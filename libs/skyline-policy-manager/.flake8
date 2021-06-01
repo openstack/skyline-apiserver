@@ -1,0 +1,5 @@
+[flake8]
+max-line-length = 99
+max-doc-length = 99
+show-source = True
+extend-ignore = E203

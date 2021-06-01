@@ -1,0 +1,2979 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Skyline API",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/api/v1/login": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Login",
+                "description": "Login & get user profile.",
+                "operationId": "login_api_v1_login_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Credential"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Profile"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/profile": {
+            "get": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Get Profile",
+                "description": "Get user profile.",
+                "operationId": "get_profile_api_v1_profile_get",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Profile"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/logout": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Logout",
+                "description": "Log out.",
+                "operationId": "logout_api_v1_logout_post",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OK"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/switch_project/{project_id}": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Switch Project",
+                "description": "Switch project.",
+                "operationId": "switch_project_api_v1_switch_project__project_id__post",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Project Id",
+                            "type": "string"
+                        },
+                        "name": "project_id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Profile"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/extension/servers": {
+            "get": {
+                "tags": [
+                    "Extension"
+                ],
+                "summary": "List Servers",
+                "description": "\nList Servers.\n\n*Notes*:\n- The `host` of **sort_keys** is only used for admin/system_admin role users.\n- The `name` is to support for fuzzy queries.\n",
+                "operationId": "list_servers_api_v1_extension_servers_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "exclusiveMinimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Marker",
+                            "type": "string"
+                        },
+                        "name": "marker",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/ExtSortDir"
+                        },
+                        "name": "sort_dirs",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/ExtServerSortKey"
+                            }
+                        },
+                        "name": "sort_keys",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "All Projects",
+                            "type": "boolean"
+                        },
+                        "name": "all_projects",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Only works when the all_projects filter is also specified.",
+                        "required": false,
+                        "schema": {
+                            "title": "Project Id",
+                            "type": "string",
+                            "description": "Only works when the all_projects filter is also specified."
+                        },
+                        "name": "project_id",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Only works when the all_projects filter is also specified.",
+                        "required": false,
+                        "schema": {
+                            "title": "Project Name",
+                            "type": "string",
+                            "description": "Only works when the all_projects filter is also specified."
+                        },
+                        "name": "project_name",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Name",
+                            "type": "string"
+                        },
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/ExtServerStatus"
+                        },
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "description": "It will be ignored for non-admin user.",
+                        "required": false,
+                        "schema": {
+                            "title": "Host",
+                            "type": "string",
+                            "description": "It will be ignored for non-admin user."
+                        },
+                        "name": "host",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Flavor Id",
+                            "type": "string"
+                        },
+                        "name": "flavor_id",
+                        "in": "query"
+                    },
+                    {
+                        "description": "UUID of server.",
+                        "required": false,
+                        "schema": {
+                            "title": "Uuid",
+                            "type": "string",
+                            "description": "UUID of server."
+                        },
+                        "name": "uuid",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExtListServersResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestMessage"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenMessage"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerErrorMessage"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/extension/recycle_servers": {
+            "get": {
+                "tags": [
+                    "Extension"
+                ],
+                "summary": "List Recycle Servers",
+                "description": "\nList Recycle Servers.\n\n*Notes*:\n- The `updated_at` of **sort_keys** is used as `deleted_at`.\n- The `name` is to support for fuzzy queries.\n",
+                "operationId": "list_recycle_servers_api_v1_extension_recycle_servers_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "exclusiveMinimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Marker",
+                            "type": "string"
+                        },
+                        "name": "marker",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/ExtSortDir"
+                        },
+                        "name": "sort_dirs",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/ExtRecycleServerSortKey"
+                            }
+                        },
+                        "name": "sort_keys",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "All Projects",
+                            "type": "boolean"
+                        },
+                        "name": "all_projects",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Only works when the all_projects filter is also specified.",
+                        "required": false,
+                        "schema": {
+                            "title": "Project Id",
+                            "type": "string",
+                            "description": "Only works when the all_projects filter is also specified."
+                        },
+                        "name": "project_id",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Only works when the all_projects filter is also specified.",
+                        "required": false,
+                        "schema": {
+                            "title": "Project Name",
+                            "type": "string",
+                            "description": "Only works when the all_projects filter is also specified."
+                        },
+                        "name": "project_name",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Name",
+                            "type": "string"
+                        },
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "description": "UUID of recycle server.",
+                        "required": false,
+                        "schema": {
+                            "title": "Uuid",
+                            "type": "string",
+                            "description": "UUID of recycle server."
+                        },
+                        "name": "uuid",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExtListRecycleServersResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestMessage"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenMessage"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerErrorMessage"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/extension/volumes": {
+            "get": {
+                "tags": [
+                    "Extension"
+                ],
+                "summary": "List Volumes",
+                "description": "List Volumes.",
+                "operationId": "list_volumes_api_v1_extension_volumes_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "exclusiveMinimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Marker",
+                            "type": "string"
+                        },
+                        "name": "marker",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/ExtSortDir"
+                        },
+                        "name": "sort_dirs",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/ExtVolumeSortKey"
+                            }
+                        },
+                        "name": "sort_keys",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "All Projects",
+                            "type": "boolean"
+                        },
+                        "name": "all_projects",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Project Id",
+                            "type": "string"
+                        },
+                        "name": "project_id",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Name",
+                            "type": "string"
+                        },
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Multiattach",
+                            "type": "boolean"
+                        },
+                        "name": "multiattach",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/ExtVolumeStatus"
+                        },
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Bootable",
+                            "type": "boolean"
+                        },
+                        "name": "bootable",
+                        "in": "query"
+                    },
+                    {
+                        "description": "UUID of volume.",
+                        "required": false,
+                        "schema": {
+                            "title": "Uuid",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "UUID of volume."
+                        },
+                        "name": "uuid",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExtListVolumesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenMessage"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerErrorMessage"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/extension/volume_snapshots": {
+            "get": {
+                "tags": [
+                    "Extension"
+                ],
+                "summary": "List Volume Snapshots",
+                "description": "List Volume Snapshots.",
+                "operationId": "list_volume_snapshots_api_v1_extension_volume_snapshots_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "exclusiveMinimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Marker",
+                            "type": "string"
+                        },
+                        "name": "marker",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/ExtSortDir"
+                        },
+                        "name": "sort_dirs",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/ExtVolumeSnapshotSortKey"
+                            }
+                        },
+                        "name": "sort_keys",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "All Projects",
+                            "type": "boolean"
+                        },
+                        "name": "all_projects",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Project Id",
+                            "type": "string"
+                        },
+                        "name": "project_id",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Name",
+                            "type": "string"
+                        },
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/ExtVolumeSnapshotStatus"
+                        },
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Volume Id",
+                            "type": "string"
+                        },
+                        "name": "volume_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExtListVolumeSnapshotsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenMessage"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerErrorMessage"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/extension/ports": {
+            "get": {
+                "tags": [
+                    "Extension"
+                ],
+                "summary": "List Ports",
+                "description": "List Ports.",
+                "operationId": "list_ports_api_v1_extension_ports_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "exclusiveMinimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Marker",
+                            "type": "string"
+                        },
+                        "name": "marker",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/ExtSortDir"
+                        },
+                        "name": "sort_dirs",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/ExtPortSortKey"
+                            }
+                        },
+                        "name": "sort_keys",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "All Projects",
+                            "type": "boolean"
+                        },
+                        "name": "all_projects",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Project Id",
+                            "type": "string"
+                        },
+                        "name": "project_id",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Name",
+                            "type": "string"
+                        },
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/ExtPortStatus"
+                        },
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Network Name",
+                            "type": "string"
+                        },
+                        "name": "network_name",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Network Id",
+                            "type": "string"
+                        },
+                        "name": "network_id",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Device Id",
+                            "type": "string"
+                        },
+                        "name": "device_id",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/ExtPortDeviceOwner"
+                            }
+                        },
+                        "name": "device_owner",
+                        "in": "query"
+                    },
+                    {
+                        "description": "UUID of port.",
+                        "required": false,
+                        "schema": {
+                            "title": "Uuid",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "UUID of port."
+                        },
+                        "name": "uuid",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExtListPortsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenMessage"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerErrorMessage"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/extension/compute-services": {
+            "get": {
+                "tags": [
+                    "Extension"
+                ],
+                "summary": "Compute Services",
+                "description": "List compute services.",
+                "operationId": "compute_services_api_v1_extension_compute_services_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Binary",
+                            "type": "string"
+                        },
+                        "name": "binary",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Host",
+                            "type": "string"
+                        },
+                        "name": "host",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExtListComputeServicesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerErrorMessage"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/contrib/keystone_endpoints": {
+            "get": {
+                "tags": [
+                    "Contrib"
+                ],
+                "summary": "List Keystone Endpoints",
+                "description": "List Keystone Endpoints",
+                "operationId": "list_keystone_endpoints_api_v1_contrib_keystone_endpoints_get",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "title": "Response 200 List Keystone Endpoints Api V1 Contrib Keystone Endpoints Get",
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ContribListKeystoneEndpointsResponseModel"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerErrorMessage"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/contrib/domains": {
+            "get": {
+                "tags": [
+                    "Contrib"
+                ],
+                "summary": "List Domains",
+                "description": "List Domains",
+                "operationId": "list_domains_api_v1_contrib_domains_get",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "title": "Response 200 List Domains Api V1 Contrib Domains Get",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerErrorMessage"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/contrib/regions": {
+            "get": {
+                "tags": [
+                    "Contrib"
+                ],
+                "summary": "List Regions",
+                "description": "List Regions",
+                "operationId": "list_regions_api_v1_contrib_regions_get",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "title": "Response 200 List Regions Api V1 Contrib Regions Get",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerErrorMessage"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/policies": {
+            "get": {
+                "tags": [
+                    "Policy"
+                ],
+                "summary": "List Policies",
+                "description": "List policies and permissions",
+                "operationId": "list_policies_api_v1_policies_get",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Policies"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerErrorMessage"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/policies/check": {
+            "post": {
+                "tags": [
+                    "Policy"
+                ],
+                "summary": "Check Policies",
+                "description": "Check policies permissions",
+                "operationId": "check_policies_api_v1_policies_check_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PoliciesRules"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Policies"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenMessage"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerErrorMessage"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/setting/{key}": {
+            "get": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "Show Setting",
+                "description": "Get a setting item.",
+                "operationId": "show_setting_api_v1_setting__key__get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Key",
+                            "type": "string"
+                        },
+                        "name": "key",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Setting"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundMessage"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "Reset Setting",
+                "description": "Reset a setting item to default",
+                "operationId": "reset_setting_api_v1_setting__key__delete",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Key",
+                            "type": "string"
+                        },
+                        "name": "key",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenMessage"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundMessage"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/setting": {
+            "put": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "Update Setting",
+                "description": "Update a setting item.",
+                "operationId": "update_setting_api_v1_setting_put",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSetting"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Setting"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenMessage"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundMessage"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnprocessableEntityMessage"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/settings": {
+            "get": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "List Settings",
+                "description": "Get all settings.",
+                "operationId": "list_settings_api_v1_settings_get",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Settings"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "BadRequestMessage": {
+                "title": "BadRequestMessage",
+                "required": [
+                    "detail"
+                ],
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "title": "Detail",
+                        "type": "string"
+                    }
+                }
+            },
+            "ContribListKeystoneEndpointsResponseModel": {
+                "title": "ContribListKeystoneEndpointsResponseModel",
+                "required": [
+                    "region_name",
+                    "url"
+                ],
+                "type": "object",
+                "properties": {
+                    "region_name": {
+                        "title": "Region Name",
+                        "type": "string"
+                    },
+                    "url": {
+                        "title": "Url",
+                        "type": "string"
+                    }
+                }
+            },
+            "Credential": {
+                "title": "Credential",
+                "required": [
+                    "region",
+                    "domain",
+                    "username",
+                    "password"
+                ],
+                "type": "object",
+                "properties": {
+                    "region": {
+                        "title": "Region",
+                        "type": "string"
+                    },
+                    "domain": {
+                        "title": "Domain",
+                        "type": "string"
+                    },
+                    "username": {
+                        "title": "Username",
+                        "type": "string"
+                    },
+                    "password": {
+                        "title": "Password",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "region": "RegionOne",
+                    "username": "admin",
+                    "domain": "default",
+                    "password": "admin"
+                }
+            },
+            "Domain": {
+                "title": "Domain",
+                "required": [
+                    "id",
+                    "name"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string"
+                    }
+                }
+            },
+            "ExtFlavor": {
+                "title": "ExtFlavor",
+                "type": "object",
+                "properties": {
+                    "ephemeral": {
+                        "title": "Ephemeral",
+                        "type": "integer"
+                    },
+                    "ram": {
+                        "title": "Ram",
+                        "type": "integer"
+                    },
+                    "original_name": {
+                        "title": "Original Name",
+                        "type": "string"
+                    },
+                    "vcpus": {
+                        "title": "Vcpus",
+                        "type": "integer"
+                    },
+                    "extra_specs": {
+                        "title": "Extra Specs",
+                        "type": "object"
+                    },
+                    "swap": {
+                        "title": "Swap",
+                        "type": "integer"
+                    },
+                    "disk": {
+                        "title": "Disk",
+                        "type": "integer"
+                    }
+                }
+            },
+            "ExtListComputeServicesBaseResponse": {
+                "title": "ExtListComputeServicesBaseResponse",
+                "required": [
+                    "binary",
+                    "host",
+                    "status"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string"
+                    },
+                    "binary": {
+                        "title": "Binary",
+                        "type": "string"
+                    },
+                    "disabled_reason": {
+                        "title": "Disabled Reason",
+                        "type": "string"
+                    },
+                    "host": {
+                        "title": "Host",
+                        "type": "string"
+                    },
+                    "state": {
+                        "title": "State",
+                        "type": "string"
+                    },
+                    "status": {
+                        "title": "Status",
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "title": "Updated At",
+                        "type": "string"
+                    },
+                    "forced_down": {
+                        "title": "Forced Down",
+                        "type": "boolean"
+                    },
+                    "zone": {
+                        "title": "Zone",
+                        "type": "string"
+                    }
+                }
+            },
+            "ExtListComputeServicesResponse": {
+                "title": "ExtListComputeServicesResponse",
+                "required": [
+                    "services"
+                ],
+                "type": "object",
+                "properties": {
+                    "services": {
+                        "title": "Services",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ExtListComputeServicesBaseResponse"
+                        }
+                    }
+                }
+            },
+            "ExtListPortsBaseResponse": {
+                "title": "ExtListPortsBaseResponse",
+                "required": [
+                    "id",
+                    "origin_data"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string"
+                    },
+                    "origin_data": {
+                        "title": "Origin Data",
+                        "type": "object",
+                        "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/network/v2/index.html?expanded=list-ports-detail#list-ports"
+                    },
+                    "server_name": {
+                        "title": "Server Name",
+                        "type": "string"
+                    },
+                    "network_name": {
+                        "title": "Network Name",
+                        "type": "string"
+                    },
+                    "ipv4": {
+                        "title": "Ipv4",
+                        "type": "array",
+                        "items": {}
+                    },
+                    "ipv6": {
+                        "title": "Ipv6",
+                        "type": "array",
+                        "items": {}
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[name]",
+                        "deprecated": true
+                    },
+                    "mac_address": {
+                        "title": "Mac Address",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[mac_address]",
+                        "deprecated": true
+                    },
+                    "project_id": {
+                        "title": "Project Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[project_id]",
+                        "deprecated": true
+                    },
+                    "device_owner": {
+                        "title": "Device Owner",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[device_owner]",
+                        "deprecated": true
+                    },
+                    "device_id": {
+                        "title": "Device Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[device_id]",
+                        "deprecated": true
+                    },
+                    "status": {
+                        "title": "Status",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[status]",
+                        "deprecated": true
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[created_at]",
+                        "deprecated": true
+                    },
+                    "network_id": {
+                        "title": "Network Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[network_id]",
+                        "deprecated": true
+                    },
+                    "binding_vnic_type": {
+                        "title": "Binding Vnic Type",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[binding:vnic_type]",
+                        "deprecated": true
+                    },
+                    "description": {
+                        "title": "Description",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[description]",
+                        "deprecated": true
+                    },
+                    "port_security_enabled": {
+                        "title": "Port Security Enabled",
+                        "type": "boolean",
+                        "description": "Will be removed, please use origin_data[port_security_enabled]",
+                        "deprecated": true
+                    },
+                    "qos_policy_id": {
+                        "title": "Qos Policy Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[qos_policy_id]",
+                        "deprecated": true
+                    },
+                    "fixed_ips": {
+                        "title": "Fixed Ips",
+                        "type": "array",
+                        "items": {},
+                        "description": "Will be removed, please use origin_data[fixed_ips]",
+                        "deprecated": true
+                    }
+                }
+            },
+            "ExtListPortsResponse": {
+                "title": "ExtListPortsResponse",
+                "required": [
+                    "ports"
+                ],
+                "type": "object",
+                "properties": {
+                    "count": {
+                        "title": "Count",
+                        "type": "integer",
+                        "default": 0
+                    },
+                    "ports": {
+                        "title": "Ports",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ExtListPortsBaseResponse"
+                        }
+                    }
+                }
+            },
+            "ExtListRecycleServersBaseResponse": {
+                "title": "ExtListRecycleServersBaseResponse",
+                "required": [
+                    "id",
+                    "origin_data",
+                    "reclaim_timestamp"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string",
+                        "format": "uuid4"
+                    },
+                    "origin_data": {
+                        "title": "Origin Data",
+                        "type": "object",
+                        "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/compute/?expanded=list-servers-detailed-detail#list-servers-detailed"
+                    },
+                    "project_name": {
+                        "title": "Project Name",
+                        "type": "string"
+                    },
+                    "image": {
+                        "title": "Image",
+                        "type": "string",
+                        "format": "uuid4"
+                    },
+                    "image_name": {
+                        "title": "Image Name",
+                        "type": "string"
+                    },
+                    "image_os_distro": {
+                        "title": "Image Os Distro",
+                        "type": "string"
+                    },
+                    "fixed_addresses": {
+                        "title": "Fixed Addresses",
+                        "type": "array",
+                        "items": {}
+                    },
+                    "floating_addresses": {
+                        "title": "Floating Addresses",
+                        "type": "array",
+                        "items": {}
+                    },
+                    "deleted_at": {
+                        "title": "Deleted At",
+                        "type": "string"
+                    },
+                    "reclaim_timestamp": {
+                        "title": "Reclaim Timestamp",
+                        "type": "number"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[name]",
+                        "deprecated": true
+                    },
+                    "project_id": {
+                        "title": "Project Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[tenant_id]",
+                        "deprecated": true
+                    },
+                    "host": {
+                        "title": "Host",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:host]",
+                        "deprecated": true
+                    },
+                    "hostname": {
+                        "title": "Hostname",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:hostname]",
+                        "deprecated": true
+                    },
+                    "flavor": {
+                        "title": "Flavor",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[flavor][original_name]",
+                        "deprecated": true
+                    },
+                    "flavor_info": {
+                        "title": "Flavor Info",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ExtFlavor"
+                            }
+                        ],
+                        "description": "Will be removed, please use origin_data[flavor]",
+                        "deprecated": true
+                    },
+                    "status": {
+                        "title": "Status",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[status]",
+                        "deprecated": true
+                    }
+                }
+            },
+            "ExtListRecycleServersResponse": {
+                "title": "ExtListRecycleServersResponse",
+                "required": [
+                    "recycle_servers"
+                ],
+                "type": "object",
+                "properties": {
+                    "recycle_servers": {
+                        "title": "Recycle Servers",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ExtListRecycleServersBaseResponse"
+                        }
+                    }
+                }
+            },
+            "ExtListServersBaseResponse": {
+                "title": "ExtListServersBaseResponse",
+                "required": [
+                    "id",
+                    "origin_data"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string",
+                        "format": "uuid4"
+                    },
+                    "origin_data": {
+                        "title": "Origin Data",
+                        "type": "object",
+                        "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/compute/?expanded=list-servers-detailed-detail#list-servers-detailed"
+                    },
+                    "project_name": {
+                        "title": "Project Name",
+                        "type": "string"
+                    },
+                    "image": {
+                        "title": "Image",
+                        "type": "string",
+                        "format": "uuid4"
+                    },
+                    "image_name": {
+                        "title": "Image Name",
+                        "type": "string"
+                    },
+                    "image_os_distro": {
+                        "title": "Image Os Distro",
+                        "type": "string"
+                    },
+                    "fixed_addresses": {
+                        "title": "Fixed Addresses",
+                        "type": "array",
+                        "items": {}
+                    },
+                    "floating_addresses": {
+                        "title": "Floating Addresses",
+                        "type": "array",
+                        "items": {}
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[name]",
+                        "deprecated": true
+                    },
+                    "project_id": {
+                        "title": "Project Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[tenant_id]",
+                        "deprecated": true
+                    },
+                    "host": {
+                        "title": "Host",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:host]",
+                        "deprecated": true
+                    },
+                    "hostname": {
+                        "title": "Hostname",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:hostname]",
+                        "deprecated": true
+                    },
+                    "flavor": {
+                        "title": "Flavor",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[flavor][original_name]",
+                        "deprecated": true
+                    },
+                    "flavor_info": {
+                        "title": "Flavor Info",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ExtFlavor"
+                            }
+                        ],
+                        "description": "Will be removed, please use origin_data[flavor]",
+                        "deprecated": true
+                    },
+                    "status": {
+                        "title": "Status",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[status]",
+                        "deprecated": true
+                    },
+                    "locked": {
+                        "title": "Locked",
+                        "type": "boolean",
+                        "description": "Will be removed, please use origin_data[locked]",
+                        "deprecated": true
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[created]",
+                        "deprecated": true
+                    },
+                    "task_state": {
+                        "title": "Task State",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[OS-EXT-STS:task_state]",
+                        "deprecated": true
+                    },
+                    "vm_state": {
+                        "title": "Vm State",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[OS-EXT-STS:vm_state]",
+                        "deprecated": true
+                    },
+                    "power_state": {
+                        "title": "Power State",
+                        "type": "integer",
+                        "description": "Will be removed, please use origin_data[OS-EXT-STS:power_state]",
+                        "deprecated": true
+                    },
+                    "root_device_name": {
+                        "title": "Root Device Name",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:root_device_name]",
+                        "deprecated": true
+                    },
+                    "metadata": {
+                        "title": "Metadata",
+                        "type": "object",
+                        "description": "Will be removed, please use origin_data[metadata]",
+                        "deprecated": true
+                    }
+                }
+            },
+            "ExtListServersResponse": {
+                "title": "ExtListServersResponse",
+                "required": [
+                    "servers"
+                ],
+                "type": "object",
+                "properties": {
+                    "servers": {
+                        "title": "Servers",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ExtListServersBaseResponse"
+                        }
+                    }
+                }
+            },
+            "ExtListVolumeSnapshotsBaseResponse": {
+                "title": "ExtListVolumeSnapshotsBaseResponse",
+                "required": [
+                    "id",
+                    "origin_data"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string"
+                    },
+                    "origin_data": {
+                        "title": "Origin Data",
+                        "type": "object",
+                        "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/block-storage/v3/index.html?expanded=list-snapshots-and-details-detail#list-snapshots-and-details"
+                    },
+                    "project_name": {
+                        "title": "Project Name",
+                        "type": "string"
+                    },
+                    "host": {
+                        "title": "Host",
+                        "type": "string"
+                    },
+                    "volume_name": {
+                        "title": "Volume Name",
+                        "type": "string"
+                    },
+                    "child_volumes": {
+                        "title": "Child Volumes",
+                        "type": "array",
+                        "items": {}
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[name]",
+                        "deprecated": true
+                    },
+                    "project_id": {
+                        "title": "Project Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[os-extended-snapshot-attributes:project_id]",
+                        "deprecated": true
+                    },
+                    "size": {
+                        "title": "Size",
+                        "type": "integer",
+                        "description": "Will be removed, please use origin_data[size]",
+                        "deprecated": true
+                    },
+                    "status": {
+                        "title": "Status",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[status]",
+                        "deprecated": true
+                    },
+                    "volume_id": {
+                        "title": "Volume Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[volume_id]",
+                        "deprecated": true
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[created_at]",
+                        "deprecated": true
+                    },
+                    "metadata": {
+                        "title": "Metadata",
+                        "type": "object",
+                        "description": "Will be removed, please use origin_data[metadata]",
+                        "deprecated": true
+                    }
+                }
+            },
+            "ExtListVolumeSnapshotsResponse": {
+                "title": "ExtListVolumeSnapshotsResponse",
+                "required": [
+                    "volume_snapshots"
+                ],
+                "type": "object",
+                "properties": {
+                    "count": {
+                        "title": "Count",
+                        "type": "integer",
+                        "default": 0
+                    },
+                    "volume_snapshots": {
+                        "title": "Volume Snapshots",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ExtListVolumeSnapshotsBaseResponse"
+                        }
+                    }
+                }
+            },
+            "ExtListVolumesBaseResponse": {
+                "title": "ExtListVolumesBaseResponse",
+                "required": [
+                    "id",
+                    "origin_data"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string",
+                        "format": "uuid4"
+                    },
+                    "origin_data": {
+                        "title": "Origin Data",
+                        "type": "object",
+                        "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/block-storage/v3/index.html?expanded=list-accessible-volumes-with-details-detail#list-accessible-volumes-with-details"
+                    },
+                    "project_name": {
+                        "title": "Project Name",
+                        "type": "string"
+                    },
+                    "attachments": {
+                        "title": "Attachments",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VolumeAttachment"
+                        }
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[name]",
+                        "deprecated": true
+                    },
+                    "project_id": {
+                        "title": "Project Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[os-vol-tenant-attr:tenant_id]",
+                        "deprecated": true
+                    },
+                    "host": {
+                        "title": "Host",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[os-vol-host-attr:host]",
+                        "deprecated": true
+                    },
+                    "snapshot_id": {
+                        "title": "Snapshot Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[snapshot_id]",
+                        "deprecated": true
+                    },
+                    "source_volid": {
+                        "title": "Source Volid",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[source_volid]",
+                        "deprecated": true
+                    },
+                    "size": {
+                        "title": "Size",
+                        "type": "integer",
+                        "description": "Will be removed, please use origin_data[size]",
+                        "deprecated": true
+                    },
+                    "status": {
+                        "title": "Status",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[status]",
+                        "deprecated": true
+                    },
+                    "volume_type": {
+                        "title": "Volume Type",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[volume_type]",
+                        "deprecated": true
+                    },
+                    "encrypted": {
+                        "title": "Encrypted",
+                        "type": "boolean",
+                        "description": "Will be removed, please use origin_data[encrypted]",
+                        "deprecated": true
+                    },
+                    "bootable": {
+                        "title": "Bootable",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[bootable]",
+                        "deprecated": true
+                    },
+                    "multiattach": {
+                        "title": "Multiattach",
+                        "type": "boolean",
+                        "description": "Will be removed, please use origin_data[multiattach]",
+                        "deprecated": true
+                    },
+                    "availability_zone": {
+                        "title": "Availability Zone",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[availability_zone]",
+                        "deprecated": true
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[created_at]",
+                        "deprecated": true
+                    }
+                }
+            },
+            "ExtListVolumesResponse": {
+                "title": "ExtListVolumesResponse",
+                "required": [
+                    "volumes"
+                ],
+                "type": "object",
+                "properties": {
+                    "count": {
+                        "title": "Count",
+                        "type": "integer",
+                        "default": 0
+                    },
+                    "volumes": {
+                        "title": "Volumes",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ExtListVolumesBaseResponse"
+                        }
+                    }
+                }
+            },
+            "ExtPortDeviceOwner": {
+                "title": "ExtPortDeviceOwner",
+                "enum": [
+                    "",
+                    "compute:nova",
+                    "network:dhcp",
+                    "network:floatingip",
+                    "network:router_gateway",
+                    "network:router_ha_interface",
+                    "network:ha_router_replicated_interface"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "ExtPortSortKey": {
+                "title": "ExtPortSortKey",
+                "enum": [
+                    "id",
+                    "name",
+                    "mac_address",
+                    "status",
+                    "project_id"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "ExtPortStatus": {
+                "title": "ExtPortStatus",
+                "enum": [
+                    "ACTIVE",
+                    "DOWN",
+                    "BUILD",
+                    "ERROR",
+                    "N/A"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "ExtRecycleServerSortKey": {
+                "title": "ExtRecycleServerSortKey",
+                "enum": [
+                    "uuid",
+                    "display_name",
+                    "updated_at",
+                    "project_id"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "ExtServerSortKey": {
+                "title": "ExtServerSortKey",
+                "enum": [
+                    "uuid",
+                    "display_name",
+                    "vm_state",
+                    "locked",
+                    "created_at",
+                    "host",
+                    "project_id"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "ExtServerStatus": {
+                "title": "ExtServerStatus",
+                "enum": [
+                    "ACTIVE",
+                    "BUILD",
+                    "ERROR",
+                    "HARD_REBOOT",
+                    "MIGRATING",
+                    "PAUSED",
+                    "REBOOT",
+                    "REBUILD",
+                    "RESCUE",
+                    "RESIZE",
+                    "SHELVED",
+                    "SHELVED_OFFLOADED",
+                    "SHUTOFF",
+                    "SOFT_DELETED",
+                    "SUSPENDED",
+                    "UNKNOWN"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "ExtSortDir": {
+                "title": "ExtSortDir",
+                "enum": [
+                    "desc",
+                    "asc"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "ExtVolumeSnapshotSortKey": {
+                "title": "ExtVolumeSnapshotSortKey",
+                "enum": [
+                    "id",
+                    "name",
+                    "status",
+                    "created_at"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "ExtVolumeSnapshotStatus": {
+                "title": "ExtVolumeSnapshotStatus",
+                "enum": [
+                    "CREATING",
+                    "AVAILABLE",
+                    "DELETING",
+                    "ERROR",
+                    "ERROR_DELETING"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "ExtVolumeSortKey": {
+                "title": "ExtVolumeSortKey",
+                "enum": [
+                    "id",
+                    "name",
+                    "size",
+                    "status",
+                    "bootable",
+                    "created_at"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "ExtVolumeStatus": {
+                "title": "ExtVolumeStatus",
+                "enum": [
+                    "creating",
+                    "available",
+                    "reserved",
+                    "attaching",
+                    "detaching",
+                    "in-use",
+                    "maintenance",
+                    "deleting",
+                    "awaiting-transfer",
+                    "error",
+                    "error_deleting",
+                    "backing-up",
+                    "restoring-backup",
+                    "error_backing-up",
+                    "error_restoring",
+                    "error_extending",
+                    "downloading",
+                    "uploading",
+                    "retyping",
+                    "extending"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "ForbiddenMessage": {
+                "title": "ForbiddenMessage",
+                "required": [
+                    "detail"
+                ],
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "title": "Detail",
+                        "type": "string"
+                    }
+                }
+            },
+            "HTTPValidationError": {
+                "title": "HTTPValidationError",
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "title": "Detail",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        }
+                    }
+                }
+            },
+            "InternalServerErrorMessage": {
+                "title": "InternalServerErrorMessage",
+                "required": [
+                    "detail"
+                ],
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "title": "Detail",
+                        "type": "string"
+                    }
+                }
+            },
+            "License": {
+                "title": "License",
+                "required": [
+                    "name",
+                    "summary",
+                    "macs",
+                    "features",
+                    "start",
+                    "end"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "title": "Name",
+                        "type": "string"
+                    },
+                    "summary": {
+                        "title": "Summary",
+                        "type": "string"
+                    },
+                    "macs": {
+                        "title": "Macs",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "features": {
+                        "title": "Features",
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
+                    "start": {
+                        "title": "Start",
+                        "type": "string"
+                    },
+                    "end": {
+                        "title": "End",
+                        "type": "string"
+                    }
+                }
+            },
+            "NotFoundMessage": {
+                "title": "NotFoundMessage",
+                "required": [
+                    "detail"
+                ],
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "title": "Detail",
+                        "type": "string"
+                    }
+                }
+            },
+            "OK": {
+                "title": "OK",
+                "required": [
+                    "message"
+                ],
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "title": "Code",
+                        "type": "integer",
+                        "default": 200
+                    },
+                    "message": {
+                        "title": "Message",
+                        "type": "string"
+                    },
+                    "title": {
+                        "title": "Title",
+                        "type": "string",
+                        "default": "OK"
+                    }
+                }
+            },
+            "Policies": {
+                "title": "Policies",
+                "required": [
+                    "policies"
+                ],
+                "type": "object",
+                "properties": {
+                    "policies": {
+                        "title": "Policies",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Policy"
+                        }
+                    }
+                }
+            },
+            "PoliciesRules": {
+                "title": "PoliciesRules",
+                "required": [
+                    "rules"
+                ],
+                "type": "object",
+                "properties": {
+                    "rules": {
+                        "title": "Rules",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "Policy": {
+                "title": "Policy",
+                "required": [
+                    "rule",
+                    "allowed"
+                ],
+                "type": "object",
+                "properties": {
+                    "rule": {
+                        "title": "Rule",
+                        "type": "string"
+                    },
+                    "allowed": {
+                        "title": "Allowed",
+                        "type": "boolean"
+                    }
+                }
+            },
+            "Profile": {
+                "title": "Profile",
+                "required": [
+                    "keystone_token",
+                    "region",
+                    "project",
+                    "user",
+                    "roles",
+                    "keystone_token_exp",
+                    "exp",
+                    "uuid",
+                    "version"
+                ],
+                "type": "object",
+                "properties": {
+                    "keystone_token": {
+                        "title": "Keystone Token",
+                        "type": "string"
+                    },
+                    "region": {
+                        "title": "Region",
+                        "type": "string"
+                    },
+                    "project": {
+                        "$ref": "#/components/schemas/Project"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/User"
+                    },
+                    "roles": {
+                        "title": "Roles",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Role"
+                        }
+                    },
+                    "keystone_token_exp": {
+                        "title": "Keystone Token Exp",
+                        "type": "string"
+                    },
+                    "base_roles": {
+                        "title": "Base Roles",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "base_domains": {
+                        "title": "Base Domains",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "endpoints": {
+                        "title": "Endpoints",
+                        "type": "object"
+                    },
+                    "projects": {
+                        "title": "Projects",
+                        "type": "object"
+                    },
+                    "exp": {
+                        "title": "Exp",
+                        "type": "integer"
+                    },
+                    "uuid": {
+                        "title": "Uuid",
+                        "type": "string"
+                    },
+                    "version": {
+                        "title": "Version",
+                        "type": "string"
+                    },
+                    "license": {
+                        "$ref": "#/components/schemas/License"
+                    },
+                    "currency": {
+                        "title": "Currency",
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "Project": {
+                "title": "Project",
+                "required": [
+                    "id",
+                    "name",
+                    "domain"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string"
+                    },
+                    "domain": {
+                        "$ref": "#/components/schemas/Domain"
+                    }
+                }
+            },
+            "Role": {
+                "title": "Role",
+                "required": [
+                    "id",
+                    "name"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string"
+                    }
+                }
+            },
+            "Setting": {
+                "title": "Setting",
+                "required": [
+                    "key",
+                    "restart_service"
+                ],
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "title": "Key",
+                        "type": "string"
+                    },
+                    "value": {
+                        "title": "Value"
+                    },
+                    "hidden": {
+                        "title": "Hidden",
+                        "type": "boolean"
+                    },
+                    "restart_service": {
+                        "title": "Restart Service",
+                        "type": "boolean"
+                    }
+                }
+            },
+            "Settings": {
+                "title": "Settings",
+                "required": [
+                    "settings"
+                ],
+                "type": "object",
+                "properties": {
+                    "settings": {
+                        "title": "Settings",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Setting"
+                        }
+                    }
+                }
+            },
+            "UnauthorizedMessage": {
+                "title": "UnauthorizedMessage",
+                "required": [
+                    "detail"
+                ],
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "title": "Detail",
+                        "type": "string"
+                    }
+                }
+            },
+            "UnprocessableEntityMessage": {
+                "title": "UnprocessableEntityMessage",
+                "required": [
+                    "detail"
+                ],
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "title": "Detail",
+                        "type": "string"
+                    }
+                }
+            },
+            "UpdateSetting": {
+                "title": "UpdateSetting",
+                "required": [
+                    "key"
+                ],
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "title": "Key",
+                        "type": "string"
+                    },
+                    "value": {
+                        "title": "Value"
+                    }
+                }
+            },
+            "User": {
+                "title": "User",
+                "required": [
+                    "id",
+                    "name",
+                    "domain"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string"
+                    },
+                    "domain": {
+                        "$ref": "#/components/schemas/Domain"
+                    }
+                }
+            },
+            "ValidationError": {
+                "title": "ValidationError",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "loc": {
+                        "title": "Location",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "msg": {
+                        "title": "Message",
+                        "type": "string"
+                    },
+                    "type": {
+                        "title": "Error Type",
+                        "type": "string"
+                    }
+                }
+            },
+            "VolumeAttachment": {
+                "title": "VolumeAttachment",
+                "required": [
+                    "id"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string"
+                    },
+                    "device": {
+                        "title": "Device",
+                        "type": "string"
+                    },
+                    "server_id": {
+                        "title": "Server Id",
+                        "type": "string"
+                    },
+                    "server_name": {
+                        "title": "Server Name",
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
