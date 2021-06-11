@@ -12,25 +12,50 @@ English | [简体中文](./README-zh_CN.md)
 
 ### Development mode
 
-**Only support Linux (Because uvloop & cython)**
+**Support Linux & Mac OS (Recommend Linux OS) (Because uvloop & cython)**
 
-```bash
-make install
-cp etc/skyline_apiserver.yaml.sample etc/skyline_apiserver.yaml
-export OS_CONFIG_DIR=$(pwd)/etc
-rm -f /tmp/skyline_apiserver.db
-make db_sync
-```
+- Installing dependency packages
 
-```console
-# $ poetry run gunicorn -c etc/gunicorn.py --reload skyline_apiserver.main:app
-$ poetry run uvicorn --reload --port 28000 --log-level debug skyline_apiserver.main:app
+  ```bash
+  make install
+  ```
 
-INFO:     Uvicorn running on http://127.0.0.1:28000 (Press CTRL+C to quit)
-INFO:     Started reloader process [154033] using statreload
-INFO:     Started server process [154037]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-```
+- Set skyline-apiserver.yaml config file
+
+  Maybe you should change the params with your real environment as followed:
+
+  ```yaml
+  - database_url  (you can set sqlite:////tmp/skyline.db to use sqlite)
+  - default_region
+  - keystone_url
+  - system_project
+  - system_project_domain
+  - system_user_domain
+  - system_user_name
+  - system_user_password
+  ```
+
+  ```bash
+  cp etc/skyline-apiserver.yaml.sample etc/skyline-apiserver.yaml
+  export OS_CONFIG_DIR=$(pwd)/etc
+  ```
+
+- Init skyline database
+
+  ```bash
+  make db_sync
+  ```
+
+- Run server
+
+  ```console
+  $ poetry run uvicorn --reload --port 28000 --log-level debug skyline_apiserver.main:app
+
+  INFO:     Uvicorn running on http://127.0.0.1:28000 (Press CTRL+C to quit)
+  INFO:     Started reloader process [154033] using statreload
+  INFO:     Started server process [154037]
+  INFO:     Waiting for application startup.
+  INFO:     Application startup complete.
+  ```
 
 You can now access the online API documentation: `http://127.0.0.1:28000/docs`
