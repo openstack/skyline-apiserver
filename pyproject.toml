@@ -59,6 +59,7 @@ skyline-log = {path = "./libs/skyline-log", develop = true}
 
 [tool.poetry.scripts]
 swagger-generator = 'skyline_apiserver.cmd.generate_swagger:main'
+config-sample-generator = 'skyline_apiserver.cmd.generate_sample_config:main'
 
 [tool.black]
 line-length = 98

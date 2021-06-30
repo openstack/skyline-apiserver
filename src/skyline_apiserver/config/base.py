@@ -83,6 +83,15 @@ class Group:
         items = ", ".join((f"{opt}=Opt(name='{opt}')" for opt in self._opts))
         return f"Group({items})"
 
+    def items(self) -> Iterator[Any]:
+        return self._opts.items()
+
+    def keys(self) -> Iterator[Any]:
+        return self._opts.keys()
+
+    def values(self) -> Iterator[Any]:
+        return self._opts.values()
+
 
 @dataclass(repr=False, frozen=True)
 class Configuration:
@@ -148,5 +157,13 @@ class Configuration:
         items = ", ".join((f"{group}=Group(name='{group}')" for group in self._groups))
         return f"Configuration({items})"
 
+    def items(self) -> Iterator[Any]:
+        return self._groups.items()
+
+    def keys(self) -> Iterator[Any]:
+        return self._groups.keys()
+
+    def values(self) -> Iterator[Any]:
+        return self._groups.values()
 
 __all__ = ("Opt", "Group", "Configuration")

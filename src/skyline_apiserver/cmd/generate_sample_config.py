@@ -14,33 +14,37 @@
 
 from __future__ import annotations
 
-import json
 import sys
 
 import click
+import yaml
 
-from skyline_apiserver.main import app
+from skyline_apiserver.config import CONF, configure
 
 
-@click.command(help="Generate swagger file.")
+@click.command(help="Generate skyline-apiserver sample config file.")
 @click.option(
     "-o",
     "--output-file",
     "output_file_path",
-    default="swagger.json",
+    default="skyline-apiserver.yaml.sample",
     help=(
-        "The path of the output file, this file is used to generate a OpenAPI file for "
-        "use in the development process. (Default value: swagger.json)"
+        "The path of the output file, this file is used to generate a sample config file "
+        "for use. (Default value: skyline-apiserver.yaml.sample)"
     ),
 )
 def main(output_file_path: str) -> None:
     try:
-        swagger_dict = app.openapi()
+        configure("skyline-apiserver", setup=False)
+
+        result = {}
+        for group_name, group in CONF.items():
+            result[group_name] = {i.name: i.default for i in group.values()}
         with open(output_file_path, mode="w") as f:
-            f.write(json.dumps(swagger_dict, indent=4))
+            f.write(yaml.safe_dump(result, allow_unicode=True))
 
     except Exception as e:
-        print(f"Generate swagger file failed: {str(e)}")
+        print(f"Generate skyline-apiserver sample config file failed: {str(e)}")
         sys.exit(1)
 
 

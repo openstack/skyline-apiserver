@@ -39,6 +39,7 @@ help:
 	@echo "  db_revision         Generate database alembic version revision with model."
 	@echo "  db_sync             Sync database from alembic version revision."
 	@echo "  swagger             Generate swagger json file."
+	@echo "  genconfig           Generate sample config file."
 	@echo "  future_check        Find python files without 'type annotations'.(Alpha)"
 	@echo
 
@@ -129,6 +130,11 @@ db_sync:
 .PHONY: swagger
 swagger:
 	poetry run swagger-generator -o $(ROOT_DIR)/docs/api/swagger.json
+
+
+.PHONY: genconfig
+genconfig:
+	poetry run config-sample-generator -o $(ROOT_DIR)/etc/skyline-apiserver.yaml.sample
 
 
 # Find python files without "type annotations"
