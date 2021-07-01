@@ -17,8 +17,7 @@ from __future__ import annotations
 from typing import List
 
 from pydantic import StrictBool, StrictInt, StrictStr
-
-from .base import Opt
+from skyline_config import Opt
 
 debug = Opt(
     name="debug",

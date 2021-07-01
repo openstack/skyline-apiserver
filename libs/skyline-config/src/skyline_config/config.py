@@ -22,9 +22,8 @@ from typing import Any, Dict, Iterator, Sequence, Tuple, Type
 
 import yaml
 from immutables import Map
+from immutables._map import MapItems, MapKeys, MapValues
 from pydantic import BaseModel, create_model
-
-from skyline_apiserver import __version__
 
 
 @dataclass(frozen=True)
@@ -50,8 +49,8 @@ class Opt:
         object.__setattr__(self, "value", value)
         if self.deprecated:
             warnings.warn(
-                f"The config opt {self.name} is deprecated, will be deleted after the"
-                f" {__version__} version",
+                f"The config opt {self.name} is deprecated, will be deleted in the"
+                " future version",
                 DeprecationWarning,
             )
 
@@ -83,13 +82,13 @@ class Group:
         items = ", ".join((f"{opt}=Opt(name='{opt}')" for opt in self._opts))
         return f"Group({items})"
 
-    def items(self) -> Iterator[Any]:
+    def items(self) -> MapItems[str, Opt]:
         return self._opts.items()
 
-    def keys(self) -> Iterator[Any]:
+    def keys(self) -> MapKeys[str]:
         return self._opts.keys()
 
-    def values(self) -> Iterator[Any]:
+    def values(self) -> MapValues[Opt]:
         return self._opts.values()
 
 
@@ -157,13 +156,14 @@ class Configuration:
         items = ", ".join((f"{group}=Group(name='{group}')" for group in self._groups))
         return f"Configuration({items})"
 
-    def items(self) -> Iterator[Any]:
+    def items(self) -> MapItems[str, Group]:
         return self._groups.items()
 
-    def keys(self) -> Iterator[Any]:
+    def keys(self) -> MapKeys[str]:
         return self._groups.keys()
 
-    def values(self) -> Iterator[Any]:
+    def values(self) -> MapValues[Group]:
         return self._groups.values()
+
 
 __all__ = ("Opt", "Group", "Configuration")

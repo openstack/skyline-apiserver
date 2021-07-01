@@ -80,12 +80,14 @@ install: venv
 	poetry install -vvv
 	$(MAKE) -C $(LIBS)/skyline-policy-manager install
 	$(MAKE) -C $(LIBS)/skyline-log install
+	$(MAKE) -C $(LIBS)/skyline-config install
 
 
 .PHONY: build
 build:
 	$(MAKE) -C $(LIBS)/skyline-policy-manager build
 	$(MAKE) -C $(LIBS)/skyline-log build
+	$(MAKE) -C $(LIBS)/skyline-config build
 	poetry build
 
 
@@ -93,6 +95,7 @@ build:
 lint:
 	$(MAKE) -C $(LIBS)/skyline-policy-manager lint
 	$(MAKE) -C $(LIBS)/skyline-log lint
+	$(MAKE) -C $(LIBS)/skyline-config lint
 	# poetry run mypy --no-incremental $(SOURCES)
 	poetry run isort --check-only --diff $(SOURCES) $(TESTS) $(TOOLS)
 	poetry run black --check --diff --color $(SOURCES) $(TESTS) $(TOOLS)
@@ -103,6 +106,7 @@ lint:
 fmt:
 	$(MAKE) -C $(LIBS)/skyline-policy-manager fmt
 	$(MAKE) -C $(LIBS)/skyline-log fmt
+	$(MAKE) -C $(LIBS)/skyline-config fmt
 	poetry run isort $(SOURCES) $(TESTS) $(TOOLS)
 	poetry run black $(SOURCES) $(TESTS) $(TOOLS)
 	poetry run add-trailing-comma --py36-plus --exit-zero-even-if-changed `find $(SOURCES) $(TESTS) $(TOOLS) -name '*.py'`

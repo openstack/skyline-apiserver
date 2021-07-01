@@ -17,8 +17,7 @@ from __future__ import annotations
 from typing import Any, Dict, List
 
 from pydantic.types import StrictStr
-
-from .base import Opt
+from skyline_config import Opt
 
 base_settings = Opt(
     name="base_settings",

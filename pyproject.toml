@@ -38,6 +38,7 @@ aiomysql = "^0.0.21"
 pymysql = "*"
 skyline-policy-manager = "*"
 skyline-log = "*"
+skyline-config = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "6.1.*"
@@ -56,6 +57,7 @@ pytest-asyncio = "*"
 pytest-xdist = {extras = ["psutil"], version = "*"}
 skyline-policy-manager = {path = "./libs/skyline-policy-manager", develop = true}
 skyline-log = {path = "./libs/skyline-log", develop = true}
+skyline-config = {path = "libs/skyline-config", develop = true}
 
 [tool.poetry.scripts]
 swagger-generator = 'skyline_apiserver.cmd.generate_swagger:main'

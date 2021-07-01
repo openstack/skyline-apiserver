@@ -12,19 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import annotations
+from skyline_config import __version__
 
-from pydantic import StrictBool
-from skyline_config import Opt
 
-show_raw_sql = Opt(
-    name="show_raw_sql",
-    description="Show raw sql",
-    schema=StrictBool,
-    default=False,
-)
-
-GROUP_NAME = __name__.split(".")[-1]
-ALL_OPTS = (show_raw_sql,)
-
-__all__ = ("GROUP_NAME", "ALL_OPTS")
+def test_version():
+    assert __version__ == "0.1.0"

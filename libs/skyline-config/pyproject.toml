@@ -1,0 +1,55 @@
+[tool.poetry]
+name = "skyline-config"
+version = "0.1.0"
+description = ""
+license = "Apache-2.0"
+authors = ["OpenStack <openstack-discuss@lists.openstack.org>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pydantic = "*"
+immutables = "*"
+
+[tool.poetry.dev-dependencies]
+pytest = "*"
+mypy = "*"
+black = "^20.8b1"
+isort = "*"
+flake8 = "*"
+add-trailing-comma = "*"
+
+[tool.black]
+line-length = 98
+target-version = ['py38']
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+      \.eggs
+    | \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+  | exclude.py
+)
+'''
+verbos = true
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 98
+reverse_relative = true
+combine_as_imports = true
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

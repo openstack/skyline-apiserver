@@ -12,19 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import annotations
+from .config import Configuration, Group, Opt
 
-from pydantic import StrictBool
-from skyline_config import Opt
+__version__ = "0.1.0"
 
-show_raw_sql = Opt(
-    name="show_raw_sql",
-    description="Show raw sql",
-    schema=StrictBool,
-    default=False,
-)
-
-GROUP_NAME = __name__.split(".")[-1]
-ALL_OPTS = (show_raw_sql,)
-
-__all__ = ("GROUP_NAME", "ALL_OPTS")
+__all__ = ("Opt", "Group", "Configuration")
