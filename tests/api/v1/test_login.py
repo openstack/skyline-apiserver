@@ -19,6 +19,7 @@ import pytest
 from httpx import AsyncClient
 from utils import utils
 
+from skyline_apiserver import __version__
 from skyline_apiserver import main
 from skyline_apiserver.config import CONF
 from skyline_apiserver.db import api as db_api, setup as db_setup
@@ -62,7 +63,7 @@ async def test_get_profile_ok(client: AsyncClient, login_jwt: str) -> None:
     assert "base_domains" in result
     assert "license" in result
     assert "currency" in result
-    assert result["version"] == constants.VERSION
+    assert result["version"] == __version__
     assert len(CONF.openstack.base_domains) == len(result["base_domains"])
 
 
