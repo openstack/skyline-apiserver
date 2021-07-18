@@ -20,7 +20,7 @@ English | [简体中文](./README-zh_CN.md)
   make install
   ```
 
-- Set skyline-apiserver.yaml config file
+- Set skyline.yaml config file
 
   Maybe you should change the params with your real environment as followed:
 
@@ -36,7 +36,7 @@ English | [简体中文](./README-zh_CN.md)
   ```
 
   ```bash
-  cp etc/skyline-apiserver.yaml.sample etc/skyline-apiserver.yaml
+  cp etc/skyline.yaml.sample etc/skyline.yaml
   export OS_CONFIG_DIR=$(pwd)/etc
   ```
 
@@ -49,7 +49,7 @@ English | [简体中文](./README-zh_CN.md)
 - Run server
 
   ```console
-  $ poetry run uvicorn --reload --port 28000 --log-level debug skyline_apiserver.main:app
+  $ poetry run uvicorn --reload --reload-dir libs/skyline-apiserver/skyline_apiserver --port 28000 --log-level debug skyline_apiserver.main:app
 
   INFO:     Uvicorn running on http://127.0.0.1:28000 (Press CTRL+C to quit)
   INFO:     Started reloader process [154033] using statreload

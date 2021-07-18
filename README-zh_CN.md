@@ -20,7 +20,7 @@
   make install
   ```
 
-- 配置 skyline-apiserver.yaml 文件
+- 配置 skyline.yaml 文件
 
   可能你需要根据实际的环境修改以下参数：
 
@@ -36,7 +36,7 @@
   ```
 
   ```bash
-  cp etc/skyline-apiserver.yaml.sample etc/skyline-apiserver.yaml
+  cp etc/skyline.yaml.sample etc/skyline.yaml
   export OS_CONFIG_DIR=$(pwd)/etc
   ```
 
@@ -49,7 +49,7 @@
 - 运行服务
 
   ```console
-  $ poetry run uvicorn --reload --port 28000 --log-level debug skyline_apiserver.main:app
+  $ poetry run uvicorn --reload --reload-dir libs/skyline-apiserver/skyline_apiserver --port 28000 --log-level debug skyline_apiserver.main:app
 
   INFO:     Uvicorn running on http://127.0.0.1:28000 (Press CTRL+C to quit)
   INFO:     Started reloader process [154033] using statreload
