@@ -36,7 +36,7 @@ SUPPORTED_SERVICE_EPS = {
     "heat": ["heat"],
     "ironic": ["ironic.api", "ironic_inspector.api"],
     "keystone": ["keystone"],
-    "neutron": ["neutron", "neutron-fwaas", "neutron-vpnaas"],
+    "neutron": ["neutron", "neutron-vpnaas"],
     "nova": ["nova"],
     "octavia": ["octavia"],
     "panko": ["panko"],

@@ -2562,50 +2562,6 @@
                     }
                 }
             },
-            "License": {
-                "title": "License",
-                "required": [
-                    "name",
-                    "summary",
-                    "macs",
-                    "features",
-                    "start",
-                    "end"
-                ],
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "title": "Name",
-                        "type": "string"
-                    },
-                    "summary": {
-                        "title": "Summary",
-                        "type": "string"
-                    },
-                    "macs": {
-                        "title": "Macs",
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "features": {
-                        "title": "Features",
-                        "type": "array",
-                        "items": {
-                            "type": "object"
-                        }
-                    },
-                    "start": {
-                        "title": "Start",
-                        "type": "string"
-                    },
-                    "end": {
-                        "title": "End",
-                        "type": "string"
-                    }
-                }
-            },
             "NotFoundMessage": {
                 "title": "NotFoundMessage",
                 "required": [
@@ -2765,16 +2721,6 @@
                     "version": {
                         "title": "Version",
                         "type": "string"
-                    },
-                    "license": {
-                        "$ref": "#/components/schemas/License"
-                    },
-                    "currency": {
-                        "title": "Currency",
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "string"
-                        }
                     }
                 }
             },

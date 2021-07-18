@@ -1,8 +1,6 @@
 PYTHON ?= python3
-SOURCES := src
-LIBS := libs
-TESTS := tests
-TOOLS := tools
+LIBS := $(shell \ls libs)
+LIB_PATHS := $(addprefix libs/,$(LIBS))
 ROOT_DIR ?= $(shell git rev-parse --show-toplevel)
 
 # Color
@@ -22,6 +20,10 @@ GIT_BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD)
 GIT_COMMIT ?= $(shell git rev-parse --verify HEAD)
 
 
+.PHONY: all
+all: install fmt lint test package
+
+
 .PHONY: help
 help:
 	@echo "Skyline API server development makefile"
@@ -32,7 +34,8 @@ help:
 	@echo "  git_config          Initialize git configuration."
 	@echo "  venv                Create virtualenvs."
 	@echo "  install             Installs the project dependencies."
-	@echo "  build               Build source and wheel packages."
+	@echo "  package             Build package from source code."
+	@echo "  build               Build container image."
 	@echo "  lint                Check python code."
 	@echo "  fmt                 Format python code style."
 	@echo "  test                Run unit tests."
@@ -70,65 +73,64 @@ endif
 
 .PHONY: venv
 venv: git_config
+	if [ ! -e "libs/skyline-console/.git" ]; then git submodule update --init; fi
 	poetry env use $(PYTHON)
 
 
-.PHONY: install
-install: venv
-	poetry run pip install -U pip
-	poetry run pip install -U setuptools
+.PHONY: install $(INSTALL_LIBS)
+INSTALL_LIBS := $(addsuffix .install,$(LIB_PATHS))
+install: venv $(INSTALL_LIBS)
+	poetry run pip install -U pip setuptools
 	poetry install -vvv
-	$(MAKE) -C $(LIBS)/skyline-policy-manager install
-	$(MAKE) -C $(LIBS)/skyline-log install
-	$(MAKE) -C $(LIBS)/skyline-config install
+$(INSTALL_LIBS):
+	$(MAKE) -C $(basename $@) install
+
+
+.PHONY: package $(PACKAGE_LIBS)
+PACKAGE_LIBS := $(addsuffix .package,$(LIB_PATHS))
+package: $(PACKAGE_LIBS)
+	poetry build -f wheel
+$(PACKAGE_LIBS):
+	$(MAKE) -C $(basename $@) package
+
+
+.PHONY: fmt $(FMT_LIBS)
+FMT_LIBS := $(addsuffix .fmt,$(LIB_PATHS))
+fmt: $(FMT_LIBS)
+$(FMT_LIBS):
+	$(MAKE) -C $(basename $@) fmt
+
+
+.PHONY: lint $(LINT_LIBS)
+LINT_LIBS := $(addsuffix .lint,$(LIB_PATHS))
+lint: $(LINT_LIBS)
+$(LINT_LIBS):
+	$(MAKE) -C $(basename $@) lint
+
+
+.PHONY: test $(TEST_LIBS)
+TEST_LIBS := $(addsuffix .test,$(LIB_PATHS))
+test: $(TEST_LIBS)
+$(TEST_LIBS):
+	$(MAKE) -C $(basename $@) test
 
 
 .PHONY: build
+BUILD_ENGINE ?= docker
+BUILD_CONTEXT ?= .
+DOCKER_FILE ?= container/Dockerfile
+IMAGE ?= skyline
+IMAGE_TAG ?= latest
+ifeq ($(BUILD_ENGINE), docker)
+    build_cmd = docker build
+else ifeq ($(BUILD_ENGINE), buildah)
+    build_cmd = buildah bud
+else
+    $(error Unsupported build engine $(BUILD_ENGINE))
+endif
 build:
-	$(MAKE) -C $(LIBS)/skyline-policy-manager build
-	$(MAKE) -C $(LIBS)/skyline-log build
-	$(MAKE) -C $(LIBS)/skyline-config build
-	poetry build
-
-
-.PHONY: lint
-lint:
-	$(MAKE) -C $(LIBS)/skyline-policy-manager lint
-	$(MAKE) -C $(LIBS)/skyline-log lint
-	$(MAKE) -C $(LIBS)/skyline-config lint
-	# poetry run mypy --no-incremental $(SOURCES)
-	poetry run isort --check-only --diff $(SOURCES) $(TESTS) $(TOOLS)
-	poetry run black --check --diff --color $(SOURCES) $(TESTS) $(TOOLS)
-	poetry run flake8 $(SOURCES) $(TESTS) $(TOOLS)
-
-
-.PHONY: fmt
-fmt:
-	$(MAKE) -C $(LIBS)/skyline-policy-manager fmt
-	$(MAKE) -C $(LIBS)/skyline-log fmt
-	$(MAKE) -C $(LIBS)/skyline-config fmt
-	poetry run isort $(SOURCES) $(TESTS) $(TOOLS)
-	poetry run black $(SOURCES) $(TESTS) $(TOOLS)
-	poetry run add-trailing-comma --py36-plus --exit-zero-even-if-changed `find $(SOURCES) $(TESTS) $(TOOLS) -name '*.py'`
-
-
-.PHONY: test
-test:
-	echo null
-
-
-.PHONY: db_revision
-HEAD_REV ?= $(shell poetry run alembic heads | awk '{print $$1}')
-NEW_REV ?= $(shell python3 -c 'import sys; print(f"{int(sys.argv[1])+1:03}")' $(HEAD_REV))
-REV_MEG ?=
-db_revision:
-	$(shell [ -z "$(REV_MEG)" ] && printf '$(red)Missing required message, use "make db_revision REV_MEG=<some message>"$(no_color)')
-	poetry run alembic revision --autogenerate --rev-id $(NEW_REV) -m '$(REV_MEG)'
-
-
-.PHONY: db_sync
-db_sync:
-	poetry run alembic upgrade head
+	if [ ! -e "libs/skyline-console/.git" ]; then git submodule update --init; fi
+	$(build_cmd) --no-cache --pull --force-rm --build-arg RELEASE_VERSION=$(RELEASE_VERSION) --build-arg GIT_BRANCH=$(GIT_BRANCH) --build-arg GIT_COMMIT=$(GIT_COMMIT) $(BUILD_ARGS) -f $(DOCKER_FILE) -t $(IMAGE):$(IMAGE_TAG) $(BUILD_CONTEXT) 
 
 
 .PHONY: swagger
@@ -138,7 +140,7 @@ swagger:
 
 .PHONY: genconfig
 genconfig:
-	poetry run config-sample-generator -o $(ROOT_DIR)/etc/skyline-apiserver.yaml.sample
+	poetry run config-sample-generator -o $(ROOT_DIR)/etc/skyline.yaml.sample
 
 
 # Find python files without "type annotations"

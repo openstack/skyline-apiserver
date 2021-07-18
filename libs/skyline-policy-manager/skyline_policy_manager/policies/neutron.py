@@ -1,3 +1,5 @@
+# flake8: noqa
+
 from . import base
 
 list_rules = (
@@ -86,10 +88,7 @@ list_rules = (
         check_str=(
             "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
         ),
-        description="Get a flavor associated with a given service profiles. "
-        "There is no corresponding GET operations in API "
-        "currently. This rule is currently referred only in the "
-        "DELETE of flavor_service_profile.",
+        description="Get a flavor associated with a given service profiles. There is no corresponding GET operations in API currently. This rule is currently referred only in the DELETE of flavor_service_profile.",
     ),
     base.Rule(
         name="external",
@@ -129,8 +128,10 @@ list_rules = (
     base.APIRule(
         name="get_address_group",
         check_str=(
-            "(role:reader and system_scope:all) or (role:reader and "
-            "project_id:%(project_id)s) or rule:shared_address_groups "
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s) or rule:shared_address_groups"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get an address group",
         scope_types=["system", "project"],
@@ -144,6 +145,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create an address scope",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/address-scopes"}],
@@ -151,6 +155,7 @@ list_rules = (
     base.APIRule(
         name="create_address_scope:shared",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Create a shared address scope",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/address-scopes"}],
@@ -158,8 +163,10 @@ list_rules = (
     base.APIRule(
         name="get_address_scope",
         check_str=(
-            "(role:reader and system_scope:all) or (role:reader and "
-            "project_id:%(project_id)s) or rule:shared_address_scopes "
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s) or rule:shared_address_scopes"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get an address scope",
         scope_types=["system", "project"],
@@ -171,7 +178,10 @@ list_rules = (
     base.APIRule(
         name="update_address_scope",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Update an address scope",
         scope_types=["system", "project"],
@@ -180,6 +190,7 @@ list_rules = (
     base.APIRule(
         name="update_address_scope:shared",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update ``shared`` attribute of an address scope",
         scope_types=["system", "project"],
         operations=[{"method": "PUT", "path": "/address-scopes/{id}"}],
@@ -189,6 +200,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Delete an address scope",
         scope_types=["system", "project"],
         operations=[{"method": "DELETE", "path": "/address-scopes/{id}"}],
@@ -196,6 +210,7 @@ list_rules = (
     base.APIRule(
         name="get_agent",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get an agent",
         scope_types=["system"],
         operations=[
@@ -206,6 +221,7 @@ list_rules = (
     base.APIRule(
         name="update_agent",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update an agent",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/agents/{id}"}],
@@ -213,6 +229,7 @@ list_rules = (
     base.APIRule(
         name="delete_agent",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Delete an agent",
         scope_types=["system"],
         operations=[{"method": "DELETE", "path": "/agents/{id}"}],
@@ -220,6 +237,7 @@ list_rules = (
     base.APIRule(
         name="create_dhcp-network",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Add a network to a DHCP agent",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/agents/{agent_id}/dhcp-networks"}],
@@ -227,6 +245,7 @@ list_rules = (
     base.APIRule(
         name="get_dhcp-networks",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="List networks on a DHCP agent",
         scope_types=["system"],
         operations=[{"method": "GET", "path": "/agents/{agent_id}/dhcp-networks"}],
@@ -234,15 +253,17 @@ list_rules = (
     base.APIRule(
         name="delete_dhcp-network",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Remove a network from a DHCP agent",
         scope_types=["system"],
         operations=[
-            {"method": "DELETE", "path": "/agents/{agent_id}/dhcp-networks/{network_id}"},
+            {"method": "DELETE", "path": "/agents/{agent_id}/dhcp-networks/{network_id}"}
         ],
     ),
     base.APIRule(
         name="create_l3-router",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Add a router to an L3 agent",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/agents/{agent_id}/l3-routers"}],
@@ -250,6 +271,7 @@ list_rules = (
     base.APIRule(
         name="get_l3-routers",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="List routers on an L3 agent",
         scope_types=["system"],
         operations=[{"method": "GET", "path": "/agents/{agent_id}/l3-routers"}],
@@ -257,6 +279,7 @@ list_rules = (
     base.APIRule(
         name="delete_l3-router",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Remove a router from an L3 agent",
         scope_types=["system"],
         operations=[{"method": "DELETE", "path": "/agents/{agent_id}/l3-routers/{router_id}"}],
@@ -264,6 +287,7 @@ list_rules = (
     base.APIRule(
         name="get_dhcp-agents",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="List DHCP agents hosting a network",
         scope_types=["system"],
         operations=[{"method": "GET", "path": "/networks/{network_id}/dhcp-agents"}],
@@ -271,6 +295,7 @@ list_rules = (
     base.APIRule(
         name="get_l3-agents",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="List L3 agents hosting a router",
         scope_types=["system"],
         operations=[{"method": "GET", "path": "/routers/{router_id}/l3-agents"}],
@@ -279,6 +304,9 @@ list_rules = (
         name="get_auto_allocated_topology",
         check_str=(
             "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get a project's auto-allocated topology",
         scope_types=["system", "project"],
@@ -289,6 +317,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Delete a project's auto-allocated topology",
         scope_types=["system", "project"],
         operations=[{"method": "DELETE", "path": "/auto-allocated-topology/{project_id}"}],
@@ -296,6 +327,7 @@ list_rules = (
     base.APIRule(
         name="get_availability_zone",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("@"),
         description="List availability zones",
         scope_types=["system"],
         operations=[{"method": "GET", "path": "/availability_zones"}],
@@ -303,6 +335,7 @@ list_rules = (
     base.APIRule(
         name="create_flavor",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Create a flavor",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/flavors"}],
@@ -311,6 +344,9 @@ list_rules = (
         name="get_flavor",
         check_str=(
             "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get a flavor",
         scope_types=["system", "project"],
@@ -322,6 +358,7 @@ list_rules = (
     base.APIRule(
         name="update_flavor",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update a flavor",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/flavors/{id}"}],
@@ -329,6 +366,7 @@ list_rules = (
     base.APIRule(
         name="delete_flavor",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Delete a flavor",
         scope_types=["system"],
         operations=[{"method": "DELETE", "path": "/flavors/{id}"}],
@@ -336,6 +374,7 @@ list_rules = (
     base.APIRule(
         name="create_service_profile",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Create a service profile",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/service_profiles"}],
@@ -343,6 +382,7 @@ list_rules = (
     base.APIRule(
         name="get_service_profile",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get a service profile",
         scope_types=["system"],
         operations=[
@@ -353,6 +393,7 @@ list_rules = (
     base.APIRule(
         name="update_service_profile",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update a service profile",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/service_profiles/{id}"}],
@@ -360,6 +401,7 @@ list_rules = (
     base.APIRule(
         name="delete_service_profile",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Delete a service profile",
         scope_types=["system"],
         operations=[{"method": "DELETE", "path": "/service_profiles/{id}"}],
@@ -367,6 +409,7 @@ list_rules = (
     base.APIRule(
         name="create_flavor_service_profile",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Associate a flavor with a service profile",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/flavors/{flavor_id}/service_profiles"}],
@@ -374,16 +417,20 @@ list_rules = (
     base.APIRule(
         name="delete_flavor_service_profile",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Disassociate a flavor with a service profile",
         scope_types=["system"],
         operations=[
-            {"method": "DELETE", "path": "/flavors/{flavor_id}/service_profiles/{profile_id}"},
+            {"method": "DELETE", "path": "/flavors/{flavor_id}/service_profiles/{profile_id}"}
         ],
     ),
     base.APIRule(
         name="create_floatingip",
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Create a floating IP",
         scope_types=["project"],
@@ -392,6 +439,9 @@ list_rules = (
     base.APIRule(
         name="create_floatingip:floating_ip_address",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create a floating IP with a specific IP address",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/floatingips"}],
@@ -400,6 +450,9 @@ list_rules = (
         name="get_floatingip",
         check_str=(
             "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get a floating IP",
         scope_types=["system", "project"],
@@ -413,6 +466,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update a floating IP",
         scope_types=["system", "project"],
         operations=[{"method": "PUT", "path": "/floatingips/{id}"}],
@@ -420,7 +476,10 @@ list_rules = (
     base.APIRule(
         name="delete_floatingip",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Delete a floating IP",
         scope_types=["system", "project"],
@@ -429,8 +488,10 @@ list_rules = (
     base.APIRule(
         name="get_floatingip_pool",
         check_str=(
-            "(role:reader and system_scope:all) or (role:reader and "
-            "project_id:%(project_id)s) "
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get floating IP pools",
         scope_types=["system", "project"],
@@ -439,8 +500,10 @@ list_rules = (
     base.APIRule(
         name="create_floatingip_port_forwarding",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and "
-            "project_id:%(project_id)s) or rule:ext_parent_owner "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) or rule:ext_parent_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Create a floating IP port forwarding",
         scope_types=["system", "project"],
@@ -449,8 +512,10 @@ list_rules = (
     base.APIRule(
         name="get_floatingip_port_forwarding",
         check_str=(
-            "(role:reader and system_scope:all) or (role:reader and "
-            "project_id:%(project_id)s) or rule:ext_parent_owner "
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s) or rule:ext_parent_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get a floating IP port forwarding",
         scope_types=["system", "project"],
@@ -465,8 +530,10 @@ list_rules = (
     base.APIRule(
         name="update_floatingip_port_forwarding",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and "
-            "project_id:%(project_id)s) or rule:ext_parent_owner "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) or rule:ext_parent_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Update a floating IP port forwarding",
         scope_types=["system", "project"],
@@ -474,14 +541,16 @@ list_rules = (
             {
                 "method": "PUT",
                 "path": "/floatingips/{floatingip_id}/port_forwardings/{port_forwarding_id}",
-            },
+            }
         ],
     ),
     base.APIRule(
         name="delete_floatingip_port_forwarding",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and "
-            "project_id:%(project_id)s) or rule:ext_parent_owner "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) or rule:ext_parent_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Delete a floating IP port forwarding",
         scope_types=["system", "project"],
@@ -489,14 +558,16 @@ list_rules = (
             {
                 "method": "DELETE",
                 "path": "/floatingips/{floatingip_id}/port_forwardings/{port_forwarding_id}",
-            },
+            }
         ],
     ),
     base.APIRule(
         name="create_router_conntrack_helper",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and "
-            "project_id:%(project_id)s) or rule:ext_parent_owner "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) or rule:ext_parent_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Create a router conntrack helper",
         scope_types=["system", "project"],
@@ -505,8 +576,10 @@ list_rules = (
     base.APIRule(
         name="get_router_conntrack_helper",
         check_str=(
-            "(role:reader and system_scope:all) or (role:reader and "
-            "project_id:%(project_id)s) or rule:ext_parent_owner "
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s) or rule:ext_parent_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get a router conntrack helper",
         scope_types=["system", "project"],
@@ -521,8 +594,10 @@ list_rules = (
     base.APIRule(
         name="update_router_conntrack_helper",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and "
-            "project_id:%(project_id)s) or rule:ext_parent_owner "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) or rule:ext_parent_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Update a router conntrack helper",
         scope_types=["system", "project"],
@@ -530,14 +605,16 @@ list_rules = (
             {
                 "method": "PUT",
                 "path": "/routers/{router_id}/conntrack_helpers/{conntrack_helper_id}",
-            },
+            }
         ],
     ),
     base.APIRule(
         name="delete_router_conntrack_helper",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and "
-            "project_id:%(project_id)s) or rule:ext_parent_owner "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) or rule:ext_parent_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Delete a router conntrack helper",
         scope_types=["system", "project"],
@@ -545,12 +622,13 @@ list_rules = (
             {
                 "method": "DELETE",
                 "path": "/routers/{router_id}/conntrack_helpers/{conntrack_helper_id}",
-            },
+            }
         ],
     ),
     base.APIRule(
         name="get_loggable_resource",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get loggable resources",
         scope_types=["system"],
         operations=[{"method": "GET", "path": "/log/loggable-resources"}],
@@ -558,6 +636,7 @@ list_rules = (
     base.APIRule(
         name="create_log",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Create a network log",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/log/logs"}],
@@ -565,6 +644,7 @@ list_rules = (
     base.APIRule(
         name="get_log",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get a network log",
         scope_types=["system"],
         operations=[
@@ -575,6 +655,7 @@ list_rules = (
     base.APIRule(
         name="update_log",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update a network log",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/log/logs/{id}"}],
@@ -582,6 +663,7 @@ list_rules = (
     base.APIRule(
         name="delete_log",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Delete a network log",
         scope_types=["system"],
         operations=[{"method": "DELETE", "path": "/log/logs/{id}"}],
@@ -589,6 +671,7 @@ list_rules = (
     base.APIRule(
         name="create_metering_label",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Create a metering label",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/metering/metering-labels"}],
@@ -596,6 +679,7 @@ list_rules = (
     base.APIRule(
         name="get_metering_label",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get a metering label",
         scope_types=["system", "project"],
         operations=[
@@ -606,6 +690,7 @@ list_rules = (
     base.APIRule(
         name="delete_metering_label",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Delete a metering label",
         scope_types=["system", "project"],
         operations=[{"method": "DELETE", "path": "/metering/metering-labels/{id}"}],
@@ -613,6 +698,7 @@ list_rules = (
     base.APIRule(
         name="create_metering_label_rule",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Create a metering label rule",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/metering/metering-label-rules"}],
@@ -620,6 +706,7 @@ list_rules = (
     base.APIRule(
         name="get_metering_label_rule",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get a metering label rule",
         scope_types=["system", "project"],
         operations=[
@@ -630,6 +717,7 @@ list_rules = (
     base.APIRule(
         name="delete_metering_label_rule",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Delete a metering label rule",
         scope_types=["system", "project"],
         operations=[{"method": "DELETE", "path": "/metering/metering-label-rules/{id}"}],
@@ -639,6 +727,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create a network",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/networks"}],
@@ -646,6 +737,7 @@ list_rules = (
     base.APIRule(
         name="create_network:shared",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Create a shared network",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/networks"}],
@@ -653,6 +745,7 @@ list_rules = (
     base.APIRule(
         name="create_network:router:external",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Create an external network",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/networks"}],
@@ -660,6 +753,7 @@ list_rules = (
     base.APIRule(
         name="create_network:is_default",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Specify ``is_default`` attribute when creating a network",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/networks"}],
@@ -669,6 +763,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Specify ``port_security_enabled`` attribute when creating a network",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/networks"}],
@@ -676,6 +773,7 @@ list_rules = (
     base.APIRule(
         name="create_network:segments",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Specify ``segments`` attribute when creating a network",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/networks"}],
@@ -683,6 +781,7 @@ list_rules = (
     base.APIRule(
         name="create_network:provider:network_type",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Specify ``provider:network_type`` when creating a network",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/networks"}],
@@ -690,6 +789,7 @@ list_rules = (
     base.APIRule(
         name="create_network:provider:physical_network",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Specify ``provider:physical_network`` when creating a network",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/networks"}],
@@ -697,6 +797,7 @@ list_rules = (
     base.APIRule(
         name="create_network:provider:segmentation_id",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Specify ``provider:segmentation_id`` when creating a network",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/networks"}],
@@ -704,9 +805,10 @@ list_rules = (
     base.APIRule(
         name="get_network",
         check_str=(
-            "(role:reader and system_scope:all) or (role:reader and "
-            "project_id:%(project_id)s) or rule:shared or rule:external or "
-            "rule:context_is_advsvc "
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s) or rule:shared or rule:external or rule:context_is_advsvc"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get a network",
         scope_types=["system", "project"],
@@ -720,6 +822,7 @@ list_rules = (
         check_str=(
             "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
         ),
+        basic_check_str=("@"),
         description="Get ``router:external`` attribute of a network",
         scope_types=["project"],
         operations=[
@@ -730,6 +833,7 @@ list_rules = (
     base.APIRule(
         name="get_network:segments",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get ``segments`` attribute of a network",
         scope_types=["system"],
         operations=[
@@ -740,6 +844,9 @@ list_rules = (
     base.APIRule(
         name="get_network:provider:network_type",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Get ``provider:network_type`` attribute of a network",
         scope_types=["system"],
         operations=[
@@ -750,6 +857,7 @@ list_rules = (
     base.APIRule(
         name="get_network:provider:physical_network",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get ``provider:physical_network`` attribute of a network",
         scope_types=["system"],
         operations=[
@@ -760,6 +868,7 @@ list_rules = (
     base.APIRule(
         name="get_network:provider:segmentation_id",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get ``provider:segmentation_id`` attribute of a network",
         scope_types=["system"],
         operations=[
@@ -772,6 +881,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update a network",
         scope_types=["system", "project"],
         operations=[{"method": "PUT", "path": "/networks/{id}"}],
@@ -779,6 +891,7 @@ list_rules = (
     base.APIRule(
         name="update_network:segments",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update ``segments`` attribute of a network",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/networks/{id}"}],
@@ -786,6 +899,7 @@ list_rules = (
     base.APIRule(
         name="update_network:shared",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update ``shared`` attribute of a network",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/networks/{id}"}],
@@ -793,6 +907,7 @@ list_rules = (
     base.APIRule(
         name="update_network:provider:network_type",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update ``provider:network_type`` attribute of a network",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/networks/{id}"}],
@@ -800,6 +915,7 @@ list_rules = (
     base.APIRule(
         name="update_network:provider:physical_network",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update ``provider:physical_network`` attribute of a network",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/networks/{id}"}],
@@ -807,6 +923,7 @@ list_rules = (
     base.APIRule(
         name="update_network:provider:segmentation_id",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update ``provider:segmentation_id`` attribute of a network",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/networks/{id}"}],
@@ -814,6 +931,7 @@ list_rules = (
     base.APIRule(
         name="update_network:router:external",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update ``router:external`` attribute of a network",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/networks/{id}"}],
@@ -821,6 +939,7 @@ list_rules = (
     base.APIRule(
         name="update_network:is_default",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update ``is_default`` attribute of a network",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/networks/{id}"}],
@@ -829,6 +948,9 @@ list_rules = (
         name="update_network:port_security_enabled",
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Update ``port_security_enabled`` attribute of a network",
         scope_types=["system", "project"],
@@ -839,6 +961,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Delete a network",
         scope_types=["system", "project"],
         operations=[{"method": "DELETE", "path": "/networks/{id}"}],
@@ -846,6 +971,9 @@ list_rules = (
     base.APIRule(
         name="get_network_ip_availability",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Get network IP availability",
         scope_types=["system"],
         operations=[
@@ -856,6 +984,7 @@ list_rules = (
     base.APIRule(
         name="create_network_segment_range",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Create a network segment range",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/network_segment_ranges"}],
@@ -863,6 +992,7 @@ list_rules = (
     base.APIRule(
         name="get_network_segment_range",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get a network segment range",
         scope_types=["system"],
         operations=[
@@ -873,6 +1003,7 @@ list_rules = (
     base.APIRule(
         name="update_network_segment_range",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update a network segment range",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/network_segment_ranges/{id}"}],
@@ -880,6 +1011,7 @@ list_rules = (
     base.APIRule(
         name="delete_network_segment_range",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Delete a network segment range",
         scope_types=["system"],
         operations=[{"method": "DELETE", "path": "/network_segment_ranges/{id}"}],
@@ -889,6 +1021,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create a port",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/ports"}],
@@ -896,9 +1031,10 @@ list_rules = (
     base.APIRule(
         name="create_port:device_owner",
         check_str=(
-            "not rule:network_device or role:admin and system_scope:all or "
-            "role:admin and project_id:%(project_id)s or "
-            "rule:context_is_advsvc or rule:network_owner "
+            "not rule:network_device or role:admin and system_scope:all or role:admin and project_id:%(project_id)s or rule:context_is_advsvc or rule:network_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Specify ``device_owner`` attribute when creting a port",
         scope_types=["system", "project"],
@@ -907,9 +1043,10 @@ list_rules = (
     base.APIRule(
         name="create_port:mac_address",
         check_str=(
-            "rule:context_is_advsvc or rule:network_owner "
-            "or role:admin and system_scope:all or role:admin "
-            "and project_id:%(project_id)s"
+            "rule:context_is_advsvc or rule:network_owner or role:admin and system_scope:all or role:admin and project_id:%(project_id)s"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Specify ``mac_address`` attribute when creating a port",
         scope_types=["system", "project"],
@@ -918,9 +1055,10 @@ list_rules = (
     base.APIRule(
         name="create_port:fixed_ips",
         check_str=(
-            "rule:context_is_advsvc or rule:network_owner "
-            "or role:admin and system_scope:all or role:admin "
-            "and project_id:%(project_id)s or rule:shared"
+            "rule:context_is_advsvc or rule:network_owner or role:admin and system_scope:all or role:admin and project_id:%(project_id)s or rule:shared"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Specify ``fixed_ips`` information when creating a port",
         scope_types=["system", "project"],
@@ -929,9 +1067,10 @@ list_rules = (
     base.APIRule(
         name="create_port:fixed_ips:ip_address",
         check_str=(
-            "rule:context_is_advsvc or rule:network_owner "
-            "or role:admin and system_scope:all or role:admin "
-            "and project_id:%(project_id)s"
+            "rule:context_is_advsvc or rule:network_owner or role:admin and system_scope:all or role:admin and project_id:%(project_id)s"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Specify IP address in ``fixed_ips`` when creating a port",
         scope_types=["system", "project"],
@@ -940,9 +1079,10 @@ list_rules = (
     base.APIRule(
         name="create_port:fixed_ips:subnet_id",
         check_str=(
-            "rule:context_is_advsvc or rule:network_owner or "
-            "role:admin and system_scope:all or role:admin and "
-            "project_id:%(project_id)s or rule:shared"
+            "rule:context_is_advsvc or rule:network_owner or role:admin and system_scope:all or role:admin and project_id:%(project_id)s or rule:shared"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Specify subnet ID in ``fixed_ips`` when creating a port",
         scope_types=["system", "project"],
@@ -951,9 +1091,10 @@ list_rules = (
     base.APIRule(
         name="create_port:port_security_enabled",
         check_str=(
-            "rule:context_is_advsvc or rule:network_owner "
-            "or role:admin and system_scope:all or role:admin "
-            "and project_id:%(project_id)s"
+            "rule:context_is_advsvc or rule:network_owner or role:admin and system_scope:all or role:admin and project_id:%(project_id)s"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Specify ``port_security_enabled`` attribute when creating a port",
         scope_types=["system", "project"],
@@ -962,6 +1103,7 @@ list_rules = (
     base.APIRule(
         name="create_port:binding:host_id",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Specify ``binding:host_id`` attribute when creating a port",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/ports"}],
@@ -969,6 +1111,7 @@ list_rules = (
     base.APIRule(
         name="create_port:binding:profile",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Specify ``binding:profile`` attribute when creating a port",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/ports"}],
@@ -978,6 +1121,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Specify ``binding:vnic_type`` attribute when creating a port",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/ports"}],
@@ -985,8 +1131,10 @@ list_rules = (
     base.APIRule(
         name="create_port:allowed_address_pairs",
         check_str=(
-            "role:admin and system_scope:all or role:admin and project_id:%("
-            "project_id)s or rule:network_owner "
+            "role:admin and system_scope:all or role:admin and project_id:%(project_id)s or rule:network_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Specify ``allowed_address_pairs`` attribute when creating a port",
         scope_types=["project", "system"],
@@ -995,30 +1143,34 @@ list_rules = (
     base.APIRule(
         name="create_port:allowed_address_pairs:mac_address",
         check_str=(
-            "role:admin and system_scope:all or role:admin and project_id:%("
-            "project_id)s or rule:network_owner "
+            "role:admin and system_scope:all or role:admin and project_id:%(project_id)s or rule:network_owner"
         ),
-        description="Specify ``mac_address` of `allowed_address_pairs`` "
-        "attribute when creating a port",
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
+        description="Specify ``mac_address` of `allowed_address_pairs`` attribute when creating a port",
         scope_types=["project", "system"],
         operations=[{"method": "POST", "path": "/ports"}],
     ),
     base.APIRule(
         name="create_port:allowed_address_pairs:ip_address",
         check_str=(
-            "role:admin and system_scope:all or role:admin and project_id:%("
-            "project_id)s or rule:network_owner "
+            "role:admin and system_scope:all or role:admin and project_id:%(project_id)s or rule:network_owner"
         ),
-        description="Specify ``ip_address`` of ``allowed_address_pairs`` "
-        "attribute when creating a port",
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
+        description="Specify ``ip_address`` of ``allowed_address_pairs`` attribute when creating a port",
         scope_types=["project", "system"],
         operations=[{"method": "POST", "path": "/ports"}],
     ),
     base.APIRule(
         name="get_port",
         check_str=(
-            "rule:context_is_advsvc or (role:reader and system_scope:all) or "
-            "(role:reader and project_id:%(project_id)s) "
+            "rule:context_is_advsvc or (role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get a port",
         scope_types=["project", "system"],
@@ -1030,6 +1182,7 @@ list_rules = (
     base.APIRule(
         name="get_port:binding:vif_type",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get ``binding:vif_type`` attribute of a port",
         scope_types=["system"],
         operations=[
@@ -1040,6 +1193,7 @@ list_rules = (
     base.APIRule(
         name="get_port:binding:vif_details",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get ``binding:vif_details`` attribute of a port",
         scope_types=["system"],
         operations=[
@@ -1050,6 +1204,7 @@ list_rules = (
     base.APIRule(
         name="get_port:binding:host_id",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get ``binding:host_id`` attribute of a port",
         scope_types=["system"],
         operations=[
@@ -1060,6 +1215,7 @@ list_rules = (
     base.APIRule(
         name="get_port:binding:profile",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get ``binding:profile`` attribute of a port",
         scope_types=["system"],
         operations=[
@@ -1070,6 +1226,7 @@ list_rules = (
     base.APIRule(
         name="get_port:resource_request",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get ``resource_request`` attribute of a port",
         scope_types=["system"],
         operations=[
@@ -1080,8 +1237,10 @@ list_rules = (
     base.APIRule(
         name="update_port",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and "
-            "project_id:%(project_id)s) or rule:context_is_advsvc "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) or rule:context_is_advsvc"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Update a port",
         scope_types=["system", "project"],
@@ -1090,9 +1249,10 @@ list_rules = (
     base.APIRule(
         name="update_port:device_owner",
         check_str=(
-            "not rule:network_device or rule:context_is_advsvc "
-            "or rule:network_owner or role:admin and system_scope:all "
-            "or role:admin and project_id:%(project_id)s"
+            "not rule:network_device or rule:context_is_advsvc or rule:network_owner or role:admin and system_scope:all or role:admin and project_id:%(project_id)s"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Update ``device_owner`` attribute of a port",
         scope_types=["system", "project"],
@@ -1101,6 +1261,9 @@ list_rules = (
     base.APIRule(
         name="update_port:mac_address",
         check_str=("role:admin and system_scope:all or rule:context_is_advsvc"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update ``mac_address`` attribute of a port",
         scope_types=["system", "project"],
         operations=[{"method": "PUT", "path": "/ports/{id}"}],
@@ -1108,9 +1271,10 @@ list_rules = (
     base.APIRule(
         name="update_port:fixed_ips",
         check_str=(
-            "rule:context_is_advsvc or rule:network_owner or "
-            "role:admin and system_scope:all or role:admin "
-            "and project_id:%(project_id)s"
+            "rule:context_is_advsvc or rule:network_owner or role:admin and system_scope:all or role:admin and project_id:%(project_id)s"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Specify ``fixed_ips`` information when updating a port",
         scope_types=["system", "project"],
@@ -1119,9 +1283,10 @@ list_rules = (
     base.APIRule(
         name="update_port:fixed_ips:ip_address",
         check_str=(
-            "rule:context_is_advsvc or rule:network_owner "
-            "or role:admin and system_scope:all or role:admin "
-            "and project_id:%(project_id)s"
+            "rule:context_is_advsvc or rule:network_owner or role:admin and system_scope:all or role:admin and project_id:%(project_id)s"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Specify IP address in ``fixed_ips`` information when updating a port",
         scope_types=["system", "project"],
@@ -1130,9 +1295,10 @@ list_rules = (
     base.APIRule(
         name="update_port:fixed_ips:subnet_id",
         check_str=(
-            "rule:context_is_advsvc or rule:network_owner "
-            "or role:admin and system_scope:all or role:admin "
-            "and project_id:%(project_id)s or rule:shared"
+            "rule:context_is_advsvc or rule:network_owner or role:admin and system_scope:all or role:admin and project_id:%(project_id)s or rule:shared"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Specify subnet ID in ``fixed_ips`` information when updating a port",
         scope_types=["system", "project"],
@@ -1141,9 +1307,10 @@ list_rules = (
     base.APIRule(
         name="update_port:port_security_enabled",
         check_str=(
-            "rule:context_is_advsvc or rule:network_owner "
-            "or role:admin and system_scope:all or role:admin "
-            "and project_id:%(project_id)s"
+            "rule:context_is_advsvc or rule:network_owner or role:admin and system_scope:all or role:admin and project_id:%(project_id)s"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Update ``port_security_enabled`` attribute of a port",
         scope_types=["system", "project"],
@@ -1152,6 +1319,7 @@ list_rules = (
     base.APIRule(
         name="update_port:binding:host_id",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update ``binding:host_id`` attribute of a port",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/ports/{id}"}],
@@ -1159,6 +1327,7 @@ list_rules = (
     base.APIRule(
         name="update_port:binding:profile",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update ``binding:profile`` attribute of a port",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/ports/{id}"}],
@@ -1166,8 +1335,10 @@ list_rules = (
     base.APIRule(
         name="update_port:binding:vnic_type",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and "
-            "project_id:%(project_id)s) or rule:context_is_advsvc"
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) or rule:context_is_advsvc"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Update ``binding:vnic_type`` attribute of a port",
         scope_types=["system", "project"],
@@ -1176,8 +1347,10 @@ list_rules = (
     base.APIRule(
         name="update_port:allowed_address_pairs",
         check_str=(
-            "role:admin and system_scope:all or role:admin and "
-            "project_id:%(project_id)s or rule:network_owner"
+            "role:admin and system_scope:all or role:admin and project_id:%(project_id)s or rule:network_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Update ``allowed_address_pairs`` attribute of a port",
         scope_types=["system", "project"],
@@ -1186,8 +1359,10 @@ list_rules = (
     base.APIRule(
         name="update_port:allowed_address_pairs:mac_address",
         check_str=(
-            "role:admin and system_scope:all or role:admin "
-            "and project_id:%(project_id)s or rule:network_owner"
+            "role:admin and system_scope:all or role:admin and project_id:%(project_id)s or rule:network_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Update ``mac_address`` of ``allowed_address_pairs`` attribute of a port",
         scope_types=["system", "project"],
@@ -1196,8 +1371,10 @@ list_rules = (
     base.APIRule(
         name="update_port:allowed_address_pairs:ip_address",
         check_str=(
-            "role:admin and system_scope:all or role:admin and "
-            "project_id:%(project_id)s or rule:network_owner"
+            "role:admin and system_scope:all or role:admin and project_id:%(project_id)s or rule:network_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Update ``ip_address`` of ``allowed_address_pairs`` attribute of a port",
         scope_types=["system", "project"],
@@ -1206,6 +1383,7 @@ list_rules = (
     base.APIRule(
         name="update_port:data_plane_status",
         check_str=("role:admin and system_scope:all or role:data_plane_integrator"),
+        basic_check_str=("role:admin"),
         description="Update ``data_plane_status`` attribute of a port",
         scope_types=["system", "project"],
         operations=[{"method": "PUT", "path": "/ports/{id}"}],
@@ -1213,8 +1391,10 @@ list_rules = (
     base.APIRule(
         name="delete_port",
         check_str=(
-            "rule:context_is_advsvc or (role:admin and system_scope:all) "
-            "or (role:member and project_id:%(project_id)s)"
+            "rule:context_is_advsvc or (role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Delete a port",
         scope_types=["system", "project"],
@@ -1225,6 +1405,7 @@ list_rules = (
         check_str=(
             "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
         ),
+        basic_check_str=("@"),
         description="Get QoS policies",
         scope_types=["system", "project"],
         operations=[
@@ -1235,6 +1416,7 @@ list_rules = (
     base.APIRule(
         name="create_policy",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Create a QoS policy",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/qos/policies"}],
@@ -1242,6 +1424,7 @@ list_rules = (
     base.APIRule(
         name="update_policy",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update a QoS policy",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/qos/policies/{id}"}],
@@ -1249,6 +1432,7 @@ list_rules = (
     base.APIRule(
         name="delete_policy",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Delete a QoS policy",
         scope_types=["system"],
         operations=[{"method": "DELETE", "path": "/qos/policies/{id}"}],
@@ -1257,6 +1441,9 @@ list_rules = (
         name="get_rule_type",
         check_str=(
             "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get available QoS rule types",
         scope_types=["system", "project"],
@@ -1269,6 +1456,9 @@ list_rules = (
         name="get_policy_bandwidth_limit_rule",
         check_str=(
             "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get a QoS bandwidth limit rule",
         scope_types=["system", "project"],
@@ -1283,40 +1473,43 @@ list_rules = (
     base.APIRule(
         name="create_policy_bandwidth_limit_rule",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Create a QoS bandwidth limit rule",
         scope_types=["system"],
         operations=[
-            {"method": "POST", "path": "/qos/policies/{policy_id}/bandwidth_limit_rules"},
+            {"method": "POST", "path": "/qos/policies/{policy_id}/bandwidth_limit_rules"}
         ],
     ),
     base.APIRule(
         name="update_policy_bandwidth_limit_rule",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update a QoS bandwidth limit rule",
         scope_types=["system"],
         operations=[
-            {
-                "method": "PUT",
-                "path": "/qos/policies/{policy_id}/bandwidth_limit_rules/{rule_id}",
-            },
+            {"method": "PUT", "path": "/qos/policies/{policy_id}/bandwidth_limit_rules/{rule_id}"}
         ],
     ),
     base.APIRule(
         name="delete_policy_bandwidth_limit_rule",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Delete a QoS bandwidth limit rule",
         scope_types=["system"],
         operations=[
             {
                 "method": "DELETE",
                 "path": "/qos/policies/{policy_id}/bandwidth_limit_rules/{rule_id}",
-            },
+            }
         ],
     ),
     base.APIRule(
         name="get_policy_dscp_marking_rule",
         check_str=(
             "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get a QoS DSCP marking rule",
         scope_types=["system", "project"],
@@ -1328,6 +1521,7 @@ list_rules = (
     base.APIRule(
         name="create_policy_dscp_marking_rule",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Create a QoS DSCP marking rule",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/qos/policies/{policy_id}/dscp_marking_rules"}],
@@ -1335,28 +1529,30 @@ list_rules = (
     base.APIRule(
         name="update_policy_dscp_marking_rule",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update a QoS DSCP marking rule",
         scope_types=["system"],
         operations=[
-            {"method": "PUT", "path": "/qos/policies/{policy_id}/dscp_marking_rules/{rule_id}"},
+            {"method": "PUT", "path": "/qos/policies/{policy_id}/dscp_marking_rules/{rule_id}"}
         ],
     ),
     base.APIRule(
         name="delete_policy_dscp_marking_rule",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Delete a QoS DSCP marking rule",
         scope_types=["system"],
         operations=[
-            {
-                "method": "DELETE",
-                "path": "/qos/policies/{policy_id}/dscp_marking_rules/{rule_id}",
-            },
+            {"method": "DELETE", "path": "/qos/policies/{policy_id}/dscp_marking_rules/{rule_id}"}
         ],
     ),
     base.APIRule(
         name="get_policy_minimum_bandwidth_rule",
         check_str=(
             "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get a QoS minimum bandwidth rule",
         scope_types=["system", "project"],
@@ -1371,39 +1567,45 @@ list_rules = (
     base.APIRule(
         name="create_policy_minimum_bandwidth_rule",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Create a QoS minimum bandwidth rule",
         scope_types=["system"],
         operations=[
-            {"method": "POST", "path": "/qos/policies/{policy_id}/minimum_bandwidth_rules"},
+            {"method": "POST", "path": "/qos/policies/{policy_id}/minimum_bandwidth_rules"}
         ],
     ),
     base.APIRule(
         name="update_policy_minimum_bandwidth_rule",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update a QoS minimum bandwidth rule",
         scope_types=["system"],
         operations=[
             {
                 "method": "PUT",
                 "path": "/qos/policies/{policy_id}/minimum_bandwidth_rules/{rule_id}",
-            },
+            }
         ],
     ),
     base.APIRule(
         name="delete_policy_minimum_bandwidth_rule",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Delete a QoS minimum bandwidth rule",
         scope_types=["system"],
         operations=[
             {
                 "method": "DELETE",
                 "path": "/qos/policies/{policy_id}/minimum_bandwidth_rules/{rule_id}",
-            },
+            }
         ],
     ),
     base.APIRule(
         name="get_alias_bandwidth_limit_rule",
         check_str=("rule:get_policy_bandwidth_limit_rule"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Get a QoS bandwidth limit rule through alias",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/qos/alias_bandwidth_limit_rules/{rule_id}/"}],
@@ -1411,6 +1613,7 @@ list_rules = (
     base.APIRule(
         name="update_alias_bandwidth_limit_rule",
         check_str=("rule:update_policy_bandwidth_limit_rule"),
+        basic_check_str=("role:admin"),
         description="Update a QoS bandwidth limit rule through alias",
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/qos/alias_bandwidth_limit_rules/{rule_id}/"}],
@@ -1418,6 +1621,7 @@ list_rules = (
     base.APIRule(
         name="delete_alias_bandwidth_limit_rule",
         check_str=("rule:delete_policy_bandwidth_limit_rule"),
+        basic_check_str=("role:admin"),
         description="Delete a QoS bandwidth limit rule through alias",
         scope_types=["project"],
         operations=[{"method": "DELETE", "path": "/qos/alias_bandwidth_limit_rules/{rule_id}/"}],
@@ -1425,6 +1629,9 @@ list_rules = (
     base.APIRule(
         name="get_alias_dscp_marking_rule",
         check_str=("rule:get_policy_dscp_marking_rule"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Get a QoS DSCP marking rule through alias",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/qos/alias_dscp_marking_rules/{rule_id}/"}],
@@ -1432,6 +1639,7 @@ list_rules = (
     base.APIRule(
         name="update_alias_dscp_marking_rule",
         check_str=("rule:update_policy_dscp_marking_rule"),
+        basic_check_str=("role:admin"),
         description="Update a QoS DSCP marking rule through alias",
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/qos/alias_dscp_marking_rules/{rule_id}/"}],
@@ -1439,6 +1647,7 @@ list_rules = (
     base.APIRule(
         name="delete_alias_dscp_marking_rule",
         check_str=("rule:delete_policy_dscp_marking_rule"),
+        basic_check_str=("role:admin"),
         description="Delete a QoS DSCP marking rule through alias",
         scope_types=["project"],
         operations=[{"method": "DELETE", "path": "/qos/alias_dscp_marking_rules/{rule_id}/"}],
@@ -1446,6 +1655,9 @@ list_rules = (
     base.APIRule(
         name="get_alias_minimum_bandwidth_rule",
         check_str=("rule:get_policy_minimum_bandwidth_rule"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Get a QoS minimum bandwidth rule through alias",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/qos/alias_minimum_bandwidth_rules/{rule_id}/"}],
@@ -1453,6 +1665,7 @@ list_rules = (
     base.APIRule(
         name="update_alias_minimum_bandwidth_rule",
         check_str=("rule:update_policy_minimum_bandwidth_rule"),
+        basic_check_str=("role:admin"),
         description="Update a QoS minimum bandwidth rule through alias",
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/qos/alias_minimum_bandwidth_rules/{rule_id}/"}],
@@ -1460,15 +1673,17 @@ list_rules = (
     base.APIRule(
         name="delete_alias_minimum_bandwidth_rule",
         check_str=("rule:delete_policy_minimum_bandwidth_rule"),
+        basic_check_str=("role:admin"),
         description="Delete a QoS minimum bandwidth rule through alias",
         scope_types=["project"],
         operations=[
-            {"method": "DELETE", "path": "/qos/alias_minimum_bandwidth_rules/{rule_id}/"},
+            {"method": "DELETE", "path": "/qos/alias_minimum_bandwidth_rules/{rule_id}/"}
         ],
     ),
     base.APIRule(
         name="get_quota",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get a resource quota",
         scope_types=["system"],
         operations=[
@@ -1479,6 +1694,7 @@ list_rules = (
     base.APIRule(
         name="update_quota",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update a resource quota",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/quota/{id}"}],
@@ -1486,6 +1702,7 @@ list_rules = (
     base.APIRule(
         name="delete_quota",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Delete a resource quota",
         scope_types=["system"],
         operations=[{"method": "DELETE", "path": "/quota/{id}"}],
@@ -1495,6 +1712,7 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=("role:admin"),
         description="Create an RBAC policy",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/rbac-policies"}],
@@ -1502,6 +1720,7 @@ list_rules = (
     base.APIRule(
         name="create_rbac_policy:target_tenant",
         check_str=("role:admin and system_scope:all or rule:restrict_wildcard"),
+        basic_check_str=("role:admin"),
         description="Specify ``target_tenant`` when creating an RBAC policy",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/rbac-policies"}],
@@ -1511,6 +1730,7 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=("role:admin"),
         description="Update an RBAC policy",
         scope_types=["project", "system"],
         operations=[{"method": "PUT", "path": "/rbac-policies/{id}"}],
@@ -1518,6 +1738,7 @@ list_rules = (
     base.APIRule(
         name="update_rbac_policy:target_tenant",
         check_str=("role:admin and system_scope:all or rule:restrict_wildcard"),
+        basic_check_str=("role:admin"),
         description="Update ``target_tenant`` attribute of an RBAC policy",
         scope_types=["system", "project"],
         operations=[{"method": "PUT", "path": "/rbac-policies/{id}"}],
@@ -1526,6 +1747,9 @@ list_rules = (
         name="get_rbac_policy",
         check_str=(
             "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get an RBAC policy",
         scope_types=["project", "system"],
@@ -1539,6 +1763,7 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=("role:admin"),
         description="Delete an RBAC policy",
         scope_types=["project", "system"],
         operations=[{"method": "DELETE", "path": "/rbac-policies/{id}"}],
@@ -1548,6 +1773,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create a router",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/routers"}],
@@ -1555,6 +1783,7 @@ list_rules = (
     base.APIRule(
         name="create_router:distributed",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Specify ``distributed`` attribute when creating a router",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/routers"}],
@@ -1562,6 +1791,7 @@ list_rules = (
     base.APIRule(
         name="create_router:ha",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Specify ``ha`` attribute when creating a router",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/routers"}],
@@ -1570,6 +1800,9 @@ list_rules = (
         name="create_router:external_gateway_info",
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Specify ``external_gateway_info`` information when creating a router",
         scope_types=["system", "project"],
@@ -1580,26 +1813,26 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
-        description="Specify ``network_id`` in ``external_gateway_info`` "
-        "information when creating a router",
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
+        description="Specify ``network_id`` in ``external_gateway_info`` information when creating a router",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/routers"}],
     ),
     base.APIRule(
         name="create_router:external_gateway_info:enable_snat",
         check_str=("role:admin and system_scope:all"),
-        description="Specify ``enable_snat`` "
-        "in ``external_gateway_info`` information "
-        "when creating a router",
+        basic_check_str=("role:admin"),
+        description="Specify ``enable_snat`` in ``external_gateway_info`` information when creating a router",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/routers"}],
     ),
     base.APIRule(
         name="create_router:external_gateway_info:external_fixed_ips",
         check_str=("role:admin and system_scope:all"),
-        description="Specify ``external_fixed_ips`` "
-        "in ``external_gateway_info`` information "
-        "when creating a router",
+        basic_check_str=("role:admin"),
+        description="Specify ``external_fixed_ips`` in ``external_gateway_info`` information when creating a router",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/routers"}],
     ),
@@ -1607,6 +1840,9 @@ list_rules = (
         name="get_router",
         check_str=(
             "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get a router",
         scope_types=["system", "project"],
@@ -1618,6 +1854,7 @@ list_rules = (
     base.APIRule(
         name="get_router:distributed",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get ``distributed`` attribute of a router",
         scope_types=["system"],
         operations=[
@@ -1628,6 +1865,7 @@ list_rules = (
     base.APIRule(
         name="get_router:ha",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get ``ha`` attribute of a router",
         scope_types=["system"],
         operations=[
@@ -1640,6 +1878,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update a router",
         scope_types=["system", "project"],
         operations=[{"method": "PUT", "path": "/routers/{id}"}],
@@ -1647,6 +1888,7 @@ list_rules = (
     base.APIRule(
         name="update_router:distributed",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update ``distributed`` attribute of a router",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/routers/{id}"}],
@@ -1654,6 +1896,7 @@ list_rules = (
     base.APIRule(
         name="update_router:ha",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update ``ha`` attribute of a router",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/routers/{id}"}],
@@ -1662,6 +1905,9 @@ list_rules = (
         name="update_router:external_gateway_info",
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Update ``external_gateway_info`` information of a router",
         scope_types=["system", "project"],
@@ -1672,24 +1918,28 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
-        description="Update ``network_id`` attribute "
-        "of ``external_gateway_info`` information of a router",
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
+        description="Update ``network_id`` attribute of ``external_gateway_info`` information of a router",
         scope_types=["system", "project"],
         operations=[{"method": "PUT", "path": "/routers/{id}"}],
     ),
     base.APIRule(
         name="update_router:external_gateway_info:enable_snat",
         check_str=("role:admin and system_scope:all"),
-        description="Update ``enable_snat`` attribute "
-        "of ``external_gateway_info`` information of a router",
+        basic_check_str=("role:admin"),
+        description="Update ``enable_snat`` attribute of ``external_gateway_info`` information of a router",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/routers/{id}"}],
     ),
     base.APIRule(
         name="update_router:external_gateway_info:external_fixed_ips",
         check_str=("role:admin and system_scope:all"),
-        description="Update ``external_fixed_ips`` attribute "
-        "of ``external_gateway_info`` information of a router",
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
+        description="Update ``external_fixed_ips`` attribute of ``external_gateway_info`` information of a router",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/routers/{id}"}],
     ),
@@ -1697,6 +1947,9 @@ list_rules = (
         name="delete_router",
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Delete a router",
         scope_types=["system", "project"],
@@ -1707,6 +1960,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Add an interface to a router",
         scope_types=["system", "project"],
         operations=[{"method": "PUT", "path": "/routers/{id}/add_router_interface"}],
@@ -1715,6 +1971,9 @@ list_rules = (
         name="remove_router_interface",
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Remove an interface from a router",
         scope_types=["system", "project"],
@@ -1725,6 +1984,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create a security group",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/security-groups"}],
@@ -1733,6 +1995,9 @@ list_rules = (
         name="get_security_group",
         check_str=(
             "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get a security group",
         scope_types=["system", "project"],
@@ -1746,6 +2011,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update a security group",
         scope_types=["system", "project"],
         operations=[{"method": "PUT", "path": "/security-groups/{id}"}],
@@ -1754,6 +2022,9 @@ list_rules = (
         name="delete_security_group",
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Delete a security group",
         scope_types=["system", "project"],
@@ -1764,6 +2035,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create a security group rule",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/security-group-rules"}],
@@ -1771,8 +2045,10 @@ list_rules = (
     base.APIRule(
         name="get_security_group_rule",
         check_str=(
-            "(role:reader and system_scope:all) "
-            "or (role:reader and project_id:%(project_id)s) or rule:sg_owner"
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s) or rule:sg_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get a security group rule",
         scope_types=["system", "project"],
@@ -1786,6 +2062,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Delete a security group rule",
         scope_types=["system", "project"],
         operations=[{"method": "DELETE", "path": "/security-group-rules/{id}"}],
@@ -1793,6 +2072,7 @@ list_rules = (
     base.APIRule(
         name="create_segment",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Create a segment",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/segments"}],
@@ -1800,6 +2080,7 @@ list_rules = (
     base.APIRule(
         name="get_segment",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get a segment",
         scope_types=["system"],
         operations=[
@@ -1810,6 +2091,7 @@ list_rules = (
     base.APIRule(
         name="update_segment",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update a segment",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/segments/{id}"}],
@@ -1817,6 +2099,7 @@ list_rules = (
     base.APIRule(
         name="delete_segment",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Delete a segment",
         scope_types=["system"],
         operations=[{"method": "DELETE", "path": "/segments/{id}"}],
@@ -1826,6 +2109,9 @@ list_rules = (
         check_str=(
             "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Get service providers",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/service-providers"}],
@@ -1833,9 +2119,10 @@ list_rules = (
     base.APIRule(
         name="create_subnet",
         check_str=(
-            "(role:admin and system_scope:all) "
-            "or (role:member and project_id:%(project_id)s) "
-            "or rule:network_owner"
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) or rule:network_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Create a subnet",
         scope_types=["system", "project"],
@@ -1844,6 +2131,7 @@ list_rules = (
     base.APIRule(
         name="create_subnet:segment_id",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Specify ``segment_id`` attribute when creating a subnet",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/subnets"}],
@@ -1851,6 +2139,7 @@ list_rules = (
     base.APIRule(
         name="create_subnet:service_types",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Specify ``service_types`` attribute when creating a subnet",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/subnets"}],
@@ -1858,8 +2147,10 @@ list_rules = (
     base.APIRule(
         name="get_subnet",
         check_str=(
-            "(role:reader and system_scope:all) "
-            "or (role:reader and project_id:%(project_id)s) or rule:shared"
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s) or rule:shared"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get a subnet",
         scope_types=["system", "project"],
@@ -1871,6 +2162,7 @@ list_rules = (
     base.APIRule(
         name="get_subnet:segment_id",
         check_str=("role:reader and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Get ``segment_id`` attribute of a subnet",
         scope_types=["system"],
         operations=[
@@ -1881,8 +2173,10 @@ list_rules = (
     base.APIRule(
         name="update_subnet",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and "
-            "project_id:%(project_id)s) or rule:network_owner "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) or rule:network_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Update a subnet",
         scope_types=["system", "project"],
@@ -1891,6 +2185,7 @@ list_rules = (
     base.APIRule(
         name="update_subnet:segment_id",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update ``segment_id`` attribute of a subnet",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/subnets/{id}"}],
@@ -1898,6 +2193,7 @@ list_rules = (
     base.APIRule(
         name="update_subnet:service_types",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update ``service_types`` attribute of a subnet",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/subnets/{id}"}],
@@ -1905,8 +2201,10 @@ list_rules = (
     base.APIRule(
         name="delete_subnet",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and "
-            "project_id:%(project_id)s) or rule:network_owner "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) or rule:network_owner"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Delete a subnet",
         scope_types=["system", "project"],
@@ -1915,7 +2213,10 @@ list_rules = (
     base.APIRule(
         name="create_subnetpool",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Create a subnetpool",
         scope_types=["project", "system"],
@@ -1924,6 +2225,7 @@ list_rules = (
     base.APIRule(
         name="create_subnetpool:shared",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Create a shared subnetpool",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/subnetpools"}],
@@ -1931,6 +2233,7 @@ list_rules = (
     base.APIRule(
         name="create_subnetpool:is_default",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Specify ``is_default`` attribute when creating a subnetpool",
         scope_types=["system"],
         operations=[{"method": "POST", "path": "/subnetpools"}],
@@ -1938,8 +2241,10 @@ list_rules = (
     base.APIRule(
         name="get_subnetpool",
         check_str=(
-            "(role:reader and system_scope:all) or (role:reader and "
-            "project_id:%(project_id)s) or rule:shared_subnetpools "
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s) or rule:shared_subnetpools"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get a subnetpool",
         scope_types=["system", "project"],
@@ -1951,7 +2256,10 @@ list_rules = (
     base.APIRule(
         name="update_subnetpool",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Update a subnetpool",
         scope_types=["system", "project"],
@@ -1960,6 +2268,7 @@ list_rules = (
     base.APIRule(
         name="update_subnetpool:is_default",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin"),
         description="Update ``is_default`` attribute of a subnetpool",
         scope_types=["system"],
         operations=[{"method": "PUT", "path": "/subnetpools/{id}"}],
@@ -1967,7 +2276,10 @@ list_rules = (
     base.APIRule(
         name="delete_subnetpool",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Delete a subnetpool",
         scope_types=["system", "project"],
@@ -1976,7 +2288,10 @@ list_rules = (
     base.APIRule(
         name="onboard_network_subnets",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Onboard existing subnet into a subnetpool",
         scope_types=["system", "project"],
@@ -1985,7 +2300,10 @@ list_rules = (
     base.APIRule(
         name="add_prefixes",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Add prefixes to a subnetpool",
         scope_types=["system", "project"],
@@ -1994,7 +2312,10 @@ list_rules = (
     base.APIRule(
         name="remove_prefixes",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Remove unallocated prefixes from a subnetpool",
         scope_types=["system", "project"],
@@ -2003,7 +2324,10 @@ list_rules = (
     base.APIRule(
         name="create_trunk",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Create a trunk",
         scope_types=["project", "system"],
@@ -2012,8 +2336,10 @@ list_rules = (
     base.APIRule(
         name="get_trunk",
         check_str=(
-            "(role:reader and system_scope:all) or (role:reader and "
-            "project_id:%(project_id)s) "
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="Get a trunk",
         scope_types=["project", "system"],
@@ -2025,7 +2351,10 @@ list_rules = (
     base.APIRule(
         name="update_trunk",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Update a trunk",
         scope_types=["project", "system"],
@@ -2034,7 +2363,10 @@ list_rules = (
     base.APIRule(
         name="delete_trunk",
         check_str=(
-            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s) "
+            "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
         ),
         description="Delete a trunk",
         scope_types=["project", "system"],
@@ -2043,8 +2375,10 @@ list_rules = (
     base.APIRule(
         name="get_subports",
         check_str=(
-            "(role:reader and system_scope:all) or (role:reader and "
-            "project_id:%(project_id)s) "
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
+        ),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
         ),
         description="List subports attached to a trunk",
         scope_types=["project", "system"],
@@ -2055,6 +2389,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Add subports to a trunk",
         scope_types=["project", "system"],
         operations=[{"method": "PUT", "path": "/trunks/{id}/add_subports"}],
@@ -2064,6 +2401,9 @@ list_rules = (
         check_str=(
             "(role:admin and system_scope:all) or (role:member and project_id:%(project_id)s)"
         ),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Delete subports from a trunk",
         scope_types=["project", "system"],
         operations=[{"method": "PUT", "path": "/trunks/{id}/remove_subports"}],
@@ -2071,6 +2411,9 @@ list_rules = (
     base.APIRule(
         name="create_endpoint_group",
         check_str=("rule:regular_user"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create a VPN endpoint group",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/vpn/endpoint-groups"}],
@@ -2078,6 +2421,9 @@ list_rules = (
     base.APIRule(
         name="update_endpoint_group",
         check_str=("rule:admin_or_owner"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update a VPN endpoint group",
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/vpn/endpoint-groups/{id}"}],
@@ -2085,6 +2431,9 @@ list_rules = (
     base.APIRule(
         name="delete_endpoint_group",
         check_str=("rule:admin_or_owner"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Delete a VPN endpoint group",
         scope_types=["project"],
         operations=[{"method": "DELETE", "path": "/vpn/endpoint-groups/{id}"}],
@@ -2092,6 +2441,9 @@ list_rules = (
     base.APIRule(
         name="get_endpoint_group",
         check_str=("rule:admin_or_owner"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Get VPN endpoint groups",
         scope_types=["project"],
         operations=[
@@ -2102,6 +2454,9 @@ list_rules = (
     base.APIRule(
         name="create_ikepolicy",
         check_str=("rule:regular_user"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create an IKE policy",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/vpn/ikepolicies"}],
@@ -2109,6 +2464,9 @@ list_rules = (
     base.APIRule(
         name="update_ikepolicy",
         check_str=("rule:admin_or_owner"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update an IKE policy",
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/vpn/ikepolicies/{id}"}],
@@ -2116,6 +2474,9 @@ list_rules = (
     base.APIRule(
         name="delete_ikepolicy",
         check_str=("rule:admin_or_owner"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Delete an IKE policy",
         scope_types=["project"],
         operations=[{"method": "DELETE", "path": "/vpn/ikepolicies/{id}"}],
@@ -2123,6 +2484,9 @@ list_rules = (
     base.APIRule(
         name="get_ikepolicy",
         check_str=("rule:admin_or_owner"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Get IKE policyies",
         scope_types=["project"],
         operations=[
@@ -2133,6 +2497,9 @@ list_rules = (
     base.APIRule(
         name="create_ipsecpolicy",
         check_str=("rule:regular_user"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create an IPsec policy",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/vpn/ipsecpolicies"}],
@@ -2140,6 +2507,9 @@ list_rules = (
     base.APIRule(
         name="update_ipsecpolicy",
         check_str=("rule:admin_or_owner"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update an IPsec policy",
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/vpn/ipsecpolicies/{id}"}],
@@ -2147,6 +2517,9 @@ list_rules = (
     base.APIRule(
         name="delete_ipsecpolicy",
         check_str=("rule:admin_or_owner"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Delete an IPsec policy",
         scope_types=["project"],
         operations=[{"method": "DELETE", "path": "/vpn/ipsecpolicies/{id}"}],
@@ -2154,6 +2527,9 @@ list_rules = (
     base.APIRule(
         name="get_ipsecpolicy",
         check_str=("rule:admin_or_owner"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Get IPsec policies",
         scope_types=["project"],
         operations=[
@@ -2164,6 +2540,9 @@ list_rules = (
     base.APIRule(
         name="create_ipsec_site_connection",
         check_str=("rule:regular_user"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create an IPsec site connection",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/vpn/ipsec-site-connections"}],
@@ -2171,6 +2550,9 @@ list_rules = (
     base.APIRule(
         name="update_ipsec_site_connection",
         check_str=("rule:admin_or_owner"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update an IPsec site connection",
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/vpn/ipsec-site-connections/{id}"}],
@@ -2178,6 +2560,9 @@ list_rules = (
     base.APIRule(
         name="delete_ipsec_site_connection",
         check_str=("rule:admin_or_owner"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Delete an IPsec site connection",
         scope_types=["project"],
         operations=[{"method": "DELETE", "path": "/vpn/ipsec-site-connections/{id}"}],
@@ -2185,6 +2570,9 @@ list_rules = (
     base.APIRule(
         name="get_ipsec_site_connection",
         check_str=("rule:admin_or_owner"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Get IPsec site connections",
         scope_types=["project"],
         operations=[
@@ -2195,6 +2583,9 @@ list_rules = (
     base.APIRule(
         name="create_vpnservice",
         check_str=("rule:regular_user"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create a VPN service",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/vpn/vpnservices"}],
@@ -2202,6 +2593,9 @@ list_rules = (
     base.APIRule(
         name="update_vpnservice",
         check_str=("rule:admin_or_owner"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update a VPN service",
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/vpn/vpnservices/{id}"}],
@@ -2209,6 +2603,9 @@ list_rules = (
     base.APIRule(
         name="delete_vpnservice",
         check_str=("rule:admin_or_owner"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Delete a VPN service",
         scope_types=["project"],
         operations=[{"method": "DELETE", "path": "/vpn/vpnservices/{id}"}],
@@ -2216,6 +2613,9 @@ list_rules = (
     base.APIRule(
         name="get_vpnservice",
         check_str=("rule:admin_or_owner"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Get VPN services",
         scope_types=["project"],
         operations=[

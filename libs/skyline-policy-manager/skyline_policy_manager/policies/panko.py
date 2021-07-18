@@ -1,3 +1,5 @@
+# flake8: noqa
+
 from . import base
 
 list_rules = (
@@ -9,16 +11,15 @@ list_rules = (
     base.APIRule(
         name="segregation",
         check_str=("role:admin and system_scope:all"),
+        basic_check_str=("role:admin or role:reader"),
         description="Return the user and project the requestshould be limited to",
         scope_types=["system"],
-        operations=[
-            {"method": "GET", "path": "/v2/events"},
-            {"method": "GET", "path": "/v2/events/{message_id}"},
-        ],
+        operations=[{"method": "GET", "path": "/v2/events"}, {"method": "GET", "path": "/v2/events/{message_id}"}],
     ),
     base.APIRule(
         name="telemetry:events:index",
         check_str=(""),
+        basic_check_str=("@"),
         description="Return all events matching the query filters.",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/events"}],
@@ -26,6 +27,7 @@ list_rules = (
     base.APIRule(
         name="telemetry:events:show",
         check_str=(""),
+        basic_check_str=("@"),
         description="Return a single event with the given message id.",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/events/{message_id}"}],

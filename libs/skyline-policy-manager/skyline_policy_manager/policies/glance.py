@@ -1,12 +1,12 @@
+# flake8: noqa
+
 from . import base
 
 list_rules = (
     base.Rule(
         name="default",
         check_str=(""),
-        description="Defines the default rule used for policies that "
-        "historically had an empty policy in the supplied "
-        "policy.json file.",
+        description="Defines the default rule used for policies that historically had an empty policy in the supplied policy.json file.",
     ),
     base.Rule(
         name="context_is_admin",
@@ -161,6 +161,7 @@ list_rules = (
     base.APIRule(
         name="add_image",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
+        basic_check_str=("role:admin or role:admin or role:member"),
         description="Create new image",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/v2/images"}],
@@ -168,17 +169,15 @@ list_rules = (
     base.APIRule(
         name="delete_image",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
+        basic_check_str=("role:admin or role:admin or role:member"),
         description="Deletes the image",
         scope_types=["system", "project"],
         operations=[{"method": "DELETE", "path": "/v2/images/{image_id}"}],
     ),
     base.APIRule(
         name="get_image",
-        check_str=(
-            "role:admin or (role:reader and (project_id:%(project_id)s or "
-            'project_id:%(member_id)s or "community":%(visibility)s or '
-            '"public":%(visibility)s)) '
-        ),
+        check_str=("role:admin or (role:reader and (project_id:%(project_id)s or project_id:%(member_id)s or \"community\":%(visibility)s or \"public\":%(visibility)s))"),
+        basic_check_str=("role:admin or role:reader or role:admin or role:member or role:reader"),
         description="Get specified image",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/images/{image_id}"}],
@@ -186,6 +185,7 @@ list_rules = (
     base.APIRule(
         name="get_images",
         check_str=("role:admin or (role:reader and project_id:%(project_id)s)"),
+        basic_check_str=("role:admin or role:reader or role:admin or role:member or role:reader"),
         description="Get all available images",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/images"}],
@@ -193,6 +193,7 @@ list_rules = (
     base.APIRule(
         name="modify_image",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
+        basic_check_str=("role:admin or role:admin or role:member"),
         description="Updates given image",
         scope_types=["system", "project"],
         operations=[{"method": "PATCH", "path": "/v2/images/{image_id}"}],
@@ -200,6 +201,7 @@ list_rules = (
     base.APIRule(
         name="publicize_image",
         check_str=("role:admin"),
+        basic_check_str=("role:admin"),
         description="Publicize given image",
         scope_types=["system", "project"],
         operations=[{"method": "PATCH", "path": "/v2/images/{image_id}"}],
@@ -207,17 +209,15 @@ list_rules = (
     base.APIRule(
         name="communitize_image",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
+        basic_check_str=("!"),
         description="Communitize given image",
         scope_types=["system", "project"],
         operations=[{"method": "PATCH", "path": "/v2/images/{image_id}"}],
     ),
     base.APIRule(
         name="download_image",
-        check_str=(
-            "role:admin or (role:member and (project_id:%(project_id)s or "
-            'project_id:%(member_id)s or "community":%(visibility)s or '
-            '"public":%(visibility)s)) '
-        ),
+        check_str=("role:admin or (role:member and (project_id:%(project_id)s or project_id:%(member_id)s or \"community\":%(visibility)s or \"public\":%(visibility)s))"),
+        basic_check_str=("role:admin or role:admin or role:member"),
         description="Downloads given image",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/images/{image_id}/file"}],
@@ -225,6 +225,7 @@ list_rules = (
     base.APIRule(
         name="upload_image",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
+        basic_check_str=("role:admin or role:admin or role:member"),
         description="Uploads data to specified image",
         scope_types=["system", "project"],
         operations=[{"method": "PUT", "path": "/v2/images/{image_id}/file"}],
@@ -232,6 +233,7 @@ list_rules = (
     base.APIRule(
         name="delete_image_location",
         check_str=("role:admin"),
+        basic_check_str=("role:admin"),
         description="Deletes the location of given image",
         scope_types=["system", "project"],
         operations=[{"method": "PATCH", "path": "/v2/images/{image_id}"}],
@@ -239,6 +241,7 @@ list_rules = (
     base.APIRule(
         name="get_image_location",
         check_str=("role:admin or (role:reader and project_id:%(project_id)s)"),
+        basic_check_str=("role:admin or role:reader or role:admin or role:member or role:reader"),
         description="Reads the location of the image",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/images/{image_id}"}],
@@ -246,6 +249,7 @@ list_rules = (
     base.APIRule(
         name="set_image_location",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
+        basic_check_str=("role:admin"),
         description="Sets location URI to given image",
         scope_types=["system", "project"],
         operations=[{"method": "PATCH", "path": "/v2/images/{image_id}"}],
@@ -253,6 +257,7 @@ list_rules = (
     base.APIRule(
         name="add_member",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
+        basic_check_str=("role:admin or role:admin or role:member"),
         description="Create image member",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/v2/images/{image_id}/members"}],
@@ -260,6 +265,7 @@ list_rules = (
     base.APIRule(
         name="delete_member",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
+        basic_check_str=("role:admin or role:admin or role:member"),
         description="Delete image member",
         scope_types=["system", "project"],
         operations=[{"method": "DELETE", "path": "/v2/images/{image_id}/members/{member_id}"}],
@@ -267,6 +273,7 @@ list_rules = (
     base.APIRule(
         name="get_member",
         check_str=("role:admin or (role:reader and project_id:%(project_id)s)"),
+        basic_check_str=("role:admin or role:reader or role:admin or role:member or role:reader"),
         description="Show image member details",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/images/{image_id}/members/{member_id}"}],
@@ -274,6 +281,7 @@ list_rules = (
     base.APIRule(
         name="get_members",
         check_str=("role:admin or (role:reader and project_id:%(project_id)s)"),
+        basic_check_str=("role:admin or role:reader or role:admin or role:member or role:reader"),
         description="List image members",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/images/{image_id}/members"}],
@@ -281,6 +289,7 @@ list_rules = (
     base.APIRule(
         name="modify_member",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
+        basic_check_str=("role:admin or role:admin or role:member"),
         description="Update image member",
         scope_types=["system", "project"],
         operations=[{"method": "PUT", "path": "/v2/images/{image_id}/members/{member_id}"}],
@@ -288,6 +297,7 @@ list_rules = (
     base.APIRule(
         name="deactivate",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
+        basic_check_str=("role:admin or role:admin or role:member"),
         description="Deactivate image",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/v2/images/{image_id}/actions/deactivate"}],
@@ -295,6 +305,7 @@ list_rules = (
     base.APIRule(
         name="reactivate",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
+        basic_check_str=("role:admin or role:admin or role:member"),
         description="Reactivate image",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/v2/images/{image_id}/actions/reactivate"}],
@@ -302,6 +313,7 @@ list_rules = (
     base.APIRule(
         name="copy_image",
         check_str=("role:admin"),
+        basic_check_str=("@"),
         description="Copy existing image to other stores",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/v2/images/{image_id}/import"}],
@@ -309,54 +321,31 @@ list_rules = (
     base.APIRule(
         name="get_task",
         check_str=("rule:default"),
-        description="Get an image task.\n#\n#This granular policy controls "
-        "access to tasks, both from the tasks API as well\n"
-        "#as internal locations in Glance that use tasks "
-        "(like import). Practically this\n#cannot be more "
-        "restrictive than the policy that controls import or "
-        "things will\n#break, and changing it from the default "
-        "is almost certainly not what you want.\n#Access to the "
-        "external tasks API should be restricted as desired by "
-        "the\n#tasks_api_access policy. This may change in the "
-        "future.\n#",
+        basic_check_str=("!"),
+        description="Get an image task.\n#\n#This granular policy controls access to tasks, both from the tasks API as well\n#as internal locations in Glance that use tasks (like import). Practically this\n#cannot be more restrictive than the policy that controls import or things will\n#break, and changing it from the default is almost certainly not what you want.\n#Access to the external tasks API should be restricted as desired by the\n#tasks_api_access policy. This may change in the future.\n#",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/tasks/{task_id}"}],
     ),
     base.APIRule(
         name="get_tasks",
         check_str=("rule:default"),
-        description="List tasks for all images.\n#\n#This granular policy "
-        "controls access to tasks, both from the tasks API as "
-        "well\n#as internal locations in Glance that use tasks ("
-        "like import). Practically this\n#cannot be more "
-        "restrictive than the policy that controls import or "
-        "things will\n#break, and changing it from the default "
-        "is almost certainly not what you want.\n#Access to the "
-        "external tasks API should be restricted as desired by "
-        "the\n#tasks_api_access policy. This may change in the "
-        "future.\n#",
+        basic_check_str=("!"),
+        description="List tasks for all images.\n#\n#This granular policy controls access to tasks, both from the tasks API as well\n#as internal locations in Glance that use tasks (like import). Practically this\n#cannot be more restrictive than the policy that controls import or things will\n#break, and changing it from the default is almost certainly not what you want.\n#Access to the external tasks API should be restricted as desired by the\n#tasks_api_access policy. This may change in the future.\n#",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/tasks"}],
     ),
     base.APIRule(
         name="add_task",
         check_str=("rule:default"),
-        description="List tasks for all images.\n#\n#This granular policy "
-        "controls access to tasks, both from the tasks API as "
-        "well\n#as internal locations in Glance that use tasks ("
-        "like import). Practically this\n#cannot be more "
-        "restrictive than the policy that controls import or "
-        "things will\n#break, and changing it from the default "
-        "is almost certainly not what you want.\n#Access to the "
-        "external tasks API should be restricted as desired by "
-        "the\n#tasks_api_access policy. This may change in the "
-        "future.\n#",
+        basic_check_str=("!"),
+        description="List tasks for all images.\n#\n#This granular policy controls access to tasks, both from the tasks API as well\n#as internal locations in Glance that use tasks (like import). Practically this\n#cannot be more restrictive than the policy that controls import or things will\n#break, and changing it from the default is almost certainly not what you want.\n#Access to the external tasks API should be restricted as desired by the\n#tasks_api_access policy. This may change in the future.\n#",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/v2/tasks"}],
     ),
     base.APIRule(
         name="modify_task",
         check_str=("rule:default"),
+        basic_check_str=("!"),
         description="This policy is not used.",
         scope_types=["system", "project"],
         operations=[{"method": "DELETE", "path": "/v2/tasks/{task_id}"}],
@@ -364,17 +353,10 @@ list_rules = (
     base.APIRule(
         name="tasks_api_access",
         check_str=("role:admin"),
-        description="\n#This is a generic blanket policy for protecting all "
-        "task APIs. It is not\n#granular and will not allow you "
-        "to separate writable and readable task\n#operations "
-        "into different roles.\n#",
+        basic_check_str=("!"),
+        description="\n#This is a generic blanket policy for protecting all task APIs. It is not\n#granular and will not allow you to separate writable and readable task\n#operations into different roles.\n#",
         scope_types=["system", "project"],
-        operations=[
-            {"method": "GET", "path": "/v2/tasks/{task_id}"},
-            {"method": "GET", "path": "/v2/tasks"},
-            {"method": "POST", "path": "/v2/tasks"},
-            {"method": "DELETE", "path": "/v2/tasks/{task_id}"},
-        ],
+        operations=[{"method": "GET", "path": "/v2/tasks/{task_id}"}, {"method": "GET", "path": "/v2/tasks"}, {"method": "POST", "path": "/v2/tasks"}, {"method": "DELETE", "path": "/v2/tasks/{task_id}"}],
     ),
 )
 

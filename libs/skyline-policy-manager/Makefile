@@ -1,7 +1,8 @@
 PYTHON ?= python3
-SOURCES := src
-TESTS := tests
-TOOLS := tools
+
+
+.PHONY: all
+all: install fmt lint test package
 
 
 .PHONY: venv
@@ -11,27 +12,31 @@ venv:
 
 .PHONY: install
 install: venv
-	poetry run pip install -U pip
-	poetry run pip install -U setuptools
+	poetry run pip install -U pip setuptools
 	poetry install -vvv
 	tools/post_install.sh
 
 
-.PHONY: build
-build:
-	poetry build
-
-
-.PHONY: lint
-lint:
-	poetry run mypy --no-incremental $(SOURCES)
-	poetry run isort --check-only --diff $(SOURCES) $(TESTS) $(TOOLS)
-	poetry run black --check --diff --color $(SOURCES) $(TESTS) $(TOOLS)
-	poetry run flake8 $(SOURCES) $(TESTS) $(TOOLS)
+.PHONY: package
+package:
+	poetry build -f wheel
 
 
 .PHONY: fmt
 fmt:
-	poetry run isort $(SOURCES) $(TESTS) $(TOOLS)
-	poetry run black $(SOURCES) $(TESTS) $(TOOLS)
-	poetry run add-trailing-comma --py36-plus --exit-zero-even-if-changed `find $(SOURCES) $(TESTS) $(TOOLS) -name '*.py'`
+	poetry run isort $$(git ls-files -- **/*.py)
+	poetry run black --config ../../pyproject.toml $$(git ls-files -- **/*.py)
+	poetry run add-trailing-comma --py36-plus --exit-zero-even-if-changed $$(git ls-files -- **/*.py)
+
+
+.PHONY: lint
+lint:
+	poetry run mypy --no-incremental $$(git ls-files -- **/*.py)
+	poetry run isort --check-only --diff  $$(git ls-files -- **/*.py)
+	poetry run black --check --diff --color --config ../../pyproject.toml $$(git ls-files -- **/*.py)
+	poetry run flake8  $$(git ls-files -- **/*.py)
+
+
+.PHONY: test
+test:
+	echo TODO

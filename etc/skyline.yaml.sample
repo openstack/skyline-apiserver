@@ -88,11 +88,6 @@ setting:
   - flavor_families
   - gpu_models
   - usb_models
-  - license
-  - currency
-  currency:
-    en: CNY
-    zh: 元
   flavor_families:
   - architecture: x86_architecture
     categories:
@@ -112,6 +107,5 @@ setting:
       properties: []
   gpu_models:
   - nvidia_t4
-  license: ''
   usb_models:
   - usb_c

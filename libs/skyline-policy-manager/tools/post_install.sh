@@ -2,16 +2,16 @@
 
 # Install openstack service package
 poetry run pip install --no-deps \
-keystone \
-openstack-placement \
-nova \
-cinder \
-glance \
-neutron neutron-vpnaas \
-openstack-heat \
-ironic-lib ironic ironic-inspector \
-octavia-lib octavia \
-panko
+    keystone \
+    openstack-placement \
+    nova \
+    cinder \
+    glance \
+    neutron neutron-vpnaas \
+    openstack-heat \
+    ironic-lib ironic ironic-inspector \
+    octavia-lib octavia \
+    panko
 
 # Patch cinder
 patch_path="$(poetry run python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')/cinder/__init__.py"
