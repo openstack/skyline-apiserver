@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "skyline-nginx"
+version = "0.1.0"
+description = ""
+license = "Apache-2.0"
+authors = ["OpenStack <openstack-discuss@lists.openstack.org>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pydantic = "*"
+click = "*"
+jinja2 = "*"
+python-keystoneclient = "*"
+keystoneauth1 = "*"
+skyline-config = "*"
+skyline-log = "*"
+skyline-console = "*"
+skyline-apiserver = "*"
+
+[tool.poetry.dev-dependencies]
+isort = "*"
+black = "^21.5b1"
+add-trailing-comma = "*"
+flake8 = "*"
+mypy = "*"
+pytest = "*"
+pytest-xdist = {extras = ["psutil"], version = "*"}
+skyline-config = {path = "../skyline-config", develop = true}
+skyline-log = {path = "../skyline-log", develop = true}
+skyline-console = {path = "../skyline-console", develop = true}
+skyline-apiserver = {path = "../skyline-apiserver", develop = true}
+
+[tool.poetry.scripts]
+nginx-generator = 'skyline_nginx.cmd.generate_nginx:main'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
