@@ -58,13 +58,13 @@ docs/_build/
 .python-version
 
 # Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
+**/.env
+**/.venv
+**/env/
+**/venv/
+**/ENV/
+**/env.bak/
+**/venv.bak/
 
 # Development
 .vscode/
@@ -76,8 +76,5 @@ tmp/
 .idea
 
 # Remove build context
-.git
-.gitreview
-docs
-tests
-requirements.txt
+**/.git
+**/tmp

@@ -1,8 +1,12 @@
-bind = ['0.0.0.0:28000']
-workers = 2
+import multiprocessing
+
+bind = "unix:/var/lib/skyline/skyline.sock"
+workers = (1 + multiprocessing.cpu_count()) // 2
 worker_class = "uvicorn.workers.UvicornWorker"
 timeout = 3600
 keepalive = 5
 reuse_port = True
-proc_name = "skyline-apiserver"
+proc_name = "skyline"
 log_level = "debug"
+accesslog = "/var/log/skyline/access.log"
+errorlog = "/var/log/skyline/error.log"
