@@ -25,6 +25,7 @@ from starlette.concurrency import run_in_threadpool
 from skyline_apiserver.client import utils
 from skyline_apiserver.client.utils import get_system_session
 from skyline_apiserver.config import CONF
+from skyline_apiserver.types import constants
 
 
 async def get_project_scope_token(
@@ -40,7 +41,7 @@ async def get_project_scope_token(
     kwargs = {"project_id": project_id}
     scope_auth = Token(auth_url=auth_url, token=keystone_token, **kwargs)
 
-    session = Session(auth=scope_auth, verify=False)
+    session = Session(auth=scope_auth, verify=False, timeout=constants.DEFAULT_TIMEOUT)
     keystone_token = session.get_token()
 
     return keystone_token

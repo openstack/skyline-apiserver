@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from keystoneauth1.identity.v3 import Password
-from keystoneauth1.session import Session as osSession
+from keystoneauth1.session import Session
 from keystoneclient.client import Client as KeystoneClient
 from skyline_log import LOG
 
@@ -36,6 +36,7 @@ from skyline_apiserver.core.security import (
     generate_profile_by_token,
     parse_access_token,
 )
+from skyline_apiserver.types import constants
 from skyline_apiserver.db import api as db_api
 
 router = APIRouter()
@@ -78,7 +79,7 @@ async def login(credential: schemas.Credential, response: Response):
             password=credential.password,
             reauthenticate=False,
         )
-        session = osSession(auth=unscope_auth, verify=False)
+        session = Session(auth=unscope_auth, verify=False, timeout=constants.DEFAULT_TIMEOUT)
         unscope_client = KeystoneClient(session=session, endpoint=auth_url)
         project_scope = unscope_client.auth.projects()
         # we must get the project_scope with enabled project
