@@ -31,12 +31,17 @@ fmt:
 
 .PHONY: lint
 lint:
-	poetry run mypy --no-incremental $$(git ls-files -- **/*.py)
-	poetry run isort --check-only --diff  $$(git ls-files -- **/*.py)
+	poetry run mypy --config-file=../../mypy.ini $$(git ls-files -- **/*.py)
+	poetry run isort --check-only --diff $$(git ls-files -- **/*.py)
 	poetry run black --check --diff --color --config ../../pyproject.toml $$(git ls-files -- **/*.py)
-	poetry run flake8  $$(git ls-files -- **/*.py)
+	poetry run flake8 $$(git ls-files -- **/*.py)
 
 
 .PHONY: test
 test:
 	echo TODO
+
+
+.PHONY: clean
+clean:
+	rm -rf .venv dist

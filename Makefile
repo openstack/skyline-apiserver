@@ -115,6 +115,14 @@ $(TEST_LIBS):
 	$(MAKE) -C $(basename $@) test
 
 
+.PHONY: clean $(CLEAN_LIBS)
+CLEAN_LIBS := $(addsuffix .clean,$(LIB_PATHS))
+clean: $(CLEAN_LIBS)
+	rm -rf .venv dist
+$(CLEAN_LIBS):
+	$(MAKE) -C $(basename $@) clean
+
+
 .PHONY: build
 BUILD_ENGINE ?= docker
 BUILD_CONTEXT ?= .

@@ -78,3 +78,7 @@ tmp/
 # Remove build context
 **/.git
 **/tmp
+**/.mypy_cache
+**/dist
+**/node_modules
+**/__pycache__
