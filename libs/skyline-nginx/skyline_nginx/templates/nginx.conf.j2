@@ -78,6 +78,8 @@ http {
 
         server_name _;
 
+        error_page 497 https://$http_host$request_uri;
+
         location / {
             # First attempt to serve request as file, then
             # as directory, then fall back to displaying a 404.
