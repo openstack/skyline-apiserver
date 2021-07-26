@@ -7,6 +7,12 @@ echo "/usr/local/bin/gunicorn -c /etc/skyline/gunicorn.py skyline_apiserver.main
 mapfile -t CMD < <(tail /run_command | xargs -n 1)
 
 # kolla_extend_start
+if [[ "${!KOLLA_BOOTSTRAP[*]}" ]]; then
+    cd /skyline/libs/skyline-apiserver/
+    make db_sync
+    exit 0
+fi
+
 nginx-generator -o /etc/nginx/nginx.conf
 nginx
 
