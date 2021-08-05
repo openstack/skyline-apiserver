@@ -37,6 +37,7 @@ pymysql = "*"
 skyline-policy-manager = "*"
 skyline-log = "*"
 skyline-config = "*"
+aiosqlite = "^0.17.0"
 
 [tool.poetry.dev-dependencies]
 isort = "*"
@@ -47,7 +48,6 @@ mypy = "*"
 types-PyYAML = "*"
 pytest = "*"
 pytest-xdist = {extras = ["psutil"], version = "*"}
-aiosqlite = "*"
 asgi-lifespan = "*"
 pytest-asyncio = "*"
 skyline-policy-manager = {path = "../skyline-policy-manager", develop = true}

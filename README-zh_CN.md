@@ -110,6 +110,9 @@ docker run -d --name skyline --restart=always -v /etc/skyline/skyline.yaml:/etc/
 
 ### 依赖工具
 
+- python >= 3.8
+- yarn >= 1.22.4
+- node >= 10.22.0
 - make >= 3.82
 - poetry >= 1.1.0
   ([安装指南](https://python-poetry.org/docs/#installation))
@@ -132,7 +135,7 @@ export OS_CONFIG_DIR=$(pwd)/etc
 可能你需要根据实际的环境修改以下参数：
 
 ```yaml
-- database_url  (你可以设置为 sqlite:///tmp/skyline.db 来使用 sqlite)
+- database_url
 - keystone_url
 - default_region
 - interface_type
@@ -143,10 +146,13 @@ export OS_CONFIG_DIR=$(pwd)/etc
 - system_user_password
 ```
 
+> 如果你为 `database_url` 设置了类似 `sqlite:////tmp/skyline.db` ，只需要执行以下操作。
+> 如果你为 `database_url` 设置了类似 `mysql://root:root@localhost:3306/skyline` ，你应该先参考 `配置和部署` 一章中的 `1` 和 `2` 步骤。
+
 #### 3. 初始化 skyline 数据库
 
 ```bash
-pushd /skyline/libs/skyline-apiserver/
+pushd libs/skyline-apiserver/
 make db_sync
 popd
 ```

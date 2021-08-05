@@ -110,6 +110,9 @@ You can now access the dashboard: `https://<ip_address>:8080`
 
 ### Dependent tools
 
+- python >= 3.8
+- yarn >= 1.22.4
+- node >= 10.22.0
 - make >= 3.82
 - poetry >= 1.1.0
   ([Installation Guide](https://python-poetry.org/docs/#installation))
@@ -132,7 +135,7 @@ export OS_CONFIG_DIR=$(pwd)/etc
 Maybe you should change the params with your real environment as followed:
 
 ```yaml
-- database_url  (you can set sqlite:////tmp/skyline.db to use sqlite)
+- database_url
 - keystone_url
 - default_region
 - interface_type
@@ -143,10 +146,13 @@ Maybe you should change the params with your real environment as followed:
 - system_user_password
 ```
 
+> If you set such as `sqlite:////tmp/skyline.db` for `database_url` , just do as followed.
+> If you set such as `mysql://root:root@localhost:3306/skyline` for `database_url` , you should refer to steps `1` and `2` of the chapter `Configure and deployment` at first.
+
 #### 3. Init skyline database
 
 ```bash
-pushd /skyline/libs/skyline-apiserver/
+pushd libs/skyline-apiserver/
 make db_sync
 popd
 ```
