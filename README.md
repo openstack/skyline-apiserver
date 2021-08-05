@@ -4,6 +4,10 @@ English | [简体中文](./README-zh_CN.md)
 
 Skyline is an OpenStack dashboard optimized by UI and UE. It has a modern technology stack and ecology, is easier for developers to maintain and operate by users, and has higher concurrency performance.
 
+Skyline's mascot is the nine-color deer. The nine-color deer comes from Dunhuang mural "the nine-color king deer", whose moral is Buddhist cause-effect and gratefulness, which is consistent with 99cloud's philosophy of embracing and feedback community since its inception. We also hope Skyline can keep light, elegant and powerful as the nine-color deer, to provide a better dashboard for the openstack community and users.
+
+![](docs/images/nine-color-deer-64.png)
+
 **Table of contents**
 
 - [Resources](#resources)

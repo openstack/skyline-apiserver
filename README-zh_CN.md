@@ -2,7 +2,11 @@
 
 [English](./README.md) | 简体中文
 
-Skyline 是一个经过 UI 和 UE 优化过的 OpenStack 仪表盘, 拥有现代化的技术栈和生态，更易于开发者维护和使用者操作, 以及更高的并发性能.
+Skyline 是一个经过 UI 和 UE 优化过的 OpenStack 仪表盘，拥有现代化的技术栈和生态，更易于开发者维护和使用者操作，以及更高的并发性能。
+
+Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本生》，其寓意是佛理因果和知恩图报，这与九州云自创办以来秉持的拥抱和反馈社区理念一致。我们也希望 Skyline 像九色鹿一样，轻巧、优雅，而又能力强大，为 OpenStack 社区和用户提供更优质的 Dashboard。
+
+![](docs/images/nine-color-deer-64.png)
 
 **目录**
 
