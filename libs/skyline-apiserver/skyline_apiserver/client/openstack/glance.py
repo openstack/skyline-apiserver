@@ -28,7 +28,7 @@ from skyline_apiserver.client import utils
 async def list_images(
     profile: schemas.Profile,
     session: Session,
-    filters: Dict[str, Any] = {},
+    filters: Dict[str, Any] = None,
 ) -> Any:
     try:
         kwargs = {}

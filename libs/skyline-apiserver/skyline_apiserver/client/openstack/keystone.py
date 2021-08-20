@@ -29,9 +29,10 @@ async def list_projects(
     profile: schemas.Profile,
     all_projects: bool,
     session: Session,
-    search_opts: Dict[str, Any] = {},
+    search_opts: Dict[str, Any] = None,
 ) -> Any:
     try:
+        search_opts = search_opts if search_opts else {}
         kc = await utils.keystone_client(session=session, region=profile.region)
         if not all_projects:
             search_opts["user"] = profile.user.id
