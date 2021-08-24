@@ -1,3 +1,27 @@
+- job:
+    name: skyline-tox-functional-py38
+    parent: openstack-tox-functional-py38
+    description: |
+      Skyline py38 functional tests
+    vars:
+      python_version: 3.8
+      tox_envlist: functional-py38
+
+- job:
+    name: skyline-tox-lint-py38
+    parent: openstack-tox-functional-py38
+    description: |
+      Skyline code static analysis
+    vars:
+      python_version: 3.8
+      tox_envlist: lint
+
 - project:
-    templates:
-      - noop-jobs
+    check:
+      jobs:
+        - skyline-tox-functional-py38
+        - skyline-tox-lint-py38
+    gate:
+      jobs:
+        - skyline-tox-functional-py38
+        - skyline-tox-lint-py38

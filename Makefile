@@ -1,5 +1,10 @@
 PYTHON ?= python3
+IGNORE_JS ?= false
+ifeq ($(IGNORE_JS), $(filter $(IGNORE_JS), true True TRUE))
+LIBS := $(shell \ls -I skyline-console libs)
+else
 LIBS := $(shell \ls libs)
+endif
 LIB_PATHS := $(addprefix libs/,$(LIBS))
 ROOT_DIR ?= $(shell git rev-parse --show-toplevel)
 
