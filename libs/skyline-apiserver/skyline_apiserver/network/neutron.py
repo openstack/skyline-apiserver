@@ -26,6 +26,7 @@ from skyline_apiserver.utils.httpclient import get_assert_200
 async def get_ports(
     neutron_endpoint: str,
     keystone_token: str,
+    global_request_id: str,
     search_opts: Dict[str, Any],
 ) -> Dict[str, Any]:
     """Get the ports in the environment .
@@ -49,5 +50,8 @@ async def get_ports(
                 val = [v.encode("utf-8") for v in val]
             qparams[opt] = val
     url += "?%s" % parse.urlencode(qparams, doseq=True)
-    resp = await get_assert_200(url, headers={"X-Auth-Token": keystone_token})
+    resp = await get_assert_200(
+        url,
+        headers={"X-Auth-Token": keystone_token, constants.INBOUND_HEADER: global_request_id},
+    )
     return resp.json()

@@ -21,7 +21,7 @@ from functools import reduce
 from typing import List
 
 from dateutil import parser
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
 
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
@@ -63,6 +63,11 @@ List Servers.
 )
 async def list_servers(
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
+    x_openstack_request_id: str = Header(
+        "",
+        alias=constants.INBOUND_HEADER,
+        regex=constants.INBOUND_HEADER_REGEX,
+    ),
     limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
     marker: str = None,
     sort_dirs: schemas.ExtSortDir = None,
@@ -136,6 +141,8 @@ async def list_servers(
             profile=profile,
             all_projects=all_projects,
             session=current_session,
+            global_request_id=x_openstack_request_id,
+            all_projects=all_projects,
             search_opts={"name": project_name},
         )
         if not filter_projects:
@@ -161,6 +168,7 @@ async def list_servers(
     servers = await nova.list_servers(
         profile=profile,
         session=current_session,
+        global_request_id=x_openstack_request_id,
         search_opts=search_opts,
         marker=marker,
         limit=limit,
@@ -195,8 +203,9 @@ async def list_servers(
         tasks = [
             keystone.list_projects(
                 profile=profile,
-                all_projects=all_projects,
                 session=current_session,
+                global_request_id=x_openstack_request_id,
+                all_projects=all_projects,
             ),
         ]
     else:
@@ -207,6 +216,7 @@ async def list_servers(
             glance.list_images(
                 profile=profile,
                 session=system_session,
+                global_request_id=x_openstack_request_id,
                 filters={"id": "in:" + ",".join(image_ids[i : i + STEP])},
             ),
         )
@@ -216,6 +226,7 @@ async def list_servers(
             cinder.list_volumes(
                 profile=profile,
                 session=cinder_session,
+                global_request_id=x_openstack_request_id,
                 search_opts={"id": root_device_ids[i : i + STEP], "all_tenants": all_projects},
             ),
         )
@@ -288,6 +299,11 @@ List Recycle Servers.
 )
 async def list_recycle_servers(
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
+    x_openstack_request_id: str = Header(
+        "",
+        alias=constants.INBOUND_HEADER,
+        regex=constants.INBOUND_HEADER_REGEX,
+    ),
     limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
     marker: str = None,
     sort_dirs: schemas.ExtSortDir = None,
@@ -351,8 +367,9 @@ async def list_recycle_servers(
     if project_name:
         filter_projects = await keystone.list_projects(
             profile=profile,
-            all_projects=all_projects,
             session=current_session,
+            global_request_id=x_openstack_request_id,
+            all_projects=all_projects,
             search_opts={"name": project_name},
         )
         if not filter_projects:
@@ -379,6 +396,7 @@ async def list_recycle_servers(
     servers = await nova.list_servers(
         profile=profile,
         session=system_session,
+        global_request_id=x_openstack_request_id,
         search_opts=search_opts,
         marker=marker,
         limit=limit,
@@ -411,8 +429,9 @@ async def list_recycle_servers(
         tasks = [
             keystone.list_projects(
                 profile=profile,
-                all_projects=all_projects,
                 session=current_session,
+                global_request_id=x_openstack_request_id,
+                all_projects=all_projects,
             ),
         ]
     else:
@@ -423,6 +442,7 @@ async def list_recycle_servers(
             glance.list_images(
                 profile=profile,
                 session=system_session,
+                global_request_id=x_openstack_request_id,
                 filters={"id": "in:" + ",".join(image_ids[i : i + STEP])},
             ),
         )
@@ -432,6 +452,7 @@ async def list_recycle_servers(
             cinder.list_volumes(
                 profile=profile,
                 session=cinder_session,
+                global_request_id=x_openstack_request_id,
                 search_opts={"id": root_device_ids[i : i + STEP], "all_tenants": all_projects},
             ),
         )
@@ -502,6 +523,11 @@ async def list_recycle_servers(
 )
 async def list_volumes(
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
+    x_openstack_request_id: str = Header(
+        "",
+        alias=constants.INBOUND_HEADER,
+        regex=constants.INBOUND_HEADER_REGEX,
+    ),
     limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
     marker: str = None,
     sort_dirs: schemas.ExtSortDir = None,
@@ -587,6 +613,7 @@ async def list_volumes(
     volumes, count = await cinder.list_volumes(
         profile=profile,
         session=cinder_session,
+        global_request_id=x_openstack_request_id,
         limit=limit,
         marker=marker,
         search_opts=search_opts,
@@ -618,8 +645,9 @@ async def list_volumes(
         tasks = [
             keystone.list_projects(
                 profile=profile,
-                all_projects=all_projects,
                 session=current_session,
+                global_request_id=x_openstack_request_id,
+                all_projects=all_projects,
             ),
         ]
     else:
@@ -633,6 +661,7 @@ async def list_volumes(
                 nova.list_servers(
                     profile=profile,
                     session=current_session,
+                    global_request_id=x_openstack_request_id,
                     search_opts={
                         "uuid": server_ids[i : i + STEP],
                         "all_tenants": all_projects,
@@ -641,6 +670,7 @@ async def list_volumes(
                 nova.list_servers(
                     profile=profile,
                     session=current_session,
+                    global_request_id=x_openstack_request_id,
                     search_opts={
                         "uuid": server_ids[i : i + STEP],
                         "status": "soft_deleted",
@@ -680,6 +710,11 @@ async def list_volumes(
 )
 async def list_volume_snapshots(
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
+    x_openstack_request_id: str = Header(
+        "",
+        alias=constants.INBOUND_HEADER,
+        regex=constants.INBOUND_HEADER_REGEX,
+    ),
     limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
     marker: str = None,
     sort_dirs: schemas.ExtSortDir = None,
@@ -743,6 +778,7 @@ async def list_volume_snapshots(
     volume_snapshots, count = await cinder.list_volume_snapshots(
         profile=profile,
         session=current_session,
+        global_request_id=x_openstack_request_id,
         limit=limit,
         marker=marker,
         search_opts=search_opts,
@@ -770,8 +806,9 @@ async def list_volume_snapshots(
         tasks = [
             keystone.list_projects(
                 profile=profile,
-                all_projects=all_projects,
                 session=current_session,
+                global_request_id=x_openstack_request_id,
+                all_projects=all_projects,
             ),
         ]
     else:
@@ -783,6 +820,7 @@ async def list_volume_snapshots(
             cinder.list_volumes(
                 profile=profile,
                 session=current_session,
+                global_request_id=x_openstack_request_id,
                 search_opts={"id": volume_ids[i : i + STEP], "all_tenants": all_projects},
             ),
         )
@@ -791,6 +829,7 @@ async def list_volume_snapshots(
             cinder.list_volumes(
                 profile=profile,
                 session=current_session,
+                global_request_id=x_openstack_request_id,
                 search_opts={
                     "snapshot_id": snapshot_ids[i : i + STEP],
                     "all_tenants": all_projects,
@@ -841,6 +880,11 @@ async def list_volume_snapshots(
 )
 async def list_ports(
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
+    x_openstack_request_id: str = Header(
+        "",
+        alias=constants.INBOUND_HEADER,
+        regex=constants.INBOUND_HEADER_REGEX,
+    ),
     limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
     marker: str = None,
     sort_dirs: schemas.ExtSortDir = None,
@@ -915,6 +959,7 @@ async def list_ports(
         networks = await neutron.list_networks(
             profile=profile,
             session=current_session,
+            global_request_id=x_openstack_request_id,
             **{"name": network_name},
         )
         if not networks["networks"]:
@@ -941,7 +986,12 @@ async def list_ports(
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(ex))
 
-    ports = await get_ports(neutron_endpoint, profile.keystone_token, kwargs)
+    ports = await get_ports(
+        neutron_endpoint,
+        profile.keystone_token,
+        x_openstack_request_id,
+        kwargs,
+    )
     ports_count = ports.get("count", 0)
     ports = ports["ports"]
 
@@ -959,7 +1009,12 @@ async def list_ports(
 
     network_params = {}
     tasks = [
-        neutron.list_networks(profile=profile, session=current_session, **{"shared": True}),
+        neutron.list_networks(
+            profile=profile,
+            session=current_session,
+            global_request_id=x_openstack_request_id,
+            **{"shared": True},
+        ),
     ]
     if not all_projects:
         network_params["project_id"] = profile.project.id
@@ -969,7 +1024,12 @@ async def list_ports(
     for i in range(0, len(network_ids), STEP):
         network_params["id"] = set(network_ids[i : i + STEP])
         tasks.append(
-            neutron.list_networks(profile=profile, session=current_session, **network_params),
+            neutron.list_networks(
+                profile=profile,
+                session=current_session,
+                global_request_id=x_openstack_request_id,
+                **network_params,
+            ),
         )
 
     # We should split the server_ids with 100 number.
@@ -980,6 +1040,7 @@ async def list_ports(
             nova.list_servers(
                 profile=profile,
                 session=current_session,
+                global_request_id=x_openstack_request_id,
                 search_opts={
                     "uuid": server_ids[i : i + STEP],
                     "all_tenants": all_projects,
@@ -1016,6 +1077,11 @@ async def list_ports(
 )
 async def compute_services(
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
+    x_openstack_request_id: str = Header(
+        "",
+        alias=constants.INBOUND_HEADER,
+        regex=constants.INBOUND_HEADER_REGEX,
+    ),
     binary: str = None,
     host: str = None,
 ) -> schemas.ExtListComputeServicesResponse:
@@ -1046,6 +1112,7 @@ async def compute_services(
     services = await nova.list_services(
         profile=profile,
         session=system_session,
+        global_request_id=x_openstack_request_id,
         **kwargs,
     )
     services = [Service(service).to_dict() for service in services]

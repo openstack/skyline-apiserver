@@ -72,16 +72,24 @@ async def get_endpoints(region: str) -> Dict[str, Any]:
     return endpoints
 
 
-async def get_projects(region: str, user: str) -> Dict[str, Any]:
-    kc = await utils.keystone_client(session=get_system_session(), region=region)
+async def get_projects(global_request_id: str, region: str, user: str) -> Dict[str, Any]:
+    kc = await utils.keystone_client(
+        session=get_system_session(),
+        region=region,
+        global_request_id=global_request_id,
+    )
     projects = {
         i.id: {"name": i.name, "domain_id": i.domain_id} for i in kc.projects.list(user=user)
     }
     return projects
 
 
-async def get_domains(region: str) -> Any:
-    kc = await utils.keystone_client(session=get_system_session(), region=region)
+async def get_domains(global_request_id: str, region: str) -> Any:
+    kc = await utils.keystone_client(
+        session=get_system_session(),
+        region=region,
+        global_request_id=global_request_id,
+    )
     domains = [i.name for i in kc.domains.list(enabled=True)]
     return domains
 

@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response, status
 from keystoneauth1.identity.v3 import Password
 from keystoneauth1.session import Session
 from keystoneclient.client import Client as KeystoneClient
@@ -38,14 +38,19 @@ from skyline_apiserver.core.security import (
 )
 from skyline_apiserver.types import constants
 from skyline_apiserver.db import api as db_api
+from skyline_apiserver.types import constants
 
 router = APIRouter()
 
 
-async def _patch_profile(profile) -> schemas.Profile:
+async def _patch_profile(profile: schemas.Profile, global_request_id: str) -> schemas.Profile:
     try:
         profile.endpoints = await get_endpoints(region=profile.region)
-        profile.projects = await get_projects(region=profile.region, user=profile.user.id)
+        profile.projects = await get_projects(
+            global_request_id=global_request_id,
+            region=profile.region,
+            user=profile.user.id,
+        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -65,7 +70,16 @@ async def _patch_profile(profile) -> schemas.Profile:
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def login(credential: schemas.Credential, response: Response):
+async def login(
+    request: Request,
+    response: Response,
+    credential: schemas.Credential,
+    x_openstack_request_id: str = Header(
+        "",
+        alias=constants.INBOUND_HEADER,
+        regex=constants.INBOUND_HEADER_REGEX,
+    ),
+):
     try:
         auth_url = await utils.get_endpoint(
             region=credential.region,
@@ -98,7 +112,7 @@ async def login(credential: schemas.Credential, response: Response):
             region=credential.region,
         )
 
-        profile = await _patch_profile(profile)
+        profile = await _patch_profile(profile, x_openstack_request_id)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -120,8 +134,15 @@ async def login(credential: schemas.Credential, response: Response):
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def get_profile(profile: schemas.Profile = Depends(deps.get_profile_update_jwt)):
-    return await _patch_profile(profile)
+async def get_profile(
+    profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
+    x_openstack_request_id: str = Header(
+        "",
+        alias=constants.INBOUND_HEADER,
+        regex=constants.INBOUND_HEADER_REGEX,
+    ),
+):
+    return await _patch_profile(profile, x_openstack_request_id)
 
 
 @router.post(
@@ -138,13 +159,18 @@ async def logout(
     response: Response,
     request: Request,
     payload: str = Depends(deps.getJWTPayload),
+    x_openstack_request_id: str = Header(
+        "",
+        alias=constants.INBOUND_HEADER,
+        regex=constants.INBOUND_HEADER_REGEX,
+    ),
 ):
     if payload:
         try:
             token = parse_access_token(payload)
             profile = await generate_profile_by_token(token)
             session = await generate_session(profile)
-            await revoke_token(profile, session, token.keystone_token)
+            await revoke_token(profile, session, x_openstack_request_id, token.keystone_token)
             await db_api.revoke_token(profile.uuid, profile.exp)
         except Exception as e:
             LOG.debug(str(e))
@@ -167,6 +193,11 @@ async def switch_project(
     project_id: str,
     response: Response,
     profile: schemas.Profile = Depends(deps.get_profile),
+    x_openstack_request_id: str = Header(
+        "",
+        alias=constants.INBOUND_HEADER,
+        regex=constants.INBOUND_HEADER_REGEX,
+    ),
 ):
     try:
         project_scope_token = await get_project_scope_token(
@@ -180,7 +211,7 @@ async def switch_project(
             region=profile.region,
             uuid_value=profile.uuid,
         )
-        profile = await _patch_profile(profile)
+        profile = await _patch_profile(profile, x_openstack_request_id)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

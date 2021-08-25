@@ -17,7 +17,7 @@ from __future__ import annotations
 import asyncio
 from typing import Any, List
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Header, HTTPException, status
 from skyline_log import LOG
 
 from skyline_apiserver import schemas
@@ -69,7 +69,13 @@ async def list_keystone_endpoints() -> List[schemas.ContribListKeystoneEndpoints
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def list_domains() -> Any:
+async def list_domains(
+    x_openstack_request_id: str = Header(
+        "",
+        alias=constants.INBOUND_HEADER,
+        regex=constants.INBOUND_HEADER_REGEX,
+    ),
+) -> Any:
     """Contrib List Domain Names."""
 
     try:
@@ -82,7 +88,7 @@ async def list_domains() -> Any:
 
     for region in regions:
         try:
-            domains = await system.get_domains(region)
+            domains = await system.get_domains(x_openstack_request_id, region)
             return [domain for domain in domains if domain not in CONF.openstack.base_domains]
         except Exception as e:
             LOG.warning(str(e))

@@ -29,6 +29,7 @@ from skyline_apiserver.client import utils
 async def list_servers(
     profile: schemas.Profile,
     session: Session,
+    global_request_id: str,
     search_opts: Dict[str, Any] = None,
     marker: str = None,
     limit: int = None,
@@ -39,6 +40,7 @@ async def list_servers(
         nc = await utils.nova_client(
             region=profile.region,
             session=session,
+            global_request_id=global_request_id,
         )
         return await run_in_threadpool(
             nc.servers.list,
@@ -70,9 +72,18 @@ async def list_servers(
         )
 
 
-async def list_services(profile: schemas.Profile, session: Session, **kwargs: Any) -> Any:
+async def list_services(
+    profile: schemas.Profile,
+    session: Session,
+    global_request_id: str,
+    **kwargs: Any,
+) -> Any:
     try:
-        nc = await utils.nova_client(region=profile.region, session=session)
+        nc = await utils.nova_client(
+            region=profile.region,
+            session=session,
+            global_request_id=global_request_id,
+        )
         return await run_in_threadpool(nc.services.list, **kwargs)
     except Unauthorized as e:
         raise HTTPException(

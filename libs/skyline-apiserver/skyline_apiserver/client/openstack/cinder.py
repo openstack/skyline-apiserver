@@ -28,13 +28,18 @@ from skyline_apiserver.client import utils
 async def list_volumes(
     profile: schemas.Profile,
     session: Session,
+    global_request_id: str,
     limit: int = None,
     marker: str = None,
     search_opts: Dict[str, Any] = None,
     sort: str = None,
 ) -> Any:
     try:
-        cc = await utils.cinder_client(region=profile.region, session=session)
+        cc = await utils.cinder_client(
+            region=profile.region,
+            session=session,
+            global_request_id=global_request_id,
+        )
         return await run_in_threadpool(
             cc.volumes.list,
             search_opts=search_opts,
@@ -57,13 +62,18 @@ async def list_volumes(
 async def list_volume_snapshots(
     profile: schemas.Profile,
     session: Session,
+    global_request_id: str,
     limit: int = None,
     marker: str = None,
     search_opts: Dict[str, Any] = None,
     sort: str = None,
 ) -> Any:
     try:
-        cc = await utils.cinder_client(region=profile.region, session=session)
+        cc = await utils.cinder_client(
+            region=profile.region,
+            session=session,
+            global_request_id=global_request_id,
+        )
         return await run_in_threadpool(
             cc.volume_snapshots.list,
             search_opts=search_opts,
