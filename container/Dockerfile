@@ -37,7 +37,7 @@ RUN export LANG=C.UTF-8 \
     && rm -rf /usr/bin/python /usr/bin/pip \
     && ln -s /usr/bin/python3 /usr/bin/python \
     && ln -s /usr/bin/pip3 /usr/bin/pip \
-    && pip install poetry \
+    && pip install poetry!=1.1.8 \
     && poetry config virtualenvs.create false \
     && mkdir -p /etc/skyline /var/log/skyline/ /var/lib/skyline \
     && cd /skyline \
