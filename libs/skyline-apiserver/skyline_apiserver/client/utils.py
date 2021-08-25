@@ -93,50 +93,80 @@ async def get_endpoint(region: str, service: str, session: Session) -> Any:
 async def keystone_client(
     session: Session,
     region: str,
+    global_request_id: str = None,
     version: str = constants.KEYSTONE_API_VERSION,
 ) -> HTTPClient:
     endpoint = await get_endpoint(region, "keystone", session=session)
-    client = KeystoneClient(version=version, session=session, endpoint=endpoint)
+    client = KeystoneClient(
+        version=version,
+        session=session,
+        endpoint=endpoint,
+        global_request_id=global_request_id,
+    )
     return client
 
 
 async def glance_client(
     session: Session,
     region: str,
+    global_request_id: str = None,
     version: str = constants.GLANCE_API_VERSION,
 ) -> HTTPClient:
     endpoint = await get_endpoint(region, "glance", session=session)
-    client = GlanceClient(version=version, session=session, endpoint=endpoint)
+    client = GlanceClient(
+        version=version,
+        session=session,
+        endpoint=endpoint,
+        global_request_id=global_request_id,
+    )
     return client
 
 
 async def nova_client(
     session: Session,
     region: str,
+    global_request_id: str = None,
     version: str = constants.NOVA_API_VERSION,
 ) -> HTTPClient:
     endpoint = await get_endpoint(region, "nova", session=session)
-    client = NovaClient(version=version, session=session, endpoint_override=endpoint)
+    client = NovaClient(
+        version=version,
+        session=session,
+        endpoint_override=endpoint,
+        global_request_id=global_request_id,
+    )
     return client
 
 
 async def cinder_client(
     session: Session,
     region: str,
+    global_request_id: str,
     version: str = constants.CINDER_API_VERSION,
 ) -> HTTPClient:
     endpoint = await get_endpoint(region, "cinderv3", session=session)
-    client = CinderClient(version=version, session=session, endpoint_override=endpoint)
+    client = CinderClient(
+        version=version,
+        session=session,
+        endpoint_override=endpoint,
+        global_request_id=global_request_id,
+    )
     return client
 
 
 async def neutron_client(
     session: Session,
     region: str,
+    global_request_id: str = None,
     version: str = constants.NEUTRON_API_VERSION,
 ) -> HTTPClient:
     endpoint = await get_endpoint(region, "neutron", session=session)
-    client = NeutronClient(version=version, session=session, endpoint_override=endpoint)
+    client = NeutronClient(
+        version=version,
+        session=session,
+        endpoint_override=endpoint,
+        global_request_id=global_request_id,
+    )
     return client
 
 

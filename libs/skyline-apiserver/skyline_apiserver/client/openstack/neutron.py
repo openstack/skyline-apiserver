@@ -25,9 +25,18 @@ from skyline_apiserver import schemas
 from skyline_apiserver.client import utils
 
 
-async def list_networks(profile: schemas.Profile, session: Session, **kwargs: Any) -> Any:
+async def list_networks(
+    profile: schemas.Profile,
+    session: Session,
+    global_request_id: str,
+    **kwargs: Any,
+) -> Any:
     try:
-        nc = await utils.neutron_client(session=session, region=profile.region)
+        nc = await utils.neutron_client(
+            session=session,
+            region=profile.region,
+            global_request_id=global_request_id,
+        )
         return await run_in_threadpool(nc.list_networks, **kwargs)
     except Unauthorized as e:
         raise HTTPException(

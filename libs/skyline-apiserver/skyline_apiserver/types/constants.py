@@ -21,6 +21,10 @@ CINDER_API_VERSION = "3.59"
 NEUTRON_API_VERSION = "2.0"
 PLACEMENT_API_VERSION = "1.36"
 
+# request_id middleware will set this into openstack.global_request_id environ
+INBOUND_HEADER = "X-Openstack-Request-Id"
+INBOUND_HEADER_REGEX = "^req-\\w{8}(-\\w{4}){3}-\\w{12}"
+
 ERR_MSG_TOKEN_REVOKED = "The token has revoked."
 ERR_MSG_TOKEN_EXPIRED = "The token has expired."
 ERR_MSG_TOKEN_NOTFOUND = "Token not found."

@@ -27,13 +27,18 @@ from skyline_apiserver.client import utils
 
 async def list_projects(
     profile: schemas.Profile,
-    all_projects: bool,
     session: Session,
+    global_request_id: str,
+    all_projects: bool,
     search_opts: Dict[str, Any] = None,
 ) -> Any:
     try:
         search_opts = search_opts if search_opts else {}
-        kc = await utils.keystone_client(session=session, region=profile.region)
+        kc = await utils.keystone_client(
+            session=session,
+            region=profile.region,
+            global_request_id=global_request_id,
+        )
         if not all_projects:
             search_opts["user"] = profile.user.id
         return await run_in_threadpool(kc.projects.list, **search_opts)
@@ -52,6 +57,7 @@ async def list_projects(
 async def revoke_token(
     profile: schemas.Profile,
     session: Session,
+    global_request_id: str,
     token: str,
 ) -> None:
     """Revoke a token.
@@ -59,7 +65,11 @@ async def revoke_token(
     :type token: str or :class:`keystoneclient.access.AccessInfo`
     """
     try:
-        kc = await utils.keystone_client(session=session, region=profile.region)
+        kc = await utils.keystone_client(
+            session=session,
+            region=profile.region,
+            global_request_id=global_request_id,
+        )
         kwargs = {"token": token}
         await run_in_threadpool(kc.tokens.revoke_token, **kwargs)
     except Unauthorized as e:

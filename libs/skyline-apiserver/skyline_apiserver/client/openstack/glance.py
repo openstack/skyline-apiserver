@@ -28,13 +28,18 @@ from skyline_apiserver.client import utils
 async def list_images(
     profile: schemas.Profile,
     session: Session,
+    global_request_id: str,
     filters: Dict[str, Any] = None,
 ) -> Any:
     try:
         kwargs = {}
         if filters:
             kwargs["filters"] = filters
-        gc = await utils.glance_client(session=session, region=profile.region)
+        gc = await utils.glance_client(
+            session=session,
+            region=profile.region,
+            global_request_id=global_request_id,
+        )
         return await run_in_threadpool(gc.images.list, **kwargs)
     except Unauthorized as e:
         raise HTTPException(
