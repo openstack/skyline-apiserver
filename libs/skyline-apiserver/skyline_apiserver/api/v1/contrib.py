@@ -25,6 +25,7 @@ from skyline_apiserver.client.openstack import system
 from skyline_apiserver.client.openstack.system import get_endpoints
 from skyline_apiserver.config import CONF
 from skyline_apiserver.schemas import common
+from skyline_apiserver.types import constants
 
 router = APIRouter()
 
