@@ -139,7 +139,6 @@ async def list_servers(
     if project_name:
         filter_projects = await keystone.list_projects(
             profile=profile,
-            all_projects=all_projects,
             session=current_session,
             global_request_id=x_openstack_request_id,
             all_projects=all_projects,
