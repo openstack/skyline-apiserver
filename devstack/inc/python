@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# Save trace setting
+INC_PY_TRACE=$(set +o | grep xtrace)
+set +o xtrace
+
+# Wrapper for ``pip install`` to set cache and proxy environment variables
+# Uses globals ``OFFLINE``, ``PIP_VIRTUAL_ENV``,
+# ``PIP_UPGRADE``, ``*_proxy``,
+# Usage:
+#  pip_install pip_arguments
+function contrib_pip_install {
+    local xtrace result
+    xtrace=$(set +o | grep xtrace)
+    set +o xtrace
+    local upgrade=""
+    local offline=${OFFLINE:-False}
+    if [[ "$offline" == "True" || -z "$@" ]]; then
+        $xtrace
+        return
+    fi
+
+    time_start "pip_install"
+
+    PIP_UPGRADE=$(trueorfalse False PIP_UPGRADE)
+    if [[ "$PIP_UPGRADE" = "True" ]] ; then
+        upgrade="--upgrade"
+    fi
+
+    if [[ -z "$os_PACKAGE" ]]; then
+        GetOSVersion
+    fi
+
+    # Try to extract the path of the package we are installing into
+    # package_dir.  We need this to check for test-requirements.txt,
+    # at least.
+    #
+    # ${!#} expands to the last positional argument to this function.
+    # With "extras" syntax included, our arguments might be something
+    # like:
+    #  -e /path/to/fooproject[extra]
+    # Thus this magic line grabs just the path without extras
+    #
+    # Note that this makes no sense if this is a pypi (rather than
+    # local path) install; ergo you must check this path exists before
+    # use.  Also, if we had multiple or mixed installs, we would also
+    # likely break.  But for historical reasons, it's basically only
+    # the other wrapper functions in here calling this to install
+    # local packages, and they do so with single call per install.  So
+    # this works (for now...)
+    local package_dir=${!#%\[*\]}
+
+    if [[ -n ${PIP_VIRTUAL_ENV:=} && -d ${PIP_VIRTUAL_ENV} ]]; then
+        local cmd_pip=$PIP_VIRTUAL_ENV/bin/pip
+        local sudo_pip="env"
+    else
+        local cmd_pip="python$PYTHON3_VERSION -m pip"
+        # See
+        #  https://github.com/pypa/setuptools/issues/2232
+        #  http://lists.openstack.org/pipermail/openstack-discuss/2020-August/016905.html
+        # this makes setuptools >=50 use the platform distutils.
+        # We only want to do this on global pip installs, not if
+        # installing in a virtualenv
+        local sudo_pip="sudo -H LC_ALL=en_US.UTF-8 SETUPTOOLS_USE_DISTUTILS=stdlib "
+        echo "Using python $PYTHON3_VERSION to install $package_dir"
+    fi
+
+    cmd_pip="$cmd_pip install"
+
+    $xtrace
+
+    # adding SETUPTOOLS_SYS_PATH_TECHNIQUE is a workaround to keep
+    # the same behaviour of setuptools before version 25.0.0.
+    # related issue: https://github.com/pypa/pip/issues/3874
+    $sudo_pip \
+        http_proxy="${http_proxy:-}" \
+        https_proxy="${https_proxy:-}" \
+        no_proxy="${no_proxy:-}" \
+        PIP_FIND_LINKS=$PIP_FIND_LINKS \
+        SETUPTOOLS_SYS_PATH_TECHNIQUE=rewrite \
+        $cmd_pip $upgrade \
+        $@
+    result=$?
+
+    time_stop "pip_install"
+    return $result
+}
+
+# Restore xtrace
+$INC_PY_TRACE
