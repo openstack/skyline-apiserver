@@ -140,14 +140,17 @@ You can now access the dashboard: `https://<ip_address>:8080`
 - make >= 3.82
 - python >= 3.8
 - poetry >= 1.1.0 ([Installation Guide](https://python-poetry.org/docs/#installation))
-- node >= 10.22.0
-- yarn >= 1.22.4
+- node >= 10.22.0 (Optional if you only develop with apiserver)
+- yarn >= 1.22.4 (Optional if you only develop with apiserver)
 
 ### Install & Run
 
 1. Installing dependency packages
 
     ```bash
+    # You can export IGNORE_JS=True to skip skyline-console if only develop with apiserver
+    export IGNORE_JS=True
+
     make install
     ```
 

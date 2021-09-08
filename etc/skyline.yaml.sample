@@ -2,9 +2,9 @@ default:
   access_token_expire: 3600
   access_token_renew: 1800
   cors_allow_origins: []
-  database_url: mysql://root:root@localhost:3306/skyline
+  database_url: sqlite:////tmp/skyline.db
   debug: false
-  log_dir: ./log
+  log_dir: /tmp
   secret_key: aCtmgbcUqYUy_HNVg5BDXCaeJgJQzHJXwqbXr0Nmb2o
   session_name: session
 developer:
@@ -61,7 +61,7 @@ openstack:
   extension_mapping:
     fwaas_v2: neutron_firewall
     vpnaas: neutron_vpn
-  interface_type: internal
+  interface_type: public
   keystone_url: http://localhost:5000/v3/
   nginx_prefix: /api/openstack
   reclaim_instance_interval: 604800

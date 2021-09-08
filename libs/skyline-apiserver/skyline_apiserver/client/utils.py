@@ -102,6 +102,7 @@ async def keystone_client(
         session=session,
         endpoint=endpoint,
         global_request_id=global_request_id,
+        interface=CONF.openstack.interface_type,
     )
     return client
 

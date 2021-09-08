@@ -140,14 +140,17 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
 - make >= 3.82
 - python >= 3.8
 - poetry >= 1.1.0 ([安装指南](https://python-poetry.org/docs/#installation))
-- node >= 10.22.0
-- yarn >= 1.22.4
+- node >= 10.22.0 (可选，只开发 API 就用不到)
+- yarn >= 1.22.4 (可选，只开发 API 就用不到)
 
 ### 安装和运行
 
 1. 安装依赖包
 
     ```bash
+    # 如果只开发 apiserver，可以通过 export IGNORE_JS=True 来跳过安装 skyline-console
+    export IGNORE_JS=True
+
     make install
     ```
 

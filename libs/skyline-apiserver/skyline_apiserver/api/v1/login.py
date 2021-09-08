@@ -94,7 +94,7 @@ async def login(
             reauthenticate=False,
         )
         session = Session(auth=unscope_auth, verify=False, timeout=constants.DEFAULT_TIMEOUT)
-        unscope_client = KeystoneClient(session=session, endpoint=auth_url)
+        unscope_client = KeystoneClient(session=session, endpoint=auth_url, interface=CONF.openstack.interface_type)
         project_scope = unscope_client.auth.projects()
         # we must get the project_scope with enabled project
         project_scope = [scope for scope in project_scope if scope.enabled]
