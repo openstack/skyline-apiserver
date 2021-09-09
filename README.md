@@ -10,9 +10,18 @@ Skyline's mascot is the nine-color deer. The nine-color deer comes from Dunhuang
 
 **Table of contents**
 
-- [Resources](#resources)
-- [Quick Start](#quick-start)
-- [Develop Skyline-apiserver](#develop-skyline-apiserver)
+- [Skyline API](#skyline-api)
+  - [Resources](#resources)
+  - [Quick Start](#quick-start)
+    - [Prerequisites](#prerequisites)
+    - [Configure](#configure)
+    - [Deployment with Sqlite](#deployment-with-sqlite)
+    - [Deployment with MariaDB](#deployment-with-mariadb)
+    - [Test Access](#test-access)
+  - [Develop Skyline-apiserver](#develop-skyline-apiserver)
+    - [Dependent tools](#dependent-tools)
+    - [Install & Run](#install--run)
+  - [Devstack Integration](#devstack-integration)
 
 ## Resources
 
@@ -205,3 +214,7 @@ You can now access the dashboard: `https://<ip_address>:8080`
     ```bash
     make build
     ```
+
+## Devstack Integration
+
+[Fast integration with Devstack to build an environment.](./devstack/README.rst)

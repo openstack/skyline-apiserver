@@ -10,9 +10,18 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
 
 **目录**
 
-- [资源](#资源)
-- [快速开始](#快速开始)
-- [开发 Skyline-apiserver](#开发-skyline-apiserver)
+- [Skyline](#skyline)
+  - [资源](#资源)
+  - [快速开始](#快速开始)
+    - [先决条件](#先决条件)
+    - [配置](#配置)
+    - [部署 - 数据库使用 Sqlite](#部署---数据库使用-sqlite)
+    - [部署 - 数据库使用 MariaDB](#部署---数据库使用-mariadb)
+    - [访问测试](#访问测试)
+  - [开发 Skyline-apiserver](#开发-skyline-apiserver)
+    - [依赖工具](#依赖工具)
+    - [安装和运行](#安装和运行)
+  - [Devstack 集成](#devstack-集成)
 
 ## 资源
 
@@ -205,3 +214,7 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
     ```bash
     make build
     ```
+
+## Devstack 集成
+
+[与 Devstack 快速集成，搭建环境。](./devstack/README.rst)
