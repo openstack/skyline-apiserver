@@ -77,7 +77,7 @@ endif
 
 
 .PHONY: venv
-venv: git_config
+venv:
 	if [ ! -e "libs/skyline-console/.git" ]; then git submodule update --init; fi
 	poetry env use $(PYTHON)
 
