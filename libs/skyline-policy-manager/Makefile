@@ -12,8 +12,7 @@ venv:
 
 .PHONY: install
 install: venv
-	poetry run pip install -U pip setuptools
-	poetry run pip install tempita==0.5.2
+	poetry run pip install -U pip setuptools'<58.0.0'
 	poetry install -vvv
 	tools/post_install.sh
 

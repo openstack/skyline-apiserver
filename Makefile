@@ -85,7 +85,7 @@ venv: git_config
 .PHONY: install $(INSTALL_LIBS)
 INSTALL_LIBS := $(addsuffix .install,$(LIB_PATHS))
 install: venv $(INSTALL_LIBS)
-	poetry run pip install -U pip setuptools
+	poetry run pip install -U pip setuptools'<58.0.0'
 	poetry install -vvv
 $(INSTALL_LIBS):
 	$(MAKE) -C $(basename $@) install
