@@ -14,15 +14,19 @@
 
 from __future__ import annotations
 
-import os
 import warnings
 from dataclasses import InitVar, dataclass, field
 from pathlib import Path, PurePath
-from typing import Any, Dict, Iterator, Sequence, Tuple, Type
+from typing import Any, Dict, Iterator, NamedTuple, Sequence, Tuple, Type
 
 import yaml
 from immutables import Map, MapItems, MapKeys, MapValues
 from pydantic import BaseModel, create_model
+
+
+class ConfigPath(NamedTuple):
+    config_dir_path: str
+    config_file_path: str
 
 
 @dataclass(frozen=True)
@@ -81,14 +85,14 @@ class Group:
         items = ", ".join((f"{opt}=Opt(name='{opt}')" for opt in self._opts))
         return f"Group({items})"
 
-    def items(self) -> MapItems[str, Opt]:
-        return self._opts.items()
-
     def keys(self) -> MapKeys[str]:
         return self._opts.keys()
 
     def values(self) -> MapValues[Opt]:
         return self._opts.values()
+
+    def items(self) -> MapItems[str, Opt]:
+        return self._opts.items()
 
 
 @dataclass(repr=False, frozen=True)
@@ -101,22 +105,17 @@ class Configuration:
         object.__setattr__(self, "_groups", Map({group.name: group for group in init_groups}))
 
     @staticmethod
-    def _get_config_file(project: str, env: Dict[str, str]) -> Tuple[str, str]:
-        config_dir = env.get("OS_CONFIG_DIR", PurePath("/etc", project).as_posix()).strip()
-
-        config_file = env.get(
-            "OS_CONFIG_FILE",
-            os.path.join(config_dir, f"{project}.yaml"),
-        ).strip()
-
-        return (config_dir, config_file)
+    def get_config_path(project: str, env: Dict[str, str]) -> Tuple[str, str]:
+        config_dir_path = env.get("OS_CONFIG_DIR", PurePath("/etc", project).as_posix())
+        config_file_path = PurePath(config_dir_path).joinpath(f"{project}.yaml").as_posix()
+        return ConfigPath(config_dir_path.strip(), config_file_path.strip())
 
     def setup(self, project: str, env: Dict[str, str]) -> None:
-        config_dir, config_file = self._get_config_file(project, env)
-        if not Path(config_file).exists():
-            raise ValueError("Not found config file: %s" % config_file)
+        config_dir_path, config_file_path = self.get_config_path(project, env)
+        if not Path(config_file_path).exists():
+            raise ValueError(f"Not found config file: {config_file_path}")
 
-        with open(config_file) as f:
+        with open(config_file_path) as f:
             try:
                 object.__setattr__(self, "config", yaml.safe_load(f))
             except Exception:
@@ -134,13 +133,13 @@ class Configuration:
         object.__setattr__(self, "_groups", Map())
         object.__setattr__(self, "config", {})
 
+    def __call__(self, init_groups: Sequence[Group]) -> Any:
+        object.__setattr__(self, "_groups", Map({group.name: group for group in init_groups}))
+
     def __getattr__(self, name: str) -> Group:
         if name in self._groups:
             return self._groups[name]
         raise AttributeError(name)
-
-    def __call__(self, init_groups: Sequence[Group]) -> Any:
-        object.__setattr__(self, "_groups", Map({group.name: group for group in init_groups}))
 
     def __contains__(self, key: Any) -> bool:
         return self._groups.__contains__(key)
@@ -155,14 +154,14 @@ class Configuration:
         items = ", ".join((f"{group}=Group(name='{group}')" for group in self._groups))
         return f"Configuration({items})"
 
-    def items(self) -> MapItems[str, Group]:
-        return self._groups.items()
-
     def keys(self) -> MapKeys[str]:
         return self._groups.keys()
 
     def values(self) -> MapValues[Group]:
         return self._groups.values()
+
+    def items(self) -> MapItems[str, Group]:
+        return self._groups.items()
 
 
 __all__ = ("Opt", "Group", "Configuration")
