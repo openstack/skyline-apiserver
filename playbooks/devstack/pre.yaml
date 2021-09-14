@@ -1,0 +1,21 @@
+---
+- hosts: controller
+  roles:
+    - ensure-tox
+
+- hosts: controller
+  vars:
+    - devstack_base_dir: /opt/stack
+    - skyline_source_dirs: src/opendev.org/skyline/skyline-apiserver
+  tasks:
+    - name: Copy skyline-apiserver repos into devstack working directory
+      command: rsync -a {{ skyline_source_dirs }} {{ devstack_base_dir }}
+      become: yes
+    - name: Set ownership of repos
+      file:
+        path: '{{ devstack_base_dir }}'
+        state: directory
+        recurse: true
+        owner: stack
+        group: stack
+      become: yes

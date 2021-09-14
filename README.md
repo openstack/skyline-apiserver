@@ -138,7 +138,7 @@ Skyline's mascot is the nine-color deer. The nine-color deer comes from Dunhuang
 
 ### Test Access
 
-You can now access the dashboard: `https://<ip_address>:8080`
+You can now access the dashboard: `https://<ip_address>:9999`
 
 ## Develop Skyline-apiserver
 

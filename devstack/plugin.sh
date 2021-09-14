@@ -22,7 +22,6 @@ function _mkdir_chown_stack {
     sudo chown $STACK_USER "$1"
 }
 
-
 function _skyline_config_set {
     local file=$1
     local old=$2
@@ -30,13 +29,11 @@ function _skyline_config_set {
     sed -i -e "s#$old#$new#g" $file
 }
 
-
 function _install_skyline_apiserver {
     pushd $SKYLINE_DIR
     make install
     popd
 }
-
 
 function _install_skyline_console {
     # nginx
@@ -48,7 +45,15 @@ function _install_skyline_console {
     popd
 }
 
-
+function _install_extra_tools {
+    # install xvfb for skyline-console e2e test
+    # https://docs.cypress.io/guides/continuous-integration/introduction#Dependencies
+    if is_fedora; then
+        install_package xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
+    else
+        install_package libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+    fi
+}
 
 function _install_dependent_tools {
     # make
@@ -84,8 +89,9 @@ function _install_dependent_tools {
     fi
     RETRY_UPDATE=True update_package_repo
     install_package yarn
-}
 
+    _install_extra_tools
+}
 
 # Functions
 # ---------

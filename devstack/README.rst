@@ -15,11 +15,13 @@ Enabling Skyline in Devstack
 
     > cat local.conf
     [[local|localrc]]
-    enable_plugin skyline https://opendev.org/skyline/skyline-apiserver
+    enable_plugin skyline-apiserver https://opendev.org/skyline/skyline-apiserver
 
     To use stable branches, make sure devstack is on that branch, and specify
     the branch name to enable_plugin, for example::
 
-    enable_plugin skyline https://opendev.org/skyline/skyline-apiserver master
+    enable_plugin skyline-apiserver https://opendev.org/skyline/skyline-apiserver master
 
-3. run ``stack.sh``
+3. Run ``stack.sh``
+
+4. Visit the skyline UI with 9999 port

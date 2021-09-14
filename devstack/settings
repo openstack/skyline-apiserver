@@ -11,7 +11,7 @@ SKYLINE_REPO=${MISTRAL_REPO:-https://opendev.org/skyline/skyline-apiserver.git}
 SKYLINE_BRANCH=${MISTRAL_BRANCH:-master}
 
 # Set up default directories
-SKYLINE_DIR=${DEST}/skyline
+SKYLINE_DIR=${DEST}/skyline-apiserver
 SKYLINE_CONF_DIR=${SKYLINE_CONF_DIR:-/etc/skyline}
 SKYLINE_CONF_FILE=${SKYLINE_CONF_DIR}/skyline.yaml
 SKYLINE_LOG_DIR=/var/log/skyline

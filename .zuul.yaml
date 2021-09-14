@@ -1,15 +1,41 @@
+---
 - job:
-    name: skyline-tox-functional-py38
-    parent: openstack-tox-functional-py38
+    name: skyline-functional-devstack
+    parent: devstack
     description: |
-      Skyline py38 functional tests
+      Skyline functional tests job based on devstack (single-node).
+    pre-run: playbooks/devstack/pre.yaml
+    run:
+      - playbooks/devstack/run-devstack.yaml
+      - playbooks/devstack/run-tox.yaml
+    post-run:
+      - playbooks/devstack/post.yaml
+    required-projects:
+      - skyline/skyline-apiserver
+    vars:
+      devstack_plugins:
+        skyline-apiserver: https://opendev.org/skyline/skyline-apiserver
+      zuul_copy_output:
+        /var/log/skyline: logs
+        /etc/skyline: logs
+        /etc/nginx: logs
+    host-vars:
+      controller:
+        tox_install_siblings: false
+        tox_envlist: functional
+
+- job:
+    name: skyline-tox-unittest-py38
+    parent: openstack-tox-py38
+    description: |
+      Skyline py38 unittest tests
     vars:
       python_version: 3.8
-      tox_envlist: functional-py38
+      tox_envlist: unittest-py38
 
 - job:
     name: skyline-tox-lint-py38
-    parent: openstack-tox-functional-py38
+    parent: openstack-tox-py38
     description: |
       Skyline code static analysis
     vars:
@@ -19,9 +45,11 @@
 - project:
     check:
       jobs:
-        - skyline-tox-functional-py38
+        - skyline-tox-unittest-py38
         - skyline-tox-lint-py38
+        - skyline-functional-devstack
     gate:
       jobs:
-        - skyline-tox-functional-py38
+        - skyline-tox-unittest-py38
         - skyline-tox-lint-py38
+        - skyline-functional-devstack

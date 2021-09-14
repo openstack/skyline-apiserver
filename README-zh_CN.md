@@ -138,7 +138,7 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
 
 ### 访问测试
 
-现在你可以访问仪表盘: `https://<ip_address>:8080`
+现在你可以访问仪表盘: `https://<ip_address>:9999`
 
 ## 开发 Skyline-apiserver
 
