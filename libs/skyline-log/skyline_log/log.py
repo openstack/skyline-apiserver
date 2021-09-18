@@ -16,8 +16,9 @@ from __future__ import annotations
 
 import inspect
 import logging
-from logging import LogRecord
-from typing import Any, Optional
+from logging import Handler, LogRecord
+from pathlib import PurePath
+from typing import Optional, Union
 
 import loguru
 from loguru import logger
@@ -43,7 +44,7 @@ class InterceptHandler(logging.Handler):
 
 
 def setup(
-    sink: Any,
+    sink: Union[PurePath, str, Handler],
     debug: bool = False,
     colorize: bool = False,
     level: Optional[str] = None,
@@ -73,7 +74,7 @@ def setup(
         backtrace=backtrace,
         diagnose=diagnose,
         serialize=False,
-        enqueue=True,
+        enqueue=False,
         catch=True,
     )
     logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)

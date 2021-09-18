@@ -16,7 +16,20 @@ add-trailing-comma = "*"
 flake8 = "*"
 mypy = "*"
 pytest = "*"
-pytest-xdist = {extras = ["psutil"], version = "*"}
+pytest-xdist = "*"
+mimesis = "*"
+pytest-cov = "*"
+pytest-html = "*"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-v -s -p no:cacheprovider -n auto --cov=skyline_log --cov-append --cov-report=term-missing --cov-report=html"
+testpaths = [
+    "tests",
+]
+markers = [
+    "ddt(*args: TestData): Mark the test as a data-driven test."
+]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
