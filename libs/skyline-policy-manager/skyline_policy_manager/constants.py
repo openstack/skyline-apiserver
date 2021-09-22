@@ -12,8 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from skyline_policy_manager import __version__
+POLICY_NS = "oslo.policy.policies"
 
-
-def test_version():
-    assert __version__ == "0.1.0"
+SUPPORTED_SERVICE_EPS = {
+    # openstack_service: [<entry_point_name>, <entry_point_name>,]
+    "cinder": ["cinder"],
+    "glance": ["glance"],
+    "heat": ["heat"],
+    "ironic": ["ironic.api", "ironic_inspector.api"],
+    "keystone": ["keystone"],
+    "neutron": ["neutron", "neutron-vpnaas"],
+    "nova": ["nova"],
+    "octavia": ["octavia"],
+    "panko": ["panko"],
+    "placement": ["placement"],
+}

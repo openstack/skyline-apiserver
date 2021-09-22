@@ -257,7 +257,7 @@ list_rules = (
         description="Remove a network from a DHCP agent",
         scope_types=["system"],
         operations=[
-            {"method": "DELETE", "path": "/agents/{agent_id}/dhcp-networks/{network_id}"}
+            {"method": "DELETE", "path": "/agents/{agent_id}/dhcp-networks/{network_id}"},
         ],
     ),
     base.APIRule(
@@ -421,7 +421,7 @@ list_rules = (
         description="Disassociate a flavor with a service profile",
         scope_types=["system"],
         operations=[
-            {"method": "DELETE", "path": "/flavors/{flavor_id}/service_profiles/{profile_id}"}
+            {"method": "DELETE", "path": "/flavors/{flavor_id}/service_profiles/{profile_id}"},
         ],
     ),
     base.APIRule(
@@ -541,7 +541,7 @@ list_rules = (
             {
                 "method": "PUT",
                 "path": "/floatingips/{floatingip_id}/port_forwardings/{port_forwarding_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -558,7 +558,7 @@ list_rules = (
             {
                 "method": "DELETE",
                 "path": "/floatingips/{floatingip_id}/port_forwardings/{port_forwarding_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -605,7 +605,7 @@ list_rules = (
             {
                 "method": "PUT",
                 "path": "/routers/{router_id}/conntrack_helpers/{conntrack_helper_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -622,7 +622,7 @@ list_rules = (
             {
                 "method": "DELETE",
                 "path": "/routers/{router_id}/conntrack_helpers/{conntrack_helper_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1477,7 +1477,7 @@ list_rules = (
         description="Create a QoS bandwidth limit rule",
         scope_types=["system"],
         operations=[
-            {"method": "POST", "path": "/qos/policies/{policy_id}/bandwidth_limit_rules"}
+            {"method": "POST", "path": "/qos/policies/{policy_id}/bandwidth_limit_rules"},
         ],
     ),
     base.APIRule(
@@ -1487,7 +1487,10 @@ list_rules = (
         description="Update a QoS bandwidth limit rule",
         scope_types=["system"],
         operations=[
-            {"method": "PUT", "path": "/qos/policies/{policy_id}/bandwidth_limit_rules/{rule_id}"}
+            {
+                "method": "PUT",
+                "path": "/qos/policies/{policy_id}/bandwidth_limit_rules/{rule_id}",
+            },
         ],
     ),
     base.APIRule(
@@ -1500,7 +1503,7 @@ list_rules = (
             {
                 "method": "DELETE",
                 "path": "/qos/policies/{policy_id}/bandwidth_limit_rules/{rule_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1533,7 +1536,7 @@ list_rules = (
         description="Update a QoS DSCP marking rule",
         scope_types=["system"],
         operations=[
-            {"method": "PUT", "path": "/qos/policies/{policy_id}/dscp_marking_rules/{rule_id}"}
+            {"method": "PUT", "path": "/qos/policies/{policy_id}/dscp_marking_rules/{rule_id}"},
         ],
     ),
     base.APIRule(
@@ -1543,7 +1546,10 @@ list_rules = (
         description="Delete a QoS DSCP marking rule",
         scope_types=["system"],
         operations=[
-            {"method": "DELETE", "path": "/qos/policies/{policy_id}/dscp_marking_rules/{rule_id}"}
+            {
+                "method": "DELETE",
+                "path": "/qos/policies/{policy_id}/dscp_marking_rules/{rule_id}",
+            },
         ],
     ),
     base.APIRule(
@@ -1571,7 +1577,7 @@ list_rules = (
         description="Create a QoS minimum bandwidth rule",
         scope_types=["system"],
         operations=[
-            {"method": "POST", "path": "/qos/policies/{policy_id}/minimum_bandwidth_rules"}
+            {"method": "POST", "path": "/qos/policies/{policy_id}/minimum_bandwidth_rules"},
         ],
     ),
     base.APIRule(
@@ -1584,7 +1590,7 @@ list_rules = (
             {
                 "method": "PUT",
                 "path": "/qos/policies/{policy_id}/minimum_bandwidth_rules/{rule_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1597,7 +1603,7 @@ list_rules = (
             {
                 "method": "DELETE",
                 "path": "/qos/policies/{policy_id}/minimum_bandwidth_rules/{rule_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1677,7 +1683,7 @@ list_rules = (
         description="Delete a QoS minimum bandwidth rule through alias",
         scope_types=["project"],
         operations=[
-            {"method": "DELETE", "path": "/qos/alias_minimum_bandwidth_rules/{rule_id}/"}
+            {"method": "DELETE", "path": "/qos/alias_minimum_bandwidth_rules/{rule_id}/"},
         ],
     ),
     base.APIRule(

@@ -25,7 +25,9 @@ list_rules = (
     ),
     base.Rule(
         name="is_member",
-        check_str=("(project_domain_id:default or project_domain_id:None) and (project_name:demo or project_name:baremetal)"),
+        check_str=(
+            "(project_domain_id:default or project_domain_id:None) and (project_name:demo or project_name:baremetal)"
+        ),
         description="May be used to restrict access to specific projects",
     ),
     base.Rule(
@@ -67,7 +69,10 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve multiple Node records, filtered by an explicit owner or the client project_id",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "/nodes"}, {"method": "GET", "path": "/nodes/detail"}],
+        operations=[
+            {"method": "GET", "path": "/nodes"},
+            {"method": "GET", "path": "/nodes/detail"},
+        ],
     ),
     base.APIRule(
         name="baremetal:node:list_all",
@@ -75,11 +80,16 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve multiple Node records",
         scope_types=["system"],
-        operations=[{"method": "GET", "path": "/nodes"}, {"method": "GET", "path": "/nodes/detail"}],
+        operations=[
+            {"method": "GET", "path": "/nodes"},
+            {"method": "GET", "path": "/nodes/detail"},
+        ],
     ),
     base.APIRule(
         name="baremetal:node:get",
-        check_str=("(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"),
+        check_str=(
+            "(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"
+        ),
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve a single Node record",
         scope_types=["system", "project"],
@@ -95,7 +105,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:get:last_error",
-        check_str=("(role:reader and system_scope:all) or (role:reader and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin or role:reader"),
         description="Governs if the node last_error field is masked from APIclients with insufficent privileges.",
         scope_types=["system", "project"],
@@ -103,7 +115,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:get:reservation",
-        check_str=("(role:reader and system_scope:all) or (role:reader and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin or role:reader"),
         description="Governs if the node reservation field is masked from APIclients with insufficent privileges.",
         scope_types=["system", "project"],
@@ -111,7 +125,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:get:driver_internal_info",
-        check_str=("(role:reader and system_scope:all) or (role:reader and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin or role:reader"),
         description="Governs if the node driver_internal_info field is masked from API clients with insufficent privileges.",
         scope_types=["system", "project"],
@@ -119,7 +135,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:get:driver_info",
-        check_str=("(role:reader and system_scope:all) or (role:reader and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin or role:reader"),
         description="Governs if the driver_info field is masked from APIclients with insufficent privileges.",
         scope_types=["system", "project"],
@@ -127,7 +145,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:update:driver_info",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Governs if node driver_info field can be updated via the API clients.",
         scope_types=["system", "project"],
@@ -135,7 +155,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:update:properties",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Governs if node properties field can be updated via the API clients.",
         scope_types=["system", "project"],
@@ -151,7 +173,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:update:instance_uuid",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Governs if node instance_uuid field can be updated via the API clients.",
         scope_types=["system", "project"],
@@ -159,7 +183,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:update:lessee",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Governs if node lessee field can be updated via the API clients.",
         scope_types=["system", "project"],
@@ -175,7 +201,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:update:driver_interfaces",
-        check_str=("(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Governs if node driver and driver interfaces field can be updated via the API clients.",
         scope_types=["system", "project"],
@@ -183,7 +211,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:update:network_data",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Governs if node driver_info field can be updated via the API clients.",
         scope_types=["system", "project"],
@@ -199,7 +229,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:update:name",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Governs if node name field can be updated via the API clients.",
         scope_types=["system", "project"],
@@ -207,7 +239,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:update:retired",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Governs if node retired and retired reason can be updated by API clients.",
         scope_types=["system", "project"],
@@ -215,7 +249,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:update",
-        check_str=("(role:member and system_scope:all) or (role:member and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"
+        ),
         basic_check_str=("role:admin"),
         description="Generalized update of node records",
         scope_types=["system", "project"],
@@ -223,7 +259,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:update_extra",
-        check_str=("(role:member and system_scope:all) or (role:member and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"
+        ),
         basic_check_str=("role:admin"),
         description="Update Node extra field",
         scope_types=["system", "project"],
@@ -231,7 +269,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:update_instance_info",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Update Node instance_info field",
         scope_types=["system", "project"],
@@ -255,7 +295,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:validate",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Request active validation of Nodes",
         scope_types=["system", "project"],
@@ -263,7 +305,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:set_maintenance",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Set maintenance flag, taking a Node out of service",
         scope_types=["system", "project"],
@@ -271,7 +315,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:clear_maintenance",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Clear maintenance flag, placing the Node into service again",
         scope_types=["system", "project"],
@@ -279,15 +325,22 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:get_boot_device",
-        check_str=("(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve Node boot device metadata",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "/nodes/{node_ident}/management/boot_device"}, {"method": "GET", "path": "/nodes/{node_ident}/management/boot_device/supported"}],
+        operations=[
+            {"method": "GET", "path": "/nodes/{node_ident}/management/boot_device"},
+            {"method": "GET", "path": "/nodes/{node_ident}/management/boot_device/supported"},
+        ],
     ),
     base.APIRule(
         name="baremetal:node:set_boot_device",
-        check_str=("(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Change Node boot device",
         scope_types=["system", "project"],
@@ -295,23 +348,40 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:get_indicator_state",
-        check_str=("(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"),
+        check_str=(
+            "(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"
+        ),
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve Node indicators and their states",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "/nodes/{node_ident}/management/indicators/{component}/{indicator}"}, {"method": "GET", "path": "/nodes/{node_ident}/management/indicators"}],
+        operations=[
+            {
+                "method": "GET",
+                "path": "/nodes/{node_ident}/management/indicators/{component}/{indicator}",
+            },
+            {"method": "GET", "path": "/nodes/{node_ident}/management/indicators"},
+        ],
     ),
     base.APIRule(
         name="baremetal:node:set_indicator_state",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Change Node indicator state",
         scope_types=["system", "project"],
-        operations=[{"method": "PUT", "path": "/nodes/{node_ident}/management/indicators/{component}/{indicator}"}],
+        operations=[
+            {
+                "method": "PUT",
+                "path": "/nodes/{node_ident}/management/indicators/{component}/{indicator}",
+            },
+        ],
     ),
     base.APIRule(
         name="baremetal:node:inject_nmi",
-        check_str=("(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Inject NMI for a node",
         scope_types=["system", "project"],
@@ -319,7 +389,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:get_states",
-        check_str=("(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"),
+        check_str=(
+            "(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"
+        ),
         basic_check_str=("role:admin or role:reader"),
         description="View Node power and provision state",
         scope_types=["system", "project"],
@@ -327,7 +399,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:set_power_state",
-        check_str=("(role:member and system_scope:all) or (role:member and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"
+        ),
         basic_check_str=("role:admin"),
         description="Change Node power status",
         scope_types=["system", "project"],
@@ -335,7 +409,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:set_provision_state",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Change Node provision status",
         scope_types=["system", "project"],
@@ -343,7 +419,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:set_raid_state",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Change Node RAID status",
         scope_types=["system", "project"],
@@ -351,7 +429,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:get_console",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Get Node console connection information",
         scope_types=["system", "project"],
@@ -359,7 +439,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:set_console_state",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Change Node console status",
         scope_types=["system", "project"],
@@ -367,7 +449,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:vif:list",
-        check_str=("(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"),
+        check_str=(
+            "(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"
+        ),
         basic_check_str=("role:admin"),
         description="List VIFs attached to node",
         scope_types=["system", "project"],
@@ -375,7 +459,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:vif:attach",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Attach a VIF to a node",
         scope_types=["system", "project"],
@@ -383,7 +469,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:vif:detach",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Detach a VIF from a node",
         scope_types=["system", "project"],
@@ -391,7 +479,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:traits:list",
-        check_str=("(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"),
+        check_str=(
+            "(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"
+        ),
         basic_check_str=("role:admin or role:reader"),
         description="List node traits",
         scope_types=["system", "project"],
@@ -399,27 +489,42 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:node:traits:set",
-        check_str=("(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Add a trait to, or replace all traits of, a node",
         scope_types=["system", "project"],
-        operations=[{"method": "PUT", "path": "/nodes/{node_ident}/traits"}, {"method": "PUT", "path": "/nodes/{node_ident}/traits/{trait}"}],
+        operations=[
+            {"method": "PUT", "path": "/nodes/{node_ident}/traits"},
+            {"method": "PUT", "path": "/nodes/{node_ident}/traits/{trait}"},
+        ],
     ),
     base.APIRule(
         name="baremetal:node:traits:delete",
-        check_str=("(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Remove one or all traits from a node",
         scope_types=["system", "project"],
-        operations=[{"method": "DELETE", "path": "/nodes/{node_ident}/traits"}, {"method": "DELETE", "path": "/nodes/{node_ident}/traits/{trait}"}],
+        operations=[
+            {"method": "DELETE", "path": "/nodes/{node_ident}/traits"},
+            {"method": "DELETE", "path": "/nodes/{node_ident}/traits/{trait}"},
+        ],
     ),
     base.APIRule(
         name="baremetal:node:bios:get",
-        check_str=("(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"),
+        check_str=(
+            "(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"
+        ),
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve Node BIOS information",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "/nodes/{node_ident}/bios"}, {"method": "GET", "path": "/nodes/{node_ident}/bios/{setting}"}],
+        operations=[
+            {"method": "GET", "path": "/nodes/{node_ident}/bios"},
+            {"method": "GET", "path": "/nodes/{node_ident}/bios/{setting}"},
+        ],
     ),
     base.APIRule(
         name="baremetal:node:disable_cleaning",
@@ -431,11 +536,19 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:port:get",
-        check_str=("(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"),
+        check_str=(
+            "(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"
+        ),
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve Port records",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "/ports/{port_id}"}, {"method": "GET", "path": "/nodes/{node_ident}/ports"}, {"method": "GET", "path": "/nodes/{node_ident}/ports/detail"}, {"method": "GET", "path": "/portgroups/{portgroup_ident}/ports"}, {"method": "GET", "path": "/portgroups/{portgroup_ident}/ports/detail"}],
+        operations=[
+            {"method": "GET", "path": "/ports/{port_id}"},
+            {"method": "GET", "path": "/nodes/{node_ident}/ports"},
+            {"method": "GET", "path": "/nodes/{node_ident}/ports/detail"},
+            {"method": "GET", "path": "/portgroups/{portgroup_ident}/ports"},
+            {"method": "GET", "path": "/portgroups/{portgroup_ident}/ports/detail"},
+        ],
     ),
     base.APIRule(
         name="baremetal:port:list",
@@ -443,7 +556,10 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve multiple Port records, filtered by owner",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "/ports"}, {"method": "GET", "path": "/ports/detail"}],
+        operations=[
+            {"method": "GET", "path": "/ports"},
+            {"method": "GET", "path": "/ports/detail"},
+        ],
     ),
     base.APIRule(
         name="baremetal:port:list_all",
@@ -451,11 +567,16 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve multiple Port records",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "/ports"}, {"method": "GET", "path": "/ports/detail"}],
+        operations=[
+            {"method": "GET", "path": "/ports"},
+            {"method": "GET", "path": "/ports/detail"},
+        ],
     ),
     base.APIRule(
         name="baremetal:port:create",
-        check_str=("(role:admin and system_scope:all) or (role:admin and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:admin and system_scope:all) or (role:admin and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Create Port records",
         scope_types=["system", "project"],
@@ -463,7 +584,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:port:delete",
-        check_str=("(role:admin and system_scope:all) or (role:admin and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:admin and system_scope:all) or (role:admin and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Delete Port records",
         scope_types=["system", "project"],
@@ -471,7 +594,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:port:update",
-        check_str=("(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Update Port records",
         scope_types=["system", "project"],
@@ -479,15 +604,25 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:portgroup:get",
-        check_str=("(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"),
+        check_str=(
+            "(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"
+        ),
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve Portgroup records",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "/portgroups"}, {"method": "GET", "path": "/portgroups/detail"}, {"method": "GET", "path": "/portgroups/{portgroup_ident}"}, {"method": "GET", "path": "/nodes/{node_ident}/portgroups"}, {"method": "GET", "path": "/nodes/{node_ident}/portgroups/detail"}],
+        operations=[
+            {"method": "GET", "path": "/portgroups"},
+            {"method": "GET", "path": "/portgroups/detail"},
+            {"method": "GET", "path": "/portgroups/{portgroup_ident}"},
+            {"method": "GET", "path": "/nodes/{node_ident}/portgroups"},
+            {"method": "GET", "path": "/nodes/{node_ident}/portgroups/detail"},
+        ],
     ),
     base.APIRule(
         name="baremetal:portgroup:create",
-        check_str=("(role:admin and system_scope:all) or (role:admin and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:admin and system_scope:all) or (role:admin and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Create Portgroup records",
         scope_types=["system", "project"],
@@ -495,7 +630,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:portgroup:delete",
-        check_str=("(role:admin and system_scope:all) or (role:admin and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:admin and system_scope:all) or (role:admin and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Delete Portgroup records",
         scope_types=["system", "project"],
@@ -503,7 +640,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:portgroup:update",
-        check_str=("(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Update Portgroup records",
         scope_types=["system", "project"],
@@ -515,7 +654,10 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve multiple Port records, filtered by owner",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "/portgroups"}, {"method": "GET", "path": "/portgroups/detail"}],
+        operations=[
+            {"method": "GET", "path": "/portgroups"},
+            {"method": "GET", "path": "/portgroups/detail"},
+        ],
     ),
     base.APIRule(
         name="baremetal:portgroup:list_all",
@@ -523,7 +665,10 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve multiple Port records",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "/portgroups"}, {"method": "GET", "path": "/portgroups/detail"}],
+        operations=[
+            {"method": "GET", "path": "/portgroups"},
+            {"method": "GET", "path": "/portgroups/detail"},
+        ],
     ),
     base.APIRule(
         name="baremetal:chassis:get",
@@ -531,7 +676,11 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve Chassis records",
         scope_types=["system"],
-        operations=[{"method": "GET", "path": "/chassis"}, {"method": "GET", "path": "/chassis/detail"}, {"method": "GET", "path": "/chassis/{chassis_id}"}],
+        operations=[
+            {"method": "GET", "path": "/chassis"},
+            {"method": "GET", "path": "/chassis/detail"},
+            {"method": "GET", "path": "/chassis/{chassis_id}"},
+        ],
     ),
     base.APIRule(
         name="baremetal:chassis:create",
@@ -563,7 +712,10 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="View list of available drivers",
         scope_types=["system"],
-        operations=[{"method": "GET", "path": "/drivers"}, {"method": "GET", "path": "/drivers/{driver_name}"}],
+        operations=[
+            {"method": "GET", "path": "/drivers"},
+            {"method": "GET", "path": "/drivers/{driver_name}"},
+        ],
     ),
     base.APIRule(
         name="baremetal:driver:get_properties",
@@ -579,7 +731,9 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="View driver-specific RAID metadata",
         scope_types=["system"],
-        operations=[{"method": "GET", "path": "/drivers/{driver_name}/raid/logical_disk_properties"}],
+        operations=[
+            {"method": "GET", "path": "/drivers/{driver_name}/raid/logical_disk_properties"},
+        ],
     ),
     base.APIRule(
         name="baremetal:node:vendor_passthru",
@@ -587,7 +741,20 @@ list_rules = (
         basic_check_str=("role:admin"),
         description="Access vendor-specific Node functions",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "nodes/{node_ident}/vendor_passthru/methods"}, {"method": "GET", "path": "nodes/{node_ident}/vendor_passthru?method={method_name}"}, {"method": "PUT", "path": "nodes/{node_ident}/vendor_passthru?method={method_name}"}, {"method": "POST", "path": "nodes/{node_ident}/vendor_passthru?method={method_name}"}, {"method": "PATCH", "path": "nodes/{node_ident}/vendor_passthru?method={method_name}"}, {"method": "DELETE", "path": "nodes/{node_ident}/vendor_passthru?method={method_name}"}],
+        operations=[
+            {"method": "GET", "path": "nodes/{node_ident}/vendor_passthru/methods"},
+            {"method": "GET", "path": "nodes/{node_ident}/vendor_passthru?method={method_name}"},
+            {"method": "PUT", "path": "nodes/{node_ident}/vendor_passthru?method={method_name}"},
+            {"method": "POST", "path": "nodes/{node_ident}/vendor_passthru?method={method_name}"},
+            {
+                "method": "PATCH",
+                "path": "nodes/{node_ident}/vendor_passthru?method={method_name}",
+            },
+            {
+                "method": "DELETE",
+                "path": "nodes/{node_ident}/vendor_passthru?method={method_name}",
+            },
+        ],
     ),
     base.APIRule(
         name="baremetal:driver:vendor_passthru",
@@ -595,7 +762,29 @@ list_rules = (
         basic_check_str=("role:admin"),
         description="Access vendor-specific Driver functions",
         scope_types=["system"],
-        operations=[{"method": "GET", "path": "drivers/{driver_name}/vendor_passthru/methods"}, {"method": "GET", "path": "drivers/{driver_name}/vendor_passthru?method={method_name}"}, {"method": "PUT", "path": "drivers/{driver_name}/vendor_passthru?method={method_name}"}, {"method": "POST", "path": "drivers/{driver_name}/vendor_passthru?method={method_name}"}, {"method": "PATCH", "path": "drivers/{driver_name}/vendor_passthru?method={method_name}"}, {"method": "DELETE", "path": "drivers/{driver_name}/vendor_passthru?method={method_name}"}],
+        operations=[
+            {"method": "GET", "path": "drivers/{driver_name}/vendor_passthru/methods"},
+            {
+                "method": "GET",
+                "path": "drivers/{driver_name}/vendor_passthru?method={method_name}",
+            },
+            {
+                "method": "PUT",
+                "path": "drivers/{driver_name}/vendor_passthru?method={method_name}",
+            },
+            {
+                "method": "POST",
+                "path": "drivers/{driver_name}/vendor_passthru?method={method_name}",
+            },
+            {
+                "method": "PATCH",
+                "path": "drivers/{driver_name}/vendor_passthru?method={method_name}",
+            },
+            {
+                "method": "DELETE",
+                "path": "drivers/{driver_name}/vendor_passthru?method={method_name}",
+            },
+        ],
     ),
     base.APIRule(
         name="baremetal:node:ipa_heartbeat",
@@ -619,7 +808,12 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve a list of all Volume connector and target records",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "/volume/connectors"}, {"method": "GET", "path": "/volume/targets"}, {"method": "GET", "path": "/nodes/{node_ident}/volume/connectors"}, {"method": "GET", "path": "/nodes/{node_ident}/volume/targets"}],
+        operations=[
+            {"method": "GET", "path": "/volume/connectors"},
+            {"method": "GET", "path": "/volume/targets"},
+            {"method": "GET", "path": "/nodes/{node_ident}/volume/connectors"},
+            {"method": "GET", "path": "/nodes/{node_ident}/volume/targets"},
+        ],
     ),
     base.APIRule(
         name="baremetal:volume:list",
@@ -627,39 +821,70 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve a list of Volume connector and target records",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "/volume/connectors"}, {"method": "GET", "path": "/volume/targets"}, {"method": "GET", "path": "/nodes/{node_ident}/volume/connectors"}, {"method": "GET", "path": "/nodes/{node_ident}/volume/targets"}],
+        operations=[
+            {"method": "GET", "path": "/volume/connectors"},
+            {"method": "GET", "path": "/volume/targets"},
+            {"method": "GET", "path": "/nodes/{node_ident}/volume/connectors"},
+            {"method": "GET", "path": "/nodes/{node_ident}/volume/targets"},
+        ],
     ),
     base.APIRule(
         name="baremetal:volume:get",
-        check_str=("(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"),
+        check_str=(
+            "(role:reader and system_scope:all) or (role:reader and (project_id:%(node.owner)s or project_id:%(node.lessee)s))"
+        ),
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve Volume connector and target records",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "/volume"}, {"method": "GET", "path": "/volume/connectors"}, {"method": "GET", "path": "/volume/connectors/{volume_connector_id}"}, {"method": "GET", "path": "/volume/targets"}, {"method": "GET", "path": "/volume/targets/{volume_target_id}"}, {"method": "GET", "path": "/nodes/{node_ident}/volume"}, {"method": "GET", "path": "/nodes/{node_ident}/volume/connectors"}, {"method": "GET", "path": "/nodes/{node_ident}/volume/targets"}],
+        operations=[
+            {"method": "GET", "path": "/volume"},
+            {"method": "GET", "path": "/volume/connectors"},
+            {"method": "GET", "path": "/volume/connectors/{volume_connector_id}"},
+            {"method": "GET", "path": "/volume/targets"},
+            {"method": "GET", "path": "/volume/targets/{volume_target_id}"},
+            {"method": "GET", "path": "/nodes/{node_ident}/volume"},
+            {"method": "GET", "path": "/nodes/{node_ident}/volume/connectors"},
+            {"method": "GET", "path": "/nodes/{node_ident}/volume/targets"},
+        ],
     ),
     base.APIRule(
         name="baremetal:volume:create",
-        check_str=("(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Create Volume connector and target records",
         scope_types=["system", "project"],
-        operations=[{"method": "POST", "path": "/volume/connectors"}, {"method": "POST", "path": "/volume/targets"}],
+        operations=[
+            {"method": "POST", "path": "/volume/connectors"},
+            {"method": "POST", "path": "/volume/targets"},
+        ],
     ),
     base.APIRule(
         name="baremetal:volume:delete",
-        check_str=("(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:admin and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Delete Volume connector and target records",
         scope_types=["system", "project"],
-        operations=[{"method": "DELETE", "path": "/volume/connectors/{volume_connector_id}"}, {"method": "DELETE", "path": "/volume/targets/{volume_target_id}"}],
+        operations=[
+            {"method": "DELETE", "path": "/volume/connectors/{volume_connector_id}"},
+            {"method": "DELETE", "path": "/volume/targets/{volume_target_id}"},
+        ],
     ),
     base.APIRule(
         name="baremetal:volume:update",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(node.owner)s) or (role:admin and project_id:%(node.lessee)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Update Volume connector and target records",
         scope_types=["system", "project"],
-        operations=[{"method": "PATCH", "path": "/volume/connectors/{volume_connector_id}"}, {"method": "PATCH", "path": "/volume/targets/{volume_target_id}"}],
+        operations=[
+            {"method": "PATCH", "path": "/volume/connectors/{volume_connector_id}"},
+            {"method": "PATCH", "path": "/volume/targets/{volume_target_id}"},
+        ],
     ),
     base.APIRule(
         name="baremetal:volume:view_target_properties",
@@ -667,7 +892,10 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="Ability to view volume target properties",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "/volume/connectors/{volume_connector_id}"}, {"method": "GET", "path": "/volume/targets/{volume_target_id}"}],
+        operations=[
+            {"method": "GET", "path": "/volume/connectors/{volume_connector_id}"},
+            {"method": "GET", "path": "/volume/targets/{volume_target_id}"},
+        ],
     ),
     base.APIRule(
         name="baremetal:conductor:get",
@@ -675,15 +903,23 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve Conductor records",
         scope_types=["system"],
-        operations=[{"method": "GET", "path": "/conductors"}, {"method": "GET", "path": "/conductors/{hostname}"}],
+        operations=[
+            {"method": "GET", "path": "/conductors"},
+            {"method": "GET", "path": "/conductors/{hostname}"},
+        ],
     ),
     base.APIRule(
         name="baremetal:allocation:get",
-        check_str=("(role:reader and system_scope:all) or (role:reader and project_id:%(allocation.owner)s)"),
+        check_str=(
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(allocation.owner)s)"
+        ),
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve Allocation records",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "/allocations/{allocation_id}"}, {"method": "GET", "path": "/nodes/{node_ident}/allocation"}],
+        operations=[
+            {"method": "GET", "path": "/allocations/{allocation_id}"},
+            {"method": "GET", "path": "/nodes/{node_ident}/allocation"},
+        ],
     ),
     base.APIRule(
         name="baremetal:allocation:list",
@@ -719,15 +955,22 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:allocation:delete",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(allocation.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(allocation.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Delete Allocation records",
         scope_types=["system", "project"],
-        operations=[{"method": "DELETE", "path": "/allocations/{allocation_id}"}, {"method": "DELETE", "path": "/nodes/{node_ident}/allocation"}],
+        operations=[
+            {"method": "DELETE", "path": "/allocations/{allocation_id}"},
+            {"method": "DELETE", "path": "/nodes/{node_ident}/allocation"},
+        ],
     ),
     base.APIRule(
         name="baremetal:allocation:update",
-        check_str=("(role:member and system_scope:all) or (role:member and project_id:%(allocation.owner)s)"),
+        check_str=(
+            "(role:member and system_scope:all) or (role:member and project_id:%(allocation.owner)s)"
+        ),
         basic_check_str=("role:admin"),
         description="Change name and extra fields of an allocation",
         scope_types=["system", "project"],
@@ -735,7 +978,9 @@ list_rules = (
     ),
     base.APIRule(
         name="baremetal:allocation:create_pre_rbac",
-        check_str=("(rule:is_member and role:baremetal_admin) or (is_admin_project:True and role:admin)"),
+        check_str=(
+            "(rule:is_member and role:baremetal_admin) or (is_admin_project:True and role:admin)"
+        ),
         basic_check_str=("role:admin"),
         description="Logical restrictor to prevent legacy allocation rule missuse - Requires blank allocations to originate from the legacy baremetal_admin.",
         scope_types=["project"],
@@ -755,7 +1000,10 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="Retrieve Deploy Template records",
         scope_types=["system"],
-        operations=[{"method": "GET", "path": "/deploy_templates"}, {"method": "GET", "path": "/deploy_templates/{deploy_template_ident}"}],
+        operations=[
+            {"method": "GET", "path": "/deploy_templates"},
+            {"method": "GET", "path": "/deploy_templates/{deploy_template_ident}"},
+        ],
     ),
     base.APIRule(
         name="baremetal:deploy_template:create",

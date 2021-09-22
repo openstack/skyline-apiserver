@@ -72,7 +72,7 @@ list_rules = (
         description="Delete an access_rule.",
         scope_types=["system", "project"],
         operations=[
-            {"method": "DELETE", "path": "/v3/users/{user_id}/access_rules/{access_rule_id}"}
+            {"method": "DELETE", "path": "/v3/users/{user_id}/access_rules/{access_rule_id}"},
         ],
     ),
     base.APIRule(
@@ -93,7 +93,7 @@ list_rules = (
             {
                 "method": "GET",
                 "path": "/v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -106,7 +106,7 @@ list_rules = (
             {
                 "method": "GET",
                 "path": "/v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}/roles/{role_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -127,7 +127,7 @@ list_rules = (
             {
                 "method": "GET",
                 "path": "/v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}/roles",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -140,7 +140,7 @@ list_rules = (
             {
                 "method": "DELETE",
                 "path": "/v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -189,7 +189,7 @@ list_rules = (
             {
                 "method": "DELETE",
                 "path": "/v3/users/{user_id}/application_credentials/{application_credential_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -448,7 +448,7 @@ list_rules = (
         description="Show ec2 credential details.",
         scope_types=["system", "project"],
         operations=[
-            {"method": "GET", "path": "/v3/users/{user_id}/credentials/OS-EC2/{credential_id}"}
+            {"method": "GET", "path": "/v3/users/{user_id}/credentials/OS-EC2/{credential_id}"},
         ],
     ),
     base.APIRule(
@@ -474,7 +474,10 @@ list_rules = (
         description="Delete ec2 credential.",
         scope_types=["system", "project"],
         operations=[
-            {"method": "DELETE", "path": "/v3/users/{user_id}/credentials/OS-EC2/{credential_id}"}
+            {
+                "method": "DELETE",
+                "path": "/v3/users/{user_id}/credentials/OS-EC2/{credential_id}",
+            },
         ],
     ),
     base.APIRule(
@@ -551,7 +554,7 @@ list_rules = (
         description="Update endpoint group.",
         scope_types=["system"],
         operations=[
-            {"method": "PATCH", "path": "/v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}"}
+            {"method": "PATCH", "path": "/v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}"},
         ],
     ),
     base.APIRule(
@@ -561,7 +564,7 @@ list_rules = (
         description="Delete endpoint group.",
         scope_types=["system"],
         operations=[
-            {"method": "DELETE", "path": "/v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}"}
+            {"method": "DELETE", "path": "/v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}"},
         ],
     ),
     base.APIRule(
@@ -574,7 +577,7 @@ list_rules = (
             {
                 "method": "GET",
                 "path": "/v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}/projects",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -587,7 +590,7 @@ list_rules = (
             {
                 "method": "GET",
                 "path": "/v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}/endpoints",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -614,7 +617,7 @@ list_rules = (
         description="List endpoint groups associated with a specific project.",
         scope_types=["system"],
         operations=[
-            {"method": "GET", "path": "/v3/OS-EP-FILTER/projects/{project_id}/endpoint_groups"}
+            {"method": "GET", "path": "/v3/OS-EP-FILTER/projects/{project_id}/endpoint_groups"},
         ],
     ),
     base.APIRule(
@@ -627,7 +630,7 @@ list_rules = (
             {
                 "method": "PUT",
                 "path": "/v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}/projects/{project_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -640,7 +643,7 @@ list_rules = (
             {
                 "method": "DELETE",
                 "path": "/v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}/projects/{project_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1058,7 +1061,7 @@ list_rules = (
         description="Delete identity provider.",
         scope_types=["system"],
         operations=[
-            {"method": "DELETE", "path": "/v3/OS-FEDERATION/identity_providers/{idp_id}"}
+            {"method": "DELETE", "path": "/v3/OS-FEDERATION/identity_providers/{idp_id}"},
         ],
     ),
     base.APIRule(
@@ -1068,7 +1071,7 @@ list_rules = (
         description="Get information about an association between two roles. When a relationship exists between a prior role and an implied role and the prior role is assigned to a user, the user also assumes the implied role.",
         scope_types=["system"],
         operations=[
-            {"method": "GET", "path": "/v3/roles/{prior_role_id}/implies/{implied_role_id}"}
+            {"method": "GET", "path": "/v3/roles/{prior_role_id}/implies/{implied_role_id}"},
         ],
     ),
     base.APIRule(
@@ -1089,7 +1092,7 @@ list_rules = (
         description="Create an association between two roles. When a relationship exists between a prior role and an implied role and the prior role is assigned to a user, the user also assumes the implied role.",
         scope_types=["system"],
         operations=[
-            {"method": "PUT", "path": "/v3/roles/{prior_role_id}/implies/{implied_role_id}"}
+            {"method": "PUT", "path": "/v3/roles/{prior_role_id}/implies/{implied_role_id}"},
         ],
     ),
     base.APIRule(
@@ -1099,7 +1102,7 @@ list_rules = (
         description="Delete the association between two roles. When a relationship exists between a prior role and an implied role and the prior role is assigned to a user, the user also assumes the implied role. Removing the association will cause that effect to be eliminated.",
         scope_types=["system"],
         operations=[
-            {"method": "DELETE", "path": "/v3/roles/{prior_role_id}/implies/{implied_role_id}"}
+            {"method": "DELETE", "path": "/v3/roles/{prior_role_id}/implies/{implied_role_id}"},
         ],
     ),
     base.APIRule(
@@ -1120,7 +1123,7 @@ list_rules = (
         description="Check an association between two roles. When a relationship exists between a prior role and an implied role and the prior role is assigned to a user, the user also assumes the implied role.",
         scope_types=["system"],
         operations=[
-            {"method": "HEAD", "path": "/v3/roles/{prior_role_id}/implies/{implied_role_id}"}
+            {"method": "HEAD", "path": "/v3/roles/{prior_role_id}/implies/{implied_role_id}"},
         ],
     ),
     base.APIRule(
@@ -1278,7 +1281,7 @@ list_rules = (
             {
                 "method": "PUT",
                 "path": "/v3/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints/{endpoint_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1308,7 +1311,7 @@ list_rules = (
             {
                 "method": "DELETE",
                 "path": "/v3/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints/{endpoint_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1321,7 +1324,7 @@ list_rules = (
             {
                 "method": "PUT",
                 "path": "/v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1351,7 +1354,7 @@ list_rules = (
             {
                 "method": "DELETE",
                 "path": "/v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1364,7 +1367,7 @@ list_rules = (
             {
                 "method": "PUT",
                 "path": "/v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1394,7 +1397,7 @@ list_rules = (
             {
                 "method": "DELETE",
                 "path": "/v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1415,7 +1418,7 @@ list_rules = (
         description="List endpoints for policy.",
         scope_types=["system"],
         operations=[
-            {"method": "GET", "path": "/v3/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints"}
+            {"method": "GET", "path": "/v3/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints"},
         ],
     ),
     base.APIRule(
@@ -1551,7 +1554,7 @@ list_rules = (
         description="List projects allowed to access an endpoint.",
         scope_types=["system"],
         operations=[
-            {"method": "GET", "path": "/v3/OS-EP-FILTER/endpoints/{endpoint_id}/projects"}
+            {"method": "GET", "path": "/v3/OS-EP-FILTER/endpoints/{endpoint_id}/projects"},
         ],
     ),
     base.APIRule(
@@ -1564,7 +1567,7 @@ list_rules = (
             {
                 "method": "PUT",
                 "path": "/v3/OS-EP-FILTER/projects/{project_id}/endpoints/{endpoint_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1591,7 +1594,7 @@ list_rules = (
         description="List the endpoints a project is allowed to access.",
         scope_types=["system"],
         operations=[
-            {"method": "GET", "path": "/v3/OS-EP-FILTER/projects/{project_id}/endpoints"}
+            {"method": "GET", "path": "/v3/OS-EP-FILTER/projects/{project_id}/endpoints"},
         ],
     ),
     base.APIRule(
@@ -1604,7 +1607,7 @@ list_rules = (
             {
                 "method": "DELETE",
                 "path": "/v3/OS-EP-FILTER/projects/{project_id}/endpoints/{endpoint_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1617,7 +1620,7 @@ list_rules = (
             {
                 "method": "PUT",
                 "path": "/v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1630,7 +1633,7 @@ list_rules = (
             {
                 "method": "PATCH",
                 "path": "/v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1643,7 +1646,7 @@ list_rules = (
             {
                 "method": "GET",
                 "path": "/v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1653,7 +1656,7 @@ list_rules = (
         description="List federated protocols.",
         scope_types=["system"],
         operations=[
-            {"method": "GET", "path": "/v3/OS-FEDERATION/identity_providers/{idp_id}/protocols"}
+            {"method": "GET", "path": "/v3/OS-FEDERATION/identity_providers/{idp_id}/protocols"},
         ],
     ),
     base.APIRule(
@@ -1666,7 +1669,7 @@ list_rules = (
             {
                 "method": "DELETE",
                 "path": "/v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1939,7 +1942,10 @@ list_rules = (
         description="Create federated service provider.",
         scope_types=["system"],
         operations=[
-            {"method": "PUT", "path": "/v3/OS-FEDERATION/service_providers/{service_provider_id}"}
+            {
+                "method": "PUT",
+                "path": "/v3/OS-FEDERATION/service_providers/{service_provider_id}",
+            },
         ],
     ),
     base.APIRule(
@@ -1980,7 +1986,7 @@ list_rules = (
             {
                 "method": "PATCH",
                 "path": "/v3/OS-FEDERATION/service_providers/{service_provider_id}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1993,7 +1999,7 @@ list_rules = (
             {
                 "method": "DELETE",
                 "path": "/v3/OS-FEDERATION/service_providers/{service_provider_id}",
-            }
+            },
         ],
     ),
     base.APIRule(

@@ -18,7 +18,6 @@ from typing import List
 
 from oslo_policy import _parser  # type: ignore
 from oslo_policy.policy import DocumentedRuleDefault, RuleDefault  # type: ignore
-
 from skyline_policy_manager.schema import Operation, OperationsSchema, ScopeTypesSchema
 
 

@@ -66,7 +66,7 @@ list_rules = (
         description="Mark a volume attachment process as completed (in-use)",
         scope_types=["project"],
         operations=[
-            {"method": "POST", "path": "/attachments/{attachment_id}/action (os-complete)"}
+            {"method": "POST", "path": "/attachments/{attachment_id}/action (os-complete)"},
         ],
     ),
     base.APIRule(
@@ -251,7 +251,7 @@ list_rules = (
         description="Reset status of a snapshot.",
         scope_types=["project"],
         operations=[
-            {"method": "POST", "path": "/snapshots/{snapshot_id}/action (os-reset_status)"}
+            {"method": "POST", "path": "/snapshots/{snapshot_id}/action (os-reset_status)"},
         ],
     ),
     base.APIRule(
@@ -261,7 +261,10 @@ list_rules = (
         description="Update database fields of snapshot.",
         scope_types=["project"],
         operations=[
-            {"method": "POST", "path": "/snapshots/{snapshot_id}/action (update_snapshot_status)"}
+            {
+                "method": "POST",
+                "path": "/snapshots/{snapshot_id}/action (update_snapshot_status)",
+            },
         ],
     ),
     base.APIRule(
@@ -271,7 +274,7 @@ list_rules = (
         description="Force delete a snapshot.",
         scope_types=["project"],
         operations=[
-            {"method": "POST", "path": "/snapshots/{snapshot_id}/action (os-force_delete)"}
+            {"method": "POST", "path": "/snapshots/{snapshot_id}/action (os-force_delete)"},
         ],
     ),
     base.APIRule(
@@ -566,7 +569,7 @@ list_rules = (
         description="Reset status of group snapshot.",
         scope_types=["project"],
         operations=[
-            {"method": "POST", "path": "/group_snapshots/{g_snapshot_id}/action (reset_status)"}
+            {"method": "POST", "path": "/group_snapshots/{g_snapshot_id}/action (reset_status)"},
         ],
     ),
     base.APIRule(
@@ -606,7 +609,7 @@ list_rules = (
         description="Disable replication.",
         scope_types=["project"],
         operations=[
-            {"method": "POST", "path": "/groups/{group_id}/action (disable_replication)"}
+            {"method": "POST", "path": "/groups/{group_id}/action (disable_replication)"},
         ],
     ),
     base.APIRule(
@@ -618,7 +621,7 @@ list_rules = (
         description="Fail over replication.",
         scope_types=["project"],
         operations=[
-            {"method": "POST", "path": "/groups/{group_id}/action (failover_replication)"}
+            {"method": "POST", "path": "/groups/{group_id}/action (failover_replication)"},
         ],
     ),
     base.APIRule(
@@ -630,7 +633,7 @@ list_rules = (
         description="List failover replication.",
         scope_types=["project"],
         operations=[
-            {"method": "POST", "path": "/groups/{group_id}/action (list_replication_targets)"}
+            {"method": "POST", "path": "/groups/{group_id}/action (list_replication_targets)"},
         ],
     ),
     base.APIRule(
@@ -1023,7 +1026,7 @@ list_rules = (
         description="Update a volume's readonly flag.",
         scope_types=["project"],
         operations=[
-            {"method": "POST", "path": "/volumes/{volume_id}/action (os-update_readonly_flag)"}
+            {"method": "POST", "path": "/volumes/{volume_id}/action (os-update_readonly_flag)"},
         ],
     ),
     base.APIRule(
@@ -1041,7 +1044,7 @@ list_rules = (
         description="Upload a volume to image with public visibility.",
         scope_types=["project"],
         operations=[
-            {"method": "POST", "path": "/volumes/{volume_id}/action (os-volume_upload_image)"}
+            {"method": "POST", "path": "/volumes/{volume_id}/action (os-volume_upload_image)"},
         ],
     ),
     base.APIRule(
@@ -1053,7 +1056,7 @@ list_rules = (
         description="Upload a volume to image.",
         scope_types=["project"],
         operations=[
-            {"method": "POST", "path": "/volumes/{volume_id}/action (os-volume_upload_image)"}
+            {"method": "POST", "path": "/volumes/{volume_id}/action (os-volume_upload_image)"},
         ],
     ),
     base.APIRule(
@@ -1071,7 +1074,7 @@ list_rules = (
         description="migrate a volume to a specified host.",
         scope_types=["project"],
         operations=[
-            {"method": "POST", "path": "/volumes/{volume_id}/action (os-migrate_volume)"}
+            {"method": "POST", "path": "/volumes/{volume_id}/action (os-migrate_volume)"},
         ],
     ),
     base.APIRule(
@@ -1084,7 +1087,7 @@ list_rules = (
             {
                 "method": "POST",
                 "path": "/volumes/{volume_id}/action (os-migrate_volume_completion)",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1096,7 +1099,7 @@ list_rules = (
         description="Initialize volume attachment.",
         scope_types=["project"],
         operations=[
-            {"method": "POST", "path": "/volumes/{volume_id}/action (os-initialize_connection)"}
+            {"method": "POST", "path": "/volumes/{volume_id}/action (os-initialize_connection)"},
         ],
     ),
     base.APIRule(
@@ -1108,7 +1111,7 @@ list_rules = (
         description="Terminate volume attachment.",
         scope_types=["project"],
         operations=[
-            {"method": "POST", "path": "/volumes/{volume_id}/action (os-terminate_connection)"}
+            {"method": "POST", "path": "/volumes/{volume_id}/action (os-terminate_connection)"},
         ],
     ),
     base.APIRule(
@@ -1120,7 +1123,7 @@ list_rules = (
         description="Roll back volume status to 'in-use'.",
         scope_types=["project"],
         operations=[
-            {"method": "POST", "path": "/volumes/{volume_id}/action (os-roll_detaching)"}
+            {"method": "POST", "path": "/volumes/{volume_id}/action (os-roll_detaching)"},
         ],
     ),
     base.APIRule(
@@ -1152,7 +1155,7 @@ list_rules = (
         description="Begin detach volumes.",
         scope_types=["project"],
         operations=[
-            {"method": "POST", "path": "/volumes/{volume_id}/action (os-begin_detaching)"}
+            {"method": "POST", "path": "/volumes/{volume_id}/action (os-begin_detaching)"},
         ],
     ),
     base.APIRule(
@@ -1351,7 +1354,7 @@ list_rules = (
         description="Delete type extra specs.",
         scope_types=["project"],
         operations=[
-            {"method": "DELETE", "path": "/types/{type_id}/extra_specs/{extra_spec_key}"}
+            {"method": "DELETE", "path": "/types/{type_id}/extra_specs/{extra_spec_key}"},
         ],
     ),
     base.APIRule(

@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 import json
-from importlib.metadata import entry_points
+from importlib import metadata
 from logging import StreamHandler
 from pathlib import Path
 from typing import Callable, Dict, Iterable, List, Union
@@ -23,25 +23,11 @@ from typing import Callable, Dict, Iterable, List, Union
 import click
 from oslo_policy.policy import DocumentedRuleDefault, RuleDefault  # type: ignore
 from skyline_log import LOG, setup as log_setup
-
+from skyline_policy_manager import constants
 from skyline_policy_manager.policies import get_service_rules
 from skyline_policy_manager.policies.base import APIRule, Rule
 
 DEBUG = False
-POLICY_NS = "oslo.policy.policies"
-SUPPORTED_SERVICE_EPS = {
-    # openstack_service: [<entry_point_name>, <entry_point_name>,]
-    "cinder": ["cinder"],
-    "glance": ["glance"],
-    "heat": ["heat"],
-    "ironic": ["ironic.api", "ironic_inspector.api"],
-    "keystone": ["keystone"],
-    "neutron": ["neutron", "neutron-vpnaas"],
-    "nova": ["nova"],
-    "octavia": ["octavia"],
-    "panko": ["panko"],
-    "placement": ["placement"],
-}
 
 OSRules = Iterable[Union[DocumentedRuleDefault, RuleDefault]]
 
@@ -50,7 +36,7 @@ def load_list_rules_funcs(
     namespace: str,
     service_eps: Dict[str, List[str]],
 ) -> Dict[str, Callable[[], OSRules]]:
-    eps = set(entry_points()[namespace])
+    eps = set(metadata.entry_points()[namespace])
     supported_eps = set()
     for ep_names in service_eps.values():
         supported_eps.update(ep_names)
@@ -58,7 +44,7 @@ def load_list_rules_funcs(
 
 
 def load_list_rules_func(namespace: str, service_ep: str) -> Union[None, Callable[[], OSRules]]:
-    eps = set(entry_points()[namespace])
+    eps = set(metadata.entry_points()[namespace])
     for ep in eps:
         if ep.name == service_ep:
             return ep.load()
@@ -106,10 +92,10 @@ def policy_manager(debug: bool) -> None:
 @click.command(help="Generate sample policy yaml file.")
 @click.option("--dir", help='Directory of policy file.(default: "./tmp")', default="./tmp")
 def generate_sample(dir: str) -> None:
-    list_rules_funcs = load_list_rules_funcs(POLICY_NS, SUPPORTED_SERVICE_EPS)
+    list_rules_funcs = load_list_rules_funcs(constants.POLICY_NS, constants.SUPPORTED_SERVICE_EPS)
 
     rule_map = {}
-    for service, eps in SUPPORTED_SERVICE_EPS.items():
+    for service, eps in constants.SUPPORTED_SERVICE_EPS.items():
         rules = []
         api_rules = []
         for ep in eps:
@@ -156,7 +142,7 @@ def generate_conf(dir: str, desc: str) -> None:
 @click.command(help="Generate service rule code.")
 @click.argument("entry_point")
 def generate_rule(entry_point: str) -> None:
-    ep_rules_func = load_list_rules_func(POLICY_NS, entry_point)
+    ep_rules_func = load_list_rules_func(constants.POLICY_NS, entry_point)
     if ep_rules_func is None:
         raise Exception(
             f"Not found entry point '{entry_point}' in oslo.policy.policies namespace.",
@@ -226,10 +212,10 @@ __all__ = ("list_rules",)
 @click.command(help="Validate all policy rules.")
 @click.option("--diff", help="Output policy rule diff info.", is_flag=True, default=False)
 def validate(diff: bool) -> None:
-    list_rules_funcs = load_list_rules_funcs(POLICY_NS, SUPPORTED_SERVICE_EPS)
+    list_rules_funcs = load_list_rules_funcs(constants.POLICY_NS, constants.SUPPORTED_SERVICE_EPS)
 
     os_rule_map = {}
-    for service, eps in SUPPORTED_SERVICE_EPS.items():
+    for service, eps in constants.SUPPORTED_SERVICE_EPS.items():
         service_rules = {}
         for ep in eps:
             ep_rules = list_rules_funcs.get(ep, lambda: [])()
@@ -276,7 +262,7 @@ def validate(diff: bool) -> None:
     LOG.info("Validate policy completed")
 
 
-def main():
+def main() -> None:
     policy_manager.add_command(generate_sample)
     policy_manager.add_command(generate_conf)
     policy_manager.add_command(generate_rule)

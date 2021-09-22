@@ -110,7 +110,9 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="Show resource provider inventory.",
         scope_types=["system"],
-        operations=[{"method": "GET", "path": "/resource_providers/{uuid}/inventories/{resource_class}"}],
+        operations=[
+            {"method": "GET", "path": "/resource_providers/{uuid}/inventories/{resource_class}"},
+        ],
     ),
     base.APIRule(
         name="placement:resource_providers:inventories:update",
@@ -118,7 +120,10 @@ list_rules = (
         basic_check_str=("role:admin"),
         description="Update resource provider inventory.",
         scope_types=["system"],
-        operations=[{"method": "PUT", "path": "/resource_providers/{uuid}/inventories"}, {"method": "PUT", "path": "/resource_providers/{uuid}/inventories/{resource_class}"}],
+        operations=[
+            {"method": "PUT", "path": "/resource_providers/{uuid}/inventories"},
+            {"method": "PUT", "path": "/resource_providers/{uuid}/inventories/{resource_class}"},
+        ],
     ),
     base.APIRule(
         name="placement:resource_providers:inventories:delete",
@@ -126,7 +131,13 @@ list_rules = (
         basic_check_str=("role:admin"),
         description="Delete resource provider inventory.",
         scope_types=["system"],
-        operations=[{"method": "DELETE", "path": "/resource_providers/{uuid}/inventories"}, {"method": "DELETE", "path": "/resource_providers/{uuid}/inventories/{resource_class}"}],
+        operations=[
+            {"method": "DELETE", "path": "/resource_providers/{uuid}/inventories"},
+            {
+                "method": "DELETE",
+                "path": "/resource_providers/{uuid}/inventories/{resource_class}",
+            },
+        ],
     ),
     base.APIRule(
         name="placement:resource_providers:aggregates:list",
@@ -154,7 +165,9 @@ list_rules = (
     ),
     base.APIRule(
         name="placement:usages",
-        check_str=("(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"),
+        check_str=(
+            "(role:reader and system_scope:all) or (role:reader and project_id:%(project_id)s)"
+        ),
         basic_check_str=("role:admin or role:reader"),
         description="List total resource usages for a given project.",
         scope_types=["system", "project"],

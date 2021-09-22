@@ -68,7 +68,7 @@ list_rules = (
         description="Inject network information into the server",
         scope_types=["system", "project"],
         operations=[
-            {"method": "POST", "path": "/servers/{server_id}/action (injectNetworkInfo)"}
+            {"method": "POST", "path": "/servers/{server_id}/action (injectNetworkInfo)"},
         ],
     ),
     base.APIRule(
@@ -88,7 +88,7 @@ list_rules = (
         description="Create or replace metadata for an aggregate",
         scope_types=["system"],
         operations=[
-            {"method": "POST", "path": "/os-aggregates/{aggregate_id}/action (set_metadata)"}
+            {"method": "POST", "path": "/os-aggregates/{aggregate_id}/action (set_metadata)"},
         ],
     ),
     base.APIRule(
@@ -98,7 +98,7 @@ list_rules = (
         description="Add a host to an aggregate",
         scope_types=["system"],
         operations=[
-            {"method": "POST", "path": "/os-aggregates/{aggregate_id}/action (add_host)"}
+            {"method": "POST", "path": "/os-aggregates/{aggregate_id}/action (add_host)"},
         ],
     ),
     base.APIRule(
@@ -116,7 +116,7 @@ list_rules = (
         description="Remove a host from an aggregate",
         scope_types=["system"],
         operations=[
-            {"method": "POST", "path": "/os-aggregates/{aggregate_id}/action (remove_host)"}
+            {"method": "POST", "path": "/os-aggregates/{aggregate_id}/action (remove_host)"},
         ],
     ),
     base.APIRule(
@@ -266,7 +266,7 @@ list_rules = (
         description="Show console output for a server",
         scope_types=["system", "project"],
         operations=[
-            {"method": "POST", "path": "/servers/{server_id}/action (os-getConsoleOutput)"}
+            {"method": "POST", "path": "/servers/{server_id}/action (os-getConsoleOutput)"},
         ],
     ),
     base.APIRule(
@@ -346,7 +346,7 @@ list_rules = (
         description="Remove flavor access from a tenant",
         scope_types=["system"],
         operations=[
-            {"method": "POST", "path": "/flavors/{flavor_id}/action (removeTenantAccess)"}
+            {"method": "POST", "path": "/flavors/{flavor_id}/action (removeTenantAccess)"},
         ],
     ),
     base.APIRule(
@@ -369,7 +369,7 @@ list_rules = (
             {
                 "method": "GET",
                 "path": "/flavors/{flavor_id}/os-extra_specs/{flavor_extra_spec_key}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -390,7 +390,7 @@ list_rules = (
             {
                 "method": "PUT",
                 "path": "/flavors/{flavor_id}/os-extra_specs/{flavor_extra_spec_key}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -403,7 +403,7 @@ list_rules = (
             {
                 "method": "DELETE",
                 "path": "/flavors/{flavor_id}/os-extra_specs/{flavor_extra_spec_key}",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -613,7 +613,7 @@ list_rules = (
         description="Search hypervisor by hypervisor_hostname pattern.",
         scope_types=["system"],
         operations=[
-            {"method": "GET", "path": "/os-hypervisors/{hypervisor_hostname_pattern}/search"}
+            {"method": "GET", "path": "/os-hypervisors/{hypervisor_hostname_pattern}/search"},
         ],
     ),
     base.APIRule(
@@ -623,7 +623,7 @@ list_rules = (
         description="List all servers on hypervisors that can match the provided hypervisor_hostname pattern.",
         scope_types=["system"],
         operations=[
-            {"method": "GET", "path": "/os-hypervisors/{hypervisor_hostname_pattern}/servers"}
+            {"method": "GET", "path": "/os-hypervisors/{hypervisor_hostname_pattern}/servers"},
         ],
     ),
     base.APIRule(
@@ -633,7 +633,7 @@ list_rules = (
         description="Add \"details\" key in action events for a server.\n#\n#This check is performed only after the check\n#os_compute_api:os-instance-actions:show passes. Beginning with Microversion\n#2.84, new field 'details' is exposed via API which can have more details about\n#event failure. That field is controlled by this policy which is system reader\n#by default. Making the 'details' field visible to the non-admin user helps to\n#understand the nature of the problem (i.e. if the action can be retried),\n#but in the other hand it might leak information about the deployment\n#(e.g. the type of the hypervisor).\n#",
         scope_types=["system", "project"],
         operations=[
-            {"method": "GET", "path": "/servers/{server_id}/os-instance-actions/{request_id}"}
+            {"method": "GET", "path": "/servers/{server_id}/os-instance-actions/{request_id}"},
         ],
     ),
     base.APIRule(
@@ -643,7 +643,7 @@ list_rules = (
         description="Add events details in action details for a server.\n#This check is performed only after the check\n#os_compute_api:os-instance-actions:show passes. Beginning with Microversion\n#2.51, events details are always included; traceback information is provided\n#per event if policy enforcement passes. Beginning with Microversion 2.62,\n#each event includes a hashed host identifier and, if policy enforcement\n#passes, the name of the host.",
         scope_types=["system", "project"],
         operations=[
-            {"method": "GET", "path": "/servers/{server_id}/os-instance-actions/{request_id}"}
+            {"method": "GET", "path": "/servers/{server_id}/os-instance-actions/{request_id}"},
         ],
     ),
     base.APIRule(
@@ -665,7 +665,7 @@ list_rules = (
         description="Show action details for a server.",
         scope_types=["system", "project"],
         operations=[
-            {"method": "GET", "path": "/servers/{server_id}/os-instance-actions/{request_id}"}
+            {"method": "GET", "path": "/servers/{server_id}/os-instance-actions/{request_id}"},
         ],
     ),
     base.APIRule(
@@ -1063,7 +1063,7 @@ list_rules = (
         description="Remove security groups from server.",
         scope_types=["system", "project"],
         operations=[
-            {"method": "POST", "path": "/servers/{server_id}/action (removeSecurityGroup)"}
+            {"method": "POST", "path": "/servers/{server_id}/action (removeSecurityGroup)"},
         ],
     ),
     base.APIRule(
@@ -1587,7 +1587,7 @@ list_rules = (
         description="Trigger crash dump in a server",
         scope_types=["system", "project"],
         operations=[
-            {"method": "POST", "path": "/servers/{server_id}/action (trigger_crash_dump)"}
+            {"method": "POST", "path": "/servers/{server_id}/action (trigger_crash_dump)"},
         ],
     ),
     base.APIRule(
@@ -1608,7 +1608,7 @@ list_rules = (
             {
                 "method": "POST",
                 "path": "/servers/{server_id}/migrations/{migration_id}/action (force_complete)",
-            }
+            },
         ],
     ),
     base.APIRule(
@@ -1618,7 +1618,7 @@ list_rules = (
         description="Delete(Abort) an in-progress live migration",
         scope_types=["system", "project"],
         operations=[
-            {"method": "DELETE", "path": "/servers/{server_id}/migrations/{migration_id}"}
+            {"method": "DELETE", "path": "/servers/{server_id}/migrations/{migration_id}"},
         ],
     ),
     base.APIRule(
@@ -1870,7 +1870,7 @@ list_rules = (
         description="Show details of a volume attachment",
         scope_types=["system", "project"],
         operations=[
-            {"method": "GET", "path": "/servers/{server_id}/os-volume_attachments/{volume_id}"}
+            {"method": "GET", "path": "/servers/{server_id}/os-volume_attachments/{volume_id}"},
         ],
     ),
     base.APIRule(
@@ -1882,7 +1882,7 @@ list_rules = (
         description="Update a volume attachment.\n#New 'update' policy about 'swap + update' request (which is possible\n#only >2.85) only <swap policy> is checked. We expect <swap policy> to be\n#always superset of this policy permission.\n#",
         scope_types=["system", "project"],
         operations=[
-            {"method": "PUT", "path": "/servers/{server_id}/os-volume_attachments/{volume_id}"}
+            {"method": "PUT", "path": "/servers/{server_id}/os-volume_attachments/{volume_id}"},
         ],
     ),
     base.APIRule(
@@ -1892,7 +1892,7 @@ list_rules = (
         description="Update a volume attachment with a different volumeId",
         scope_types=["system"],
         operations=[
-            {"method": "PUT", "path": "/servers/{server_id}/os-volume_attachments/{volume_id}"}
+            {"method": "PUT", "path": "/servers/{server_id}/os-volume_attachments/{volume_id}"},
         ],
     ),
     base.APIRule(
@@ -1904,7 +1904,10 @@ list_rules = (
         description="Detach a volume from an instance",
         scope_types=["system", "project"],
         operations=[
-            {"method": "DELETE", "path": "/servers/{server_id}/os-volume_attachments/{volume_id}"}
+            {
+                "method": "DELETE",
+                "path": "/servers/{server_id}/os-volume_attachments/{volume_id}",
+            },
         ],
     ),
 )

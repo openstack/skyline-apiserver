@@ -19,11 +19,24 @@ black = "^21.5b1"
 add-trailing-comma = "*"
 flake8 = "*"
 mypy = "*"
-pytest = "*"
-pytest-xdist = {extras = ["psutil"], version = "*"}
 skyline-log = {path = "../skyline-log", develop = true}
 "oslo.log" = "*"
 neutron-lib = "*"
+pytest = "*"
+pytest-xdist = "*"
+mimesis = "*"
+pytest-cov = "*"
+pytest-html = "*"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-v -s -p no:cacheprovider -n auto --cov=skyline_policy_manager --cov-append --cov-report=term-missing --cov-report=html"
+testpaths = [
+    "tests",
+]
+markers = [
+    "ddt(*args: TestData): Mark the test as a data-driven test."
+]
 
 [tool.poetry.scripts]
 skyline-policy-manager = "skyline_policy_manager.cmd.manage:main"

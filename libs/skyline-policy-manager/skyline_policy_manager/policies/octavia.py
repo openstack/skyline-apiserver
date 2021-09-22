@@ -55,7 +55,9 @@ list_rules = (
     ),
     base.Rule(
         name="load-balancer:read",
-        check_str=("rule:load-balancer:observer_and_owner or rule:load-balancer:global_observer or rule:load-balancer:member_and_owner or rule:load-balancer:admin"),
+        check_str=(
+            "rule:load-balancer:observer_and_owner or rule:load-balancer:global_observer or rule:load-balancer:member_and_owner or rule:load-balancer:admin"
+        ),
         description="No description",
     ),
     base.Rule(
@@ -70,12 +72,16 @@ list_rules = (
     ),
     base.Rule(
         name="load-balancer:read-quota",
-        check_str=("rule:load-balancer:observer_and_owner or rule:load-balancer:global_observer or rule:load-balancer:member_and_owner or role:load-balancer_quota_admin or rule:load-balancer:admin"),
+        check_str=(
+            "rule:load-balancer:observer_and_owner or rule:load-balancer:global_observer or rule:load-balancer:member_and_owner or role:load-balancer_quota_admin or rule:load-balancer:admin"
+        ),
         description="No description",
     ),
     base.Rule(
         name="load-balancer:read-quota-global",
-        check_str=("rule:load-balancer:global_observer or role:load-balancer_quota_admin or rule:load-balancer:admin"),
+        check_str=(
+            "rule:load-balancer:global_observer or role:load-balancer_quota_admin or rule:load-balancer:admin"
+        ),
         description="No description",
     ),
     base.Rule(
@@ -86,7 +92,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:flavor:get_all",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="List Flavors",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2.0/lbaas/flavors"}],
@@ -110,7 +118,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:flavor:get_one",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Show Flavor details",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2.0/lbaas/flavors/{flavor_id}"}],
@@ -161,12 +171,16 @@ list_rules = (
         basic_check_str=("role:admin"),
         description="Remove a Flavor Profile",
         scope_types=["project"],
-        operations=[{"method": "DELETE", "path": "/v2.0/lbaas/flavorprofiles/{flavor_profile_id}"}],
+        operations=[
+            {"method": "DELETE", "path": "/v2.0/lbaas/flavorprofiles/{flavor_profile_id}"},
+        ],
     ),
     base.APIRule(
         name="os_load-balancer_api:availability-zone:get_all",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="List Availability Zones",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2.0/lbaas/availabilityzones"}],
@@ -185,15 +199,21 @@ list_rules = (
         basic_check_str=("role:admin"),
         description="Update an Availability Zone",
         scope_types=["project"],
-        operations=[{"method": "PUT", "path": "/v2.0/lbaas/availabilityzones/{availability_zone_id}"}],
+        operations=[
+            {"method": "PUT", "path": "/v2.0/lbaas/availabilityzones/{availability_zone_id}"},
+        ],
     ),
     base.APIRule(
         name="os_load-balancer_api:availability-zone:get_one",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Show Availability Zone details",
         scope_types=["project"],
-        operations=[{"method": "GET", "path": "/v2.0/lbaas/availabilityzones/{availability_zone_id}"}],
+        operations=[
+            {"method": "GET", "path": "/v2.0/lbaas/availabilityzones/{availability_zone_id}"},
+        ],
     ),
     base.APIRule(
         name="os_load-balancer_api:availability-zone:delete",
@@ -201,7 +221,9 @@ list_rules = (
         basic_check_str=("role:admin"),
         description="Remove an Availability Zone",
         scope_types=["project"],
-        operations=[{"method": "DELETE", "path": "/v2.0/lbaas/availabilityzones/{availability_zone_id}"}],
+        operations=[
+            {"method": "DELETE", "path": "/v2.0/lbaas/availabilityzones/{availability_zone_id}"},
+        ],
     ),
     base.APIRule(
         name="os_load-balancer_api:availability-zone-profile:get_all",
@@ -225,7 +247,12 @@ list_rules = (
         basic_check_str=("role:admin"),
         description="Update an Availability Zone",
         scope_types=["project"],
-        operations=[{"method": "PUT", "path": "/v2.0/lbaas/availabilityzoneprofiles/{availability_zone_profile_id}"}],
+        operations=[
+            {
+                "method": "PUT",
+                "path": "/v2.0/lbaas/availabilityzoneprofiles/{availability_zone_profile_id}",
+            },
+        ],
     ),
     base.APIRule(
         name="os_load-balancer_api:availability-zone-profile:get_one",
@@ -233,7 +260,12 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="Show Availability Zone details",
         scope_types=["project"],
-        operations=[{"method": "GET", "path": "/v2.0/lbaas/availabilityzoneprofiles/{availability_zone_profile_id}"}],
+        operations=[
+            {
+                "method": "GET",
+                "path": "/v2.0/lbaas/availabilityzoneprofiles/{availability_zone_profile_id}",
+            },
+        ],
     ),
     base.APIRule(
         name="os_load-balancer_api:availability-zone-profile:delete",
@@ -241,12 +273,19 @@ list_rules = (
         basic_check_str=("role:admin"),
         description="Remove an Availability Zone",
         scope_types=["project"],
-        operations=[{"method": "DELETE", "path": "/v2.0/lbaas/availabilityzoneprofiles/{availability_zone_profile_id}"}],
+        operations=[
+            {
+                "method": "DELETE",
+                "path": "/v2.0/lbaas/availabilityzoneprofiles/{availability_zone_profile_id}",
+            },
+        ],
     ),
     base.APIRule(
         name="os_load-balancer_api:healthmonitor:get_all",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="List Health Monitors of a Pool",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/healthmonitors"}],
@@ -262,7 +301,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:healthmonitor:post",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create a Health Monitor",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/v2/lbaas/healthmonitors"}],
@@ -270,7 +311,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:healthmonitor:get_one",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Show Health Monitor details",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/healthmonitors/{healthmonitor_id}"}],
@@ -278,7 +321,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:healthmonitor:put",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update a Health Monitor",
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/v2/lbaas/healthmonitors/{healthmonitor_id}"}],
@@ -286,7 +331,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:healthmonitor:delete",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Remove a Health Monitor",
         scope_types=["project"],
         operations=[{"method": "DELETE", "path": "/v2/lbaas/healthmonitors/{healthmonitor_id}"}],
@@ -294,7 +341,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:l7policy:get_all",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="List L7 Policys",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/l7policies"}],
@@ -310,7 +359,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:l7policy:post",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create a L7 Policy",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/v2/lbaas/l7policies"}],
@@ -318,7 +369,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:l7policy:get_one",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Show L7 Policy details",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/l7policies/{l7policy_id}"}],
@@ -326,7 +379,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:l7policy:put",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update a L7 Policy",
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/v2/lbaas/l7policies/{l7policy_id}"}],
@@ -334,7 +389,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:l7policy:delete",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Remove a L7 Policy",
         scope_types=["project"],
         operations=[{"method": "DELETE", "path": "/v2/lbaas/l7policies/{l7policy_id}"}],
@@ -342,7 +399,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:l7rule:get_all",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="List L7 Rules",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/l7policies/{l7policy_id}/rules"}],
@@ -350,7 +409,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:l7rule:post",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create a L7 Rule",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/v2/lbaas/l7policies/{l7policy_id}/rules"}],
@@ -358,31 +419,45 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:l7rule:get_one",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Show L7 Rule details",
         scope_types=["project"],
-        operations=[{"method": "GET", "path": "/v2/lbaas/l7policies/{l7policy_id}/rules/{l7rule_id}"}],
+        operations=[
+            {"method": "GET", "path": "/v2/lbaas/l7policies/{l7policy_id}/rules/{l7rule_id}"},
+        ],
     ),
     base.APIRule(
         name="os_load-balancer_api:l7rule:put",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update a L7 Rule",
         scope_types=["project"],
-        operations=[{"method": "PUT", "path": "/v2/lbaas/l7policies/{l7policy_id}/rules/{l7rule_id}"}],
+        operations=[
+            {"method": "PUT", "path": "/v2/lbaas/l7policies/{l7policy_id}/rules/{l7rule_id}"},
+        ],
     ),
     base.APIRule(
         name="os_load-balancer_api:l7rule:delete",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Remove a L7 Rule",
         scope_types=["project"],
-        operations=[{"method": "DELETE", "path": "/v2/lbaas/l7policies/{l7policy_id}/rules/{l7rule_id}"}],
+        operations=[
+            {"method": "DELETE", "path": "/v2/lbaas/l7policies/{l7policy_id}/rules/{l7rule_id}"},
+        ],
     ),
     base.APIRule(
         name="os_load-balancer_api:listener:get_all",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="List Listeners",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/listeners"}],
@@ -398,7 +473,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:listener:post",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create a Listener",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/v2/lbaas/listeners"}],
@@ -406,7 +483,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:listener:get_one",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Show Listener details",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/listeners/{listener_id}"}],
@@ -414,7 +493,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:listener:put",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update a Listener",
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/v2/lbaas/listeners/{listener_id}"}],
@@ -422,7 +503,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:listener:delete",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Remove a Listener",
         scope_types=["project"],
         operations=[{"method": "DELETE", "path": "/v2/lbaas/listeners/{listener_id}"}],
@@ -430,7 +513,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:listener:get_stats",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Show Listener statistics",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/listeners/{listener_id}/stats"}],
@@ -438,7 +523,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:loadbalancer:get_all",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="List Load Balancers",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/loadbalancers"}],
@@ -454,7 +541,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:loadbalancer:post",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create a Load Balancer",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/v2/lbaas/loadbalancers"}],
@@ -462,7 +551,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:loadbalancer:get_one",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Show Load Balancer details",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/loadbalancers/{loadbalancer_id}"}],
@@ -470,7 +561,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:loadbalancer:put",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update a Load Balancer",
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/v2/lbaas/loadbalancers/{loadbalancer_id}"}],
@@ -478,7 +571,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:loadbalancer:delete",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Remove a Load Balancer",
         scope_types=["project"],
         operations=[{"method": "DELETE", "path": "/v2/lbaas/loadbalancers/{loadbalancer_id}"}],
@@ -486,7 +581,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:loadbalancer:get_stats",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Show Load Balancer statistics",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/loadbalancers/{loadbalancer_id}/stats"}],
@@ -494,10 +591,14 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:loadbalancer:get_status",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Show Load Balancer status",
         scope_types=["project"],
-        operations=[{"method": "GET", "path": "/v2/lbaas/loadbalancers/{loadbalancer_id}/status"}],
+        operations=[
+            {"method": "GET", "path": "/v2/lbaas/loadbalancers/{loadbalancer_id}/status"},
+        ],
     ),
     base.APIRule(
         name="os_load-balancer_api:loadbalancer:put_failover",
@@ -505,12 +606,16 @@ list_rules = (
         basic_check_str=("role:admin"),
         description="Failover a Load Balancer",
         scope_types=["project"],
-        operations=[{"method": "PUT", "path": "/v2/lbaas/loadbalancers/{loadbalancer_id}/failover"}],
+        operations=[
+            {"method": "PUT", "path": "/v2/lbaas/loadbalancers/{loadbalancer_id}/failover"},
+        ],
     ),
     base.APIRule(
         name="os_load-balancer_api:member:get_all",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="List Members of a Pool",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/pools/{pool_id}/members"}],
@@ -518,7 +623,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:member:post",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create a Member",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/v2/lbaas/pools/{pool_id}/members"}],
@@ -526,7 +633,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:member:get_one",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Show Member details",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/pools/{pool_id}/members/{member_id}"}],
@@ -534,7 +643,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:member:put",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update a Member",
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/v2/lbaas/pools/{pool_id}/members/{member_id}"}],
@@ -542,15 +653,21 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:member:delete",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Remove a Member",
         scope_types=["project"],
-        operations=[{"method": "DELETE", "path": "/v2/lbaas/pools/{pool_id}/members/{member_id}"}],
+        operations=[
+            {"method": "DELETE", "path": "/v2/lbaas/pools/{pool_id}/members/{member_id}"},
+        ],
     ),
     base.APIRule(
         name="os_load-balancer_api:pool:get_all",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="List Pools",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/pools"}],
@@ -566,7 +683,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:pool:post",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Create a Pool",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/v2/lbaas/pools"}],
@@ -574,7 +693,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:pool:get_one",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Show Pool details",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/pools/{pool_id}"}],
@@ -582,7 +703,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:pool:put",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Update a Pool",
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/v2/lbaas/pools/{pool_id}"}],
@@ -590,7 +713,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:pool:delete",
         check_str=("rule:load-balancer:write"),
-        basic_check_str=("role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s"
+        ),
         description="Remove a Pool",
         scope_types=["project"],
         operations=[{"method": "DELETE", "path": "/v2/lbaas/pools/{pool_id}"}],
@@ -598,7 +723,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:provider:get_all",
         check_str=("rule:load-balancer:read"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="List enabled providers",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/providers"}],
@@ -606,7 +733,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:quota:get_all",
         check_str=("rule:load-balancer:read-quota"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="List Quotas",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/quotas"}],
@@ -622,7 +751,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:quota:get_one",
         check_str=("rule:load-balancer:read-quota"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Show Quota details",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/quotas/{project_id}"}],
@@ -646,7 +777,9 @@ list_rules = (
     base.APIRule(
         name="os_load-balancer_api:quota:get_defaults",
         check_str=("rule:load-balancer:read-quota"),
-        basic_check_str=("role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"),
+        basic_check_str=(
+            "role:admin or role:reader or role:admin and project_id:%(project_id)s or role:member and project_id:%(project_id)s or role:reader and project_id:%(project_id)s"
+        ),
         description="Show Default Quota for a Project",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v2/lbaas/quotas/{project_id}/default"}],
@@ -705,7 +838,9 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="List the provider flavor capabilities.",
         scope_types=["project"],
-        operations=[{"method": "GET", "path": "/v2/lbaas/providers/{provider}/flavor_capabilities"}],
+        operations=[
+            {"method": "GET", "path": "/v2/lbaas/providers/{provider}/flavor_capabilities"},
+        ],
     ),
     base.APIRule(
         name="os_load-balancer_api:provider-availability-zone:get_all",
@@ -713,7 +848,12 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="List the provider availability zone capabilities.",
         scope_types=["project"],
-        operations=[{"method": "GET", "path": "/v2/lbaas/providers/{provider}/availability_zone_capabilities"}],
+        operations=[
+            {
+                "method": "GET",
+                "path": "/v2/lbaas/providers/{provider}/availability_zone_capabilities",
+            },
+        ],
     ),
 )
 

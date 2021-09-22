@@ -14,7 +14,10 @@ list_rules = (
         basic_check_str=("role:admin or role:reader"),
         description="Return the user and project the requestshould be limited to",
         scope_types=["system"],
-        operations=[{"method": "GET", "path": "/v2/events"}, {"method": "GET", "path": "/v2/events/{message_id}"}],
+        operations=[
+            {"method": "GET", "path": "/v2/events"},
+            {"method": "GET", "path": "/v2/events/{message_id}"},
+        ],
     ),
     base.APIRule(
         name="telemetry:events:index",

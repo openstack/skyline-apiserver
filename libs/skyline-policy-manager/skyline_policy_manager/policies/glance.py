@@ -176,7 +176,9 @@ list_rules = (
     ),
     base.APIRule(
         name="get_image",
-        check_str=("role:admin or (role:reader and (project_id:%(project_id)s or project_id:%(member_id)s or \"community\":%(visibility)s or \"public\":%(visibility)s))"),
+        check_str=(
+            'role:admin or (role:reader and (project_id:%(project_id)s or project_id:%(member_id)s or "community":%(visibility)s or "public":%(visibility)s))'
+        ),
         basic_check_str=("role:admin or role:reader or role:admin or role:member or role:reader"),
         description="Get specified image",
         scope_types=["system", "project"],
@@ -216,7 +218,9 @@ list_rules = (
     ),
     base.APIRule(
         name="download_image",
-        check_str=("role:admin or (role:member and (project_id:%(project_id)s or project_id:%(member_id)s or \"community\":%(visibility)s or \"public\":%(visibility)s))"),
+        check_str=(
+            'role:admin or (role:member and (project_id:%(project_id)s or project_id:%(member_id)s or "community":%(visibility)s or "public":%(visibility)s))'
+        ),
         basic_check_str=("role:admin or role:admin or role:member"),
         description="Downloads given image",
         scope_types=["system", "project"],
@@ -356,7 +360,12 @@ list_rules = (
         basic_check_str=("!"),
         description="\n#This is a generic blanket policy for protecting all task APIs. It is not\n#granular and will not allow you to separate writable and readable task\n#operations into different roles.\n#",
         scope_types=["system", "project"],
-        operations=[{"method": "GET", "path": "/v2/tasks/{task_id}"}, {"method": "GET", "path": "/v2/tasks"}, {"method": "POST", "path": "/v2/tasks"}, {"method": "DELETE", "path": "/v2/tasks/{task_id}"}],
+        operations=[
+            {"method": "GET", "path": "/v2/tasks/{task_id}"},
+            {"method": "GET", "path": "/v2/tasks"},
+            {"method": "POST", "path": "/v2/tasks"},
+            {"method": "DELETE", "path": "/v2/tasks/{task_id}"},
+        ],
     ),
 )
 
