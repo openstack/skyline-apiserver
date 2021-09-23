@@ -18,14 +18,11 @@ import os
 import warnings
 from dataclasses import InitVar, dataclass, field
 from pathlib import Path, PurePath
-from typing import TYPE_CHECKING, Any, Dict, Iterator, Sequence, Tuple, Type
+from typing import Any, Dict, Iterator, Sequence, Tuple, Type
 
 import yaml
-from immutables import Map
+from immutables import Map, MapItems, MapKeys, MapValues
 from pydantic import BaseModel, create_model
-
-if TYPE_CHECKING:
-    from immutables._map import MapItems, MapKeys, MapValues
 
 
 @dataclass(frozen=True)
