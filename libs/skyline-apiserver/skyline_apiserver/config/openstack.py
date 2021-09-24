@@ -74,7 +74,7 @@ interface_type = Opt(
     name="interface_type",
     description="OpenStack endpoint interface type",
     schema=InterfaceType,
-    default="internal",
+    default="public",
 )
 
 nginx_prefix = Opt(
@@ -173,6 +173,8 @@ service_mapping = Opt(
         "network": "neutron",
         "compute": "nova",
         "placement": "placement",
+        "baremetal": "ironic",
+        "load-balancer": "octavia",
     },
 )
 

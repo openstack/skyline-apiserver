@@ -2,9 +2,9 @@ default:
   access_token_expire: 3600
   access_token_renew: 1800
   cors_allow_origins: []
-  database_url: sqlite:////tmp/skyline.db
+  database_url: mysql://root:root@localhost:3306/skyline
   debug: false
-  log_dir: /tmp
+  log_dir: ./log
   secret_key: aCtmgbcUqYUy_HNVg5BDXCaeJgJQzHJXwqbXr0Nmb2o
   session_name: session
 developer:
@@ -66,9 +66,11 @@ openstack:
   nginx_prefix: /api/openstack
   reclaim_instance_interval: 604800
   service_mapping:
+    baremetal: ironic
     compute: nova
     identity: keystone
     image: glance
+    load-balancer: octavia
     network: neutron
     orchestration: heat
     placement: placement
