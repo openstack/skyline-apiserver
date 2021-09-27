@@ -19,6 +19,7 @@ install: venv
 .PHONY: package
 package:
 	poetry build -f wheel
+	poetry build -f sdist
 
 
 .PHONY: fmt

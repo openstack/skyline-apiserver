@@ -95,6 +95,7 @@ $(INSTALL_LIBS):
 PACKAGE_LIBS := $(addsuffix .package,$(LIB_PATHS))
 package: $(PACKAGE_LIBS)
 	poetry build -f wheel
+	poetry build -f sdist
 $(PACKAGE_LIBS):
 	$(MAKE) -C $(basename $@) package
 
