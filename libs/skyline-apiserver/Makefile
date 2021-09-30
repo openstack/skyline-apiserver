@@ -59,17 +59,17 @@ clean:
 
 
 .PHONY: db_revision
-HEAD_REV ?= $(shell poetry run alembic heads | awk '{print $$1}')
+HEAD_REV ?= $(shell poetry run alembic -c skyline_apiserver/db/alembic/alembic.ini heads | awk '{print $$1}')
 NEW_REV ?= $(shell python3 -c 'import sys; print(f"{int(sys.argv[1])+1:03}")' $(HEAD_REV))
 REV_MEG ?=
 db_revision:
 	$(shell [ -z "$(REV_MEG)" ] && printf '$(red)Missing required message, use "make db_revision REV_MEG=<some message>"$(no_color)')
-	poetry run alembic revision --autogenerate --rev-id $(NEW_REV) -m '$(REV_MEG)'
+	poetry run alembic -c skyline_apiserver/db/alembic/alembic.ini revision --autogenerate --rev-id $(NEW_REV) -m '$(REV_MEG)'
 
 
 .PHONY: db_sync
 db_sync:
-	poetry run alembic upgrade head
+	poetry run alembic -c skyline_apiserver/db/alembic/alembic.ini upgrade head
 
 
 # Find python files without "type annotations"

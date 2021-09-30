@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 license = "Apache-2.0"
 authors = ["OpenStack <openstack-discuss@lists.openstack.org>"]
+include = ["skyline_apiserver/db/alembic/alembic.ini"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
