@@ -42,6 +42,16 @@
       python_version: 3.8
       tox_envlist: lint
 
+- job:
+    name: publish-skyline-python-branch-tarball
+    parent: publish-openstack-python-branch-tarball
+    description: |
+            Publish the results of the tox-tarball job to tarballs.openstack.org.
+    run: playbooks/python-tarball/run.yaml
+    post-run: playbooks/python-tarball/post.yaml
+    vars:
+      release_python: python3
+
 - project:
     check:
       jobs:
@@ -53,3 +63,6 @@
         - skyline-tox-unittest-py38
         - skyline-tox-lint-py38
         - skyline-functional-devstack
+    post:
+      jobs:
+        - publish-skyline-python-branch-tarball
