@@ -1,0 +1,37 @@
+- hosts: all
+  tasks:
+    - name: Install poetry!=1.1.8
+      pip:
+        name: poetry!=1.1.8
+      become: yes
+    - name: Add node repo
+      command: curl --silent --location https://rpm.nodesource.com/setup_12.x | sudo bash -
+      become: yes
+    - name: Install nodejs
+      apt:
+        name: nodejs
+        update_cache: yes
+      become: yes
+    - name: Update nodejs version
+      shell:
+        executable: /bin/bash
+        cmd: |
+          npm install -g n
+          n stable
+      become: yes
+    - name: Add yarn repo
+      shell:
+        executable: /bin/bash
+        cmd: |
+          curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+          echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+      become: yes
+    - name: Install yarn
+      apt:
+        name: yarn
+        update_cache: yes
+      become: yes
+  roles:
+    # We use ensure-pip to make sure the wheel module is installed
+    - ensure-pip
+    - revoke-sudo
