@@ -22,6 +22,19 @@
         executable: /bin/bash
         cmd: |
           git submodule update --init
+          . $HOME/.nvm/nvm.sh
           $HOME/.local/bin/tox -e package
       args:
         chdir: "src/{{ zuul.project.canonical_name }}"
+    - name: Move all tar.gz and wheel packages into dist
+      shell: "mv libs/{{ item }}/dist/* dist/"
+      args:
+        chdir: "src/{{ zuul.project.canonical_name }}"
+      with_items:
+        - "skyline-apiserver"
+        - "skyline-config"
+        - "skyline-console"
+        - "skyline-log"
+        - "skyline-nginx"
+        - "skyline-policy-manager"
+
