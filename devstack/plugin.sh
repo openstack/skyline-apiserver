@@ -69,26 +69,19 @@ function _install_dependent_tools {
     # poetry
     contrib_pip_install poetry!=1.1.8
 
-    # node
-    if is_fedora; then
-        curl --silent --location https://rpm.nodesource.com/setup_12.x | sudo bash -
-    else
-        curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-    fi
-    RETRY_UPDATE=True update_package_repo
-    install_package nodejs
-    sudo npm install -g n
-    sudo n stable
+    # nvm
+    wget -P $HOME --tries=10 --retry-connrefused --waitretry=60 --no-dns-cache --no-cache  https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh
+    bash $HOME/install.sh
+    . $HOME/.nvm/nvm.sh
+
+    # nodejs
+    NODE_VERSION=erbium
+    nvm install --lts=$NODE_VERSION
+    nvm alias default lts/$NODE_VERSION
+    nvm use default
 
     # yarn
-    if is_fedora; then
-        curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
-    else
-        curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-        echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-    fi
-    RETRY_UPDATE=True update_package_repo
-    install_package yarn
+    npm install -g yarn
 
     _install_extra_tools
 }
@@ -99,15 +92,15 @@ function _install_dependent_tools {
 # cleanup_skyline() - Remove residual data files, anything left over from previous
 # runs that a clean run would need to clean up
 function cleanup_skyline {
-    rm -rf $SKYLINE_CONF_DIR
-    rm -rf $SKYLINE_LOG_DIR
-    rm -rf $SKYLINE_RUN_DIR
+    sudo rm -rf $SKYLINE_CONF_DIR
+    sudo rm -rf $SKYLINE_LOG_DIR
+    sudo rm -rf $SKYLINE_RUN_DIR
 
     # remove all .venv under skyline
-    find $SKYLINE_DIR -name '.venv'|xargs rm -rf
+    sudo find $SKYLINE_DIR -name '.venv'|xargs rm -rf
 
     # remove static
-    rm -rf $SKYLINE_DIR/libs/skyline-console/skyline_console/static
+    sudo rm -rf $SKYLINE_DIR/libs/skyline-console/skyline_console/static
 
     # uninstall nginx
     uninstall_package nginx
@@ -133,11 +126,6 @@ function configure_skyline {
     # we can see more details from devstack/lib/keystone
     _skyline_config_set $SKYLINE_CONF_FILE "interface_type: *.*" "interface_type: public"
     _skyline_config_set $SKYLINE_CONF_FILE "log_dir: *.*" "log_dir: /var/log"
-
-    # skyline-console Configuration
-    #-------------------------
-
-    sudo $SKYLINE_DIR/.venv/bin/nginx-generator -o /etc/nginx/nginx.conf
 }
 
 # create_skyline_accounts() - Create required service accounts
@@ -173,6 +161,11 @@ function start_skyline {
     #-------------------------
 
     run_process "skyline" "$SKYLINE_DIR/.venv/bin/gunicorn -c /etc/skyline/gunicorn.py skyline_apiserver.main:app"
+
+    # skyline-console Configuration
+    #-------------------------
+
+    sudo $SKYLINE_DIR/.venv/bin/nginx-generator -o /etc/nginx/nginx.conf
 
     # skyline-console Start
     #-------------------------
