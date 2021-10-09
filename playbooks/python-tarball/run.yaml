@@ -26,8 +26,15 @@
           $HOME/.local/bin/tox -e package
       args:
         chdir: "src/{{ zuul.project.canonical_name }}"
-    - name: Move all tar.gz and wheel packages into dist
-      shell: "mv libs/{{ item }}/dist/* dist/"
+    - name: Remove the invalid tar.gz packages
+      shell:
+        executable: /bin/bash
+        cmd: |
+          rm -rf *.tar.gz
+      args:
+        chdir: "src/{{ zuul.project.canonical_name }}/dist"
+    - name: Move all tar.gz packages into dist
+      shell: "mv libs/{{ item }}/dist/*.tar.gz dist/"
       args:
         chdir: "src/{{ zuul.project.canonical_name }}"
       with_items:
@@ -37,4 +44,14 @@
         - "skyline-log"
         - "skyline-nginx"
         - "skyline-policy-manager"
-
+    - name: All tar.gz into skyline.tar.gz
+      shell:
+        executable: /bin/bash
+        cmd: |
+          mkdir -p packages
+          mv *.tar.gz packages
+          mv packages skyline-apiserver
+          tar -czf skyline-apiserver.tar.gz skyline-apiserver
+          rm -rf skyline-apiserver
+      args:
+        chdir: "src/{{ zuul.project.canonical_name }}/dist"

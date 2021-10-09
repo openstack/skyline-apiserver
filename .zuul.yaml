@@ -47,9 +47,7 @@
     parent: publish-openstack-artifacts
     description: |
             Publish the results tar.gz and whl packages to tarballs.openstack.org.
-    pre-run: playbooks/python-tarball/pre.yaml
     run: playbooks/python-tarball/run.yaml
-    post-run: playbooks/python-tarball/post.yaml
     vars:
       release_python: python3
 
