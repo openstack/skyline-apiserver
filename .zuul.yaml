@@ -44,9 +44,9 @@
 
 - job:
     name: publish-skyline-python-branch-tarball
-    parent: publish-openstack-python-branch-tarball
+    parent: publish-openstack-artifacts
     description: |
-            Publish the results of the tox-tarball job to tarballs.openstack.org.
+            Publish the results tar.gz and whl packages to tarballs.openstack.org.
     pre-run: playbooks/python-tarball/pre.yaml
     run: playbooks/python-tarball/run.yaml
     post-run: playbooks/python-tarball/post.yaml
