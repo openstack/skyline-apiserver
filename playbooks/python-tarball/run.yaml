@@ -17,6 +17,7 @@
           npm install -g yarn
           # tox
           pip3 install tox
+
     - name: Build tarball and wheel
       shell:
         executable: /bin/bash
@@ -26,15 +27,17 @@
           $HOME/.local/bin/tox -e package
       args:
         chdir: "src/{{ zuul.project.canonical_name }}"
-    - name: Remove the invalid tar.gz packages
+
+    - name: Remove the invalid tar.gz and whl packages
       shell:
         executable: /bin/bash
         cmd: |
-          rm -rf *.tar.gz
+          rm -rf *
       args:
         chdir: "src/{{ zuul.project.canonical_name }}/dist"
-    - name: Move all tar.gz packages into dist
-      shell: "mv libs/{{ item }}/dist/*.tar.gz dist/"
+
+    - name: Move all tar.gz and whl packages into dist
+      shell: "mv libs/{{ item }}/dist/* dist/"
       args:
         chdir: "src/{{ zuul.project.canonical_name }}"
       with_items:
@@ -44,14 +47,28 @@
         - "skyline-log"
         - "skyline-nginx"
         - "skyline-policy-manager"
-    - name: All tar.gz into skyline.tar.gz
-      shell:
-        executable: /bin/bash
-        cmd: |
-          mkdir -p packages
-          mv *.tar.gz packages
-          mv packages skyline-apiserver
-          tar -czf skyline-apiserver.tar.gz skyline-apiserver
-          rm -rf skyline-apiserver
+
+    - name: Rename whl files to branch specific name
+      shell: "mv {{ item }}*.whl {{ item }}-{{ zuul.branch | replace('/', '-') }}.whl"
       args:
         chdir: "src/{{ zuul.project.canonical_name }}/dist"
+      with_items:
+        - "skyline_apiserver"
+        - "skyline_config"
+        - "skyline_console"
+        - "skyline_log"
+        - "skyline_nginx"
+        - "skyline_policy_manager"
+
+    - name: Rename tar.gz files to branch specific name
+      shell: "mv {{ item }}*.tar.gz {{ item }}-{{ zuul.branch | replace('/', '-') }}.tar.gz"
+      args:
+        chdir: "src/{{ zuul.project.canonical_name }}/dist"
+      with_items:
+        - "skyline-apiserver"
+        - "skyline-config"
+        - "skyline-console"
+        - "skyline-log"
+        - "skyline-nginx"
+        - "skyline-policy-manager"
+
