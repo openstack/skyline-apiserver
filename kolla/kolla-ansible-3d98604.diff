@@ -1,0 +1,848 @@
+From 3d98604c16f7d60127122df5185843873a8ff70d Mon Sep 17 00:00:00 2001
+From: yangshaoxue <yang.shaoxue@99cloud.net>
+Date: Thu, 23 Sep 2021 16:50:17 +0800
+Subject: [PATCH] Skyline: Add skyline role
+
+Add skyline role
+
+Depends-On: https://review.opendev.org/c/openstack/kolla/+/810796
+
+Change-Id: I5243c88ffbdb72fd3ad2e0eb6a41bd2b341f89b8
+---
+
+diff --git a/ansible/group_vars/all.yml b/ansible/group_vars/all.yml
+index d27139d..2afe4d2 100644
+--- a/ansible/group_vars/all.yml
++++ b/ansible/group_vars/all.yml
+@@ -47,10 +47,13 @@
+ # Valid options are [ binary, source ]
+ kolla_install_type: "source"
+ 
++kolla_admin_vip_address: "{{ kolla_internal_vip_address }}"
++kolla_admin_fqdn: "{{ kolla_internal_fqdn if kolla_same_internal_admin_vip | bool else kolla_admin_vip_address }}"
+ kolla_internal_vip_address: "{{ kolla_internal_address | default('') }}"
+ kolla_internal_fqdn: "{{ kolla_internal_vip_address }}"
+ kolla_external_vip_address: "{{ kolla_internal_vip_address }}"
+ kolla_same_external_internal_vip: "{{ kolla_external_vip_address == kolla_internal_vip_address }}"
++kolla_same_internal_admin_vip: "{{ kolla_internal_vip_address == kolla_admin_vip_address }}"
+ kolla_external_fqdn: "{{ kolla_internal_fqdn if kolla_same_external_internal_vip | bool else kolla_external_vip_address }}"
+ 
+ kolla_enable_sanity_checks: "no"
+@@ -481,6 +484,13 @@
+ skydive_analyzer_port: "8085"
+ skydive_agents_port: "8090"
+ 
++skyline_port: "9999"
++skyline_enable_tls_backend: "{{ kolla_enable_tls_backend }}"
++skyline_cert: "{{ container_config_directory }}/skyline-cert.pem"
++skyline_key: "{{ container_config_directory }}/skyline-key.pem"
++skyline_ssl_certfile: "{{ skyline_cert if skyline_enable_tls_backend | bool else '' }}"
++skyline_ssl_keyfile: "{{ skyline_key if skyline_enable_tls_backend | bool else '' }}"
++
+ solum_application_deployment_port: "9777"
+ solum_image_builder_port: "9778"
+ 
+@@ -691,6 +701,7 @@
+ enable_sahara: "no"
+ enable_senlin: "no"
+ enable_skydive: "no"
++enable_skyline: "no"
+ enable_solum: "no"
+ enable_storm: "{{ enable_monasca | bool and monasca_enable_alerting_pipeline | bool }}"
+ enable_swift: "no"
+diff --git a/ansible/inventory/all-in-one b/ansible/inventory/all-in-one
+index 66e17b4..c1d9925 100644
+--- a/ansible/inventory/all-in-one
++++ b/ansible/inventory/all-in-one
+@@ -213,6 +213,9 @@
+ [skydive:children]
+ monitoring
+ 
++[skyline:children]
++control
++
+ [redis:children]
+ control
+ 
+diff --git a/ansible/inventory/multinode b/ansible/inventory/multinode
+index 63247ff..bd94759 100644
+--- a/ansible/inventory/multinode
++++ b/ansible/inventory/multinode
+@@ -231,6 +231,9 @@
+ [skydive:children]
+ monitoring
+ 
++[skyline:children]
++control
++
+ [redis:children]
+ control
+ 
+diff --git a/ansible/roles/common/tasks/config.yml b/ansible/roles/common/tasks/config.yml
+index 94d6d63..30e6ea3 100644
+--- a/ansible/roles/common/tasks/config.yml
++++ b/ansible/roles/common/tasks/config.yml
+@@ -229,6 +229,7 @@
+       - { name: "sahara", enabled: "{{ enable_sahara | bool }}" }
+       - { name: "senlin", enabled: "{{ enable_senlin | bool }}" }
+       - { name: "skydive", enabled: "{{ enable_skydive | bool }}" }
++      - { name: "skyline", enabled: "{{ enable_skyline | bool }}" }
+       - { name: "solum", enabled: "{{ enable_solum | bool }}" }
+       - { name: "storm", enabled: "{{ enable_storm | bool }}" }
+       - { name: "swift", enabled: "{{ enable_swift | bool }}" }
+diff --git a/ansible/roles/skyline/defaults/main.yml b/ansible/roles/skyline/defaults/main.yml
+new file mode 100644
+index 0000000..72e49ab
+--- /dev/null
++++ b/ansible/roles/skyline/defaults/main.yml
+@@ -0,0 +1,187 @@
++---
++project_name: "skyline"
++
++skyline_services:
++  skyline:
++    container_name: "skyline"
++    group: skyline
++    enabled: true
++    image: "{{ skyline_image_full }}"
++    volumes: "{{ skyline_volumes }}"
++    haproxy:
++      skyline:
++        enabled: "{{ enable_skyline|bool }}"
++        mode: "tcp"
++        port: "{{ skyline_port }}"
++        listen_port: "{{ skyline_port }}"
++        frontend_tcp_extra:
++          - "option clitcpka"
++          - "timeout client 3600s"
++        backend_tcp_extra:
++          - "option srvtcpka"
++          - "timeout server 3600s"
++        custom_member_list: "{{ internal_haproxy_members.split(';') }}"
++      skyline_external:
++        enabled: "{{ enable_skyline|bool }}"
++        mode: "tcp"
++        external: true
++        port: "{{ skyline_port }}"
++        listen_port: "{{ skyline_port }}"
++        frontend_tcp_extra:
++          - "option clitcpka"
++          - "timeout client 3600s"
++        backend_tcp_extra:
++          - "option srvtcpka"
++          - "timeout server 3600s"
++        custom_member_list: "{{ external_haproxy_members.split(';') }}"
++      skyline_admin:
++        enabled: "{{ enable_skyline|bool and not kolla_same_internal_admin_vip|bool }}"
++        mode: "tcp"
++        external: false
++        port: "{{ skyline_port }}"
++        listen_port: "{{ skyline_port }}"
++        frontend_tcp_extra:
++          - "option clitcpka"
++          - "timeout client 3600s"
++        backend_tcp_extra:
++          - "option srvtcpka"
++          - "timeout server 3600s"
++        custom_member_list: "{{ admin_haproxy_members.split(';') }}"
++
++####################
++# Registry config
++####################
++openstack_skyline_auth: "{{ openstack_auth }}"
++skyline_keystone_user: skyline
++skyline_admin_endpoint: "{{ admin_protocol }}://{{ kolla_admin_fqdn | put_address_in_context('url') }}:{{ skyline_port }}"
++skyline_public_endpoint: "{{ public_protocol }}://{{ kolla_external_fqdn | put_address_in_context('url') }}:{{ skyline_port }}"
++skyline_internal_endpoint: "{{ internal_protocol }}://{{ kolla_internal_fqdn | put_address_in_context('url') }}:{{ skyline_port }}"
++skyline_ks_services:
++  - name: "skyline"
++    type: "panel"
++    description: "Custom API"
++    endpoints:
++      - {'interface': 'admin', 'url': '{{ skyline_admin_endpoint }}'}
++      - {'interface': 'internal', 'url': '{{ skyline_internal_endpoint }}'}
++      - {'interface': 'public', 'url': '{{ skyline_public_endpoint }}'}
++skyline_ks_users:
++  - project: service
++    user: "{{ skyline_keystone_user }}"
++    password: "{{ skyline_keystone_password }}"
++    role: admin
++
++####################
++# Database config
++####################
++skyline_database_name: skyline
++skyline_database_user: skyline
++skyline_database_address: "{{ database_address | put_address_in_context('url') }}:{{ database_port }}"
++
++####################
++# HAProxy
++####################
++internal_haproxy_members: "{% for host in groups['skyline'] %}server {{ hostvars[host]['ansible_hostname'] }} {{ 'api' | kolla_address(host) }}:{{ skyline_port }} check inter 2000 rise 2 fall 5{% if not loop.first %} backup{% endif %};{% endfor %}"
++external_haproxy_members: "{% for host in groups['skyline'] %}server {{ host }} {{ host }}:{{ skyline_port }} check inter 2000 rise 2 fall 5{% if not loop.first %} backup{% endif %};{% endfor %}"
++admin_haproxy_members: "{% for host in groups['skyline'] %}server {{ host }} {{ host }}:{{ skyline_port }} check inter 2000 rise 2 fall 5{% if not loop.first %} backup{% endif %};{% endfor %}"
++
++####################
++# Docker image
++####################
++skyline_distro: "{{ kolla_base_distro }}"
++skyline_install_type: "{{ kolla_install_type }}"
++skyline_release: "{{ openstack_release }}"
++
++skyline_image: "{{ docker_registry ~ '/' if docker_registry else '' }}{{ docker_namespace }}/{{ skyline_distro }}-{{ skyline_install_type }}-skyline"
++skyline_tag: "{{ skyline_release }}"
++skyline_image_full: "{{ skyline_image }}:{{ skyline_tag }}"
++
++####################
++# Skyline config
++####################
++debug: false
++log_dir: /var/log/kolla/
++skyline_show_raw_sql: false
++skyline_access_token_expire_seconds: 3600
++skyline_access_token_renew_seconds: 1800
++skyline_backend_cors_origins: []
++skyline_nginx_prefix: /api/openstack
++skyline_base_domains:
++  - heat_user_domain
++skyline_base_roles:
++  - keystone_system_admin
++  - keystone_system_reader
++  - keystone_project_admin
++  - keystone_project_member
++  - keystone_project_reader
++  - nova_system_admin
++  - nova_system_reader
++  - nova_project_admin
++  - nova_project_member
++  - nova_project_reader
++  - cinder_system_admin
++  - cinder_system_reader
++  - cinder_project_admin
++  - cinder_project_member
++  - cinder_project_reader
++  - glance_system_admin
++  - glance_system_reader
++  - glance_project_admin
++  - glance_project_member
++  - glance_project_reader
++  - neutron_system_admin
++  - neutron_system_reader
++  - neutron_project_admin
++  - neutron_project_member
++  - neutron_project_reader
++  - heat_system_admin
++  - heat_system_reader
++  - heat_project_admin
++  - heat_project_member
++  - heat_project_reader
++  - placement_system_admin
++  - placement_system_reader
++  - panko_system_admin
++  - panko_system_reader
++  - panko_project_admin
++  - panko_project_member
++  - panko_project_reader
++  - ironic_system_admin
++  - ironic_system_reader
++  - octavia_system_admin
++  - octavia_system_reader
++  - octavia_project_admin
++  - octavia_project_member
++  - octavia_project_reader
++skyline_extension_mapping:
++  fwaas_v2: neutron_firewall
++  vpnaas: neutron_vpn
++skyline_service_mapping:
++  compute: nova
++  identity: keystone
++  image: glance
++  network: neutron
++  orchestration: heat
++  placement: placement
++  volumev3: cinder
++skyline_system_admin_roles:
++  - admin
++  - system_admin
++skyline_system_reader_roles:
++  - system_reader
++skyline_keystone_url: "{{ keystone_internal_url }}/v3/"
++skyline_secret_key: aCtmgbcUqYUy_HNVg5BDXCaeJgJQzHJXwqbXr0Nmb2o
++skyline_session_name: session
++skyline_reclaim_instance_interval: 604800
++
++skyline_gunicorn_debug_level: debug
++skyline_gunicorn_timeout: 3600
++skyline_gunicorn_keepalive: 5
++
++###################
++# volumes
++###################
++skyline_volumes:
++  - "kolla_logs:{{ log_dir }}"
++  - "/etc/localtime:/etc/localtime:ro"
++  - "{{ '/etc/timezone:/etc/timezone:ro' if ansible_facts.os_family == 'Debian' else '' }}"
++  - "{{ node_config_directory }}/skyline/:{{ container_config_directory }}/:ro"
+diff --git a/ansible/roles/skyline/handlers/main.yml b/ansible/roles/skyline/handlers/main.yml
+new file mode 100644
+index 0000000..9108b03
+--- /dev/null
++++ b/ansible/roles/skyline/handlers/main.yml
+@@ -0,0 +1,19 @@
++---
++- name: Restart skyline container
++  vars:
++    service_name: skyline
++    service: "{{ skyline_services[service_name] }}"
++  become: true
++  kolla_docker:
++    action: "recreate_or_restart_container"
++    common_options: "{{ docker_common_options }}"
++    environment:
++      SSL_KEYFILE:
++      SSL_CERTFILE:
++      LISTEN_ADDRESS: "{{ api_interface_address | put_address_in_context('url') }}"
++      KOLLA_CONFIG_STRATEGY: "{{ config_strategy }}"
++    name: "{{ service.container_name }}"
++    image: "{{ service.image }}"
++    volumes: "{{ service.volumes }}"
++  when:
++    - kolla_action != "config"
+diff --git a/ansible/roles/skyline/tasks/bootstrap.yml b/ansible/roles/skyline/tasks/bootstrap.yml
+new file mode 100644
+index 0000000..175fb1c
+--- /dev/null
++++ b/ansible/roles/skyline/tasks/bootstrap.yml
+@@ -0,0 +1,52 @@
++---
++- name: Creating skyline database
++  become: true
++  kolla_toolbox:
++    module_name: mysql_db
++    module_args:
++      login_host: "{{ database_address }}"
++      login_port: "{{ database_port }}"
++      login_user: "{{ database_user }}"
++      login_password: "{{ database_password }}"
++      name: "{{ skyline_database_name }}"
++  register: database
++  run_once: True
++  delegate_to: "{{ groups['skyline'][0] }}"
++
++- name: Creating skyline database user and setting permissions
++  become: true
++  kolla_toolbox:
++    module_name: mysql_user
++    module_args:
++      login_host: "{{ database_address }}"
++      login_port: "{{ database_port }}"
++      login_user: "{{ database_user }}"
++      login_password: "{{ database_password }}"
++      name: "{{ skyline_database_user }}"
++      password: "{{ skyline_database_password }}"
++      host: "%"
++      priv: "{{ skyline_database_name }}.*:ALL"
++      append_privs: "yes"
++  run_once: True
++  delegate_to: "{{ groups['skyline'][0] }}"
++
++- name: Creating boostrap container
++  vars:
++    service_name: skyline
++    service: "{{ skyline_services[service_name] }}"
++  become: true
++  kolla_docker:
++    action: "start_container"
++    name: "bootstrap_{{ service.container_name }}"
++    common_options: "{{ docker_common_options }}"
++    image: "{{ service.image }}"
++    detach: False
++    restart_policy: no
++    volumes: "{{ service.volumes }}"
++    environment:
++      KOLLA_BOOTSTRAP:
++      KOLLA_CONFIG_STRATEGY: "{{ config_strategy }}"
++    labels:
++      BOOTSTRAP:
++  run_once: True
++  delegate_to: "{{ groups['skyline'][0] }}"
+diff --git a/ansible/roles/skyline/tasks/check.yml b/ansible/roles/skyline/tasks/check.yml
+new file mode 100644
+index 0000000..ed97d53
+--- /dev/null
++++ b/ansible/roles/skyline/tasks/check.yml
+@@ -0,0 +1 @@
++---
+diff --git a/ansible/roles/skyline/tasks/config.yml b/ansible/roles/skyline/tasks/config.yml
+new file mode 100644
+index 0000000..ed5697a
+--- /dev/null
++++ b/ansible/roles/skyline/tasks/config.yml
+@@ -0,0 +1,83 @@
++---
++- name: Ensuring config directories exist
++  become: true
++  file:
++    path: "{{ node_config_directory }}/{{ item.key }}"
++    state: "directory"
++    recurse: yes
++  when:
++    - inventory_hostname in groups[item.value.group]
++    - item.value.enabled | bool
++  with_dict: "{{ skyline_services }}"
++
++- name: Ensuring log directories exist
++  file:
++    path: "{{ docker_runtime_directory or '/var/lib/docker' }}/volumes/kolla_logs/_data/{{ item.key }}"
++    state: directory
++    recurse: yes
++  when:
++    - inventory_hostname in groups[item.value.group]
++    - item.value.enabled | bool
++  with_dict: "{{ skyline_services }}"
++
++- include_tasks: copy-certs.yml
++  when:
++    - skyline_enable_tls_backend | bool
++
++- name: Copying over config.yaml files for services
++  become: true
++  template:
++    src: "{{ item.key }}.yaml.j2"
++    dest: "{{ node_config_directory }}/{{ item.key }}/skyline.yaml"
++    mode: "0660"
++  when:
++    - inventory_hostname in groups[item.value.group]
++    - item.value.enabled | bool
++  with_dict: "{{ skyline_services }}"
++  notify:
++    - "Restart {{ item.key }} container"
++
++- name: Copying over gunicorn.py files for services
++  become: true
++  template:
++    src: "gunicorn.py.j2"
++    dest: "{{ node_config_directory }}/{{ item.key }}/gunicorn.py"
++    mode: "0660"
++  when:
++    - inventory_hostname in groups[item.value.group]
++    - item.value.enabled | bool
++  with_dict: "{{ skyline_services }}"
++  notify:
++    - "Restart {{ item.key }} container"
++
++- name: Copying over config.json files for services
++  become: true
++  template:
++    src: "{{ item.key }}.json.j2"
++    dest: "{{ node_config_directory }}/{{ item.key }}/config.json"
++    mode: "0660"
++  when:
++    - inventory_hostname in groups[item.value.group]
++    - item.value.enabled | bool
++  with_dict: "{{ skyline_services }}"
++  notify:
++    - "Restart {{ item.key }} container"
++
++- name: Check skyline containers
++  become: true
++  kolla_docker:
++    action: "compare_container"
++    common_options: "{{ docker_common_options }}"
++    name: "{{ item.value.container_name }}"
++    image: "{{ item.value.image }}"
++    volumes: "{{ item.value.volumes }}"
++    environment:
++      SSL_CERTFILE: "{{ skyline_ssl_certfile }}"
++      SSL_KEYFILE: "{{ skyline_ssl_keyfile }}"
++  register: check_skyline_containers
++  when:
++    - inventory_hostname in groups[item.value.group]
++    - item.value.enabled | bool
++  with_dict: "{{ skyline_services }}"
++  notify:
++    - "Restart {{ item.key }} container"
+diff --git a/ansible/roles/skyline/tasks/copy-certs.yml b/ansible/roles/skyline/tasks/copy-certs.yml
+new file mode 100644
+index 0000000..3f39794
+--- /dev/null
++++ b/ansible/roles/skyline/tasks/copy-certs.yml
+@@ -0,0 +1,6 @@
++---
++- name: "Copy certificates and keys for {{ project_name }}"
++  import_role:
++    role: service-cert-copy
++  vars:
++    project_services: "{{ skyline_services }}"
+diff --git a/ansible/roles/skyline/tasks/deploy.yml b/ansible/roles/skyline/tasks/deploy.yml
+new file mode 100644
+index 0000000..0d49d33
+--- /dev/null
++++ b/ansible/roles/skyline/tasks/deploy.yml
+@@ -0,0 +1,13 @@
++---
++- include: precheck.yml
++
++- include: pull.yml
++
++- include: register.yml
++
++- include: config.yml
++
++- include: bootstrap.yml
++
++- name: Flush handlers
++  meta: flush_handlers
+diff --git a/ansible/roles/skyline/tasks/loadbalancer.yml b/ansible/roles/skyline/tasks/loadbalancer.yml
+new file mode 100644
+index 0000000..d4759ea
+--- /dev/null
++++ b/ansible/roles/skyline/tasks/loadbalancer.yml
+@@ -0,0 +1,7 @@
++---
++- name: "Configure haproxy for {{ project_name }}"
++  import_role:
++    name: haproxy-config
++  vars:
++    project_services: "{{ skyline_services }}"
++  tags: always
+diff --git a/ansible/roles/skyline/tasks/main.yml b/ansible/roles/skyline/tasks/main.yml
+new file mode 100644
+index 0000000..bc5d1e6
+--- /dev/null
++++ b/ansible/roles/skyline/tasks/main.yml
+@@ -0,0 +1,2 @@
++---
++- include_tasks: "{{ kolla_action }}.yml"
+diff --git a/ansible/roles/skyline/tasks/precheck.yml b/ansible/roles/skyline/tasks/precheck.yml
+new file mode 100644
+index 0000000..8cfcb92
+--- /dev/null
++++ b/ansible/roles/skyline/tasks/precheck.yml
+@@ -0,0 +1,18 @@
++---
++- name: Get container facts
++  become: true
++  kolla_container_facts:
++    name:
++      - skyline
++  register: container_facts
++
++- name: Checking free port for Skyline
++  wait_for:
++    host: "{{ api_interface_address }}"
++    port: "{{ skyline_port }}"
++    connect_timeout: 1
++    timeout: 1
++    state: stopped
++  when:
++    - container_facts['skyline'] is not defined
++    - inventory_hostname in groups['skyline']
+diff --git a/ansible/roles/skyline/tasks/pull.yml b/ansible/roles/skyline/tasks/pull.yml
+new file mode 100644
+index 0000000..53f9c5f
+--- /dev/null
++++ b/ansible/roles/skyline/tasks/pull.yml
+@@ -0,0 +1,3 @@
++---
++- import_role:
++    role: service-images-pull
+diff --git a/ansible/roles/skyline/tasks/reconfigure.yml b/ansible/roles/skyline/tasks/reconfigure.yml
+new file mode 100644
+index 0000000..f670a5b
+--- /dev/null
++++ b/ansible/roles/skyline/tasks/reconfigure.yml
+@@ -0,0 +1,2 @@
++---
++- include_tasks: deploy.yml
+diff --git a/ansible/roles/skyline/tasks/register.yml b/ansible/roles/skyline/tasks/register.yml
+new file mode 100644
+index 0000000..f0ec84e
+--- /dev/null
++++ b/ansible/roles/skyline/tasks/register.yml
+@@ -0,0 +1,8 @@
++---
++- import_role:
++    name: service-ks-register
++  vars:
++    service_ks_register_auth: "{{ openstack_skyline_auth }}"
++    service_ks_register_services: "{{ skyline_ks_services }}"
++    service_ks_register_users: "{{ skyline_ks_users }}"
++  tags: always
+diff --git a/ansible/roles/skyline/tasks/stop.yml b/ansible/roles/skyline/tasks/stop.yml
+new file mode 100644
+index 0000000..a8e9278
+--- /dev/null
++++ b/ansible/roles/skyline/tasks/stop.yml
+@@ -0,0 +1,11 @@
++---
++- name: "Stopping skyline containers"
++  vars:
++    service: "{{ item.value }}"
++  docker_container:
++    name: "{{ service.container_name }}"
++    state: stopped
++  when:
++    - service.enabled | bool
++    - service.container_name not in skip_stop_containers
++  with_dict: "{{ skyline_services }}"
+diff --git a/ansible/roles/skyline/tasks/upgrade.yml b/ansible/roles/skyline/tasks/upgrade.yml
+new file mode 100644
+index 0000000..90c46fa
+--- /dev/null
++++ b/ansible/roles/skyline/tasks/upgrade.yml
+@@ -0,0 +1,7 @@
++---
++- include_tasks: register.yml
++
++- include_tasks: config.yml
++
++- name: Flush handlers
++  meta: flush_handlers
+diff --git a/ansible/roles/skyline/templates/gunicorn.py.j2 b/ansible/roles/skyline/templates/gunicorn.py.j2
+new file mode 100644
+index 0000000..a6190e3
+--- /dev/null
++++ b/ansible/roles/skyline/templates/gunicorn.py.j2
+@@ -0,0 +1,12 @@
++import multiprocessing
++
++bind = "unix:/var/lib/skyline/skyline.sock"
++workers = (1 + multiprocessing.cpu_count()) // 2
++worker_class = "uvicorn.workers.UvicornWorker"
++timeout = {{ skyline_gunicorn_timeout }}
++keepalive = {{ skyline_gunicorn_keepalive }}
++reuse_port = True
++proc_name = "{{ project_name }}"
++log_level = "{{ skyline_gunicorn_debug_level }}"
++accesslog = "{{ log_dir }}skyline/access.log"
++errorlog = "{{ log_dir }}skyline/error.log"
+diff --git a/ansible/roles/skyline/templates/skyline.json.j2 b/ansible/roles/skyline/templates/skyline.json.j2
+new file mode 100644
+index 0000000..ee4559d
+--- /dev/null
++++ b/ansible/roles/skyline/templates/skyline.json.j2
+@@ -0,0 +1,36 @@
++{
++    "command": "gunicorn -c /etc/skyline/gunicorn.py skyline_apiserver.main:app",
++    "config_files": [
++        {
++            "source": "{{ container_config_directory }}/skyline.yaml",
++            "dest": "/etc/skyline/skyline.yaml",
++            "owner": "skyline",
++            "perm": "0600"
++        },
++        {
++            "source": "{{ container_config_directory }}/gunicorn.py",
++            "dest": "/etc/skyline/gunicorn.py",
++            "owner": "skyline",
++            "perm": "0600"
++        }{% if skyline_enable_tls_backend | bool %},
++        {
++            "source": "{{ container_config_directory }}/skyline-cert.pem",
++            "dest": "/etc/skyline/certs/skyline-cert.pem",
++            "owner": "skyline",
++            "perm": "0600"
++        },
++        {
++            "source": "{{ container_config_directory }}/skyline-key.pem",
++            "dest": "/etc/skyline/certs/skyline-key.pem",
++            "owner": "skyline",
++            "perm": "0600"
++        }{% endif %}
++        ],
++    "permissions": [
++        {
++            "path": "/var/log/kolla/skyline",
++            "owner": "skyline:skyline",
++            "recurse": true
++        }
++    ]
++}
+diff --git a/ansible/roles/skyline/templates/skyline.yaml.j2 b/ansible/roles/skyline/templates/skyline.yaml.j2
+new file mode 100644
+index 0000000..6b7b4b5
+--- /dev/null
++++ b/ansible/roles/skyline/templates/skyline.yaml.j2
+@@ -0,0 +1,113 @@
++default:
++  access_token_expire: {{ skyline_access_token_expire_seconds }}
++  access_token_renew: {{ skyline_access_token_renew_seconds }}
++  cors_allow_origins: {{ skyline_backend_cors_origins }}
++  database_url: mysql://{{ skyline_database_user }}:{{ skyline_database_password }}@{{ skyline_database_address }}/{{ skyline_database_name }}
++  debug: {{ debug }}
++  log_dir: {{ log_dir }}
++  secret_key: {{ skyline_secret_key }}
++  session_name: {{ skyline_session_name }}
++developer:
++  show_raw_sql: {{ skyline_show_raw_sql }}
++openstack:
++  base_domains:
++  - heat_user_domain
++  base_roles:
++  - keystone_system_admin
++  - keystone_system_reader
++  - keystone_project_admin
++  - keystone_project_member
++  - keystone_project_reader
++  - nova_system_admin
++  - nova_system_reader
++  - nova_project_admin
++  - nova_project_member
++  - nova_project_reader
++  - cinder_system_admin
++  - cinder_system_reader
++  - cinder_project_admin
++  - cinder_project_member
++  - cinder_project_reader
++  - glance_system_admin
++  - glance_system_reader
++  - glance_project_admin
++  - glance_project_member
++  - glance_project_reader
++  - neutron_system_admin
++  - neutron_system_reader
++  - neutron_project_admin
++  - neutron_project_member
++  - neutron_project_reader
++  - heat_system_admin
++  - heat_system_reader
++  - heat_project_admin
++  - heat_project_member
++  - heat_project_reader
++  - placement_system_admin
++  - placement_system_reader
++  - panko_system_admin
++  - panko_system_reader
++  - panko_project_admin
++  - panko_project_member
++  - panko_project_reader
++  - ironic_system_admin
++  - ironic_system_reader
++  - octavia_system_admin
++  - octavia_system_reader
++  - octavia_project_admin
++  - octavia_project_member
++  - octavia_project_reader
++  default_region: RegionOne
++  extension_mapping:
++    fwaas_v2: neutron_firewall
++    vpnaas: neutron_vpn
++  interface_type: public
++  keystone_url: {{ skyline_keystone_url }}
++  nginx_prefix: {{ skyline_nginx_prefix }}
++  reclaim_instance_interval: {{ skyline_reclaim_instance_interval }}
++  service_mapping:
++    baremetal: ironic
++    compute: nova
++    identity: keystone
++    image: glance
++    load-balancer: octavia
++    network: neutron
++    orchestration: heat
++    placement: placement
++    volumev3: cinder
++  system_admin_roles:
++  - admin
++  - system_admin
++  system_project: service
++  system_project_domain: Default
++  system_reader_roles:
++  - system_reader
++  system_user_domain: Default
++  system_user_name: skyline
++  system_user_password: {{ skyline_keystone_password }}
++setting:
++  base_settings:
++  - flavor_families
++  - gpu_models
++  - usb_models
++  flavor_families:
++  - architecture: x86_architecture
++    categories:
++    - name: general_purpose
++      properties: []
++    - name: compute_optimized
++      properties: []
++    - name: memory_optimized
++      properties: []
++    - name: high_clock_speed
++      properties: []
++  - architecture: heterogeneous_computing
++    categories:
++    - name: compute_optimized_type_with_gpu
++      properties: []
++    - name: visualization_compute_optimized_type_with_gpu
++      properties: []
++  gpu_models:
++  - nvidia_t4
++  usb_models:
++  - usb_c
+diff --git a/ansible/site.yml b/ansible/site.yml
+index dc0be8e..daa2a50 100644
+--- a/ansible/site.yml
++++ b/ansible/site.yml
+@@ -68,6 +68,7 @@
+         - enable_sahara_{{ enable_sahara | bool }}
+         - enable_senlin_{{ enable_senlin | bool }}
+         - enable_skydive_{{ enable_skydive | bool }}
++        - enable_skyline_{{ enable_skyline | bool }}
+         - enable_solum_{{ enable_solum | bool }}
+         - enable_storm_{{ enable_storm | bool }}
+         - enable_swift_{{ enable_swift | bool }}
+@@ -308,6 +309,11 @@
+           tags: skydive
+           when: enable_skydive | bool
+         - include_role:
++            name: skyline
++            tasks_from: loadbalancer
++          tags: skyline
++          when: enable_skyline | bool
++        - include_role:
+             name: solum
+             tasks_from: loadbalancer
+           tags: solum
+@@ -1091,6 +1097,17 @@
+         tags: skydive,
+         when: enable_skydive | bool }
+ 
++- name: Apply role skyline
++  gather_facts: false
++  hosts:
++    - skyline
++    - '&enable_skyline_True'
++  serial: '{{ kolla_serial|default("0") }}'
++  roles:
++    - { role: skyline,
++        tags: skyline,
++        when: enable_skyline | bool }
++
+ - name: Apply role vitrage
+   gather_facts: false
+   hosts:
+diff --git a/etc/kolla/globals.yml b/etc/kolla/globals.yml
+index d7c89b7..4146a21 100644
+--- a/etc/kolla/globals.yml
++++ b/etc/kolla/globals.yml
+@@ -392,6 +392,7 @@
+ #enable_sahara: "no"
+ #enable_senlin: "no"
+ #enable_skydive: "no"
++#enable_skyline: "no"
+ #enable_solum: "no"
+ #enable_storm: "{{ enable_monasca | bool }}"
+ #enable_swift: "no"
+diff --git a/etc/kolla/passwords.yml b/etc/kolla/passwords.yml
+index 9b0dd99..35cc94f 100644
+--- a/etc/kolla/passwords.yml
++++ b/etc/kolla/passwords.yml
+@@ -251,3 +251,9 @@
+ # Ceph RadosGW options
+ ####################
+ ceph_rgw_keystone_password:
++
++####################
++# Skyline options
++####################
++skyline_database_password:
++skyline_keystone_password:

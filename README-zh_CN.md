@@ -22,6 +22,7 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
     - [依赖工具](#依赖工具)
     - [安装和运行](#安装和运行)
   - [Devstack 集成](#devstack-集成)
+  - [Kolla Ansible 部署](#kolla-ansible-部署)
 
 ## 资源
 
@@ -218,3 +219,7 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
 ## Devstack 集成
 
 [与 Devstack 快速集成，搭建环境。](./devstack/README.rst)
+
+## Kolla Ansible 部署
+
+[使用 Kolla Ansible 部署环境。](./kolla/README-zh_CN.md)

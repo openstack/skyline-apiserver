@@ -22,6 +22,7 @@ Skyline's mascot is the nine-color deer. The nine-color deer comes from Dunhuang
     - [Dependent tools](#dependent-tools)
     - [Install & Run](#install--run)
   - [Devstack Integration](#devstack-integration)
+  - [Kolla Ansible Deployment](#kolla-ansible-deployment)
 
 ## Resources
 
@@ -218,3 +219,7 @@ You can now access the dashboard: `https://<ip_address>:9999`
 ## Devstack Integration
 
 [Fast integration with Devstack to build an environment.](./devstack/README.rst)
+
+## Kolla Ansible Deployment
+
+[Kolla Ansible to build an environment.](./kolla/README.md)
