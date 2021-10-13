@@ -56,14 +56,58 @@
 - project:
     check:
       jobs:
-        - skyline-tox-unittest-py38
-        - skyline-tox-lint-py38
-        - skyline-functional-devstack
+        - skyline-tox-unittest-py38:
+            irrelevant-files:
+              - ^container/.*$
+              - ^devstack/.*$
+              - ^docs/.*$
+              - ^tools/.*$
+              - ^.*\.rst$
+              - ^.*\.md$
+              - ^libs/skyline-console$
+        - skyline-tox-lint-py38:
+            irrelevant-files:
+              - ^container/.*$
+              - ^devstack/.*$
+              - ^docs/.*$
+              - ^tools/.*$
+              - ^.*\.rst$
+              - ^.*\.md$
+              - ^libs/skyline-console$
+        - skyline-functional-devstack:
+            irrelevant-files:
+              - ^container/.*$
+              - ^docs/.*$
+              - ^tools/.*$
+              - ^.*\.rst$
+              - ^.*\.md$
     gate:
       jobs:
-        - skyline-tox-unittest-py38
-        - skyline-tox-lint-py38
-        - skyline-functional-devstack
+        - skyline-tox-unittest-py38:
+            irrelevant-files:
+              - ^container/.*$
+              - ^devstack/.*$
+              - ^docs/.*$
+              - ^tools/.*$
+              - ^.*\.rst$
+              - ^.*\.md$
+              - ^libs/skyline-console$
+        - skyline-tox-lint-py38:
+            irrelevant-files:
+              - ^container/.*$
+              - ^devstack/.*$
+              - ^docs/.*$
+              - ^tools/.*$
+              - ^.*\.rst$
+              - ^.*\.md$
+              - ^libs/skyline-console$
+        - skyline-functional-devstack:
+            irrelevant-files:
+              - ^container/.*$
+              - ^docs/.*$
+              - ^tools/.*$
+              - ^.*\.rst$
+              - ^.*\.md$
     post:
       jobs:
         - publish-skyline-python-branch-tarball
