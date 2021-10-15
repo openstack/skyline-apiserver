@@ -15,7 +15,6 @@
 import os
 
 import pytest
-
 from skyline_apiserver.config import base
 
 

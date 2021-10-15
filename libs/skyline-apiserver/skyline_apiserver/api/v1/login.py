@@ -18,8 +18,6 @@ from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response
 from keystoneauth1.identity.v3 import Password
 from keystoneauth1.session import Session
 from keystoneclient.client import Client as KeystoneClient
-from skyline_log import LOG
-
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
 from skyline_apiserver.client import utils
@@ -36,9 +34,9 @@ from skyline_apiserver.core.security import (
     generate_profile_by_token,
     parse_access_token,
 )
-from skyline_apiserver.types import constants
 from skyline_apiserver.db import api as db_api
 from skyline_apiserver.types import constants
+from skyline_log import LOG
 
 router = APIRouter()
 
@@ -94,7 +92,11 @@ async def login(
             reauthenticate=False,
         )
         session = Session(auth=unscope_auth, verify=False, timeout=constants.DEFAULT_TIMEOUT)
-        unscope_client = KeystoneClient(session=session, endpoint=auth_url, interface=CONF.openstack.interface_type)
+        unscope_client = KeystoneClient(
+            session=session,
+            endpoint=auth_url,
+            interface=CONF.openstack.interface_type,
+        )
         project_scope = unscope_client.auth.projects()
         # we must get the project_scope with enabled project
         project_scope = [scope for scope in project_scope if scope.enabled]

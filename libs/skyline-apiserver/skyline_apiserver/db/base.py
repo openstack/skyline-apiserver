@@ -17,7 +17,6 @@ from __future__ import annotations
 from contextvars import ContextVar
 
 from databases import Database, DatabaseURL, core
-
 from skyline_apiserver.config import CONF
 
 DATABASE = None

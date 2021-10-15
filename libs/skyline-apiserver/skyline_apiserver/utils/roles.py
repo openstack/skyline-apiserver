@@ -15,7 +15,6 @@
 from __future__ import annotations
 
 from fastapi import HTTPException, status
-
 from skyline_apiserver import schemas
 from skyline_apiserver.config import CONF
 

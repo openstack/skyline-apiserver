@@ -16,7 +16,6 @@ import os
 
 import pytest
 from httpx import AsyncClient
-
 from skyline_apiserver import main
 from skyline_apiserver.config import CONF
 

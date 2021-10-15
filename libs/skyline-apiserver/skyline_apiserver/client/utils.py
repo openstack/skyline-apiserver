@@ -26,11 +26,10 @@ from keystoneclient.httpclient import HTTPClient
 from neutronclient.v2_0.client import Client as NeutronClient
 from novaclient.client import Client as NovaClient
 from osc_placement.http import SessionClient as PlacementClient
-from starlette.concurrency import run_in_threadpool
-
 from skyline_apiserver import schemas
 from skyline_apiserver.config import CONF
 from skyline_apiserver.types import constants
+from starlette.concurrency import run_in_threadpool
 
 SESSION = None
 

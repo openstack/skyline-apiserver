@@ -18,7 +18,6 @@ from typing import Any, Dict
 
 import six
 from six.moves.urllib import parse
-
 from skyline_apiserver.types import constants
 from skyline_apiserver.utils.httpclient import get_assert_200
 

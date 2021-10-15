@@ -18,7 +18,6 @@ import sys
 
 import click
 import yaml
-
 from skyline_apiserver.config import CONF, configure
 
 

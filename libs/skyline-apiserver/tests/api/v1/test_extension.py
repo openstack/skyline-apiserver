@@ -19,7 +19,6 @@ from typing import Any, Dict
 import pytest
 from httpx import AsyncClient
 from six.moves.urllib import parse
-
 from skyline_apiserver import main
 
 

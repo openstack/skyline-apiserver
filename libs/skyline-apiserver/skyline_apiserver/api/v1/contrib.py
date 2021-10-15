@@ -18,14 +18,13 @@ import asyncio
 from typing import Any, List
 
 from fastapi import APIRouter, Header, HTTPException, status
-from skyline_log import LOG
-
 from skyline_apiserver import schemas
 from skyline_apiserver.client.openstack import system
 from skyline_apiserver.client.openstack.system import get_endpoints
 from skyline_apiserver.config import CONF
 from skyline_apiserver.schemas import common
 from skyline_apiserver.types import constants
+from skyline_log import LOG
 
 router = APIRouter()
 

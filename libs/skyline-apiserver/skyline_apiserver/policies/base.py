@@ -21,9 +21,8 @@ import attr
 from immutables import Map
 from keystoneauth1.access.access import AccessInfoV3
 from oslo_policy._checks import _check
-from skyline_policy_manager.policies.base import APIRule
-
 from skyline_apiserver.config import CONF
+from skyline_policy_manager.policies.base import APIRule
 
 
 class UserContext(MutableMapping):

@@ -22,7 +22,6 @@ from typing import List
 
 from dateutil import parser
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
-
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
 from skyline_apiserver.api.v1.openstack.base import OSPort, OSServer, OSVolume, OSVolumeSnapshot

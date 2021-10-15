@@ -14,24 +14,15 @@
 
 from __future__ import annotations
 
-import base64
-import json
 import time
 import uuid
-import zlib
-from typing import Optional
 
 from fastapi import HTTPException, status
 from jose import jwt
-from skyline_log import LOG
-
-from skyline_apiserver import __version__
-from skyline_apiserver import schemas
+from skyline_apiserver import __version__, schemas
 from skyline_apiserver.client import utils
 from skyline_apiserver.client.utils import get_system_session
 from skyline_apiserver.config import CONF
-from skyline_apiserver.db import api as db_api
-from skyline_apiserver.types import constants
 
 
 def parse_access_token(token: str) -> (schemas.Payload):

@@ -17,9 +17,8 @@ from __future__ import annotations
 from typing import Dict, List
 
 from pydantic import HttpUrl, StrictInt, StrictStr
-from skyline_config import Opt
-
 from skyline_apiserver.types import InterfaceType
+from skyline_config import Opt
 
 keystone_url = Opt(
     name="keystone_url",

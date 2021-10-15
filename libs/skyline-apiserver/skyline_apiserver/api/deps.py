@@ -20,7 +20,6 @@ from typing import Optional
 import jose
 from fastapi import HTTPException, Request, Response, status
 from fastapi.security import APIKeyCookie
-
 from skyline_apiserver import schemas
 from skyline_apiserver.config import CONF
 from skyline_apiserver.core.security import generate_profile_by_token, parse_access_token

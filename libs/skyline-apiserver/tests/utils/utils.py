@@ -16,9 +16,7 @@ import time
 import uuid
 
 from httpx import AsyncClient
-
-from skyline_apiserver import __version__
-from skyline_apiserver import config, main, schemas
+from skyline_apiserver import __version__, config, main, schemas
 
 
 def get_session_profile() -> schemas.Profile:

@@ -19,13 +19,12 @@ from typing import Any, Dict
 
 from keystoneauth1.identity.v3 import Token
 from keystoneauth1.session import Session
-from skyline_log import LOG
-from starlette.concurrency import run_in_threadpool
-
 from skyline_apiserver.client import utils
 from skyline_apiserver.client.utils import get_system_session
 from skyline_apiserver.config import CONF
 from skyline_apiserver.types import constants
+from skyline_log import LOG
+from starlette.concurrency import run_in_threadpool
 
 
 async def get_project_scope_token(

@@ -19,10 +19,9 @@ from typing import Any, Dict
 from fastapi import HTTPException, status
 from keystoneauth1.exceptions.http import Unauthorized
 from keystoneauth1.session import Session
-from starlette.concurrency import run_in_threadpool
-
 from skyline_apiserver import schemas
 from skyline_apiserver.client import utils
+from starlette.concurrency import run_in_threadpool
 
 
 async def list_images(

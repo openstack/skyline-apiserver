@@ -18,7 +18,6 @@ import json
 import sys
 
 import click
-
 from skyline_apiserver.main import app
 
 

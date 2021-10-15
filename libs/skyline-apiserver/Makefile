@@ -1,5 +1,5 @@
 PYTHON ?= python3
-ROOT_DIR ?= $(shell git rev-parse --show-toplevel)
+PY_FILES := $(shell git ls-files -- *.py | xargs)
 
 # Color
 no_color = \033[0m
@@ -35,17 +35,17 @@ package:
 
 .PHONY: fmt
 fmt:
-	poetry run isort $$(git ls-files -- **/*.py)
-	poetry run black --config ../../pyproject.toml $$(git ls-files -- **/*.py)
-	poetry run add-trailing-comma --py36-plus --exit-zero-even-if-changed $$(git ls-files -- **/*.py)
+	poetry run isort $(PY_FILES)
+	poetry run black --config ../../pyproject.toml $(PY_FILES)
+	poetry run add-trailing-comma --py36-plus --exit-zero-even-if-changed $(PY_FILES)
 
 
 .PHONY: lint
 lint:
-	# poetry run mypy --config-file=../../mypy.ini $$(git ls-files -- **/*.py)
-	poetry run isort --check-only --diff $$(git ls-files -- **/*.py)
-	poetry run black --check --diff --color --config ../../pyproject.toml $$(git ls-files -- **/*.py)
-	poetry run flake8 $$(git ls-files -- **/*.py)
+	# poetry run mypy --config-file=../../mypy.ini $(PY_FILES)
+	poetry run isort --check-only --diff $(PY_FILES)
+	poetry run black --check --diff --color --config ../../pyproject.toml $(PY_FILES)
+	poetry run flake8 $(PY_FILES)
 
 
 .PHONY: test

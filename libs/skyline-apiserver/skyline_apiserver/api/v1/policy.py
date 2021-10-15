@@ -15,7 +15,6 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
-
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
 from skyline_apiserver.client.utils import generate_session, get_access

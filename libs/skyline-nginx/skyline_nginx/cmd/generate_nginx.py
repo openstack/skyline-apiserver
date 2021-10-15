@@ -17,19 +17,20 @@ from __future__ import annotations
 import sys
 from logging import StreamHandler
 from pathlib import Path, PurePath
-from typing import Any, Dict
+from typing import Dict
 from urllib.parse import urlparse
 
 import click
 import skyline_nginx
-from pydantic import BaseModel
 from jinja2 import Template
-from keystoneauth1.identity.v3 import Password, Token
+from keystoneauth1.identity.v3 import Password
 from keystoneauth1.session import Session
 from keystoneclient.client import Client as KeystoneClient
+from pydantic import BaseModel
 from skyline_console import static_path
 from skyline_log import LOG, setup
 from skyline_nginx.config import CONF, configure
+
 
 class CommandException(Exception):
     EXIT_CODE = 1
@@ -73,7 +74,9 @@ def get_proxy_endpoints() -> Dict[str, ProxyEndpoint]:
         if service is None:
             continue
         if f"{region}-{service_type}" in endpoints:
-            raise KeyError(f"Region \"{region}\" service type \"{service_type}\" conflict in endpoints.")
+            raise KeyError(
+                f'Region "{region}" service type "{service_type}" conflict in endpoints.',
+            )
 
         proxy.part = f"# {region} {service}"
         location = PurePath("/").joinpath(
@@ -89,13 +92,9 @@ def get_proxy_endpoints() -> Dict[str, ProxyEndpoint]:
             raw_path = PurePath(raw_url.path)
             if len(raw_path.parts) > 1:
                 if raw_path.match("%(tenant_id)s") or raw_path.match("$(project_id)s"):
-                    path = (
-                        "" if str(raw_path.parents[1]) == "/" else raw_path.parents[1]
-                    )
+                    path = "" if str(raw_path.parents[1]) == "/" else raw_path.parents[1]
                 elif raw_path.match("v[0-9]") or raw_path.match("v[0-9][.][0-9]"):
-                    path = (
-                        "" if str(raw_path.parents[0]) == "/" else raw_path.parents[0]
-                    )
+                    path = "" if str(raw_path.parents[0]) == "/" else raw_path.parents[0]
                 else:
                     path = raw_path
 
@@ -131,9 +130,7 @@ def main(output_file_path: str, ssl_certfile: str, ssl_keyfile: str) -> None:
         setup(StreamHandler(), debug=CONF.default.debug)
 
         template_file_path = (
-            Path(skyline_nginx.__file__).parent
-            .joinpath("templates")
-            .joinpath("nginx.conf.j2")
+            Path(skyline_nginx.__file__).parent.joinpath("templates").joinpath("nginx.conf.j2")
         )
         content = ""
         with template_file_path.open() as f:

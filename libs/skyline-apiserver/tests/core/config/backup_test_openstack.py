@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import pytest
-
 from skyline_apiserver.config.openstack import ALL_OPTS, GROUP_NAME
 
 

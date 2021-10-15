@@ -18,7 +18,6 @@ from typing import Any, Dict, List, Optional
 
 from jose import jwt
 from pydantic import BaseModel
-
 from skyline_apiserver import config
 from skyline_apiserver.types import constants
 

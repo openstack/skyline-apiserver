@@ -13,7 +13,6 @@
 # limitations under the License.
 
 from fastapi import APIRouter
-
 from skyline_apiserver.api.v1 import contrib, extension, login, policy, setting
 
 api_router = APIRouter()

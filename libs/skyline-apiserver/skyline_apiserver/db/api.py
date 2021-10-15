@@ -18,9 +18,8 @@ import time
 from functools import wraps
 from typing import Any
 
-from sqlalchemy import delete, func, insert, select, update
-
 from skyline_apiserver.types import Fn
+from sqlalchemy import delete, func, insert, select, update
 
 from .base import DB, inject_db
 from .models import RevokedToken, Settings
