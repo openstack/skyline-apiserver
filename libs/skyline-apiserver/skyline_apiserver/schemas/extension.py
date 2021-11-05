@@ -106,12 +106,21 @@ class ExtPortStatus(str, Enum):
 
 class ExtPortDeviceOwner(str, Enum):
     null = ""
+    # prefix compute
     compute_nova = "compute:nova"
-    network_dhcp = "network:dhcp"
-    network_floatingip = "network:floatingip"
-    network_router_gateway = "network:router_gateway"
+    # prefix network
     network_router_ha_interface = "network:router_ha_interface"
     network_ha_router_replicated_interface = "network:ha_router_replicated_interface"
+    network_router_interface = "network:router_interface"
+    network_router_gateway = "network:router_gateway"
+    network_floatingip = "network:floatingip"
+    network_local_ip = "network:local_ip"
+    network_dhcp = "network:dhcp"
+    network_router_interface_distributed = "network:router_interface_distributed"
+    network_floatingip_agent_gateway = "network:floatingip_agent_gateway"
+    network_router_centralized_snat = "network:router_centralized_snat"
+    network_routed = "network:routed"
+    network_distributed = "network:distributed"
 
     def __str__(self):
         return self.value
