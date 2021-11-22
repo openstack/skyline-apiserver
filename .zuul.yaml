@@ -66,16 +66,7 @@
               - ^.*\.md$
               - ^libs/skyline-console$
               - ^kolla/.*$
-        - skyline-tox-lint-py38:
-            irrelevant-files:
-              - ^container/.*$
-              - ^devstack/.*$
-              - ^docs/.*$
-              - ^tools/.*$
-              - ^.*\.rst$
-              - ^.*\.md$
-              - ^libs/skyline-console$
-              - ^kolla/.*$
+        - skyline-tox-lint-py38
         - skyline-functional-devstack:
             irrelevant-files:
               - ^container/.*$
@@ -96,16 +87,7 @@
               - ^.*\.md$
               - ^libs/skyline-console$
               - ^kolla/.*$
-        - skyline-tox-lint-py38:
-            irrelevant-files:
-              - ^container/.*$
-              - ^devstack/.*$
-              - ^docs/.*$
-              - ^tools/.*$
-              - ^.*\.rst$
-              - ^.*\.md$
-              - ^libs/skyline-console$
-              - ^kolla/.*$
+        - skyline-tox-lint-py38
         - skyline-functional-devstack:
             irrelevant-files:
               - ^container/.*$
