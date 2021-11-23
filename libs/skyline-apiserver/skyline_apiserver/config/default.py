@@ -75,6 +75,34 @@ database_url = Opt(
     default="mysql://root:root@localhost:3306/skyline",
 )
 
+prometheus_endpoint = Opt(
+    name="prometheus_endpoint",
+    description="Prometheus Endpoint",
+    schema=StrictStr,
+    default="http://localhost:9091",
+)
+
+prometheus_enable_basic_auth = Opt(
+    name="prometheus_enable_basic_auth",
+    description="Start Prometheus Basic Auth",
+    schema=StrictBool,
+    default=False,
+)
+
+prometheus_basic_auth_user = Opt(
+    name="prometheus_basic_auth_user",
+    description="Prometheus Basic Auth username",
+    schema=StrictStr,
+    default="",
+)
+
+prometheus_basic_auth_password = Opt(
+    name="prometheus_basic_auth_password",
+    description="Prometheus Basic Auth password",
+    schema=StrictStr,
+    default="",
+)
+
 GROUP_NAME = __name__.split(".")[-1]
 ALL_OPTS = (
     debug,
@@ -85,6 +113,10 @@ ALL_OPTS = (
     cors_allow_origins,
     session_name,
     database_url,
+    prometheus_endpoint,
+    prometheus_enable_basic_auth,
+    prometheus_basic_auth_user,
+    prometheus_basic_auth_password,
 )
 
 __all__ = ("GROUP_NAME", "ALL_OPTS")

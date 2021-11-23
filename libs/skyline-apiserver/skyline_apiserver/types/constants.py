@@ -29,6 +29,10 @@ ERR_MSG_TOKEN_REVOKED = "The token has revoked."
 ERR_MSG_TOKEN_EXPIRED = "The token has expired."
 ERR_MSG_TOKEN_NOTFOUND = "Token not found."
 
+# prometheus
+PROMETHEUS_QUERY_API = "/api/v1/query"
+PROMETHEUS_QUERY_RANGE_API = "/api/v1/query_range"
+
 # RESTful API
 # neutron
 NEUTRON_PORTS_API = "/v2.0/ports"

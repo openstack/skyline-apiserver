@@ -35,6 +35,14 @@ from .extension import (
 )
 from .login import Credential, Domain, License, Payload, Profile, Project, Region, Role
 from .policy import Policies, PoliciesRules
+from .prometheus import (
+    PrometheusQueryData,
+    PrometheusQueryRangeData,
+    PrometheusQueryRangeResponse,
+    PrometheusQueryRangeResult,
+    PrometheusQueryResponse,
+    PrometheusQueryResult,
+)
 from .setting import Setting, Settings, UpdateSetting
 
 __all__ = (
@@ -70,4 +78,10 @@ __all__ = (
     "Setting",
     "Settings",
     "UpdateSetting",
+    "PrometheusQueryResponse",
+    "PrometheusQueryData",
+    "PrometheusQueryResult",
+    "PrometheusQueryRangeResponse",
+    "PrometheusQueryRangeData",
+    "PrometheusQueryRangeResult",
 )

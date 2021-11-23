@@ -5,6 +5,10 @@ default:
   database_url: mysql://root:root@localhost:3306/skyline
   debug: false
   log_dir: ./log
+  prometheus_basic_auth_password: ''
+  prometheus_basic_auth_user: ''
+  prometheus_enable_basic_auth: false
+  prometheus_endpoint: http://localhost:9091
   secret_key: aCtmgbcUqYUy_HNVg5BDXCaeJgJQzHJXwqbXr0Nmb2o
   session_name: session
 developer:

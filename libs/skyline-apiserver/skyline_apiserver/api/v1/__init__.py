@@ -13,11 +13,12 @@
 # limitations under the License.
 
 from fastapi import APIRouter
-from skyline_apiserver.api.v1 import contrib, extension, login, policy, setting
+from skyline_apiserver.api.v1 import contrib, extension, login, policy, prometheus, setting
 
 api_router = APIRouter()
 api_router.include_router(login.router, tags=["Login"])
 api_router.include_router(extension.router, tags=["Extension"])
+api_router.include_router(prometheus.router, tags=["Prometheus"])
 api_router.include_router(contrib.router, tags=["Contrib"])
 api_router.include_router(policy.router, tags=["Policy"])
 api_router.include_router(setting.router, tags=["Setting"])

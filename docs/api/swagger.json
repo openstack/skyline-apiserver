@@ -1230,6 +1230,186 @@
                 }
             }
         },
+        "/api/v1/query": {
+            "get": {
+                "tags": [
+                    "Prometheus"
+                ],
+                "summary": "Prometheus Query",
+                "description": "Prometheus query API.",
+                "operationId": "prometheus_query_api_v1_query_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Query",
+                            "type": "string"
+                        },
+                        "name": "query",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Time",
+                            "type": "string"
+                        },
+                        "name": "time",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Timeout",
+                            "type": "string"
+                        },
+                        "name": "timeout",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PrometheusQueryResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerErrorMessage"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/query_range": {
+            "get": {
+                "tags": [
+                    "Prometheus"
+                ],
+                "summary": "Prometheus Query Range",
+                "description": "Prometheus query_range API.",
+                "operationId": "prometheus_query_range_api_v1_query_range_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Query",
+                            "type": "string"
+                        },
+                        "name": "query",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Start",
+                            "type": "string"
+                        },
+                        "name": "start",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "End",
+                            "type": "string"
+                        },
+                        "name": "end",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Step",
+                            "type": "string"
+                        },
+                        "name": "step",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Timeout",
+                            "type": "string"
+                        },
+                        "name": "timeout",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PrometheusQueryRangeResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerErrorMessage"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/contrib/keystone_endpoints": {
             "get": {
                 "tags": [
@@ -2909,6 +3089,148 @@
                     },
                     "domain": {
                         "$ref": "#/components/schemas/Domain"
+                    }
+                }
+            },
+            "PrometheusQueryData": {
+                "title": "PrometheusQueryData",
+                "required": [
+                    "result",
+                    "resultType"
+                ],
+                "type": "object",
+                "properties": {
+                    "result": {
+                        "title": "Result",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PrometheusQueryResult"
+                        }
+                    },
+                    "resultType": {
+                        "title": "Resulttype",
+                        "type": "string"
+                    }
+                }
+            },
+            "PrometheusQueryRangeData": {
+                "title": "PrometheusQueryRangeData",
+                "required": [
+                    "result",
+                    "resultType"
+                ],
+                "type": "object",
+                "properties": {
+                    "result": {
+                        "title": "Result",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PrometheusQueryRangeResult"
+                        }
+                    },
+                    "resultType": {
+                        "title": "Resulttype",
+                        "type": "string"
+                    }
+                }
+            },
+            "PrometheusQueryRangeResponse": {
+                "title": "PrometheusQueryRangeResponse",
+                "required": [
+                    "status"
+                ],
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "title": "Status",
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/PrometheusQueryRangeData"
+                    },
+                    "errorType": {
+                        "title": "Errortype",
+                        "type": "string"
+                    },
+                    "error": {
+                        "title": "Error",
+                        "type": "string"
+                    },
+                    "warnings": {
+                        "title": "Warnings",
+                        "type": "string"
+                    }
+                }
+            },
+            "PrometheusQueryRangeResult": {
+                "title": "PrometheusQueryRangeResult",
+                "required": [
+                    "metric",
+                    "values"
+                ],
+                "type": "object",
+                "properties": {
+                    "metric": {
+                        "title": "Metric",
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "values": {
+                        "title": "Values",
+                        "type": "array",
+                        "items": {}
+                    }
+                }
+            },
+            "PrometheusQueryResponse": {
+                "title": "PrometheusQueryResponse",
+                "required": [
+                    "status"
+                ],
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "title": "Status",
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/PrometheusQueryData"
+                    },
+                    "errorType": {
+                        "title": "Errortype",
+                        "type": "string"
+                    },
+                    "error": {
+                        "title": "Error",
+                        "type": "string"
+                    },
+                    "warnings": {
+                        "title": "Warnings",
+                        "type": "string"
+                    }
+                }
+            },
+            "PrometheusQueryResult": {
+                "title": "PrometheusQueryResult",
+                "required": [
+                    "metric",
+                    "value"
+                ],
+                "type": "object",
+                "properties": {
+                    "metric": {
+                        "title": "Metric",
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "value": {
+                        "title": "Value",
+                        "type": "array",
+                        "items": {}
                     }
                 }
             },
