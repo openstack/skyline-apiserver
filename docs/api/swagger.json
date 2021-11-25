@@ -13,6 +13,19 @@
                 "summary": "Login",
                 "description": "Login & get user profile.",
                 "operationId": "login_api_v1_login_post",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "X-Openstack-Request-Id",
+                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "type": "string",
+                            "default": ""
+                        },
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header"
+                    }
+                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -65,6 +78,19 @@
                 "summary": "Get Profile",
                 "description": "Get user profile.",
                 "operationId": "get_profile_api_v1_profile_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "X-Openstack-Request-Id",
+                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "type": "string",
+                            "default": ""
+                        },
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -85,6 +111,16 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -97,6 +133,19 @@
                 "summary": "Logout",
                 "description": "Log out.",
                 "operationId": "logout_api_v1_logout_post",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "X-Openstack-Request-Id",
+                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "type": "string",
+                            "default": ""
+                        },
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -104,6 +153,16 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/OK"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
                                 }
                             }
                         }
@@ -128,6 +187,17 @@
                         },
                         "name": "project_id",
                         "in": "path"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "X-Openstack-Request-Id",
+                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "type": "string",
+                            "default": ""
+                        },
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -289,6 +359,17 @@
                         },
                         "name": "uuid",
                         "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "X-Openstack-Request-Id",
+                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "type": "string",
+                            "default": ""
+                        },
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -452,6 +533,17 @@
                         },
                         "name": "uuid",
                         "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "X-Openstack-Request-Id",
+                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "type": "string",
+                            "default": ""
+                        },
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -631,6 +723,17 @@
                         },
                         "name": "uuid",
                         "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "X-Openstack-Request-Id",
+                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "type": "string",
+                            "default": ""
+                        },
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -777,6 +880,17 @@
                         },
                         "name": "volume_id",
                         "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "X-Openstack-Request-Id",
+                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "type": "string",
+                            "default": ""
+                        },
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -966,6 +1080,17 @@
                         },
                         "name": "uuid",
                         "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "X-Openstack-Request-Id",
+                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "type": "string",
+                            "default": ""
+                        },
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -1048,6 +1173,17 @@
                         },
                         "name": "host",
                         "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "X-Openstack-Request-Id",
+                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "type": "string",
+                            "default": ""
+                        },
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -1138,6 +1274,19 @@
                 "summary": "List Domains",
                 "description": "List Domains",
                 "operationId": "list_domains_api_v1_contrib_domains_get",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "X-Openstack-Request-Id",
+                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "type": "string",
+                            "default": ""
+                        },
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1159,6 +1308,16 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/InternalServerErrorMessage"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
                                 }
                             }
                         }
@@ -2370,11 +2529,18 @@
                 "enum": [
                     "",
                     "compute:nova",
-                    "network:dhcp",
-                    "network:floatingip",
-                    "network:router_gateway",
                     "network:router_ha_interface",
-                    "network:ha_router_replicated_interface"
+                    "network:ha_router_replicated_interface",
+                    "network:router_interface",
+                    "network:router_gateway",
+                    "network:floatingip",
+                    "network:local_ip",
+                    "network:dhcp",
+                    "network:router_interface_distributed",
+                    "network:floatingip_agent_gateway",
+                    "network:router_centralized_snat",
+                    "network:routed",
+                    "network:distributed"
                 ],
                 "type": "string",
                 "description": "An enumeration."
