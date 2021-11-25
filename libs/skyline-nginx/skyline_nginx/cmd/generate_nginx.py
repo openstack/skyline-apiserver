@@ -91,7 +91,12 @@ def get_proxy_endpoints() -> Dict[str, ProxyEndpoint]:
         if raw_url.path:
             raw_path = PurePath(raw_url.path)
             if len(raw_path.parts) > 1:
-                if raw_path.match("%(tenant_id)s") or raw_path.match("$(project_id)s"):
+                if (
+                    raw_path.match("%(tenant_id)s")
+                    or raw_path.match("AUTH_%(tenant_id)s")
+                    or raw_path.match("$(project_id)s")
+                    or raw_path.match("AUTH_$(project_id)s")
+                ):
                     path = "" if str(raw_path.parents[1]) == "/" else raw_path.parents[1]
                 elif raw_path.match("v[0-9]") or raw_path.match("v[0-9][.][0-9]"):
                     path = "" if str(raw_path.parents[0]) == "/" else raw_path.parents[0]
