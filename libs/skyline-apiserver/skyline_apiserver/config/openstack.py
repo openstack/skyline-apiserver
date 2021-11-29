@@ -174,6 +174,7 @@ service_mapping = Opt(
         "placement": "placement",
         "baremetal": "ironic",
         "load-balancer": "octavia",
+        "object-store": "swift",
     },
 )
 

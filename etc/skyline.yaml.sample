@@ -76,6 +76,7 @@ openstack:
     image: glance
     load-balancer: octavia
     network: neutron
+    object-store: swift
     orchestration: heat
     placement: placement
     volumev3: cinder
