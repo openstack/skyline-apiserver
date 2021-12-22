@@ -158,9 +158,6 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
 1. 安装依赖包
 
     ```bash
-    # 如果只开发 apiserver，可以通过 export IGNORE_JS=True 来跳过安装 skyline-console
-    export IGNORE_JS=True
-
     make install
     ```
 

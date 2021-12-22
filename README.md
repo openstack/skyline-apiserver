@@ -158,9 +158,6 @@ You can now access the dashboard: `https://<ip_address>:9999`
 1. Installing dependency packages
 
     ```bash
-    # You can export IGNORE_JS=True to skip skyline-console if only develop with apiserver
-    export IGNORE_JS=True
-
     make install
     ```
 

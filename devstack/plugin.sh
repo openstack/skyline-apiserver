@@ -13,7 +13,7 @@
 _XTRACE=$(set +o | grep xtrace)
 set +o xtrace
 
-source $SKYLINE_DIR/devstack/inc/*
+source $SKYLINE_APISERVER_DIR/devstack/inc/*
 
 function _mkdir_chown_stack {
     if [[ ! -d "$1" ]]; then
@@ -30,7 +30,7 @@ function _skyline_config_set {
 }
 
 function _install_skyline_apiserver {
-    pushd $SKYLINE_DIR
+    pushd $SKYLINE_APISERVER_DIR
     make install
     popd
 }
@@ -40,8 +40,16 @@ function _install_skyline_console {
     install_package nginx
 
     # build static
-    pushd $SKYLINE_DIR/libs/skyline-console
-    yarn run build
+    export ERROR_ON_CLONE=False
+    git_clone_by_name "skyline-console"
+    unset ERROR_ON_CLONE
+    pushd $DEST/skyline-console
+    make package
+    source $DEST/skyline-apiserver/.venv/bin/activate
+    pip install --force-reinstall dist/skyline_console-*.whl
+    source $DEST/skyline-apiserver/libs/skyline-nginx/.venv/bin/activate
+    pip install --force-reinstall dist/skyline_console-*.whl
+    deactivate
     popd
 }
 
@@ -97,10 +105,10 @@ function cleanup_skyline {
     sudo rm -rf $SKYLINE_RUN_DIR
 
     # remove all .venv under skyline
-    sudo find $SKYLINE_DIR -name '.venv'|xargs rm -rf
+    sudo find $SKYLINE_APISERVER_DIR -name '.venv'|xargs rm -rf
 
     # remove static
-    sudo rm -rf $SKYLINE_DIR/libs/skyline-console/skyline_console/static
+    sudo rm -rf $SKYLINE_APISERVER_DIR/libs/skyline-console/skyline_console/static
 
     # uninstall nginx
     uninstall_package nginx
@@ -112,8 +120,8 @@ function configure_skyline {
     _mkdir_chown_stack $SKYLINE_CONF_DIR
     _mkdir_chown_stack $SKYLINE_RUN_DIR
 
-    cp $SKYLINE_DIR/etc/skyline.yaml.sample $SKYLINE_CONF_FILE
-    cp $SKYLINE_DIR/etc/gunicorn.py $SKYLINE_CONF_DIR/gunicorn.py
+    cp $SKYLINE_APISERVER_DIR/etc/skyline.yaml.sample $SKYLINE_CONF_FILE
+    cp $SKYLINE_APISERVER_DIR/etc/gunicorn.py $SKYLINE_CONF_DIR/gunicorn.py
 
     # skyline-apiserver Configuration
     #-------------------------
@@ -141,7 +149,7 @@ function create_skyline_accounts {
 function init_skyline {
     recreate_database skyline
 
-    pushd $SKYLINE_DIR/libs/skyline-apiserver
+    pushd $SKYLINE_APISERVER_DIR/libs/skyline-apiserver
     make db_sync
     popd
 }
@@ -160,12 +168,12 @@ function start_skyline {
     # skyline-apiserver Start
     #-------------------------
 
-    run_process "skyline" "$SKYLINE_DIR/.venv/bin/gunicorn -c /etc/skyline/gunicorn.py skyline_apiserver.main:app"
+    run_process "skyline" "$SKYLINE_APISERVER_DIR/.venv/bin/gunicorn -c /etc/skyline/gunicorn.py skyline_apiserver.main:app"
 
     # skyline-console Configuration
     #-------------------------
 
-    sudo $SKYLINE_DIR/.venv/bin/nginx-generator -o /etc/nginx/nginx.conf
+    sudo $SKYLINE_APISERVER_DIR/.venv/bin/nginx-generator -o /etc/nginx/nginx.conf
 
     # skyline-console Start
     #-------------------------

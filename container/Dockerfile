@@ -1,20 +1,9 @@
-# Setp1. Build static
-FROM node:erbium AS builder
-
-COPY ./libs/skyline-console /skyline-console/
-
-RUN cd /skyline-console \
-    && yarn install \
-    && rm -rf /skyline-console/skyline_console/static \
-    && yarn run build
-
-
-# Setp2. Build image
 FROM ubuntu:20.04
 
 ARG GIT_BRANCH
 ARG GIT_COMMIT
 ARG RELEASE_VERSION
+ARG SKYLINE_CONSOLE_PACKAGE_URL
 
 LABEL skyline.build_branch=${GIT_BRANCH}\
       skyline.build_commit=${GIT_COMMIT} \
@@ -24,7 +13,6 @@ ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
 COPY ./ /skyline/
-COPY --from=builder /skyline-console/skyline_console/static /skyline/libs/skyline-console/skyline_console/static
 COPY ./container/start_service.sh /usr/local/bin/start_service.sh
 COPY ./etc/skyline.yaml.sample /etc/skyline/skyline.yaml
 COPY ./etc/gunicorn.py /etc/skyline/gunicorn.py
@@ -43,6 +31,7 @@ RUN export LANG=C.UTF-8 \
     && mkdir -p /etc/skyline /var/log/skyline/ /var/lib/skyline \
     && cd /skyline \
     && poetry install \
+    && pip install ${SKYLINE_CONSOLE_PACKAGE_URL} \
     && apt-get clean \
     && rm -rf ~/.cache/pip
 

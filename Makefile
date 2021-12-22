@@ -1,10 +1,5 @@
 PYTHON ?= python3
-IGNORE_JS ?= false
-ifeq ($(IGNORE_JS), $(filter $(IGNORE_JS), true True TRUE))
-LIBS := $(shell \ls -I skyline-console libs)
-else
 LIBS := $(shell \ls libs)
-endif
 LIB_PATHS := $(addprefix libs/,$(LIBS))
 ROOT_DIR ?= $(shell git rev-parse --show-toplevel)
 
@@ -24,6 +19,8 @@ RELEASE_VERSION ?= $(shell git rev-parse --short HEAD)_$(shell date -u +%Y-%m-%d
 GIT_BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD)
 GIT_COMMIT ?= $(shell git rev-parse --verify HEAD)
 
+# URL for skyline-console packages
+SKYLINE_CONSOLE_PACKAGE_URL ?= "https://tarballs.opendev.org/skyline/skyline-console/skyline-console-master.tar.gz"
 
 .PHONY: all
 all: install fmt lint test package
@@ -78,7 +75,6 @@ endif
 
 .PHONY: venv
 venv:
-	if [ ! -e "libs/skyline-console/.git" ]; then git submodule update --init; fi
 	poetry env use $(PYTHON)
 
 
@@ -142,8 +138,7 @@ else
     $(error Unsupported build engine $(BUILD_ENGINE))
 endif
 build:
-	if [ ! -e "libs/skyline-console/.git" ]; then git submodule update --init; fi
-	$(build_cmd) --no-cache --pull --force-rm --build-arg RELEASE_VERSION=$(RELEASE_VERSION) --build-arg GIT_BRANCH=$(GIT_BRANCH) --build-arg GIT_COMMIT=$(GIT_COMMIT) $(BUILD_ARGS) -f $(DOCKER_FILE) -t $(IMAGE):$(IMAGE_TAG) $(BUILD_CONTEXT) 
+	$(build_cmd) --no-cache --pull --force-rm --build-arg RELEASE_VERSION=$(RELEASE_VERSION) --build-arg SKYLINE_CONSOLE_PACKAGE_URL=$(SKYLINE_CONSOLE_PACKAGE_URL) --build-arg GIT_BRANCH=$(GIT_BRANCH) --build-arg GIT_COMMIT=$(GIT_COMMIT) $(BUILD_ARGS) -f $(DOCKER_FILE) -t $(IMAGE):$(IMAGE_TAG) $(BUILD_CONTEXT) 
 
 
 .PHONY: swagger

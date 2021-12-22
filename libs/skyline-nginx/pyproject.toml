@@ -27,8 +27,8 @@ pytest = "*"
 pytest-xdist = {extras = ["psutil"], version = "*"}
 skyline-config = {path = "../skyline-config", develop = true}
 skyline-log = {path = "../skyline-log", develop = true}
-skyline-console = {path = "../skyline-console", develop = true}
 skyline-apiserver = {path = "../skyline-apiserver", develop = true}
+skyline-console = "*"
 
 [tool.poetry.scripts]
 nginx-generator = 'skyline_nginx.cmd.generate_nginx:main'
