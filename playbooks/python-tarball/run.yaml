@@ -43,7 +43,6 @@
       with_items:
         - "skyline-apiserver"
         - "skyline-config"
-        - "skyline-console"
         - "skyline-log"
         - "skyline-nginx"
         - "skyline-policy-manager"
@@ -67,7 +66,6 @@
       with_items:
         - "skyline-apiserver"
         - "skyline-config"
-        - "skyline-console"
         - "skyline-log"
         - "skyline-nginx"
         - "skyline-policy-manager"

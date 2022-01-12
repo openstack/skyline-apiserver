@@ -64,7 +64,6 @@
               - ^tools/.*$
               - ^.*\.rst$
               - ^.*\.md$
-              - ^libs/skyline-console$
               - ^kolla/.*$
         - skyline-tox-lint-py38
         - skyline-functional-devstack:
@@ -85,7 +84,6 @@
               - ^tools/.*$
               - ^.*\.rst$
               - ^.*\.md$
-              - ^libs/skyline-console$
               - ^kolla/.*$
         - skyline-tox-lint-py38
         - skyline-functional-devstack:
