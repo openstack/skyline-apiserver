@@ -54,7 +54,6 @@
       with_items:
         - "skyline_apiserver"
         - "skyline_config"
-        - "skyline_console"
         - "skyline_log"
         - "skyline_nginx"
         - "skyline_policy_manager"
