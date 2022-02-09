@@ -44,8 +44,8 @@ http {
                     '"$upstream_response_time" "$request" '
                     '$status $body_bytes_sent "$http_referer" '
                     '"$http_user_agent" "$http_x_forwarded_for"';
-    access_log /var/log/skyline/nginx_access.log main;
-    error_log /var/log/skyline/nginx_error.log;
+    access_log /var/log/kolla/skyline/nginx_access.log main;
+    error_log /var/log/kolla/skyline/nginx_error.log;
 
     ##
     # Gzip Settings
