@@ -147,6 +147,8 @@ You can now access the dashboard: `https://<ip_address>:9999`
 
 ### Dependent tools
 
+> Use the new feature Context Variables of python37. Considering that most systems do not support python37, we choose to support python38 at least.
+
 - make >= 3.82
 - python >= 3.8
 - poetry >= 1.1.0 ([Installation Guide](https://python-poetry.org/docs/#installation))

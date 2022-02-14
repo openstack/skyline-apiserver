@@ -147,6 +147,8 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
 
 ### 依赖工具
 
+> python 使用了3.7版本的新特性 Context Variables，考虑大部分系统不支持 python3.7，所以选择支持 python3.8 及以上版本
+
 - make >= 3.82
 - python >= 3.8
 - poetry >= 1.1.0 ([安装指南](https://python-poetry.org/docs/#installation))
