@@ -129,7 +129,19 @@ def get_proxy_endpoints() -> Dict[str, ProxyEndpoint]:
     "ssl_keyfile",
     help=("SSL key file path."),
 )
-def main(output_file_path: str, ssl_certfile: str, ssl_keyfile: str) -> None:
+@click.option(
+    "--listen-address",
+    "listen_address",
+    help=("nginx listen address."),
+)
+@click.option(
+    "--log-dir",
+    "log_dir",
+    help=("skyline log file address."),
+)
+def main(
+    output_file_path: str, ssl_certfile: str, ssl_keyfile: str, listen_address: str, log_dir: str
+) -> None:
     try:
         configure("skyline")
         setup(StreamHandler(), debug=CONF.default.debug)
@@ -150,7 +162,11 @@ def main(output_file_path: str, ssl_certfile: str, ssl_keyfile: str) -> None:
         if ssl_certfile:
             context.update(ssl_certfile=ssl_certfile)
         if ssl_keyfile:
-            context.update(ssl_certfile=ssl_keyfile)
+            context.update(ssl_keyfile=ssl_keyfile)
+        if listen_address:
+            context.update(listen_address=listen_address)
+        if log_dir:
+            context.update(log_dir=log_dir)
         result = template.render(**context)
 
         if output_file_path:

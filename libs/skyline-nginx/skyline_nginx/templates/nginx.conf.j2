@@ -44,8 +44,8 @@ http {
                     '"$upstream_response_time" "$request" '
                     '$status $body_bytes_sent "$http_referer" '
                     '"$http_user_agent" "$http_x_forwarded_for"';
-    access_log /var/log/kolla/skyline/nginx_access.log main;
-    error_log /var/log/kolla/skyline/nginx_error.log;
+    access_log {{ log_dir | default('/var/log/kolla/') }}skyline/nginx_access.log main;
+    error_log {{ log_dir | default('/var/log/kolla/') }}skyline/nginx_error.log;
 
     ##
     # Gzip Settings
@@ -69,7 +69,7 @@ http {
     # Virtual Host Configs
     ##
     server {
-        listen 9999 ssl http2 default_server;
+        listen {{ listen_address | default('0.0.0.0:9999') }} ssl http2 default_server;
 
         root {{ skyline_console_static_path }};
 
