@@ -11,12 +11,12 @@
     post-run:
       - playbooks/devstack/post.yaml
     required-projects:
-      - skyline/skyline-apiserver
+      - openstack/skyline-apiserver
     vars:
       devstack_plugins:
-        skyline-apiserver: https://opendev.org/skyline/skyline-apiserver
+        skyline-apiserver: https://opendev.org/openstack/skyline-apiserver
       zuul_copy_output:
-        /var/log/skyline: logs
+        /var/log/kolla/skyline: logs
         /etc/skyline: logs
         /etc/nginx: logs
     host-vars:

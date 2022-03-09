@@ -20,7 +20,7 @@ GIT_BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD)
 GIT_COMMIT ?= $(shell git rev-parse --verify HEAD)
 
 # URL for skyline-console packages
-SKYLINE_CONSOLE_PACKAGE_URL ?= "https://tarballs.opendev.org/skyline/skyline-console/skyline-console-master.tar.gz"
+SKYLINE_CONSOLE_PACKAGE_URL ?= "https://tarballs.opendev.org/openstack/skyline-console/skyline-console-master.tar.gz"
 
 .PHONY: all
 all: install fmt lint test package

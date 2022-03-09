@@ -3,4 +3,4 @@
   roles:
     - role: tox
       vars:
-        zuul_work_dir: "{{ zuul.projects['opendev.org/skyline/skyline-apiserver'].src_dir }}"
+        zuul_work_dir: "{{ zuul.projects['opendev.org/openstack/skyline-apiserver'].src_dir }}"

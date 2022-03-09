@@ -28,7 +28,7 @@ RUN export LANG=C.UTF-8 \
     && pip install -U pip setuptools'<58.0.0' \
     && pip install poetry!=1.1.8 \
     && poetry config virtualenvs.create false \
-    && mkdir -p /etc/skyline /var/log/skyline/ /var/lib/skyline \
+    && mkdir -p /etc/skyline /var/log/kolla/skyline /var/lib/skyline \
     && cd /skyline \
     && poetry install \
     && pip install ${SKYLINE_CONSOLE_PACKAGE_URL} \
