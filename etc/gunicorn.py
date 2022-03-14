@@ -8,5 +8,5 @@ keepalive = 5
 reuse_port = True
 proc_name = "skyline"
 log_level = "debug"
-accesslog = "/var/log/kolla/skyline/access.log"
-errorlog = "/var/log/kolla/skyline/error.log"
+accesslog = "/var/log/skyline/access.log"
+errorlog = "/var/log/skyline/error.log"

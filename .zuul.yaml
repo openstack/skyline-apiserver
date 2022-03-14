@@ -16,7 +16,7 @@
       devstack_plugins:
         skyline-apiserver: https://opendev.org/openstack/skyline-apiserver
       zuul_copy_output:
-        /var/log/kolla/skyline: logs
+        /var/log/skyline: logs
         /etc/skyline: logs
         /etc/nginx: logs
     host-vars:
