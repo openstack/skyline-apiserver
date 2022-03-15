@@ -33,7 +33,7 @@ from skyline_apiserver.config import CONF
 from skyline_apiserver.network.neutron import get_ports
 from skyline_apiserver.schemas import common
 from skyline_apiserver.types import constants
-from skyline_apiserver.utils.roles import assert_system_admin_or_reader, is_system_reader_no_admin
+from skyline_apiserver.utils.roles import assert_system_admin_or_reader
 
 router = APIRouter()
 
@@ -189,14 +189,6 @@ async def list_servers(
         for volume_attached in server["volumes_attached"]:
             root_device_ids.append(volume_attached["id"])
 
-    # We will use system session when we use all projects and the role
-    # of use is system_reader but no admin/system_admin role.
-    cinder_session = (
-        system_session
-        if all_projects and is_system_reader_no_admin(profile=profile)
-        else current_session
-    )
-
     if all_projects:
         tasks = [
             keystone.list_projects(
@@ -223,7 +215,7 @@ async def list_servers(
         tasks.append(
             cinder.list_volumes(
                 profile=profile,
-                session=cinder_session,
+                session=system_session,
                 global_request_id=x_openstack_request_id,
                 search_opts={"id": root_device_ids[i : i + STEP], "all_tenants": all_projects},
             ),
@@ -417,12 +409,6 @@ async def list_recycle_servers(
         for volume_attached in server["volumes_attached"]:
             root_device_ids.append(volume_attached["id"])
 
-    cinder_session = (
-        system_session
-        if all_projects and is_system_reader_no_admin(profile=profile)
-        else current_session
-    )
-
     if all_projects:
         tasks = [
             keystone.list_projects(
@@ -449,7 +435,7 @@ async def list_recycle_servers(
         tasks.append(
             cinder.list_volumes(
                 profile=profile,
-                session=cinder_session,
+                session=system_session,
                 global_request_id=x_openstack_request_id,
                 search_opts={"id": root_device_ids[i : i + STEP], "all_tenants": all_projects},
             ),
@@ -600,17 +586,10 @@ async def list_volumes(
         "bootable": bootable,
         "id": uuid,
     }
-    # if not is_admin, cinder will ignore the all_projects query param.
-    # role:admin or role:cinder_system_admin is is_admin.
-    # so here we just use skyline session to get all_projects' volumes.
-    cinder_session = (
-        system_session
-        if all_projects and is_system_reader_no_admin(profile=profile)
-        else current_session
-    )
+
     volumes, count = await cinder.list_volumes(
         profile=profile,
-        session=cinder_session,
+        session=system_session,
         global_request_id=x_openstack_request_id,
         limit=limit,
         marker=marker,
@@ -758,6 +737,7 @@ async def list_volume_snapshots(
         )
 
     current_session = await generate_session(profile=profile)
+    system_session = get_system_session()
 
     sort = None
     if sort_keys:
@@ -817,7 +797,7 @@ async def list_volume_snapshots(
         tasks.append(
             cinder.list_volumes(
                 profile=profile,
-                session=current_session,
+                session=system_session,
                 global_request_id=x_openstack_request_id,
                 search_opts={"id": volume_ids[i : i + STEP], "all_tenants": all_projects},
             ),
@@ -826,7 +806,7 @@ async def list_volume_snapshots(
         tasks.append(
             cinder.list_volumes(
                 profile=profile,
-                session=current_session,
+                session=system_session,
                 global_request_id=x_openstack_request_id,
                 search_opts={
                     "snapshot_id": snapshot_ids[i : i + STEP],
