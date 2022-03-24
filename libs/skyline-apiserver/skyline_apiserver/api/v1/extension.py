@@ -33,7 +33,7 @@ from skyline_apiserver.config import CONF
 from skyline_apiserver.network.neutron import get_ports
 from skyline_apiserver.schemas import common
 from skyline_apiserver.types import constants
-from skyline_apiserver.utils.roles import assert_system_admin_or_reader
+from skyline_apiserver.utils.roles import assert_system_admin_or_reader, is_system_reader_no_admin
 
 router = APIRouter()
 
@@ -212,12 +212,16 @@ async def list_servers(
         )
     root_device_ids = list(set(root_device_ids))
     for i in range(0, len(root_device_ids), STEP):
+        # Here we use system_session to filter volume with id list.
+        # So we need to set all_tenants as True to filter volume from
+        # all volumes. Otherwise, we just filter volume from the user
+        # of system_session.
         tasks.append(
             cinder.list_volumes(
                 profile=profile,
                 session=system_session,
                 global_request_id=x_openstack_request_id,
-                search_opts={"id": root_device_ids[i : i + STEP], "all_tenants": all_projects},
+                search_opts={"id": root_device_ids[i : i + STEP], "all_tenants": True},
             ),
         )
     task_result = await gather(*tasks)
@@ -432,12 +436,16 @@ async def list_recycle_servers(
         )
     root_device_ids = list(set(root_device_ids))
     for i in range(0, len(root_device_ids), STEP):
+        # Here we use system_session to filter volume with id list.
+        # So we need to set all_tenants as True to filter volume from
+        # all volumes. Otherwise, we just filter volume from the user
+        # of system_session.
         tasks.append(
             cinder.list_volumes(
                 profile=profile,
                 session=system_session,
                 global_request_id=x_openstack_request_id,
-                search_opts={"id": root_device_ids[i : i + STEP], "all_tenants": all_projects},
+                search_opts={"id": root_device_ids[i : i + STEP], "all_tenants": True},
             ),
         )
     task_result = await gather(*tasks)
@@ -586,10 +594,26 @@ async def list_volumes(
         "bootable": bootable,
         "id": uuid,
     }
+    # if not is_admin, cinder will ignore the all_projects query param.
+    # role:admin or role:cinder_system_admin is is_admin.
+    # so here we just use skyline session to get all_projects' volumes.
+    cinder_session = (
+        system_session
+        if all_projects and is_system_reader_no_admin(profile=profile)
+        else current_session
+    )
+
+    if uuid:
+        # Here we use system_session to filter volume with id list.
+        # So we need to set all_tenants as True to filter volume from
+        # all volumes. Otherwise, we just filter volume from the user
+        # of system_session.
+        cinder_session = system_session
+        search_opts["all_tenants"] = True
 
     volumes, count = await cinder.list_volumes(
         profile=profile,
-        session=system_session,
+        session=cinder_session,
         global_request_id=x_openstack_request_id,
         limit=limit,
         marker=marker,
@@ -737,7 +761,6 @@ async def list_volume_snapshots(
         )
 
     current_session = await generate_session(profile=profile)
-    system_session = get_system_session()
 
     sort = None
     if sort_keys:
@@ -794,19 +817,23 @@ async def list_volume_snapshots(
 
     volume_ids = list(set(volume_ids))
     for i in range(0, len(volume_ids), STEP):
+        # Here we use system_session to filter volume with id list.
+        # So we need to set all_tenants as True to filter volume from
+        # all volumes. Otherwise, we just filter volume from the user
+        # of system_session.
         tasks.append(
             cinder.list_volumes(
                 profile=profile,
-                session=system_session,
+                session=get_system_session(),
                 global_request_id=x_openstack_request_id,
-                search_opts={"id": volume_ids[i : i + STEP], "all_tenants": all_projects},
+                search_opts={"id": volume_ids[i : i + STEP], "all_tenants": True},
             ),
         )
     for i in range(0, len(snapshot_ids), STEP):
         tasks.append(
             cinder.list_volumes(
                 profile=profile,
-                session=system_session,
+                session=current_session,
                 global_request_id=x_openstack_request_id,
                 search_opts={
                     "snapshot_id": snapshot_ids[i : i + STEP],
