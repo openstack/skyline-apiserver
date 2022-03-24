@@ -177,6 +177,7 @@ service_mapping = Opt(
         "load-balancer": "octavia",
         "object-store": "swift",
         "database": "trove",
+        "container-infra": "magnum",
     },
 )
 

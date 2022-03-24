@@ -1,0 +1,4 @@
+---
+features:
+  - |
+    Add Magnum config and policy in order to configure endpoint and provide policy to skyline-console.

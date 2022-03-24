@@ -74,6 +74,7 @@ openstack:
     baremetal: ironic
     compute: nova
     database: trove
+    container-infra: magnum
     identity: keystone
     image: glance
     load-balancer: octavia
