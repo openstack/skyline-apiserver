@@ -140,7 +140,11 @@ def get_proxy_endpoints() -> Dict[str, ProxyEndpoint]:
     help=("skyline log file address."),
 )
 def main(
-    output_file_path: str, ssl_certfile: str, ssl_keyfile: str, listen_address: str, log_dir: str
+    output_file_path: str,
+    ssl_certfile: str,
+    ssl_keyfile: str,
+    listen_address: str,
+    log_dir: str,
 ) -> None:
     try:
         configure("skyline")

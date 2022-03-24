@@ -72,6 +72,7 @@ openstack:
   service_mapping:
     baremetal: ironic
     compute: nova
+    database: trove
     identity: keystone
     image: glance
     load-balancer: octavia
