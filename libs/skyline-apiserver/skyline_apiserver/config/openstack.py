@@ -175,6 +175,7 @@ service_mapping = Opt(
         "baremetal": "ironic",
         "load-balancer": "octavia",
         "object-store": "swift",
+        "database": "trove",
     },
 )
 
