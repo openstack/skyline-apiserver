@@ -31,7 +31,7 @@ RUN export LANG=C.UTF-8 \
     && mkdir -p /etc/skyline /var/log/skyline /var/lib/skyline \
     && cd /skyline \
     && poetry install \
-    && pip install ${SKYLINE_CONSOLE_PACKAGE_URL} \
+    && pip install -U ${SKYLINE_CONSOLE_PACKAGE_URL} \
     && apt-get clean \
     && rm -rf ~/.cache/pip
 
