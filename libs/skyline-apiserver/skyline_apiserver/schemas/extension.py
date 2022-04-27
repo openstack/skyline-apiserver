@@ -506,7 +506,6 @@ class ExtListPortsBaseResponse(BaseModel):
 
 
 class ExtListPortsResponse(BaseModel):
-    count: int = 0
     ports: List[ExtListPortsBaseResponse]
 
 

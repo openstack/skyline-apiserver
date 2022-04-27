@@ -2192,11 +2192,6 @@
                 ],
                 "type": "object",
                 "properties": {
-                    "count": {
-                        "title": "Count",
-                        "type": "integer",
-                        "default": 0
-                    },
                     "ports": {
                         "title": "Ports",
                         "type": "array",

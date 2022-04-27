@@ -21,16 +21,15 @@ from functools import reduce
 from typing import List
 
 from dateutil import parser
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Header, Query, status
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
 from skyline_apiserver.api.v1.openstack.base import OSPort, OSServer, OSVolume, OSVolumeSnapshot
 from skyline_apiserver.api.v1.utils import Port, Server, Service, Volume, VolumeSnapshot
 from skyline_apiserver.client import utils
 from skyline_apiserver.client.openstack import cinder, glance, keystone, neutron, nova
-from skyline_apiserver.client.utils import generate_session, get_endpoint, get_system_session
+from skyline_apiserver.client.utils import generate_session, get_system_session
 from skyline_apiserver.config import CONF
-from skyline_apiserver.network.neutron import get_ports
 from skyline_apiserver.schemas import common
 from skyline_apiserver.types import constants
 from skyline_apiserver.utils.roles import assert_system_admin_or_reader, is_system_reader_no_admin
@@ -874,7 +873,6 @@ async def list_volume_snapshots(
     "/extension/ports",
     description="List Ports.",
     responses={
-        200: {"model": schemas.ExtListPortsResponse},
         401: {"model": common.UnauthorizedMessage},
         403: {"model": common.ForbiddenMessage},
         500: {"model": common.InternalServerErrorMessage},
@@ -986,24 +984,17 @@ async def list_ports(
         kwargs["sort_dir"] = sort_dir
         kwargs["sort_key"] = sort_keys
 
-    try:
-        neutron_endpoint = await get_endpoint(profile.region, "neutron", current_session)
-    except Exception as ex:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(ex))
-
-    ports = await get_ports(
-        neutron_endpoint,
-        profile.keystone_token,
+    ports = await neutron.list_ports(
+        current_session,
+        profile.region,
         x_openstack_request_id,
-        kwargs,
+        **kwargs,
     )
-    ports_count = ports.get("count", 0)
-    ports = ports["ports"]
 
     server_ids = []
     network_ids = []
     result = []
-    for port in ports:
+    for port in ports.get("ports", []):
         origin_data = OSPort(port).to_dict()
         port = Port(port).to_dict()
         port["origin_data"] = origin_data
@@ -1064,7 +1055,7 @@ async def list_ports(
     for port in result:
         port["server_name"] = ser_mappings.get(port["device_id"])
         port["network_name"] = network_mappings.get(port["network_id"])
-    return {"count": ports_count, "ports": result}
+    return {"ports": result}
 
 
 @router.get(
