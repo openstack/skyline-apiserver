@@ -8,7 +8,7 @@ list_rules = (
     ),
     base.Rule(
         name="admin_or_owner",
-        check_str=("rule:admin or tenant:%(tenant)s"),
+        check_str=("rule:admin or project_id:%(tenant)s"),
         description="Must be an administrator or owner of the object.",
     ),
     base.Rule(
@@ -131,8 +131,7 @@ list_rules = (
         operations=[
             {
                 "method": "POST",
-                "path": "/v1.0/{account_id}/instances/{instance_id}/action"
-                + "(promote_to_replica_source)",
+                "path": "/v1.0/{account_id}/instances/{instance_id}/action (promote_to_replica_source)",  # noqa
             },
         ],
     ),
@@ -328,8 +327,7 @@ list_rules = (
         operations=[
             {
                 "method": "DELETE",
-                "path": "/v1.0/{account_id}/instances/{instance_id}/users/{user}"
-                + "/databases/{database}",
+                "path": "/v1.0/{account_id}/instances/{instance_id}/users/{user}/databases/{database}",  # noqa
             },
         ],
     ),
@@ -549,8 +547,7 @@ list_rules = (
     base.APIRule(
         name="trove:configuration:update",
         check_str=("rule:admin_or_owner"),
-        description="Update a configuration group(the configuration group will be replaced"
-        + "completely).",
+        description="Update a configuration group(the configuration group will be replaced completely).",  # noqa
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/v1.0/{account_id}/configurations/{config}"}],
     ),
@@ -581,16 +578,14 @@ list_rules = (
         operations=[
             {
                 "method": "GET",
-                "path": "/v1.0/{account_id}/datastores/{datastore}/versions/{version}/parameters"
-                + "/{param}",
+                "path": "/v1.0/{account_id}/datastores/{datastore}/versions/{version}/parameters/{param}",  # noqa
             },
         ],
     ),
     base.APIRule(
         name="trove:configuration-parameter:index_by_version",
         check_str=("rule:admin_or_owner"),
-        description="List all paramters bind to a datastore version by the id of the"
-        + "version(datastore is not provided).",
+        description="List all paramters bind to a datastore version by the id of the version(datastore is not provided).",  # noqa
         scope_types=["project"],
         operations=[
             {
@@ -602,8 +597,7 @@ list_rules = (
     base.APIRule(
         name="trove:configuration-parameter:show_by_version",
         check_str=("rule:admin_or_owner"),
-        description="Get a paramter of a datastore version by it names and the id of the"
-        + "version(datastore is not provided).",
+        description="Get a paramter of a datastore version by it names and the id of the version(datastore is not provided).",  # noqa
         scope_types=["project"],
         operations=[
             {
@@ -648,8 +642,7 @@ list_rules = (
     base.APIRule(
         name="trove:datastore:version_show_by_uuid",
         check_str=(""),
-        description="Get a version of a datastore by the version"
-        + "id(without providing the datastore id).",
+        description="Get a version of a datastore by the version id(without providing the datastore id).",  # noqa
         scope_types=["project"],
         operations=[
             {"method": "GET", "path": "/v1.0/{account_id}/datastores/versions/{version}"},
@@ -684,8 +677,7 @@ list_rules = (
         operations=[
             {
                 "method": "GET",
-                "path": "/v1.0/{account_id}/datastores/{datastore}/versions/{version}"
-                + "/volume-types",
+                "path": "/v1.0/{account_id}/datastores/{datastore}/versions/{version}/volume-types",  # noqa
             },
         ],
     ),

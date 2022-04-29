@@ -26,4 +26,7 @@ SUPPORTED_SERVICE_EPS = {
     "octavia": ["octavia"],
     "panko": ["panko"],
     "placement": ["placement"],
+    "trove": ["trove"],
 }
+
+PREFIX_MAPPINGS = {"trove": "trove:"}

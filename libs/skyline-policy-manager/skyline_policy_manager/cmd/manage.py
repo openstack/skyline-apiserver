@@ -134,7 +134,10 @@ def generate_conf(dir: str, desc: str) -> None:
             f.write(f"{'#' * 20}\n# {service}\n{'#' * 20}\n")
             f.write(f"# {desc}\n\n")
             for rule in rules:
-                f.writelines(rule.format_into_yaml())
+                rule_yaml = rule.format_into_yaml()
+                if service in constants.PREFIX_MAPPINGS:
+                    rule_yaml = rule_yaml.replace(constants.PREFIX_MAPPINGS[service], "")
+                f.writelines(rule_yaml)
 
     LOG.info("Generate policy successful")
 
@@ -192,7 +195,7 @@ list_rules = ("""
     for r in api_rules:
         print(
             apirule_format_str.format(
-                name=json.dumps(r.name),
+                name=json.dumps(constants.PREFIX_MAPPINGS.get(entry_point, "") + r.name),
                 check_str=json.dumps(r.check_str),
                 description=json.dumps(r.description),
                 scope_types=json.dumps(r.scope_types),
