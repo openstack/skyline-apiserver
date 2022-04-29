@@ -12,7 +12,8 @@ poetry run pip install --no-deps \
     openstack-heat \
     ironic-lib ironic ironic-inspector \
     octavia-lib octavia \
-    panko  
+    panko \
+    manila
 
 # Patch cinder
 patch_path="$(poetry run python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')/cinder/__init__.py"
