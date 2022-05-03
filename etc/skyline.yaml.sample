@@ -3,6 +3,7 @@ default:
   access_token_renew: 1800
   cors_allow_origins: []
   database_url: mysql://root:root@localhost:3306/skyline
+  # database_url: sqlite:////tmp/skyline.db
   debug: false
   log_dir: ./log
   prometheus_basic_auth_password: ''
