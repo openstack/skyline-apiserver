@@ -2,8 +2,8 @@ default:
   access_token_expire: 3600
   access_token_renew: 1800
   cors_allow_origins: []
-  database_url: mysql://root:root@localhost:3306/skyline
-  # database_url: sqlite:////tmp/skyline.db
+  database_url: 'mysql://root:root@localhost:3306/skyline'
+  # database_url: 'sqlite:////tmp/skyline.db'
   debug: false
   log_dir: ./log
   prometheus_basic_auth_password: ''
@@ -67,7 +67,7 @@ openstack:
     fwaas_v2: neutron_firewall
     vpnaas: neutron_vpn
   interface_type: public
-  keystone_url: http://localhost:5000/v3/
+  keystone_url: 'http://localhost:5000/v3/'
   nginx_prefix: /api/openstack
   reclaim_instance_interval: 604800
   service_mapping:
@@ -85,13 +85,13 @@ openstack:
   system_admin_roles:
   - admin
   - system_admin
-  system_project: service
-  system_project_domain: Default
+  system_project: 'service'
+  system_project_domain: 'Default'
   system_reader_roles:
   - system_reader
-  system_user_domain: Default
-  system_user_name: skyline
-  system_user_password: password
+  system_user_domain: 'Default'
+  system_user_name: 'skyline'
+  system_user_password: 'password'
 setting:
   base_settings:
   - flavor_families

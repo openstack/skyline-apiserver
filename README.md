@@ -1,12 +1,12 @@
-# Skyline API
+# Skyline API Server
 
 English | [简体中文](./README-zh_CN.md)
 
-Skyline is an OpenStack dashboard optimized by UI and UE. It has a modern technology stack and ecology, is easier for developers to maintain and operate by users, and has higher concurrency performance.
+Skyline is an OpenStack dashboard optimized by UI and UE, support OpenStack Train+. It has a modern technology stack and ecology, is easier for developers to maintain and operate by users, and has higher concurrency performance.
 
 Skyline's mascot is the nine-color deer. The nine-color deer comes from Dunhuang mural "the nine-color king deer", whose moral is Buddhist cause-effect and gratefulness, which is consistent with 99cloud's philosophy of embracing and feedback community since its inception. We also hope Skyline can keep light, elegant and powerful as the nine-color deer, to provide a better dashboard for the openstack community and users.
 
-![](docs/images/nine-color-deer-64.png)
+![](docs/images/OpenStack_Project_Skyline_horizontal.png)
 
 **Table of contents**
 
@@ -147,7 +147,7 @@ You can now access the dashboard: `https://<ip_address>:9999`
 
 ### Dependent tools
 
-> Use the new feature Context Variables of python37. Considering that most systems do not support python37, we choose to support python38 at least.
+> Use the new feature Context Variables of python37 & uvloop(0.15.0+ requires python37). Considering that most systems do not support python37, we choose to support python38 at least.
 
 - make >= 3.82
 - python >= 3.8
@@ -207,7 +207,9 @@ You can now access the dashboard: `https://<ip_address>:9999`
     INFO:     Application startup complete.
     ```
 
-    You can now access the online API documentation: `http://127.0.0.1:28000/docs`
+    You can now access the online API documentation: `http://127.0.0.1:28000/docs`.
+
+    Or, you can launch debugger with `.vscode/lauch.json` with vscode.
 
 5. Build Image
 
@@ -222,3 +224,5 @@ You can now access the dashboard: `https://<ip_address>:9999`
 ## Kolla Ansible Deployment
 
 [Kolla Ansible to build an environment.](./kolla/README.md)
+
+![](docs/images/nine-color-deer-64.png)

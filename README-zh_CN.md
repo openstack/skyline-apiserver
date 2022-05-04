@@ -1,12 +1,12 @@
-# Skyline
+# Skyline API Server
 
 [English](./README.md) | 简体中文
 
-Skyline 是一个经过 UI 和 UE 优化过的 OpenStack 仪表盘，拥有现代化的技术栈和生态，更易于开发者维护和使用者操作，以及更高的并发性能。
+Skyline 是一个经过 UI 和 UE 优化过的 OpenStack 仪表盘，支持 OpenStack Train 及以上版本。Skyline 拥有现代化的技术栈和生态，更易于开发者维护和使用者操作，以及更高的并发性能。
 
 Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本生》，其寓意是佛理因果和知恩图报，这与九州云自创办以来秉持的拥抱和反馈社区理念一致。我们也希望 Skyline 像九色鹿一样，轻巧、优雅，而又能力强大，为 OpenStack 社区和用户提供更优质的 Dashboard。
 
-![](docs/images/nine-color-deer-64.png)
+![](docs/images/OpenStack_Project_Skyline_horizontal.png)
 
 **目录**
 
@@ -147,7 +147,7 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
 
 ### 依赖工具
 
-> python 使用了3.7版本的新特性 Context Variables，考虑大部分系统不支持 python3.7，所以选择支持 python3.8 及以上版本
+> python 使用了 3.7 版本的新特性 Context Variables 以及 uvloop（0.15.0+ 需要 python3.7+），考虑大部分系统不支持 python3.7，所以选择支持 python3.8 及以上版本
 
 - make >= 3.82
 - python >= 3.8
@@ -207,7 +207,9 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
     INFO:     Application startup complete.
     ```
 
-    此时你可访问在线 API 文档：`http://127.0.0.1:28000/docs`
+    此时你可访问在线 API 文档：`http://127.0.0.1:28000/docs`。
+
+    如果用 vscode 调试的话，可以通过 `.vscode/launch.json` 启动调试器。
 
 5. 构建镜像
 
@@ -222,3 +224,5 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
 ## Kolla Ansible 部署
 
 [使用 Kolla Ansible 部署环境。](./kolla/README-zh_CN.md)
+
+![](docs/images/nine-color-deer-64.png)

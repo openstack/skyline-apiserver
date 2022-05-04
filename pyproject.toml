@@ -19,6 +19,9 @@ skyline-log = {path = "libs/skyline-log", develop = true}
 skyline-policy-manager = {path = "libs/skyline-policy-manager", develop = true}
 skyline-apiserver = {path = "libs/skyline-apiserver", develop = true}
 skyline-nginx = {path = "libs/skyline-nginx", develop = true}
+flake8 = "^4.0.1"
+pycodestyle = "^2.8.0"
+bandit = "^1.7.4"
 
 [tool.black]
 line-length = 98
