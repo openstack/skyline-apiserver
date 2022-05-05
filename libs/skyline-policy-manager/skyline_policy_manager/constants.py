@@ -22,6 +22,7 @@ SUPPORTED_SERVICE_EPS = {
     "ironic": ["ironic.api", "ironic_inspector.api"],
     "keystone": ["keystone"],
     "neutron": ["neutron", "neutron-vpnaas"],
+    "manila": ["manila"],
     "nova": ["nova"],
     "octavia": ["octavia"],
     "panko": ["panko"],
@@ -29,4 +30,4 @@ SUPPORTED_SERVICE_EPS = {
     "trove": ["trove"],
 }
 
-PREFIX_MAPPINGS = {"trove": "trove:"}
+PREFIX_MAPPINGS = {"trove": "trove:", "manila": "manila:"}
