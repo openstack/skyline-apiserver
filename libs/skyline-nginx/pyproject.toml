@@ -7,24 +7,23 @@ authors = ["OpenStack <openstack-discuss@lists.openstack.org>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-pydantic = "*"
-click = "*"
-jinja2 = "*"
-python-keystoneclient = "*"
-keystoneauth1 = "*"
+pydantic = "1.8.2"
+click = "7.1.2"
+jinja2 = "2.11.3"
+markupsafe = "2.0.1"
+python-keystoneclient = "3.21.0"
+keystoneauth1 = "3.17.4"
 skyline-config = "*"
 skyline-log = "*"
 skyline-console = "*"
 skyline-apiserver = "*"
 
 [tool.poetry.dev-dependencies]
-isort = "*"
-black = "^21.5b1"
-add-trailing-comma = "*"
-flake8 = "*"
-mypy = "*"
-pytest = "*"
-pytest-xdist = {extras = ["psutil"], version = "*"}
+isort = "5.9.3"
+black = "21.9b0"
+add-trailing-comma = "2.1.0"
+flake8 = "3.9.2"
+mypy = "0.910"
 skyline-config = {path = "../skyline-config", develop = true}
 skyline-log = {path = "../skyline-log", develop = true}
 skyline-apiserver = {path = "../skyline-apiserver", develop = true}

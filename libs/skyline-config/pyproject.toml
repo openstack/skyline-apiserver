@@ -7,22 +7,23 @@ authors = ["OpenStack <openstack-discuss@lists.openstack.org>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-pydantic = "*"
-immutables = "*"
-PyYAML = "*"
+pydantic = "1.8.2"
+immutables = "0.16"
+PyYAML = "5.4.1"
 
 [tool.poetry.dev-dependencies]
-isort = "*"
-black = "^21.5b1"
-add-trailing-comma = "*"
-flake8 = "*"
-mypy = "*"
-types-PyYAML = "*"
-pytest = "*"
-pytest-xdist = "*"
-mimesis = "*"
-pytest-cov = "*"
-pytest-html = "*"
+isort = "5.9.3"
+black = "21.9b0"
+add-trailing-comma = "2.1.0"
+flake8 = "3.9.2"
+mypy = "0.910"
+pytest = "6.2.5"
+pytest-xdist = "2.4.0"
+pytest-cov = "2.12.1"
+pytest-html = "3.1.1"
+mimesis = "4.1.3"
+types-PyYAML = "5.4.10"
+click = "7.1.2"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
