@@ -20,6 +20,8 @@ skyline-log = {path = "libs/skyline-log", develop = true}
 skyline-policy-manager = {path = "libs/skyline-policy-manager", develop = true}
 skyline-apiserver = {path = "libs/skyline-apiserver", develop = true}
 skyline-nginx = {path = "libs/skyline-nginx", develop = true}
+reno = {extras = ["sphinx"], version = "^3.5.0"}
+openstackdocstheme = "^2.4.0"
 
 [tool.black]
 line-length = 98
