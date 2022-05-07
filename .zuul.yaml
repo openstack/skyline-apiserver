@@ -74,6 +74,8 @@
               - ^.*\.rst$
               - ^.*\.md$
               - ^kolla/.*$
+              # releasenotes
+              - ^releasenotes/.*$
     gate:
       jobs:
         - skyline-tox-unittest-py38:
@@ -94,6 +96,8 @@
               - ^.*\.rst$
               - ^.*\.md$
               - ^kolla/.*$
+              # releasenotes
+              - ^releasenotes/.*$
     post:
       jobs:
         - publish-skyline-python-branch-tarball
