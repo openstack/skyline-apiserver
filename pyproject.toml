@@ -22,6 +22,7 @@ skyline-apiserver = {path = "libs/skyline-apiserver", develop = true}
 skyline-nginx = {path = "libs/skyline-nginx", develop = true}
 reno = {extras = ["sphinx"], version = "^3.5.0"}
 openstackdocstheme = "^2.4.0"
+Sphinx = "4.5.0"
 
 [tool.black]
 line-length = 98

@@ -174,7 +174,9 @@ list_rules = ("""
         "        description={description},\n"
         "    ),"
     )
+    rule_mappings = {}
     for r in rules:
+        rule_mappings[f"rule:{r.name}"] = r.check_str
         print(
             rule_format_str.format(
                 name=json.dumps(r.name),
@@ -193,10 +195,26 @@ list_rules = ("""
         "    ),"
     )
     for r in api_rules:
+        name = constants.PREFIX_MAPPINGS.get(entry_point, "") + r.name
+        check_str = r.check_str
+        tries = 0
+        while "rule:" in check_str:
+            tries += 1
+            for k, v in rule_mappings.items():
+                if k + " " in check_str or check_str.endswith(k):
+                    check_str = check_str.replace(k, f"({v})")
+                elif "(" + k + ")" in check_str:
+                    check_str = check_str.replace(k, v)
+            if tries > 10:
+                raise Exception(f"Can't replace rule name in {r.name}")
+
+        # Fix for Trove, replace 'project_id:%(tenant)s' with 'project_id:%(project_id)s'
+        if entry_point == "trove":
+            check_str = check_str.replace("project_id:%(tenant)s", "project_id:%(project_id)s")
         print(
             apirule_format_str.format(
-                name=json.dumps(constants.PREFIX_MAPPINGS.get(entry_point, "") + r.name),
-                check_str=json.dumps(r.check_str),
+                name=json.dumps(name),
+                check_str=json.dumps(check_str),
                 description=json.dumps(r.description),
                 scope_types=json.dumps(r.scope_types),
                 operations=json.dumps(r.operations),
