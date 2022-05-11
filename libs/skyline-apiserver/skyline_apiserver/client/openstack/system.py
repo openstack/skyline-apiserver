@@ -22,8 +22,8 @@ from keystoneauth1.session import Session
 from skyline_apiserver.client import utils
 from skyline_apiserver.client.utils import get_system_session
 from skyline_apiserver.config import CONF
+from skyline_apiserver.log import LOG
 from skyline_apiserver.types import constants
-from skyline_log import LOG
 from starlette.concurrency import run_in_threadpool
 
 

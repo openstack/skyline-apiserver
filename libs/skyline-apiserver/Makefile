@@ -45,17 +45,17 @@ lint:
 	# poetry run mypy --config-file=../../mypy.ini $(PY_FILES)
 	poetry run isort --check-only --diff $(PY_FILES)
 	poetry run black --check --diff --color --config ../../pyproject.toml $(PY_FILES)
-	poetry run flake8 $(PY_FILES)
+	poetry run flake8 --config ../../.flake8 $(PY_FILES)
 
 
 .PHONY: test
 test:
-	echo TODO
+	poetry run pytest
 
 
 .PHONY: clean
 clean:
-	rm -rf .venv dist
+	rm -rf .venv dist htmlcov .coverage log
 
 
 .PHONY: db_revision
@@ -74,4 +74,4 @@ db_sync:
 
 # Find python files without "type annotations"
 future_check:
-	@find src ! -size 0 -type f -name *.py -exec grep -L 'from __future__ import annotations' {} \;
+	@find skyline_apiserver ! -size 0 -type f -name *.py -exec grep -L 'from __future__ import annotations' {} \;

@@ -14,20 +14,23 @@
 
 from __future__ import annotations
 
-import asyncio
-from logging import StreamHandler
-from pprint import pprint
-
-import uvloop
-from skyline_apiserver.config import configure
-from skyline_apiserver.log import setup
+from dataclasses import dataclass
+from typing import Any, Collection, Sequence, Tuple, Union
 
 
-async def main() -> None:
-    configure("skyline")
-    setup(StreamHandler())
-    pprint("Run some debug code")
+@dataclass
+class ArgumentData:
+    id: str
+    values: Sequence[object]
+    # TODO: Fix type annotation of `marks` after the pytest > 7.0.0
+    # marks: Collection[Union[pytest.MarkDecorator, pytest.Mark]]
+    marks: Collection[Any] = ()
 
 
-uvloop.install()
-asyncio.run(main())
+@dataclass
+class TestData:
+    arguments: Tuple[str, ...]
+    argument_data_set: Sequence[ArgumentData]
+    indirect: Union[bool, Tuple[str]] = False
+
+    __test__ = False

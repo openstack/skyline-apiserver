@@ -70,6 +70,7 @@ venv.bak/
 .vscode/
 /log/
 tmp/
+libs/skyline-apiserver/log/
 
 # MAC OS
 .DS_Store

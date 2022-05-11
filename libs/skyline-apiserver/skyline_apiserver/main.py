@@ -20,8 +20,8 @@ from fastapi import FastAPI
 from skyline_apiserver.api.v1 import api_router
 from skyline_apiserver.config import CONF, configure
 from skyline_apiserver.db import setup as db_setup
+from skyline_apiserver.log import LOG, setup as log_setup
 from skyline_apiserver.policies import setup as policies_setup
-from skyline_log import LOG, setup as log_setup
 from starlette.middleware.cors import CORSMiddleware
 
 PROJECT_NAME = "Skyline API"

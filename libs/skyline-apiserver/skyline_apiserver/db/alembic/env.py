@@ -18,7 +18,7 @@ from alembic import context
 from databases import DatabaseURL
 from skyline_apiserver.config import CONF, configure
 from skyline_apiserver.db.models import METADATA
-from skyline_log import setup as log_setup
+from skyline_apiserver.log import setup as log_setup
 from sqlalchemy import create_engine, pool
 
 configure("skyline")

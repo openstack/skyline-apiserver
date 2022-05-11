@@ -84,6 +84,7 @@ async def test_switch_project(client: AsyncClient, login_jwt: str) -> None:
     await utils._logout(client)
 
 
+@pytest.mark.skipif(os.getenv("TEST_API") != "true", reason="No backend OpenStack for api-test.")
 @pytest.mark.asyncio
 async def test_get_profile_no_auth(client: AsyncClient) -> None:
     r = await client.get(f"{main.API_PREFIX}/profile")
@@ -92,6 +93,7 @@ async def test_get_profile_no_auth(client: AsyncClient) -> None:
     assert result["detail"] == constants.ERR_MSG_TOKEN_NOTFOUND
 
 
+@pytest.mark.skipif(os.getenv("TEST_API") != "true", reason="No backend OpenStack for api-test.")
 @pytest.mark.asyncio
 async def test_get_profile_token_expire(client: AsyncClient) -> None:
     profile = utils.get_session_profile()
@@ -107,6 +109,7 @@ async def test_get_profile_token_expire(client: AsyncClient) -> None:
     assert result["detail"].startswith(constants.ERR_MSG_TOKEN_EXPIRED)
 
 
+@pytest.mark.skipif(os.getenv("TEST_API") != "true", reason="No backend OpenStack for api-test.")
 @pytest.mark.asyncio
 async def test_get_profile_token_revoke(client: AsyncClient) -> None:
     profile = utils.get_session_profile()
@@ -123,6 +126,7 @@ async def test_get_profile_token_revoke(client: AsyncClient) -> None:
     assert result["detail"] == constants.ERR_MSG_TOKEN_REVOKED
 
 
+@pytest.mark.skipif(os.getenv("TEST_API") != "true", reason="No backend OpenStack for api-test.")
 @pytest.mark.asyncio
 async def test_logout(client: AsyncClient, session_token: str) -> None:
     r = await client.post(

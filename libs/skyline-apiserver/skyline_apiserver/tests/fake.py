@@ -14,20 +14,6 @@
 
 from __future__ import annotations
 
-import asyncio
-from logging import StreamHandler
-from pprint import pprint
+from mimesis import Generic
 
-import uvloop
-from skyline_apiserver.config import configure
-from skyline_apiserver.log import setup
-
-
-async def main() -> None:
-    configure("skyline")
-    setup(StreamHandler())
-    pprint("Run some debug code")
-
-
-uvloop.install()
-asyncio.run(main())
+FAKER = Generic()
