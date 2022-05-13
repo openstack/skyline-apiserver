@@ -55,7 +55,7 @@ test:
 
 .PHONY: clean
 clean:
-	rm -rf .venv dist htmlcov .coverage log
+	rm -rf .venv dist htmlcov .coverage log test_results.html
 
 
 .PHONY: db_revision

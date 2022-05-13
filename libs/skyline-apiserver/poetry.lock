@@ -1649,24 +1649,6 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
-name = "skyline-config"
-version = "0.1.0"
-description = ""
-category = "main"
-optional = false
-python-versions = "^3.8"
-develop = true
-
-[package.dependencies]
-immutables = "0.16"
-pydantic = "1.8.2"
-PyYAML = "5.4.1"
-
-[package.source]
-type = "directory"
-url = "../skyline-config"
-
-[[package]]
 name = "skyline-log"
 version = "0.1.0"
 description = ""
@@ -1925,7 +1907,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "ded4edfc5f1c33f84ed7fb28b5e2adadc53e1e694c8d78010156ff1b9a60f971"
+content-hash = "d0188fec06a156124a80edce0d10dc7bb79e95287bbe49db541882db6a01c414"
 
 [metadata.files]
 add-trailing-comma = [
@@ -2939,7 +2921,6 @@ six = [
     {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
     {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
 ]
-skyline-config = []
 skyline-log = [
     {file = "skyline_log-0.1.0-py3-none-any.whl", hash = "sha256:60e61784ce43061c62ea424d271fd6ad0c04ba2a9e2df5d1e1f490a9cceb8d3b"},
 ]

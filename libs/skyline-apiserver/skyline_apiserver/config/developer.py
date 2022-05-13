@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 from pydantic import StrictBool
-from skyline_config import Opt
+from skyline_apiserver.config.base import Opt
 
 show_raw_sql = Opt(
     name="show_raw_sql",

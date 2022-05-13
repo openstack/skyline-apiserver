@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import os
 
-from skyline_config import Configuration, Group
+from skyline_apiserver.config.base import Configuration, Group
 
 from . import default, developer, openstack, setting
 

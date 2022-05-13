@@ -119,7 +119,7 @@ $(TEST_LIBS):
 .PHONY: clean $(CLEAN_LIBS)
 CLEAN_LIBS := $(addsuffix .clean,$(LIB_PATHS))
 clean: $(CLEAN_LIBS)
-	rm -rf .venv dist
+	rm -rf .venv dist .tox
 $(CLEAN_LIBS):
 	$(MAKE) -C $(basename $@) clean
 

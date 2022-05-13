@@ -14,6 +14,23 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass, field
+from typing import Any, Dict, List
+
 from mimesis import Generic
+from pydantic import StrictBool, StrictInt, StrictStr
 
 FAKER = Generic()
+
+
+@dataclass
+class FakeOptData:
+    name: str = field(default_factory=lambda: "_".join(FAKER.text.words()))
+    description: str = field(default_factory=lambda: str(FAKER.text.text()))
+    schema: Any = field(
+        default_factory=lambda: FAKER.random.choice(
+            [StrictBool, StrictInt, StrictStr, List, Dict],
+        ),
+    )
+    default: Any = None
+    deprecated: bool = False

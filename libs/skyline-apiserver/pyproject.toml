@@ -34,7 +34,6 @@ python-octaviaclient = "1.10.1"
 osc-placement = "1.7.0"
 keystoneauth1 = "3.17.4"
 skyline-policy-manager = "*"
-skyline-config = "*"
 
 [tool.poetry.dev-dependencies]
 isort = "5.9.3"
@@ -52,7 +51,6 @@ click = "7.1.2"
 asgi-lifespan = "1.0.1"
 types-PyYAML = "5.4.10"
 skyline-policy-manager = {path = "../skyline-policy-manager", develop = true}
-skyline-config = {path = "../skyline-config", develop = true}
 
 [tool.poetry.scripts]
 swagger-generator = 'skyline_apiserver.cmd.generate_swagger:main'
@@ -60,7 +58,7 @@ config-sample-generator = 'skyline_apiserver.cmd.generate_sample_config:main'
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-v -s -p no:cacheprovider -n auto --cov=skyline_apiserver --cov-append --cov-report=term-missing --cov-report=html"
+addopts = "-v -s -p no:cacheprovider -n auto --cov=skyline_apiserver --cov-append --cov-report=term-missing --cov-report=html --html=test_results.html --self-contained-html"
 testpaths = [
     "skyline_apiserver/tests",
 ]
