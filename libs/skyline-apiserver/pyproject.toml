@@ -24,6 +24,7 @@ pymysql = "0.9.3"
 aiosqlite = "0.17.0"
 dnspython = "2.1.0"
 loguru = "0.5.3"
+click = "7.1.2"
 python-keystoneclient = "3.21.0"
 python-cinderclient = "5.0.2"
 python-glanceclient = "2.17.1"
@@ -33,7 +34,7 @@ python-novaclient = "15.1.1"
 python-octaviaclient = "1.10.1"
 osc-placement = "1.7.0"
 keystoneauth1 = "3.17.4"
-skyline-policy-manager = "*"
+"oslo.policy" = "3.8.2"
 
 [tool.poetry.dev-dependencies]
 isort = "5.9.3"
@@ -47,14 +48,15 @@ pytest-asyncio = "0.15.1"
 pytest-cov = "2.12.1"
 pytest-html = "3.1.1"
 mimesis = "4.1.3"
-click = "7.1.2"
 asgi-lifespan = "1.0.1"
 types-PyYAML = "5.4.10"
-skyline-policy-manager = {path = "../skyline-policy-manager", develop = true}
+"oslo.log" = "4.8.0"
+neutron-lib = "2.15.0"
 
 [tool.poetry.scripts]
 swagger-generator = 'skyline_apiserver.cmd.generate_swagger:main'
 config-sample-generator = 'skyline_apiserver.cmd.generate_sample_config:main'
+skyline-policy-manager = "skyline_apiserver.cmd.policy_manager:main"
 
 [tool.pytest.ini_options]
 minversion = "6.0"

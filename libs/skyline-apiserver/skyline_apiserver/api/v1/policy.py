@@ -18,7 +18,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
 from skyline_apiserver.client.utils import generate_session, get_access
-from skyline_apiserver.policies import ENFORCER, UserContext
+from skyline_apiserver.policy import ENFORCER, UserContext
 from skyline_apiserver.schemas import Policies, PoliciesRules, common
 
 router = APIRouter()

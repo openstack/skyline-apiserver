@@ -20,8 +20,8 @@ from httpx import AsyncClient
 from skyline_apiserver import __version__, main
 from skyline_apiserver.config import CONF
 from skyline_apiserver.db import api as db_api, setup as db_setup
+from skyline_apiserver.tests.utils import utils
 from skyline_apiserver.types import constants
-from utils import utils
 
 
 @pytest.mark.skipif(os.getenv("TEST_API") != "true", reason="No backend OpenStack for api-test.")

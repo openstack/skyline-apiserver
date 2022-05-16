@@ -26,6 +26,7 @@ venv:
 install: venv
 	poetry run pip install -U pip setuptools'<58.0.0'
 	poetry install -vvv
+	tools/post_install.sh
 
 
 .PHONY: package
@@ -42,7 +43,7 @@ fmt:
 
 .PHONY: lint
 lint:
-	# poetry run mypy --config-file=../../mypy.ini $(PY_FILES)
+	# poetry run mypy --strict --config-file=../../mypy.ini $(PY_FILES)
 	poetry run isort --check-only --diff $(PY_FILES)
 	poetry run black --check --diff --color --config ../../pyproject.toml $(PY_FILES)
 	poetry run flake8 --config ../../.flake8 $(PY_FILES)

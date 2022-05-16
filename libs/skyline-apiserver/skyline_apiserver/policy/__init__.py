@@ -14,10 +14,9 @@
 
 from __future__ import annotations
 
-from skyline_policy_manager.policies import get_service_rules
-from skyline_policy_manager.policies.base import APIRule
-
 from .base import Enforcer, UserContext
+from .manager import get_service_rules
+from .manager.base import APIRule
 
 ENFORCER = Enforcer()
 

@@ -1492,17 +1492,12 @@ version = "0.1.0"
 description = ""
 category = "main"
 optional = false
-python-versions = "^3.8"
-develop = true
+python-versions = ">=3.8,<4.0"
 
 [package.dependencies]
-immutables = "0.16"
-pydantic = "1.8.2"
-PyYAML = "5.4.1"
-
-[package.source]
-type = "directory"
-url = "libs/skyline-config"
+immutables = "*"
+pydantic = "*"
+PyYAML = "*"
 
 [[package]]
 name = "skyline-console"
@@ -1518,15 +1513,10 @@ version = "0.1.0"
 description = ""
 category = "main"
 optional = false
-python-versions = "^3.8"
-develop = true
+python-versions = ">=3.8,<4.0"
 
 [package.dependencies]
-loguru = "0.5.3"
-
-[package.source]
-type = "directory"
-url = "libs/skyline-log"
+loguru = "*"
 
 [[package]]
 name = "skyline-nginx"
@@ -1559,19 +1549,14 @@ version = "0.1.0"
 description = ""
 category = "main"
 optional = false
-python-versions = "^3.8"
-develop = true
+python-versions = ">=3.8,<4.0"
 
 [package.dependencies]
-click = "7.1.2"
-"oslo.policy" = "3.8.2"
-pydantic = "1.8.2"
+click = "*"
+"oslo.policy" = "*"
+pydantic = "*"
 skyline-log = "*"
-Werkzeug = "2.0.1"
-
-[package.source]
-type = "directory"
-url = "libs/skyline-policy-manager"
+Werkzeug = "*"
 
 [[package]]
 name = "sniffio"
@@ -1880,7 +1865,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "5d559f245168ea3f166d49367a0bf4909e4efb4c9bcbbc9ce869be9430eb686c"
+content-hash = "f514ad7674184efa501beb4cc72a11a7b2a0ac8f2af21e47a4fcd3f40a9c18ae"
 
 [metadata.files]
 aiofiles = [
@@ -2748,13 +2733,19 @@ six = [
     {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
 ]
 skyline-apiserver = []
-skyline-config = []
+skyline-config = [
+    {file = "skyline_config-0.1.0-py3-none-any.whl", hash = "sha256:63defc191c74714e59ae2f69874f90a6df245d47bb67130744b63c733ce7547f"},
+]
 skyline-console = [
     {file = "skyline_console-0.1.0-py2.py3-none-any.whl", hash = "sha256:42b25a064f7e12bd12c5128608016123efd28576974cffe5c63645264aa006d7"},
 ]
-skyline-log = []
+skyline-log = [
+    {file = "skyline_log-0.1.0-py3-none-any.whl", hash = "sha256:60e61784ce43061c62ea424d271fd6ad0c04ba2a9e2df5d1e1f490a9cceb8d3b"},
+]
 skyline-nginx = []
-skyline-policy-manager = []
+skyline-policy-manager = [
+    {file = "skyline_policy_manager-0.1.0-py3-none-any.whl", hash = "sha256:5e7838d573fee23dbba4b3b9e022fd86ecdcb751b4e23ff5fda129ec252ab848"},
+]
 sniffio = [
     {file = "sniffio-1.2.0-py3-none-any.whl", hash = "sha256:471b71698eac1c2112a40ce2752bb2f4a4814c22a54a3eed3676bc0f5ca9f663"},
     {file = "sniffio-1.2.0.tar.gz", hash = "sha256:c4666eecec1d3f50960c6bdf61ab7bc350648da6c126e3cf6898d8cd4ddcd3de"},

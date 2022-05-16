@@ -45,3 +45,23 @@ SETTINGS_HIDDEN_SET = set()
 SETTINGS_RESTART_SET = set()
 
 DEFAULT_TIMEOUT = 30
+
+POLICY_NS = "oslo.policy.policies"
+
+SUPPORTED_SERVICE_EPS = {
+    # openstack_service: [<entry_point_name>, <entry_point_name>,]
+    "cinder": ["cinder"],
+    "glance": ["glance"],
+    "heat": ["heat"],
+    "ironic": ["ironic.api", "ironic_inspector.api"],
+    "keystone": ["keystone"],
+    "neutron": ["neutron", "neutron-vpnaas"],
+    "manila": ["manila"],
+    "nova": ["nova"],
+    "octavia": ["octavia"],
+    "panko": ["panko"],
+    "placement": ["placement"],
+    "trove": ["trove"],
+}
+
+PREFIX_MAPPINGS = {"trove": "trove:", "manila": "manila:"}

@@ -14,13 +14,31 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+import sys
+from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, List
 
 from mimesis import Generic
 from pydantic import StrictBool, StrictInt, StrictStr
 
 FAKER = Generic()
+
+FAKE_NS = "skyline_apiserver.tests.mock_ns"
+
+FAKE_SERVICE_EPS = {
+    "cinder": ["cinder"],
+    "glance": ["glance"],
+    "heat": ["heat"],
+    "keystone": ["keystone"],
+    "neutron": ["neutron"],
+    "nova": ["nova"],
+}
+
+current_module = sys.modules[__name__]
+
+for ep_names in FAKE_SERVICE_EPS.values():
+    for ep_name in ep_names:
+        setattr(current_module, f"{ep_name}_list_rules", lambda: [])
 
 
 @dataclass
@@ -34,3 +52,50 @@ class FakeOptData:
     )
     default: Any = None
     deprecated: bool = False
+
+
+@dataclass
+class FakeOperation:
+    method: str = field(
+        default_factory=lambda: FAKER.choice(["GET", "POST", "PUT", "PATCH", "DELETE"]),
+    )
+    path: str = field(
+        default_factory=lambda: FAKER.choice(["/resources", "/resources/{resource_id}"]),
+    )
+
+
+@dataclass
+class FakeDocumentedRuleData:
+    name: str = field(default_factory=lambda: ":".join(FAKER.text.words()))
+    description: str = field(default_factory=lambda: FAKER.text.text())
+    check_str: str = field(
+        default_factory=lambda: f'role:{FAKER.choice(["admin", "member", "reader"])}',
+    )
+    scope_types: List[str] = field(
+        default_factory=lambda: FAKER.choice(
+            ["system", "domain", "project"],
+            length=FAKER.numbers.integer_number(1, 3),
+            unique=True,
+        ),
+    )
+    operations: List[Dict[str, str]] = field(
+        default_factory=lambda: [
+            asdict(FakeOperation()) for _ in range(FAKER.numbers.integer_number(1, 5))
+        ],
+    )
+
+
+@dataclass
+class FakeRuleData:
+    name: str = field(default_factory=lambda: ":".join(FAKER.text.words()))
+    description: str = field(default_factory=lambda: FAKER.text.text())
+    check_str: str = field(
+        default_factory=lambda: f'role:{FAKER.choice(["admin", "member", "reader"])}',
+    )
+    scope_types: List[str] = field(
+        default_factory=lambda: FAKER.choice(
+            ["system", "domain", "project"],
+            length=FAKER.numbers.integer_number(1, 3),
+            unique=True,
+        ),
+    )
