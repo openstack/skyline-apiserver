@@ -13,7 +13,7 @@ if [[ "${!KOLLA_BOOTSTRAP[*]}" ]]; then
     exit 0
 fi
 
-nginx-generator -o /etc/nginx/nginx.conf
+skyline-nginx-generator -o /etc/nginx/nginx.conf
 nginx
 
 echo "Running command: ${CMD[*]}"

@@ -173,7 +173,7 @@ function start_skyline {
     # skyline-console Configuration
     #-------------------------
 
-    sudo $SKYLINE_APISERVER_DIR/.venv/bin/nginx-generator -o /etc/nginx/nginx.conf
+    sudo $SKYLINE_APISERVER_DIR/.venv/bin/skyline-nginx-generator -o /etc/nginx/nginx.conf
 
     # skyline-console Start
     #-------------------------
