@@ -47,8 +47,6 @@ function _install_skyline_console {
     make package
     source $DEST/skyline-apiserver/.venv/bin/activate
     pip install --force-reinstall dist/skyline_console-*.whl
-    source $DEST/skyline-apiserver/libs/skyline-nginx/.venv/bin/activate
-    pip install --force-reinstall dist/skyline_console-*.whl
     deactivate
     popd
 }
