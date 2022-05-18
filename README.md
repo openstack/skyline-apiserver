@@ -10,7 +10,7 @@ Skyline's mascot is the nine-color deer. The nine-color deer comes from Dunhuang
 
 **Table of contents**
 
-- [Skyline API](#skyline-api)
+- [Skyline API Server](#skyline-api-server)
   - [Resources](#resources)
   - [Quick Start](#quick-start)
     - [Prerequisites](#prerequisites)
@@ -190,15 +190,13 @@ You can now access the dashboard: `https://<ip_address>:9999`
 3. Init skyline database
 
     ```bash
-    pushd libs/skyline-apiserver/
     make db_sync
-    popd
     ```
 
 4. Run skyline-apiserver
 
     ```bash
-    $ poetry run uvicorn --reload --reload-dir libs/skyline-apiserver/skyline_apiserver --port 28000 --log-level debug skyline_apiserver.main:app
+    $ poetry run uvicorn --reload --reload-dir skyline_apiserver --port 28000 --log-level debug skyline_apiserver.main:app
 
     INFO:     Uvicorn running on http://127.0.0.1:28000 (Press CTRL+C to quit)
     INFO:     Started reloader process [154033] using statreload

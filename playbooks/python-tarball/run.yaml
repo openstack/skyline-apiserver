@@ -1,20 +1,9 @@
 - hosts: all
   tasks:
-    - name: Install tox, nvm, nodejs and yarn
+    - name: Install tox
       shell:
         executable: /bin/bash
         cmd: |
-          # nvm
-          wget -P $HOME --tries=10 --retry-connrefused --waitretry=60 --no-dns-cache --no-cache  https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh
-          bash $HOME/install.sh
-          . $HOME/.nvm/nvm.sh
-          # nodejs
-          NODE_VERSION=erbium
-          nvm install --lts=$NODE_VERSION
-          nvm alias default lts/$NODE_VERSION
-          nvm use default
-          # yarn
-          npm install -g yarn
           # tox
           pip3 install tox
 
@@ -22,26 +11,9 @@
       shell:
         executable: /bin/bash
         cmd: |
-          git submodule update --init
-          . $HOME/.nvm/nvm.sh
           $HOME/.local/bin/tox -e package
       args:
         chdir: "src/{{ zuul.project.canonical_name }}"
-
-    - name: Remove the invalid tar.gz and whl packages
-      shell:
-        executable: /bin/bash
-        cmd: |
-          rm -rf *
-      args:
-        chdir: "src/{{ zuul.project.canonical_name }}/dist"
-
-    - name: Move all tar.gz and whl packages into dist
-      shell: "mv libs/{{ item }}/dist/* dist/"
-      args:
-        chdir: "src/{{ zuul.project.canonical_name }}"
-      with_items:
-        - "skyline-apiserver"
 
     - name: Rename whl files to branch specific name
       shell: "mv {{ item }}*.whl {{ item }}-{{ zuul.branch | replace('/', '-') }}.whl"

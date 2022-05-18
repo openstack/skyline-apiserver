@@ -70,7 +70,6 @@ venv.bak/
 .vscode/
 /log/
 tmp/
-libs/skyline-apiserver/log/
 test_results.html
 
 # MAC OS

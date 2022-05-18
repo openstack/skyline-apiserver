@@ -1,6 +1,5 @@
 PYTHON ?= python3
-LIBS := $(shell \ls libs)
-LIB_PATHS := $(addprefix libs/,$(LIBS))
+PY_FILES := $(shell git ls-files -- *.py | xargs)
 ROOT_DIR ?= $(shell git rev-parse --show-toplevel)
 
 # Color
@@ -78,50 +77,41 @@ venv:
 	poetry env use $(PYTHON)
 
 
-.PHONY: install $(INSTALL_LIBS)
-INSTALL_LIBS := $(addsuffix .install,$(LIB_PATHS))
-install: venv $(INSTALL_LIBS)
+.PHONY: install
+install: venv
 	poetry run pip install -U pip setuptools'<58.0.0'
 	poetry install -vvv
-$(INSTALL_LIBS):
-	$(MAKE) -C $(basename $@) install
+	tools/post_install.sh
 
 
-.PHONY: package $(PACKAGE_LIBS)
-PACKAGE_LIBS := $(addsuffix .package,$(LIB_PATHS))
-package: $(PACKAGE_LIBS)
+.PHONY: package
+package:
 	poetry build
-$(PACKAGE_LIBS):
-	$(MAKE) -C $(basename $@) package
 
 
-.PHONY: fmt $(FMT_LIBS)
-FMT_LIBS := $(addsuffix .fmt,$(LIB_PATHS))
-fmt: $(FMT_LIBS)
-$(FMT_LIBS):
-	$(MAKE) -C $(basename $@) fmt
+.PHONY: fmt
+fmt:
+	poetry run isort $(PY_FILES)
+	poetry run black --config pyproject.toml $(PY_FILES)
+	poetry run add-trailing-comma --py36-plus --exit-zero-even-if-changed $(PY_FILES)
 
 
-.PHONY: lint $(LINT_LIBS)
-LINT_LIBS := $(addsuffix .lint,$(LIB_PATHS))
-lint: $(LINT_LIBS)
-$(LINT_LIBS):
-	$(MAKE) -C $(basename $@) lint
+.PHONY: lint
+lint:
+	# poetry run mypy --strict --config-file=mypy.ini $(PY_FILES)
+	poetry run isort --check-only --diff $(PY_FILES)
+	poetry run black --check --diff --color --config pyproject.toml $(PY_FILES)
+	poetry run flake8 --config .flake8 $(PY_FILES)
 
 
-.PHONY: test $(TEST_LIBS)
-TEST_LIBS := $(addsuffix .test,$(LIB_PATHS))
-test: $(TEST_LIBS)
-$(TEST_LIBS):
-	$(MAKE) -C $(basename $@) test
+.PHONY: test
+test:
+	poetry run pytest
 
 
-.PHONY: clean $(CLEAN_LIBS)
-CLEAN_LIBS := $(addsuffix .clean,$(LIB_PATHS))
-clean: $(CLEAN_LIBS)
-	rm -rf .venv dist .tox
-$(CLEAN_LIBS):
-	$(MAKE) -C $(basename $@) clean
+.PHONY: clean
+clean:
+	rm -rf .venv dist htmlcov .coverage log test_results.html
 
 
 .PHONY: build
@@ -151,6 +141,20 @@ genconfig:
 	poetry run config-sample-generator -o $(ROOT_DIR)/etc/skyline.yaml.sample
 
 
+.PHONY: db_revision
+HEAD_REV ?= $(shell poetry run alembic -c skyline_apiserver/db/alembic/alembic.ini heads | awk '{print $$1}')
+NEW_REV ?= $(shell python3 -c 'import sys; print(f"{int(sys.argv[1])+1:03}")' $(HEAD_REV))
+REV_MEG ?=
+db_revision:
+	$(shell [ -z "$(REV_MEG)" ] && printf '$(red)Missing required message, use "make db_revision REV_MEG=<some message>"$(no_color)')
+	poetry run alembic -c skyline_apiserver/db/alembic/alembic.ini revision --autogenerate --rev-id $(NEW_REV) -m '$(REV_MEG)'
+
+
+.PHONY: db_sync
+db_sync:
+	poetry run alembic -c skyline_apiserver/db/alembic/alembic.ini upgrade head
+
+
 # Find python files without "type annotations"
 future_check:
-	@find src ! -size 0 -type f -name *.py -exec grep -L 'from __future__ import annotations' {} \;
+	@find skyline_apiserver ! -size 0 -type f -name *.py -exec grep -L 'from __future__ import annotations' {} \;

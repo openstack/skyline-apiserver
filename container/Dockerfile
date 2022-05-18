@@ -12,7 +12,7 @@ LABEL skyline.build_branch=${GIT_BRANCH}\
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
-COPY ./ /skyline/
+COPY ./ /skyline-apiserver/
 COPY ./container/start_service.sh /usr/local/bin/start_service.sh
 COPY ./etc/skyline.yaml.sample /etc/skyline/skyline.yaml
 COPY ./etc/gunicorn.py /etc/skyline/gunicorn.py
@@ -29,7 +29,7 @@ RUN export LANG=C.UTF-8 \
     && pip install poetry!=1.1.8 \
     && poetry config virtualenvs.create false \
     && mkdir -p /etc/skyline /var/log/skyline /var/lib/skyline \
-    && cd /skyline \
+    && cd /skyline-apiserver \
     && poetry install \
     && pip install -U ${SKYLINE_CONSOLE_PACKAGE_URL} \
     && apt-get clean \

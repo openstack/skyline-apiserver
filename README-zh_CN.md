@@ -10,7 +10,7 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
 
 **目录**
 
-- [Skyline](#skyline)
+- [Skyline API Server](#skyline-api-server)
   - [资源](#资源)
   - [快速开始](#快速开始)
     - [先决条件](#先决条件)
@@ -190,15 +190,13 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
 3. 初始化 skyline 数据库
 
     ```bash
-    pushd libs/skyline-apiserver/
     make db_sync
-    popd
     ```
 
 4. 运行 skyline-apiserver
 
     ```bash
-    $ poetry run uvicorn --reload --reload-dir libs/skyline-apiserver/skyline_apiserver --port 28000 --log-level debug skyline_apiserver.main:app
+    $ poetry run uvicorn --reload --reload-dir skyline_apiserver --port 28000 --log-level debug skyline_apiserver.main:app
 
     INFO:     Uvicorn running on http://127.0.0.1:28000 (Press CTRL+C to quit)
     INFO:     Started reloader process [154033] using statreload

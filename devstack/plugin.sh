@@ -40,9 +40,11 @@ function _install_skyline_console {
     install_package nginx
 
     # build static
-    export ERROR_ON_CLONE=False
-    git_clone_by_name "skyline-console"
-    unset ERROR_ON_CLONE
+    if [[ ! -d "$DEST/skyline-console" ]]; then
+        export ERROR_ON_CLONE=False
+        git_clone_by_name "skyline-console"
+        unset ERROR_ON_CLONE
+    fi
     pushd $DEST/skyline-console
     make package
     source $DEST/skyline-apiserver/.venv/bin/activate
@@ -76,8 +78,11 @@ function _install_dependent_tools {
     contrib_pip_install poetry!=1.1.8
 
     # nvm
-    wget -P $HOME --tries=10 --retry-connrefused --waitretry=60 --no-dns-cache --no-cache  https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh
-    bash $HOME/install.sh
+    NVM_INSTALL_FILE_NAME=nvm-install.sh
+    if [[ ! -f "$HOME/$NVM_INSTALL_FILE_NAME" ]]; then
+        wget -O $HOME/$NVM_INSTALL_FILE_NAME --tries=10 --retry-connrefused --waitretry=60 --no-dns-cache --no-cache  https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh
+    fi
+    bash $HOME/$NVM_INSTALL_FILE_NAME
     . $HOME/.nvm/nvm.sh
 
     # nodejs
@@ -104,9 +109,6 @@ function cleanup_skyline {
 
     # remove all .venv under skyline
     sudo find $SKYLINE_APISERVER_DIR -name '.venv'|xargs rm -rf
-
-    # remove static
-    sudo rm -rf $SKYLINE_APISERVER_DIR/libs/skyline-console/skyline_console/static
 
     # uninstall nginx
     uninstall_package nginx
@@ -147,7 +149,7 @@ function create_skyline_accounts {
 function init_skyline {
     recreate_database skyline
 
-    pushd $SKYLINE_APISERVER_DIR/libs/skyline-apiserver
+    pushd $SKYLINE_APISERVER_DIR
     make db_sync
     popd
 }
