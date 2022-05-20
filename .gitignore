@@ -71,6 +71,7 @@ venv.bak/
 /log/
 tmp/
 test_results.html
+skyline-console-*
 
 # MAC OS
 .DS_Store

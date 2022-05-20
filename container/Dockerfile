@@ -2,11 +2,13 @@ FROM ubuntu:20.04
 
 ARG GIT_BRANCH
 ARG GIT_COMMIT
+ARG GIT_CONSOLE_COMMIT
 ARG RELEASE_VERSION
 ARG SKYLINE_CONSOLE_PACKAGE_URL
 
 LABEL skyline.build_branch=${GIT_BRANCH}\
       skyline.build_commit=${GIT_COMMIT} \
+      skyline.build_console_commit=${GIT_CONSOLE_COMMIT} \
       skyline.release_version=${RELEASE_VERSION}
 
 ENV LANG C.UTF-8
