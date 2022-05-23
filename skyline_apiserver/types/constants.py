@@ -33,10 +33,6 @@ ERR_MSG_TOKEN_NOTFOUND = "Token not found."
 PROMETHEUS_QUERY_API = "/api/v1/query"
 PROMETHEUS_QUERY_RANGE_API = "/api/v1/query_range"
 
-# RESTful API
-# neutron
-NEUTRON_PORTS_API = "/v2.0/ports"
-
 EXTENSION_API_LIMIT_GT = 0
 
 ID_UUID_RANGE_STEP = 100
