@@ -25,7 +25,6 @@ from keystoneclient.client import Client as KeystoneClient
 from keystoneclient.httpclient import HTTPClient
 from neutronclient.v2_0.client import Client as NeutronClient
 from novaclient.client import Client as NovaClient
-from osc_placement.http import SessionClient as PlacementClient
 from starlette.concurrency import run_in_threadpool
 
 from skyline_apiserver import schemas
@@ -168,15 +167,4 @@ async def neutron_client(
         endpoint_override=endpoint,
         global_request_id=global_request_id,
     )
-    return client
-
-
-async def placement_client(
-    session: Session,
-    region: str,
-    version: str = constants.PLACEMENT_API_VERSION,
-) -> HTTPClient:
-    endpoint = await get_endpoint(region, "placement", session=session)
-    ks_filter = {"service_type": "placement", "endpoint_override": endpoint}
-    client = PlacementClient(api_version=version, session=session, ks_filter=ks_filter)
     return client

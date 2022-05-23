@@ -1,5 +1,3 @@
-PYTHON ?= python3
-PY_FILES := $(shell git ls-files -- *.py | xargs)
 ROOT_DIR ?= $(shell git rev-parse --show-toplevel)
 
 # Color
@@ -21,9 +19,6 @@ GIT_COMMIT ?= $(shell git rev-parse --verify HEAD)
 # URL for skyline-console packages
 SKYLINE_CONSOLE_PACKAGE_URL ?= "https://tarballs.opendev.org/openstack/skyline-console/skyline-console-master.tar.gz"
 
-.PHONY: all
-all: install fmt lint test package
-
 
 .PHONY: help
 help:
@@ -33,17 +28,10 @@ help:
 	@echo
 	@echo "Target:"
 	@echo "  git_config          Initialize git configuration."
-	@echo "  venv                Create virtualenvs."
-	@echo "  install             Installs the project dependencies."
-	@echo "  package             Build package from source code."
-	@echo "  build               Build container image."
-	@echo "  lint                Check python code."
-	@echo "  fmt                 Format python code style."
-	@echo "  test                Run unit tests."
+	@echo "  clean               Clean up."
+	@echo "  build               Build docker image."
 	@echo "  db_revision         Generate database alembic version revision with model."
 	@echo "  db_sync             Sync database from alembic version revision."
-	@echo "  swagger             Generate swagger json file."
-	@echo "  genconfig           Generate sample config file."
 	@echo "  future_check        Find python files without 'type annotations'.(Alpha)"
 	@echo
 
@@ -72,46 +60,9 @@ endif
 	@printf "${yellow}You may need to run 'pip install git-review' install git review tools.\n\n${no_color}"
 
 
-.PHONY: venv
-venv:
-	poetry env use $(PYTHON)
-
-
-.PHONY: install
-install: venv
-	poetry run pip install -U pip setuptools'<58.0.0'
-	poetry install -vvv
-	tools/post_install.sh
-
-
-.PHONY: package
-package:
-	poetry build
-
-
-.PHONY: fmt
-fmt:
-	poetry run isort $(PY_FILES)
-	poetry run black --config pyproject.toml $(PY_FILES)
-	poetry run add-trailing-comma --py36-plus --exit-zero-even-if-changed $(PY_FILES)
-
-
-.PHONY: lint
-lint:
-	# poetry run mypy --strict --config-file=mypy.ini $(PY_FILES)
-	poetry run isort --check-only --diff $(PY_FILES)
-	poetry run black --check --diff --color --config pyproject.toml $(PY_FILES)
-	poetry run flake8 --config .flake8 $(PY_FILES)
-
-
-.PHONY: test
-test:
-	poetry run pytest
-
-
 .PHONY: clean
 clean:
-	rm -rf .venv dist htmlcov .coverage log test_results.html
+	rm -rf .venv dist htmlcov .coverage log test_results.html build .tox skyline_apiserver.egg-info AUTHORS ChangeLog
 
 
 .PHONY: build
@@ -133,28 +84,18 @@ build:
 	rm -rf skyline-console-*
 
 
-.PHONY: swagger
-swagger:
-	poetry run swagger-generator -o $(ROOT_DIR)/docs/api/swagger.json
-
-
-.PHONY: genconfig
-genconfig:
-	poetry run config-sample-generator -o $(ROOT_DIR)/etc/skyline.yaml.sample
-
-
 .PHONY: db_revision
-HEAD_REV ?= $(shell poetry run alembic -c skyline_apiserver/db/alembic/alembic.ini heads | awk '{print $$1}')
+HEAD_REV ?= $(shell alembic -c skyline_apiserver/db/alembic/alembic.ini heads | awk '{print $$1}')
 NEW_REV ?= $(shell python3 -c 'import sys; print(f"{int(sys.argv[1])+1:03}")' $(HEAD_REV))
 REV_MEG ?=
 db_revision:
 	$(shell [ -z "$(REV_MEG)" ] && printf '$(red)Missing required message, use "make db_revision REV_MEG=<some message>"$(no_color)')
-	poetry run alembic -c skyline_apiserver/db/alembic/alembic.ini revision --autogenerate --rev-id $(NEW_REV) -m '$(REV_MEG)'
+	alembic -c skyline_apiserver/db/alembic/alembic.ini revision --autogenerate --rev-id $(NEW_REV) -m '$(REV_MEG)'
 
 
 .PHONY: db_sync
 db_sync:
-	poetry run alembic -c skyline_apiserver/db/alembic/alembic.ini upgrade head
+	alembic -c skyline_apiserver/db/alembic/alembic.ini upgrade head
 
 
 # Find python files without "type annotations"

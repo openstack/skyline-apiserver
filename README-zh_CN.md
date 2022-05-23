@@ -151,7 +151,6 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
 
 - make >= 3.82
 - python >= 3.8
-- poetry >= 1.1.0 ([安装指南](https://python-poetry.org/docs/#installation))
 - node >= 10.22.0 (可选，只开发 API 就用不到)
 - yarn >= 1.22.4 (可选，只开发 API 就用不到)
 
@@ -160,7 +159,7 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
 1. 安装依赖包
 
     ```bash
-    make install
+    tox -e venv
     ```
 
 2. 配置 `skyline.yaml` 文件
@@ -190,13 +189,16 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
 3. 初始化 skyline 数据库
 
     ```bash
+    source .tox/venv/bin/activate
     make db_sync
+    deactivate
     ```
 
 4. 运行 skyline-apiserver
 
-    ```bash
-    $ poetry run uvicorn --reload --reload-dir skyline_apiserver --port 28000 --log-level debug skyline_apiserver.main:app
+    ```console
+    $ source .tox/venv/bin/activate
+    $ uvicorn --reload --reload-dir skyline_apiserver --port 28000 --log-level debug skyline_apiserver.main:app
 
     INFO:     Uvicorn running on http://127.0.0.1:28000 (Press CTRL+C to quit)
     INFO:     Started reloader process [154033] using statreload

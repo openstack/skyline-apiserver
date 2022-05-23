@@ -70,6 +70,8 @@ docs/_build/
 .vscode/
 /log/
 tmp/
+test_results.html
+nginx.conf
 
 # MAC OS
 .DS_Store

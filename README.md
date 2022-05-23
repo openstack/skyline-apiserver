@@ -151,7 +151,6 @@ You can now access the dashboard: `https://<ip_address>:9999`
 
 - make >= 3.82
 - python >= 3.8
-- poetry >= 1.1.0 ([Installation Guide](https://python-poetry.org/docs/#installation))
 - node >= 10.22.0 (Optional if you only develop with apiserver)
 - yarn >= 1.22.4 (Optional if you only develop with apiserver)
 
@@ -160,7 +159,7 @@ You can now access the dashboard: `https://<ip_address>:9999`
 1. Installing dependency packages
 
     ```bash
-    make install
+    tox -e venv
     ```
 
 2. Set skyline.yaml config file
@@ -190,13 +189,16 @@ You can now access the dashboard: `https://<ip_address>:9999`
 3. Init skyline database
 
     ```bash
+    source .tox/venv/bin/activate
     make db_sync
+    deactivate
     ```
 
 4. Run skyline-apiserver
 
-    ```bash
-    $ poetry run uvicorn --reload --reload-dir skyline_apiserver --port 28000 --log-level debug skyline_apiserver.main:app
+    ```console
+    $ source .tox/venv/bin/activate
+    $ uvicorn --reload --reload-dir skyline_apiserver --port 28000 --log-level debug skyline_apiserver.main:app
 
     INFO:     Uvicorn running on http://127.0.0.1:28000 (Press CTRL+C to quit)
     INFO:     Started reloader process [154033] using statreload

@@ -11,7 +11,7 @@
             "module": "uvicorn",
             "args": [
                 "--reload",
-                "--reload-dir", "libs/skyline-apiserver/skyline_apiserver",
+                "--reload-dir", "skyline_apiserver",
                 "--port", "28000",
                 "--log-level", "debug",
                 "skyline_apiserver.main:app"

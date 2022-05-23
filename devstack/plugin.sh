@@ -13,8 +13,6 @@
 _XTRACE=$(set +o | grep xtrace)
 set +o xtrace
 
-source $SKYLINE_APISERVER_DIR/devstack/inc/*
-
 function _mkdir_chown_stack {
     if [[ ! -d "$1" ]]; then
         sudo mkdir -p "$1"
@@ -30,9 +28,7 @@ function _skyline_config_set {
 }
 
 function _install_skyline_apiserver {
-    pushd $SKYLINE_APISERVER_DIR
-    make install
-    popd
+    setup_develop $SKYLINE_APISERVER_DIR
 }
 
 function _install_skyline_console {
@@ -47,9 +43,7 @@ function _install_skyline_console {
     fi
     pushd $DEST/skyline-console
     make package
-    source $DEST/skyline-apiserver/.venv/bin/activate
-    pip install --force-reinstall dist/skyline_console-*.whl
-    deactivate
+    sudo pip3 install --force-reinstall dist/skyline_console-*.whl
     popd
 }
 
@@ -73,9 +67,6 @@ function _install_dependent_tools {
     else
         install_package python3.8 python-is-python3 # make sure python exists
     fi
-
-    # poetry
-    contrib_pip_install poetry!=1.1.8
 
     # nvm
     NVM_INSTALL_FILE_NAME=nvm-install.sh
@@ -168,12 +159,12 @@ function start_skyline {
     # skyline-apiserver Start
     #-------------------------
 
-    run_process "skyline" "$SKYLINE_APISERVER_DIR/.venv/bin/gunicorn -c /etc/skyline/gunicorn.py skyline_apiserver.main:app"
+    run_process "skyline" "/usr/local/bin/gunicorn -c /etc/skyline/gunicorn.py skyline_apiserver.main:app"
 
     # skyline-console Configuration
     #-------------------------
 
-    sudo $SKYLINE_APISERVER_DIR/.venv/bin/skyline-nginx-generator -o /etc/nginx/nginx.conf
+    sudo skyline-nginx-generator -o /etc/nginx/nginx.conf
 
     # skyline-console Start
     #-------------------------

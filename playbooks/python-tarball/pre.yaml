@@ -1,5 +1,0 @@
-- hosts: all
-  roles:
-    # We use ensure-pip to make sure the wheel module is installed
-    - ensure-pip
-    - revoke-sudo

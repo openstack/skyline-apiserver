@@ -26,6 +26,8 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+AUTHORS
+ChangeLog
 
 # Installer logs
 pip-log.txt
@@ -72,8 +74,8 @@ venv.bak/
 tmp/
 test_results.html
 skyline-console-*
+nginx.conf
 
 # MAC OS
 .DS_Store
 .idea
-requirements.txt
