@@ -90,4 +90,4 @@
               - ^releasenotes/.*$
     post:
       jobs:
-        - publish-openstack-python-tarball
+        - publish-openstack-python-branch-tarball
