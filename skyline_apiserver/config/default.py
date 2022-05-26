@@ -71,9 +71,9 @@ session_name = Opt(
 
 database_url = Opt(
     name="database_url",
-    description="Database url",
+    description="Database url. For mariadb, set as 'mysql://root:root@localhost:3306/skyline'",
     schema=StrictStr,
-    default="mysql://root:root@localhost:3306/skyline",
+    default="sqlite:////tmp/skyline.db",
 )
 
 prometheus_endpoint = Opt(
