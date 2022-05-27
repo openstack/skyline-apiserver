@@ -18,7 +18,7 @@ import os
 
 from skyline_apiserver.config.base import Configuration, Group
 
-from . import default, developer, openstack, setting
+from . import default, openstack, setting
 
 CONF = Configuration()
 
@@ -26,7 +26,6 @@ CONF = Configuration()
 def configure(project: str, setup: bool = True) -> None:
     conf_modules = (
         (default.GROUP_NAME, default.ALL_OPTS),
-        (developer.GROUP_NAME, developer.ALL_OPTS),
         (openstack.GROUP_NAME, openstack.ALL_OPTS),
         (setting.GROUP_NAME, setting.ALL_OPTS),
     )

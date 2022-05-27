@@ -11,8 +11,6 @@ default:
   prometheus_endpoint: http://localhost:9091
   secret_key: aCtmgbcUqYUy_HNVg5BDXCaeJgJQzHJXwqbXr0Nmb2o
   session_name: session
-developer:
-  show_raw_sql: false
 openstack:
   base_domains:
   - heat_user_domain
