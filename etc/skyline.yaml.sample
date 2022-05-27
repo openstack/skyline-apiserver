@@ -81,6 +81,7 @@ openstack:
     object-store: swift
     orchestration: heat
     placement: placement
+    sharev2: manilav2
     volumev3: cinder
   system_admin_roles:
   - admin
