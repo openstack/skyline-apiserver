@@ -14,7 +14,8 @@ pip install --no-deps \
     octavia-lib octavia \
     panko \
     manila \
-    magnum
+    magnum \
+    zun
 
 # Patch cinder
 patch_path="$(python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')/cinder/__init__.py"

@@ -57,6 +57,7 @@ SUPPORTED_SERVICE_EPS = {
     "panko": ["panko"],
     "placement": ["placement"],
     "trove": ["trove"],
+    "zun": ["zun"],
 }
 
-PREFIX_MAPPINGS = {"trove": "trove:", "manila": "manila:"}
+PREFIX_MAPPINGS = {"trove": "trove:", "manila": "manila:", "zun": "zun:"}

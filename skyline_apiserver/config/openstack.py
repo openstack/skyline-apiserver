@@ -168,6 +168,7 @@ service_mapping = Opt(
     default={
         "baremetal": "ironic",
         "compute": "nova",
+        "container": "zun",
         "container-infra": "magnum",
         "database": "trove",
         "identity": "keystone",
