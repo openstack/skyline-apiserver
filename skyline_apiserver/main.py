@@ -31,7 +31,10 @@ API_PREFIX = "/api/v1"
 
 async def on_startup() -> None:
     configure("skyline")
-    log_setup(Path(CONF.default.log_dir).joinpath("skyline", "skyline-apiserver.log"))
+    log_setup(
+        Path(CONF.default.log_dir).joinpath("skyline", "skyline-apiserver.log"),
+        debug=CONF.default.debug,
+    )
     policies_setup()
     await db_setup()
 

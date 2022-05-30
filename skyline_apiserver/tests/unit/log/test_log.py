@@ -87,7 +87,7 @@ class TestLog:
         log = getattr(LOG, level)
         log(content)
         file_content = file_sink_captor.read_text()
-        if debug is False and level in ["debug", "info"]:
+        if debug is False and level in ["debug"]:
             assert f"| {level.upper():<8} |" not in file_content
             assert content not in file_content
         else:
@@ -159,7 +159,7 @@ class TestLog:
         log = getattr(LOG, level)
         log(content)
         std_out, std_err = stream_sink_captor.readouterr()
-        if debug is False and level in ["debug", "info"]:
+        if debug is False and level in ["debug"]:
             assert f"| {level.upper():<8} |" not in std_err
             assert content not in std_err
         else:
@@ -219,7 +219,7 @@ class TestLog:
         log = getattr(std_logger, level)
         log(content)
         file_content = file_sink_captor.read_text()
-        if debug is False and level in ["debug", "info"]:
+        if debug is False and level in ["debug"]:
             assert f"| {level.upper():<8} |" not in file_content
             assert content not in file_content
         else:
