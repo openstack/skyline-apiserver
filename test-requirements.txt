@@ -8,7 +8,7 @@ Sphinx<=4.5.0 # BSD
 isort<=5.9.3 # MIT
 black<=22.3.0 # MIT
 flake8<=3.9.2 # MIT
-mypy>=0.910,<=0.950 # MIT
+mypy>=0.910 # MIT
 pytest>=6.2.5,<=7.1.2 # MIT
 pytest-xdist>=2.4.0,<=2.5.0 # MIT
 pytest-asyncio<=0.15.1 # Apache-2.0

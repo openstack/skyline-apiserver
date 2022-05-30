@@ -20,7 +20,7 @@ import uuid
 from fastapi import HTTPException, status
 from jose import jwt
 
-from skyline_apiserver import __version__, schemas
+from skyline_apiserver import schemas, version
 from skyline_apiserver.client import utils
 from skyline_apiserver.client.utils import get_system_session
 from skyline_apiserver.config import CONF
@@ -71,5 +71,5 @@ async def generate_profile(
             base_domains=CONF.openstack.base_domains,
             exp=exp or int(time.time()) + CONF.default.access_token_expire,
             uuid=uuid_value or uuid.uuid4().hex,
-            version=__version__,
+            version=version.version_string(),
         )

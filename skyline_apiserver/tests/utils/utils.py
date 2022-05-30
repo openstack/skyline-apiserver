@@ -17,7 +17,7 @@ import uuid
 
 from httpx import AsyncClient
 
-from skyline_apiserver import __version__, config, main, schemas
+from skyline_apiserver import config, main, schemas, version
 
 
 def get_session_profile() -> schemas.Profile:
@@ -62,7 +62,7 @@ def get_session_profile() -> schemas.Profile:
             "4c017648d2e34d1a8e732b98e3232af9": {"name": "alt_demo", "domain_id": "default"},
             "e88226c062094881b7a1f01517b945b4": {"name": "admin", "domain_id": "default"},
         },
-        version=__version__,
+        version=version.version_string(),
     )
     return profile
 
