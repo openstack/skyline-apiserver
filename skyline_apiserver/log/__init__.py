@@ -54,7 +54,7 @@ def setup(
         backtrace = True
         diagnose = True
     else:
-        default_level = "WARNING"
+        default_level = "INFO"
         backtrace = False
         diagnose = True
     if level is None:
