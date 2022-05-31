@@ -136,33 +136,39 @@ def generate_conf(dir: str, desc: str) -> None:
             f.write(f"# {desc}\n\n")
             for rule in rules:
                 rule_yaml = rule.format_into_yaml()
-                if service in constants.PREFIX_MAPPINGS:
-                    rule_yaml = rule_yaml.replace(constants.PREFIX_MAPPINGS[service], "")
                 f.writelines(rule_yaml)
 
     LOG.info("Generate policy successful")
 
 
 @click.command(help="Generate service rule code.")
-@click.argument("entry_point")
-def generate_rule(entry_point: str) -> None:
-    ep_rules_func = load_list_rules_func(constants.POLICY_NS, entry_point)
-    if ep_rules_func is None:
-        raise Exception(
-            f"Not found entry point '{entry_point}' in oslo.policy.policies namespace.",
-        )
-
-    ep_rules = [item for item in ep_rules_func()]
+@click.argument("service")
+def generate_rule(service: str) -> None:
+    entry_points = constants.SUPPORTED_SERVICE_EPS.get(service, [])
+    if not entry_points:
+        LOG.error(f"Service {service} is not supported.")
+        return
 
     rules = []
     api_rules = []
-    for rule in ep_rules:
-        if isinstance(rule, DocumentedRuleDefault):
-            api_rules.append(APIRule.from_oslo(rule))
-        elif isinstance(rule, RuleDefault):
-            rules.append(Rule.from_oslo(rule))
+    for entry_point in entry_points:
+        ep_rules_func = load_list_rules_func(constants.POLICY_NS, entry_point)
+        if ep_rules_func is None:
+            raise Exception(
+                f"Not found entry point '{entry_point}' in oslo.policy.policies namespace.",
+            )
 
-    header_str = """
+        ep_rules = [item for item in ep_rules_func()]
+        for rule in ep_rules:
+            if isinstance(rule, DocumentedRuleDefault):
+                api_rules.append(APIRule.from_oslo(rule))
+            elif isinstance(rule, RuleDefault):
+                rules.append(Rule.from_oslo(rule))
+
+    header_str = """\
+# flake8: noqa
+# fmt: off
+
 from . import base
 
 list_rules = ("""
@@ -175,9 +181,7 @@ list_rules = ("""
         "        description={description},\n"
         "    ),"
     )
-    rule_mappings = {}
     for r in rules:
-        rule_mappings[f"rule:{r.name}"] = r.check_str
         print(
             rule_format_str.format(
                 name=json.dumps(r.name),
@@ -196,26 +200,10 @@ list_rules = ("""
         "    ),"
     )
     for r in api_rules:
-        name = constants.PREFIX_MAPPINGS.get(entry_point, "") + r.name
-        check_str = r.check_str
-        tries = 0
-        while "rule:" in check_str:
-            tries += 1
-            for k, v in rule_mappings.items():
-                if k + " " in check_str or check_str.endswith(k):
-                    check_str = check_str.replace(k, f"({v})")
-                elif "(" + k + ")" in check_str:
-                    check_str = check_str.replace(k, v)
-            if tries > 10:
-                raise Exception(f"Can't replace rule name in {r.name}")
-
-        # Fix for Trove, replace 'project_id:%(tenant)s' with 'project_id:%(project_id)s'
-        if entry_point == "trove":
-            check_str = check_str.replace("project_id:%(tenant)s", "project_id:%(project_id)s")
         print(
             apirule_format_str.format(
-                name=json.dumps(name),
-                check_str=json.dumps(check_str),
+                name=json.dumps(r.name),
+                check_str=json.dumps(r.check_str),
                 description=json.dumps(r.description),
                 scope_types=json.dumps(r.scope_types),
                 operations=json.dumps(r.operations),
@@ -224,7 +212,7 @@ list_rules = ("""
 
     footer_str = """)
 
-__all__ = ("list_rules",)
+__all__ = ("list_rules",)\
 """
     print(footer_str)
 

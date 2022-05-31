@@ -48,10 +48,12 @@ SUPPORTED_SERVICE_EPS = {
     "cinder": ["cinder"],
     "glance": ["glance"],
     "heat": ["heat"],
-    "ironic": ["ironic.api", "ironic_inspector.api"],
+    "ironic": ["ironic.api"],
+    "ironic_inspector": ["ironic_inspector.api"],
     "keystone": ["keystone"],
-    "neutron": ["neutron", "neutron-vpnaas"],
+    "magnum": ["magnum"],
     "manila": ["manila"],
+    "neutron": ["neutron", "neutron-vpnaas"],
     "nova": ["nova"],
     "octavia": ["octavia"],
     "panko": ["panko"],
@@ -59,5 +61,3 @@ SUPPORTED_SERVICE_EPS = {
     "trove": ["trove"],
     "zun": ["zun"],
 }
-
-PREFIX_MAPPINGS = {"trove": "trove:", "manila": "manila:", "zun": "zun:"}

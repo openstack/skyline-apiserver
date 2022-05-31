@@ -14,6 +14,8 @@
 
 from __future__ import annotations
 
+from typing import Dict
+
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from skyline_apiserver import schemas
@@ -23,6 +25,41 @@ from skyline_apiserver.policy import ENFORCER, UserContext
 from skyline_apiserver.schemas import Policies, PoliciesRules, common
 
 router = APIRouter()
+
+
+def _generate_target(profile: schemas.Profile) -> Dict[str, str]:
+    return {
+        "user_id": profile.user.id,
+        "project_id": profile.project.id,
+        # trove
+        "tenant": profile.project.id,
+        # keystone
+        "trust.trustor_user_id": profile.user.id,
+        "target.user.id": profile.user.id,
+        "target.user.domain_id": profile.user.domain.id,
+        "target.project.domain_id": profile.project.domain.id,
+        "target.project.id": profile.project.id,
+        "target.trust.trustor_user_id": profile.user.id,
+        "target.trust.trustee_user_id": profile.user.id,
+        "target.token.user_id": profile.user.id,
+        "target.domain.id": profile.project.domain.id,
+        "target.domain_id": profile.project.domain.id,
+        "target.credential.user_id": profile.user.id,
+        "target.role.domain_id": profile.project.domain.id,
+        "target.group.domain_id": profile.project.domain.id,
+        "target.limit.domain.id": profile.project.domain.id,
+        "target.limit.project_id": profile.project.domain.id,
+        "target.limit.project.domain_id": profile.project.domain.id,
+        # ironic
+        "allocation.owner": profile.project.id,
+        "node.lessee": profile.project.id,
+        "node.owner": profile.project.id,
+        # glance
+        "member_id": profile.project.id,
+        "owner": profile.project.id,
+        # cinder
+        "domain_id": profile.project.domain.id,
+    }
 
 
 @router.get(
@@ -43,10 +80,7 @@ async def list_policies(
     session = await generate_session(profile)
     access = await get_access(session)
     user_context = UserContext(access)
-    target = {
-        "user_id": profile.user.id,
-        "project_id": profile.project.id,
-    }
+    target = _generate_target(profile)
     result = [
         {"rule": rule, "allowed": ENFORCER.authorize(rule, target, user_context)}
         for rule in ENFORCER.rules
@@ -74,10 +108,7 @@ async def check_policies(
     session = await generate_session(profile)
     access = await get_access(session)
     user_context = UserContext(access)
-    target = {
-        "user_id": profile.user.id,
-        "project_id": profile.project.id,
-    }
+    target = _generate_target(profile)
     try:
         result = [
             {"rule": rule, "allowed": ENFORCER.authorize(rule, target, user_context)}

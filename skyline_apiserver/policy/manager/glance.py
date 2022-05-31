@@ -1,4 +1,5 @@
 # flake8: noqa
+# fmt: off
 
 from . import base
 
@@ -28,140 +29,9 @@ list_rules = (
         check_str=("role:admin"),
         description="No description",
     ),
-    base.Rule(
-        name="get_metadef_namespace",
-        check_str=("rule:metadef_default"),
-        description="No description",
-    ),
-    base.Rule(
-        name="get_metadef_namespaces",
-        check_str=("rule:metadef_default"),
-        description="No description",
-    ),
-    base.Rule(
-        name="modify_metadef_namespace",
-        check_str=("rule:metadef_admin"),
-        description="No description",
-    ),
-    base.Rule(
-        name="add_metadef_namespace",
-        check_str=("rule:metadef_admin"),
-        description="No description",
-    ),
-    base.Rule(
-        name="delete_metadef_namespace",
-        check_str=("rule:metadef_admin"),
-        description="No description",
-    ),
-    base.Rule(
-        name="get_metadef_object",
-        check_str=("rule:metadef_default"),
-        description="No description",
-    ),
-    base.Rule(
-        name="get_metadef_objects",
-        check_str=("rule:metadef_default"),
-        description="No description",
-    ),
-    base.Rule(
-        name="modify_metadef_object",
-        check_str=("rule:metadef_admin"),
-        description="No description",
-    ),
-    base.Rule(
-        name="add_metadef_object",
-        check_str=("rule:metadef_admin"),
-        description="No description",
-    ),
-    base.Rule(
-        name="delete_metadef_object",
-        check_str=("rule:metadef_admin"),
-        description="No description",
-    ),
-    base.Rule(
-        name="list_metadef_resource_types",
-        check_str=("rule:metadef_default"),
-        description="No description",
-    ),
-    base.Rule(
-        name="get_metadef_resource_type",
-        check_str=("rule:metadef_default"),
-        description="No description",
-    ),
-    base.Rule(
-        name="add_metadef_resource_type_association",
-        check_str=("rule:metadef_admin"),
-        description="No description",
-    ),
-    base.Rule(
-        name="remove_metadef_resource_type_association",
-        check_str=("rule:metadef_admin"),
-        description="No description",
-    ),
-    base.Rule(
-        name="get_metadef_property",
-        check_str=("rule:metadef_default"),
-        description="No description",
-    ),
-    base.Rule(
-        name="get_metadef_properties",
-        check_str=("rule:metadef_default"),
-        description="No description",
-    ),
-    base.Rule(
-        name="modify_metadef_property",
-        check_str=("rule:metadef_admin"),
-        description="No description",
-    ),
-    base.Rule(
-        name="add_metadef_property",
-        check_str=("rule:metadef_admin"),
-        description="No description",
-    ),
-    base.Rule(
-        name="remove_metadef_property",
-        check_str=("rule:metadef_admin"),
-        description="No description",
-    ),
-    base.Rule(
-        name="get_metadef_tag",
-        check_str=("rule:metadef_default"),
-        description="No description",
-    ),
-    base.Rule(
-        name="get_metadef_tags",
-        check_str=("rule:metadef_default"),
-        description="No description",
-    ),
-    base.Rule(
-        name="modify_metadef_tag",
-        check_str=("rule:metadef_admin"),
-        description="No description",
-    ),
-    base.Rule(
-        name="add_metadef_tag",
-        check_str=("rule:metadef_admin"),
-        description="No description",
-    ),
-    base.Rule(
-        name="add_metadef_tags",
-        check_str=("rule:metadef_admin"),
-        description="No description",
-    ),
-    base.Rule(
-        name="delete_metadef_tag",
-        check_str=("rule:metadef_admin"),
-        description="No description",
-    ),
-    base.Rule(
-        name="delete_metadef_tags",
-        check_str=("rule:metadef_admin"),
-        description="No description",
-    ),
     base.APIRule(
         name="add_image",
-        check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
-        basic_check_str=("role:admin or role:admin or role:member"),
+        check_str=("role:admin or (role:member and project_id:%(project_id)s and project_id:%(owner)s)"),
         description="Create new image",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/v2/images"}],
@@ -169,17 +39,13 @@ list_rules = (
     base.APIRule(
         name="delete_image",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
-        basic_check_str=("role:admin or role:admin or role:member"),
         description="Deletes the image",
         scope_types=["system", "project"],
         operations=[{"method": "DELETE", "path": "/v2/images/{image_id}"}],
     ),
     base.APIRule(
         name="get_image",
-        check_str=(
-            'role:admin or (role:reader and (project_id:%(project_id)s or project_id:%(member_id)s or "community":%(visibility)s or "public":%(visibility)s))'
-        ),
-        basic_check_str=("role:admin or role:reader or role:admin or role:member or role:reader"),
+        check_str=("role:admin or (role:reader and (project_id:%(project_id)s or project_id:%(member_id)s or 'community':%(visibility)s or 'public':%(visibility)s or 'shared':%(visibility)s))"),
         description="Get specified image",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/images/{image_id}"}],
@@ -187,7 +53,6 @@ list_rules = (
     base.APIRule(
         name="get_images",
         check_str=("role:admin or (role:reader and project_id:%(project_id)s)"),
-        basic_check_str=("role:admin or role:reader or role:admin or role:member or role:reader"),
         description="Get all available images",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/images"}],
@@ -195,7 +60,6 @@ list_rules = (
     base.APIRule(
         name="modify_image",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
-        basic_check_str=("role:admin or role:admin or role:member"),
         description="Updates given image",
         scope_types=["system", "project"],
         operations=[{"method": "PATCH", "path": "/v2/images/{image_id}"}],
@@ -203,7 +67,6 @@ list_rules = (
     base.APIRule(
         name="publicize_image",
         check_str=("role:admin"),
-        basic_check_str=("role:admin"),
         description="Publicize given image",
         scope_types=["system", "project"],
         operations=[{"method": "PATCH", "path": "/v2/images/{image_id}"}],
@@ -211,17 +74,13 @@ list_rules = (
     base.APIRule(
         name="communitize_image",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
-        basic_check_str=("!"),
         description="Communitize given image",
         scope_types=["system", "project"],
         operations=[{"method": "PATCH", "path": "/v2/images/{image_id}"}],
     ),
     base.APIRule(
         name="download_image",
-        check_str=(
-            'role:admin or (role:member and (project_id:%(project_id)s or project_id:%(member_id)s or "community":%(visibility)s or "public":%(visibility)s))'
-        ),
-        basic_check_str=("role:admin or role:admin or role:member"),
+        check_str=("role:admin or (role:member and (project_id:%(project_id)s or project_id:%(member_id)s or 'community':%(visibility)s or 'public':%(visibility)s or 'shared':%(visibility)s))"),
         description="Downloads given image",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/images/{image_id}/file"}],
@@ -229,7 +88,6 @@ list_rules = (
     base.APIRule(
         name="upload_image",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
-        basic_check_str=("role:admin or role:admin or role:member"),
         description="Uploads data to specified image",
         scope_types=["system", "project"],
         operations=[{"method": "PUT", "path": "/v2/images/{image_id}/file"}],
@@ -237,7 +95,6 @@ list_rules = (
     base.APIRule(
         name="delete_image_location",
         check_str=("role:admin"),
-        basic_check_str=("role:admin"),
         description="Deletes the location of given image",
         scope_types=["system", "project"],
         operations=[{"method": "PATCH", "path": "/v2/images/{image_id}"}],
@@ -245,7 +102,6 @@ list_rules = (
     base.APIRule(
         name="get_image_location",
         check_str=("role:admin or (role:reader and project_id:%(project_id)s)"),
-        basic_check_str=("role:admin or role:reader or role:admin or role:member or role:reader"),
         description="Reads the location of the image",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/images/{image_id}"}],
@@ -253,7 +109,6 @@ list_rules = (
     base.APIRule(
         name="set_image_location",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
-        basic_check_str=("role:admin"),
         description="Sets location URI to given image",
         scope_types=["system", "project"],
         operations=[{"method": "PATCH", "path": "/v2/images/{image_id}"}],
@@ -261,7 +116,6 @@ list_rules = (
     base.APIRule(
         name="add_member",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
-        basic_check_str=("role:admin or role:admin or role:member"),
         description="Create image member",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/v2/images/{image_id}/members"}],
@@ -269,31 +123,27 @@ list_rules = (
     base.APIRule(
         name="delete_member",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
-        basic_check_str=("role:admin or role:admin or role:member"),
         description="Delete image member",
         scope_types=["system", "project"],
         operations=[{"method": "DELETE", "path": "/v2/images/{image_id}/members/{member_id}"}],
     ),
     base.APIRule(
         name="get_member",
-        check_str=("role:admin or (role:reader and project_id:%(project_id)s)"),
-        basic_check_str=("role:admin or role:reader or role:admin or role:member or role:reader"),
+        check_str=("role:admin or role:reader and (project_id:%(project_id)s or project_id:%(member_id)s)"),
         description="Show image member details",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/images/{image_id}/members/{member_id}"}],
     ),
     base.APIRule(
         name="get_members",
-        check_str=("role:admin or (role:reader and project_id:%(project_id)s)"),
-        basic_check_str=("role:admin or role:reader or role:admin or role:member or role:reader"),
+        check_str=("role:admin or role:reader and (project_id:%(project_id)s or project_id:%(member_id)s)"),
         description="List image members",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/images/{image_id}/members"}],
     ),
     base.APIRule(
         name="modify_member",
-        check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
-        basic_check_str=("role:admin or role:admin or role:member"),
+        check_str=("role:admin or (role:member and project_id:%(member_id)s)"),
         description="Update image member",
         scope_types=["system", "project"],
         operations=[{"method": "PUT", "path": "/v2/images/{image_id}/members/{member_id}"}],
@@ -301,7 +151,6 @@ list_rules = (
     base.APIRule(
         name="deactivate",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
-        basic_check_str=("role:admin or role:admin or role:member"),
         description="Deactivate image",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/v2/images/{image_id}/actions/deactivate"}],
@@ -309,7 +158,6 @@ list_rules = (
     base.APIRule(
         name="reactivate",
         check_str=("role:admin or (role:member and project_id:%(project_id)s)"),
-        basic_check_str=("role:admin or role:admin or role:member"),
         description="Reactivate image",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/v2/images/{image_id}/actions/reactivate"}],
@@ -317,7 +165,6 @@ list_rules = (
     base.APIRule(
         name="copy_image",
         check_str=("role:admin"),
-        basic_check_str=("@"),
         description="Copy existing image to other stores",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/v2/images/{image_id}/import"}],
@@ -325,7 +172,6 @@ list_rules = (
     base.APIRule(
         name="get_task",
         check_str=("rule:default"),
-        basic_check_str=("!"),
         description="Get an image task.\n#\n#This granular policy controls access to tasks, both from the tasks API as well\n#as internal locations in Glance that use tasks (like import). Practically this\n#cannot be more restrictive than the policy that controls import or things will\n#break, and changing it from the default is almost certainly not what you want.\n#Access to the external tasks API should be restricted as desired by the\n#tasks_api_access policy. This may change in the future.\n#",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/tasks/{task_id}"}],
@@ -333,7 +179,6 @@ list_rules = (
     base.APIRule(
         name="get_tasks",
         check_str=("rule:default"),
-        basic_check_str=("!"),
         description="List tasks for all images.\n#\n#This granular policy controls access to tasks, both from the tasks API as well\n#as internal locations in Glance that use tasks (like import). Practically this\n#cannot be more restrictive than the policy that controls import or things will\n#break, and changing it from the default is almost certainly not what you want.\n#Access to the external tasks API should be restricted as desired by the\n#tasks_api_access policy. This may change in the future.\n#",
         scope_types=["system", "project"],
         operations=[{"method": "GET", "path": "/v2/tasks"}],
@@ -341,7 +186,6 @@ list_rules = (
     base.APIRule(
         name="add_task",
         check_str=("rule:default"),
-        basic_check_str=("!"),
         description="List tasks for all images.\n#\n#This granular policy controls access to tasks, both from the tasks API as well\n#as internal locations in Glance that use tasks (like import). Practically this\n#cannot be more restrictive than the policy that controls import or things will\n#break, and changing it from the default is almost certainly not what you want.\n#Access to the external tasks API should be restricted as desired by the\n#tasks_api_access policy. This may change in the future.\n#",
         scope_types=["system", "project"],
         operations=[{"method": "POST", "path": "/v2/tasks"}],
@@ -349,7 +193,6 @@ list_rules = (
     base.APIRule(
         name="modify_task",
         check_str=("rule:default"),
-        basic_check_str=("!"),
         description="This policy is not used.",
         scope_types=["system", "project"],
         operations=[{"method": "DELETE", "path": "/v2/tasks/{task_id}"}],
@@ -357,15 +200,219 @@ list_rules = (
     base.APIRule(
         name="tasks_api_access",
         check_str=("role:admin"),
-        basic_check_str=("!"),
         description="\n#This is a generic blanket policy for protecting all task APIs. It is not\n#granular and will not allow you to separate writable and readable task\n#operations into different roles.\n#",
         scope_types=["system", "project"],
-        operations=[
-            {"method": "GET", "path": "/v2/tasks/{task_id}"},
-            {"method": "GET", "path": "/v2/tasks"},
-            {"method": "POST", "path": "/v2/tasks"},
-            {"method": "DELETE", "path": "/v2/tasks/{task_id}"},
-        ],
+        operations=[{"method": "GET", "path": "/v2/tasks/{task_id}"}, {"method": "GET", "path": "/v2/tasks"}, {"method": "POST", "path": "/v2/tasks"}, {"method": "DELETE", "path": "/v2/tasks/{task_id}"}],
+    ),
+    base.APIRule(
+        name="get_metadef_namespace",
+        check_str=("role:admin or (role:reader and (project_id:%(project_id)s or 'public':%(visibility)s))"),
+        description="Get a specific namespace.",
+        scope_types=["system", "project"],
+        operations=[{"method": "GET", "path": "/v2/metadefs/namespaces/{namespace_name}"}],
+    ),
+    base.APIRule(
+        name="get_metadef_namespaces",
+        check_str=("role:admin or (role:reader and project_id:%(project_id)s)"),
+        description="List namespace.",
+        scope_types=["system", "project"],
+        operations=[{"method": "GET", "path": "/v2/metadefs/namespaces"}],
+    ),
+    base.APIRule(
+        name="modify_metadef_namespace",
+        check_str=("rule:metadef_admin"),
+        description="Modify an existing namespace.",
+        scope_types=["system", "project"],
+        operations=[{"method": "PUT", "path": "/v2/metadefs/namespaces/{namespace_name}"}],
+    ),
+    base.APIRule(
+        name="add_metadef_namespace",
+        check_str=("rule:metadef_admin"),
+        description="Create a namespace.",
+        scope_types=["system", "project"],
+        operations=[{"method": "POST", "path": "/v2/metadefs/namespaces"}],
+    ),
+    base.APIRule(
+        name="delete_metadef_namespace",
+        check_str=("rule:metadef_admin"),
+        description="Delete a namespace.",
+        scope_types=["system", "project"],
+        operations=[{"method": "DELETE", "path": "/v2/metadefs/namespaces/{namespace_name}"}],
+    ),
+    base.APIRule(
+        name="get_metadef_object",
+        check_str=("role:admin or (role:reader and (project_id:%(project_id)s or 'public':%(visibility)s))"),
+        description="Get a specific object from a namespace.",
+        scope_types=["system", "project"],
+        operations=[{"method": "GET", "path": "/v2/metadefs/namespaces/{namespace_name}/objects/{object_name}"}],
+    ),
+    base.APIRule(
+        name="get_metadef_objects",
+        check_str=("role:admin or (role:reader and (project_id:%(project_id)s or 'public':%(visibility)s))"),
+        description="Get objects from a namespace.",
+        scope_types=["system", "project"],
+        operations=[{"method": "GET", "path": "/v2/metadefs/namespaces/{namespace_name}/objects"}],
+    ),
+    base.APIRule(
+        name="modify_metadef_object",
+        check_str=("rule:metadef_admin"),
+        description="Update an object within a namespace.",
+        scope_types=["system", "project"],
+        operations=[{"method": "PUT", "path": "/v2/metadefs/namespaces/{namespace_name}/objects/{object_name}"}],
+    ),
+    base.APIRule(
+        name="add_metadef_object",
+        check_str=("rule:metadef_admin"),
+        description="Create an object within a namespace.",
+        scope_types=["system", "project"],
+        operations=[{"method": "POST", "path": "/v2/metadefs/namespaces/{namespace_name}/objects"}],
+    ),
+    base.APIRule(
+        name="delete_metadef_object",
+        check_str=("rule:metadef_admin"),
+        description="Delete an object within a namespace.",
+        scope_types=["system", "project"],
+        operations=[{"method": "DELETE", "path": "/v2/metadefs/namespaces/{namespace_name}/objects/{object_name}"}],
+    ),
+    base.APIRule(
+        name="list_metadef_resource_types",
+        check_str=("role:admin or (role:reader and (project_id:%(project_id)s or 'public':%(visibility)s))"),
+        description="List meta definition resource types.",
+        scope_types=["system", "project"],
+        operations=[{"method": "GET", "path": "/v2/metadefs/resource_types"}],
+    ),
+    base.APIRule(
+        name="get_metadef_resource_type",
+        check_str=("role:admin or (role:reader and (project_id:%(project_id)s or 'public':%(visibility)s))"),
+        description="Get meta definition resource types associations.",
+        scope_types=["system", "project"],
+        operations=[{"method": "GET", "path": "/v2/metadefs/namespaces/{namespace_name}/resource_types"}],
+    ),
+    base.APIRule(
+        name="add_metadef_resource_type_association",
+        check_str=("rule:metadef_admin"),
+        description="Create meta definition resource types association.",
+        scope_types=["system", "project"],
+        operations=[{"method": "POST", "path": "/v2/metadefs/namespaces/{namespace_name}/resource_types"}],
+    ),
+    base.APIRule(
+        name="remove_metadef_resource_type_association",
+        check_str=("rule:metadef_admin"),
+        description="Delete meta definition resource types association.",
+        scope_types=["system", "project"],
+        operations=[{"method": "POST", "path": "/v2/metadefs/namespaces/{namespace_name}/resource_types/{name}"}],
+    ),
+    base.APIRule(
+        name="get_metadef_property",
+        check_str=("role:admin or (role:reader and (project_id:%(project_id)s or 'public':%(visibility)s))"),
+        description="Get a specific meta definition property.",
+        scope_types=["system", "project"],
+        operations=[{"method": "GET", "path": "/v2/metadefs/namespaces/{namespace_name}/properties/{property_name}"}],
+    ),
+    base.APIRule(
+        name="get_metadef_properties",
+        check_str=("role:admin or (role:reader and (project_id:%(project_id)s or 'public':%(visibility)s))"),
+        description="List meta definition properties.",
+        scope_types=["system", "project"],
+        operations=[{"method": "GET", "path": "/v2/metadefs/namespaces/{namespace_name}/properties"}],
+    ),
+    base.APIRule(
+        name="modify_metadef_property",
+        check_str=("rule:metadef_admin"),
+        description="Update meta definition property.",
+        scope_types=["system", "project"],
+        operations=[{"method": "GET", "path": "/v2/metadefs/namespaces/{namespace_name}/properties/{property_name}"}],
+    ),
+    base.APIRule(
+        name="add_metadef_property",
+        check_str=("rule:metadef_admin"),
+        description="Create meta definition property.",
+        scope_types=["system", "project"],
+        operations=[{"method": "POST", "path": "/v2/metadefs/namespaces/{namespace_name}/properties"}],
+    ),
+    base.APIRule(
+        name="remove_metadef_property",
+        check_str=("rule:metadef_admin"),
+        description="Delete meta definition property.",
+        scope_types=["system", "project"],
+        operations=[{"method": "DELETE", "path": "/v2/metadefs/namespaces/{namespace_name}/properties/{property_name}"}],
+    ),
+    base.APIRule(
+        name="get_metadef_tag",
+        check_str=("role:admin or (role:reader and (project_id:%(project_id)s or 'public':%(visibility)s))"),
+        description="Get tag definition.",
+        scope_types=["system", "project"],
+        operations=[{"method": "GET", "path": "/v2/metadefs/namespaces/{namespace_name}/tags/{tag_name}"}],
+    ),
+    base.APIRule(
+        name="get_metadef_tags",
+        check_str=("role:admin or (role:reader and (project_id:%(project_id)s or 'public':%(visibility)s))"),
+        description="List tag definitions.",
+        scope_types=["system", "project"],
+        operations=[{"method": "GET", "path": "/v2/metadefs/namespaces/{namespace_name}/tags"}],
+    ),
+    base.APIRule(
+        name="modify_metadef_tag",
+        check_str=("rule:metadef_admin"),
+        description="Update tag definition.",
+        scope_types=["system", "project"],
+        operations=[{"method": "PUT", "path": "/v2/metadefs/namespaces/{namespace_name}/tags/{tag_name}"}],
+    ),
+    base.APIRule(
+        name="add_metadef_tag",
+        check_str=("rule:metadef_admin"),
+        description="Add tag definition.",
+        scope_types=["system", "project"],
+        operations=[{"method": "POST", "path": "/v2/metadefs/namespaces/{namespace_name}/tags/{tag_name}"}],
+    ),
+    base.APIRule(
+        name="add_metadef_tags",
+        check_str=("rule:metadef_admin"),
+        description="Create tag definitions.",
+        scope_types=["system", "project"],
+        operations=[{"method": "POST", "path": "/v2/metadefs/namespaces/{namespace_name}/tags"}],
+    ),
+    base.APIRule(
+        name="delete_metadef_tag",
+        check_str=("rule:metadef_admin"),
+        description="Delete tag definition.",
+        scope_types=["system", "project"],
+        operations=[{"method": "DELETE", "path": "/v2/metadefs/namespaces/{namespace_name}/tags/{tag_name}"}],
+    ),
+    base.APIRule(
+        name="delete_metadef_tags",
+        check_str=("rule:metadef_admin"),
+        description="Delete tag definitions.",
+        scope_types=["system", "project"],
+        operations=[{"method": "DELETE", "path": "/v2/metadefs/namespaces/{namespace_name}/tags"}],
+    ),
+    base.APIRule(
+        name="cache_image",
+        check_str=("role:admin"),
+        description="Queue image for caching",
+        scope_types=["project"],
+        operations=[{"method": "PUT", "path": "/v2/cache/{image_id}"}],
+    ),
+    base.APIRule(
+        name="cache_list",
+        check_str=("role:admin"),
+        description="List cache status",
+        scope_types=["project"],
+        operations=[{"method": "GET", "path": "/v2/cache"}],
+    ),
+    base.APIRule(
+        name="cache_delete",
+        check_str=("role:admin"),
+        description="Delete image(s) from cache and/or queue",
+        scope_types=["project"],
+        operations=[{"method": "DELETE", "path": "/v2/cache"}, {"method": "DELETE", "path": "/v2/cache/{image_id}"}],
+    ),
+    base.APIRule(
+        name="stores_info_detail",
+        check_str=("role:admin"),
+        description="Expose store specific information",
+        scope_types=["system", "project"],
+        operations=[{"method": "GET", "path": "/v2/info/stores/detail"}],
     ),
 )
 
