@@ -45,6 +45,7 @@ POLICY_NS = "oslo.policy.policies"
 
 SUPPORTED_SERVICE_EPS = {
     # openstack_service: [<entry_point_name>, <entry_point_name>,]
+    "barbican": ["barbican"],
     "cinder": ["cinder"],
     "glance": ["glance"],
     "heat": ["heat"],

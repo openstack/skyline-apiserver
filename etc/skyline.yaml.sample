@@ -75,6 +75,7 @@ openstack:
     database: trove
     identity: keystone
     image: glance
+    key-manager: barbican
     load-balancer: octavia
     network: neutron
     object-store: swift

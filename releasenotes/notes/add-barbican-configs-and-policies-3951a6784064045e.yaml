@@ -1,0 +1,7 @@
+---
+features:
+  - |
+    Add ``key-manager: barbican`` into service_mapping of skyline config. So that we will
+    generate barbican related endpoint into nginx file.
+  - |
+    Add barbican related policies. So that we provide policies of barbican to skyline-console.

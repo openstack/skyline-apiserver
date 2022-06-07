@@ -173,13 +173,14 @@ service_mapping = Opt(
         "database": "trove",
         "identity": "keystone",
         "image": "glance",
+        "key-manager": "barbican",
         "load-balancer": "octavia",
         "network": "neutron",
         "object-store": "swift",
         "orchestration": "heat",
         "placement": "placement",
-        "volumev3": "cinder",
         "sharev2": "manilav2",
+        "volumev3": "cinder",
     },
 )
 

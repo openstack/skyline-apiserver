@@ -1,4 +1,7 @@
 ---
 features:
   - |
-    Add Zun config and policy in order to configure endpoint and provide policy to skyline-console.
+    Add ``container: zun`` into service_mapping of skyline config. So that we will
+    generate zun related endpoint into nginx file.
+  - |
+    Add zun related policies. So that we provide policies of zun to skyline-console.

@@ -19,7 +19,8 @@ INSTALL_PROJECTS="keystone \
     octavia \
     manila \
     magnum \
-    zun"
+    zun\
+    barbican"
 BRANCH=`git rev-parse --abbrev-ref HEAD`
 
 for project in ${INSTALL_PROJECTS}
@@ -31,3 +32,8 @@ for deprecated_project in ${INSTALL_DEPRECATED_PROJECTS}
 do
     pip install -U ${deprecated_project}
 done
+
+# Patch barbican
+# https://review.opendev.org/c/openstack/barbican/+/839147
+patch_path="$(python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')/barbican/common/policies/secrets.py"
+sed -i "s/'GET\"'/'GET'/g" $patch_path

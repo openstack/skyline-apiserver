@@ -1,4 +1,7 @@
 ---
 features:
   - |
-    Add Magnum config and policy in order to configure endpoint and provide policy to skyline-console.
+    Add ``container-infra: magnum`` into service_mapping of skyline config. So that we will
+    generate magnum related endpoint into nginx file.
+  - |
+    Add magnum related policies. So that we provide policies of magnum to skyline-console.
