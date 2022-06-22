@@ -32,8 +32,3 @@ for deprecated_project in ${INSTALL_DEPRECATED_PROJECTS}
 do
     pip install -U ${deprecated_project}
 done
-
-# Patch barbican
-# https://review.opendev.org/c/openstack/barbican/+/839147
-patch_path="$(python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')/barbican/common/policies/secrets.py"
-sed -i "s/'GET\"'/'GET'/g" $patch_path

@@ -160,6 +160,11 @@ list_rules = (
         description="No description",
     ),
     base.Rule(
+        name="resource_types:OS::Neutron::QoSMinimumPacketRateRule",
+        check_str=("rule:project_admin"),
+        description="No description",
+    ),
+    base.Rule(
         name="resource_types:OS::Neutron::Segment",
         check_str=("rule:project_admin"),
         description="No description",
