@@ -69,7 +69,13 @@ Skyline's mascot is the nine-color deer. The nine-color deer comes from Dunhuang
 
     ```bash
     docker rm -f skyline_bootstrap
+    ```
 
+    > If you need to modify skyline port, add `-e LISTEN_ADDRESS=<ip:port>` in the following command
+    >
+    > `LISTEN_ADDRESS` defaults to `0.0.0.0:9999`
+
+    ```bash
     docker run -d --name skyline --restart=always -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml -v /tmp/skyline:/tmp --net=host 99cloud/skyline:latest
     ```
 
@@ -133,7 +139,13 @@ Skyline's mascot is the nine-color deer. The nine-color deer comes from Dunhuang
 
     ```bash
     docker rm -f skyline_bootstrap
+    ```
 
+    > If you need to modify skyline port, add `-e LISTEN_ADDRESS=<ip:port>` in the following command
+    >
+    > `LISTEN_ADDRESS` defaults to `0.0.0.0:9999`
+
+    ```bash
     docker run -d --name skyline --restart=always -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml --net=host 99cloud/skyline:latest
     ```
 

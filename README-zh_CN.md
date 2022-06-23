@@ -69,7 +69,13 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
 
     ```bash
     docker rm -f skyline_bootstrap
+    ```
 
+    > 如果需要修改 skyline 端口号，则在以下命令中添加 `-e LISTEN_ADDRESS=<ip:port>`
+    >
+    > `LISTEN_ADDRESS` 默认为 `0.0.0.0:9999`
+
+    ```bash
     docker run -d --name skyline --restart=always -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml -v /tmp/skyline:/tmp --net=host 99cloud/skyline:latest
     ```
 
@@ -133,7 +139,13 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
 
     ```bash
     docker rm -f skyline_bootstrap
+    ```
 
+    > 如果需要修改 skyline 端口号，则在以下命令中添加 `-e LISTEN_ADDRESS=<ip:port>`
+    >
+    > `LISTEN_ADDRESS` 默认为 `0.0.0.0:9999`
+
+    ```bash
     docker run -d --name skyline --restart=always -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml --net=host 99cloud/skyline:latest
     ```
 
