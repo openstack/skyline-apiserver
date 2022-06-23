@@ -13,7 +13,12 @@ if [[ "${!KOLLA_BOOTSTRAP[*]}" ]]; then
     exit 0
 fi
 
-skyline-nginx-generator -o /etc/nginx/nginx.conf
+if [[ -n "${LISTEN_ADDRESS}" ]]; then
+    skyline-nginx-generator -o /etc/nginx/nginx.conf --listen-address "${LISTEN_ADDRESS}"
+else
+    skyline-nginx-generator -o /etc/nginx/nginx.conf
+fi
+
 nginx
 
 echo "Running command: ${CMD[*]}"
