@@ -56,7 +56,11 @@ async def get_endpoints(region: str) -> Dict[str, Any]:
     endpoints = {}
     for service_type, endpoint in catalogs.items():
         service = CONF.openstack.service_mapping.get(service_type)
-        if service is None:
+        # Two cases:
+        # 1. The service is created, but no endpoints are created for it.
+        # 2. The service is not created.
+        # Both of them, we will not add the related endpoint into profile.
+        if service is None or not endpoint:
             continue
 
         path = PurePath("/").joinpath(CONF.openstack.nginx_prefix, region.lower(), service)
