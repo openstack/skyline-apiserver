@@ -92,7 +92,7 @@ openstack:
   - system_reader
   system_user_domain: Default
   system_user_name: skyline
-  system_user_password: password
+  system_user_password: ''
 setting:
   base_settings:
   - flavor_families

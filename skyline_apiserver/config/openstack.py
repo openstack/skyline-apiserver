@@ -60,7 +60,7 @@ system_user_password = Opt(
     name="system_user_password",
     description="Skyline system 's password",
     schema=StrictStr,
-    default="password",
+    default="",
 )
 
 default_region = Opt(
