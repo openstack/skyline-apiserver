@@ -152,7 +152,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/OK"
+                                    "$ref": "#/components/schemas/Message"
                                 }
                             }
                         }
@@ -1427,7 +1427,7 @@
                                     "title": "Response 200 List Keystone Endpoints Api V1 Contrib Keystone Endpoints Get",
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/ContribListKeystoneEndpointsResponseModel"
+                                        "$ref": "#/components/schemas/KeystoneEndpoints"
                                     }
                                 }
                             }
@@ -1842,11 +1842,11 @@
                         }
                     },
                     "422": {
-                        "description": "Unprocessable Entity",
+                        "description": "Validation Error",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UnprocessableEntityMessage"
+                                    "$ref": "#/components/schemas/HTTPValidationError"
                                 }
                             }
                         }
@@ -1898,25 +1898,8 @@
                 "properties": {
                     "detail": {
                         "title": "Detail",
-                        "type": "string"
-                    }
-                }
-            },
-            "ContribListKeystoneEndpointsResponseModel": {
-                "title": "ContribListKeystoneEndpointsResponseModel",
-                "required": [
-                    "region_name",
-                    "url"
-                ],
-                "type": "object",
-                "properties": {
-                    "region_name": {
-                        "title": "Region Name",
-                        "type": "string"
-                    },
-                    "url": {
-                        "title": "Url",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Detail message"
                     }
                 }
             },
@@ -2873,7 +2856,8 @@
                 "properties": {
                     "detail": {
                         "title": "Detail",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Detail message"
                     }
                 }
             },
@@ -2899,7 +2883,54 @@
                 "properties": {
                     "detail": {
                         "title": "Detail",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Detail message"
+                    }
+                }
+            },
+            "KeystoneEndpoints": {
+                "title": "KeystoneEndpoints",
+                "required": [
+                    "region_name",
+                    "url"
+                ],
+                "type": "object",
+                "properties": {
+                    "region_name": {
+                        "title": "Region Name",
+                        "type": "string",
+                        "description": "Region name"
+                    },
+                    "url": {
+                        "title": "Url",
+                        "type": "string",
+                        "description": "Endpoint URL"
+                    }
+                }
+            },
+            "Message": {
+                "title": "Message",
+                "required": [
+                    "message"
+                ],
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "title": "Message",
+                        "type": "string",
+                        "description": "Message"
+                    },
+                    "code": {
+                        "title": "Code",
+                        "type": "integer",
+                        "description": "Code",
+                        "default": 200
+                    },
+                    "title": {
+                        "title": "Title",
+                        "type": "string",
+                        "description": "Title",
+                        "default": "OK"
                     }
                 }
             },
@@ -2912,30 +2943,8 @@
                 "properties": {
                     "detail": {
                         "title": "Detail",
-                        "type": "string"
-                    }
-                }
-            },
-            "OK": {
-                "title": "OK",
-                "required": [
-                    "message"
-                ],
-                "type": "object",
-                "properties": {
-                    "code": {
-                        "title": "Code",
-                        "type": "integer",
-                        "default": 200
-                    },
-                    "message": {
-                        "title": "Message",
-                        "type": "string"
-                    },
-                    "title": {
-                        "title": "Title",
                         "type": "string",
-                        "default": "OK"
+                        "description": "Detail message"
                     }
                 }
             },
@@ -3297,20 +3306,8 @@
                 "properties": {
                     "detail": {
                         "title": "Detail",
-                        "type": "string"
-                    }
-                }
-            },
-            "UnprocessableEntityMessage": {
-                "title": "UnprocessableEntityMessage",
-                "required": [
-                    "detail"
-                ],
-                "type": "object",
-                "properties": {
-                    "detail": {
-                        "title": "Detail",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Detail message"
                     }
                 }
             },

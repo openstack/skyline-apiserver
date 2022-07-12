@@ -24,7 +24,6 @@ from skyline_apiserver.client.openstack import system
 from skyline_apiserver.client.openstack.system import get_endpoints
 from skyline_apiserver.config import CONF
 from skyline_apiserver.log import LOG
-from skyline_apiserver.schemas import common
 from skyline_apiserver.types import constants
 
 router = APIRouter()
@@ -34,14 +33,14 @@ router = APIRouter()
     "/contrib/keystone_endpoints",
     description="List Keystone Endpoints",
     responses={
-        200: {"model": List[schemas.ContribListKeystoneEndpointsResponseModel]},
-        500: {"model": common.InternalServerErrorMessage},
+        200: {"model": List[schemas.KeystoneEndpoints]},
+        500: {"model": schemas.InternalServerErrorMessage},
     },
-    response_model=List[schemas.ContribListKeystoneEndpointsResponseModel],
+    response_model=List[schemas.KeystoneEndpoints],
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def list_keystone_endpoints() -> List[schemas.ContribListKeystoneEndpointsResponseModel]:
+async def list_keystone_endpoints() -> List[schemas.KeystoneEndpoints]:
     """Contrib List Keystone Endpoints."""
     try:
         regions = await system.get_regions()
@@ -64,7 +63,7 @@ async def list_keystone_endpoints() -> List[schemas.ContribListKeystoneEndpoints
     description="List Domains",
     responses={
         200: {"model": List[str]},
-        500: {"model": common.InternalServerErrorMessage},
+        500: {"model": schemas.InternalServerErrorMessage},
     },
     response_model=List[str],
     status_code=status.HTTP_200_OK,
@@ -102,7 +101,7 @@ async def list_domains(
     description="List Regions",
     responses={
         200: {"model": List[str]},
-        500: {"model": common.InternalServerErrorMessage},
+        500: {"model": schemas.InternalServerErrorMessage},
     },
     response_model=List[str],
     status_code=status.HTTP_200_OK,

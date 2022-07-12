@@ -22,7 +22,6 @@ from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
 from skyline_apiserver.client.utils import generate_session, get_access
 from skyline_apiserver.policy import ENFORCER, UserContext
-from skyline_apiserver.schemas import Policies, PoliciesRules, common
 
 router = APIRouter()
 
@@ -66,11 +65,11 @@ def _generate_target(profile: schemas.Profile) -> Dict[str, str]:
     "/policies",
     description="List policies and permissions",
     responses={
-        200: {"model": Policies},
-        401: {"model": common.UnauthorizedMessage},
-        500: {"model": common.InternalServerErrorMessage},
+        200: {"model": schemas.Policies},
+        401: {"model": schemas.UnauthorizedMessage},
+        500: {"model": schemas.InternalServerErrorMessage},
     },
-    response_model=Policies,
+    response_model=schemas.Policies,
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
@@ -92,17 +91,17 @@ async def list_policies(
     "/policies/check",
     description="Check policies permissions",
     responses={
-        200: {"model": Policies},
-        401: {"model": common.UnauthorizedMessage},
-        403: {"model": common.ForbiddenMessage},
-        500: {"model": common.InternalServerErrorMessage},
+        200: {"model": schemas.Policies},
+        401: {"model": schemas.UnauthorizedMessage},
+        403: {"model": schemas.ForbiddenMessage},
+        500: {"model": schemas.InternalServerErrorMessage},
     },
-    response_model=Policies,
+    response_model=schemas.Policies,
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
 async def check_policies(
-    policy_rules: PoliciesRules,
+    policy_rules: schemas.PoliciesRules,
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
 ):
     session = await generate_session(profile)

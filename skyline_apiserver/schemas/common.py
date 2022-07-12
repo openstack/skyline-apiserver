@@ -12,34 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
-class OK(BaseModel):
-    code: int = 200
-    message: str
-    title: str = "OK"
+class Message(BaseModel):
+    message: str = Field(..., description="Message")
+    code: int = Field(200, description="Code")
+    title: str = Field("OK", description="Title")
 
 
-class BadRequestMessage(BaseModel):
-    detail: str
+class ErrorMessageBase(BaseModel):
+    detail: str = Field(..., description="Detail message")
 
 
-class UnprocessableEntityMessage(BaseModel):
-    detail: str
+class BadRequestMessage(ErrorMessageBase):
+    """"""
 
 
-class UnauthorizedMessage(BaseModel):
-    detail: str
+class UnauthorizedMessage(ErrorMessageBase):
+    """"""
 
 
-class ForbiddenMessage(BaseModel):
-    detail: str
+class ForbiddenMessage(ErrorMessageBase):
+    """"""
 
 
-class NotFoundMessage(BaseModel):
-    detail: str
+class NotFoundMessage(ErrorMessageBase):
+    """"""
 
 
-class InternalServerErrorMessage(BaseModel):
-    detail: str
+class InternalServerErrorMessage(ErrorMessageBase):
+    """"""

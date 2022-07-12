@@ -14,9 +14,9 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
-class ContribListKeystoneEndpointsResponseModel(BaseModel):
-    region_name: str
-    url: str
+class KeystoneEndpoints(BaseModel):
+    region_name: str = Field(..., description="Region name")
+    url: str = Field(..., description="Endpoint URL")

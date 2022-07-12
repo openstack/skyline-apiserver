@@ -63,7 +63,7 @@ async def _patch_profile(profile: schemas.Profile, global_request_id: str) -> sc
     description="Login & get user profile.",
     responses={
         200: {"model": schemas.Profile},
-        401: {"model": schemas.common.UnauthorizedMessage},
+        401: {"model": schemas.UnauthorizedMessage},
     },
     response_model=schemas.Profile,
     status_code=status.HTTP_200_OK,
@@ -131,7 +131,7 @@ async def login(
     description="Get user profile.",
     responses={
         200: {"model": schemas.Profile},
-        401: {"model": schemas.common.UnauthorizedMessage},
+        401: {"model": schemas.UnauthorizedMessage},
     },
     response_model=schemas.Profile,
     status_code=status.HTTP_200_OK,
@@ -152,9 +152,9 @@ async def get_profile(
     "/logout",
     description="Log out.",
     responses={
-        200: {"model": schemas.common.OK},
+        200: {"model": schemas.Message},
     },
-    response_model=schemas.common.OK,
+    response_model=schemas.Message,
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
@@ -178,7 +178,7 @@ async def logout(
         except Exception as e:
             LOG.debug(str(e))
     response.delete_cookie(CONF.default.session_name)
-    return schemas.common.OK(message="Logout OK")
+    return schemas.Message(message="Logout OK")
 
 
 @router.post(
@@ -186,7 +186,7 @@ async def logout(
     description="Switch project.",
     responses={
         200: {"model": schemas.Profile},
-        401: {"model": schemas.common.UnauthorizedMessage},
+        401: {"model": schemas.UnauthorizedMessage},
     },
     response_model=schemas.Profile,
     status_code=status.HTTP_200_OK,

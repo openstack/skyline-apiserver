@@ -31,7 +31,6 @@ from skyline_apiserver.client import utils
 from skyline_apiserver.client.openstack import cinder, glance, keystone, neutron, nova
 from skyline_apiserver.client.utils import generate_session, get_system_session
 from skyline_apiserver.config import CONF
-from skyline_apiserver.schemas import common
 from skyline_apiserver.types import constants
 from skyline_apiserver.utils.roles import assert_system_admin_or_reader, is_system_reader_no_admin
 
@@ -51,10 +50,10 @@ List Servers.
 """,
     responses={
         200: {"model": schemas.ExtListServersResponse},
-        400: {"model": common.BadRequestMessage},
-        401: {"model": common.UnauthorizedMessage},
-        403: {"model": common.ForbiddenMessage},
-        500: {"model": common.InternalServerErrorMessage},
+        400: {"model": schemas.BadRequestMessage},
+        401: {"model": schemas.UnauthorizedMessage},
+        403: {"model": schemas.ForbiddenMessage},
+        500: {"model": schemas.InternalServerErrorMessage},
     },
     response_model=schemas.ExtListServersResponse,
     status_code=status.HTTP_200_OK,
@@ -282,10 +281,10 @@ List Recycle Servers.
 """,
     responses={
         200: {"model": schemas.ExtListRecycleServersResponse},
-        400: {"model": common.BadRequestMessage},
-        401: {"model": common.UnauthorizedMessage},
-        403: {"model": common.ForbiddenMessage},
-        500: {"model": common.InternalServerErrorMessage},
+        400: {"model": schemas.BadRequestMessage},
+        401: {"model": schemas.UnauthorizedMessage},
+        403: {"model": schemas.ForbiddenMessage},
+        500: {"model": schemas.InternalServerErrorMessage},
     },
     response_model=schemas.ExtListRecycleServersResponse,
     status_code=status.HTTP_200_OK,
@@ -505,9 +504,9 @@ async def list_recycle_servers(
     description="List Volumes.",
     responses={
         200: {"model": schemas.ExtListVolumesResponse},
-        401: {"model": common.UnauthorizedMessage},
-        403: {"model": common.ForbiddenMessage},
-        500: {"model": common.InternalServerErrorMessage},
+        401: {"model": schemas.UnauthorizedMessage},
+        403: {"model": schemas.ForbiddenMessage},
+        500: {"model": schemas.InternalServerErrorMessage},
     },
     response_model=schemas.ExtListVolumesResponse,
     status_code=status.HTTP_200_OK,
@@ -701,9 +700,9 @@ async def list_volumes(
     description="List Volume Snapshots.",
     responses={
         200: {"model": schemas.ExtListVolumeSnapshotsResponse},
-        401: {"model": common.UnauthorizedMessage},
-        403: {"model": common.ForbiddenMessage},
-        500: {"model": common.InternalServerErrorMessage},
+        401: {"model": schemas.UnauthorizedMessage},
+        403: {"model": schemas.ForbiddenMessage},
+        500: {"model": schemas.InternalServerErrorMessage},
     },
     response_model=schemas.ExtListVolumeSnapshotsResponse,
     status_code=status.HTTP_200_OK,
@@ -874,9 +873,9 @@ async def list_volume_snapshots(
     "/extension/ports",
     description="List Ports.",
     responses={
-        401: {"model": common.UnauthorizedMessage},
-        403: {"model": common.ForbiddenMessage},
-        500: {"model": common.InternalServerErrorMessage},
+        401: {"model": schemas.UnauthorizedMessage},
+        403: {"model": schemas.ForbiddenMessage},
+        500: {"model": schemas.InternalServerErrorMessage},
     },
     response_model=schemas.ExtListPortsResponse,
     status_code=status.HTTP_200_OK,
@@ -1064,8 +1063,8 @@ async def list_ports(
     description="List compute services.",
     responses={
         200: {"model": schemas.ExtListComputeServicesResponse},
-        401: {"model": common.UnauthorizedMessage},
-        500: {"model": common.InternalServerErrorMessage},
+        401: {"model": schemas.UnauthorizedMessage},
+        500: {"model": schemas.InternalServerErrorMessage},
     },
     response_model=schemas.ExtListComputeServicesResponse,
     status_code=status.HTTP_200_OK,

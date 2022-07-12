@@ -84,8 +84,8 @@ def get_prometheus_query_range_response(
     description="Prometheus query API.",
     responses={
         200: {"model": schemas.PrometheusQueryResponse},
-        401: {"model": schemas.common.UnauthorizedMessage},
-        500: {"model": schemas.common.InternalServerErrorMessage},
+        401: {"model": schemas.UnauthorizedMessage},
+        500: {"model": schemas.InternalServerErrorMessage},
     },
     response_model=schemas.PrometheusQueryResponse,
     status_code=status.HTTP_200_OK,
@@ -129,8 +129,8 @@ async def prometheus_query(
     description="Prometheus query_range API.",
     responses={
         200: {"model": schemas.PrometheusQueryRangeResponse},
-        401: {"model": schemas.common.UnauthorizedMessage},
-        500: {"model": schemas.common.InternalServerErrorMessage},
+        401: {"model": schemas.UnauthorizedMessage},
+        500: {"model": schemas.InternalServerErrorMessage},
     },
     response_model=schemas.PrometheusQueryRangeResponse,
     status_code=status.HTTP_200_OK,
