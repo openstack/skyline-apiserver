@@ -22,7 +22,6 @@ from httpx import AsyncClient
 from skyline_apiserver.config import CONF
 from skyline_apiserver.main import app
 from skyline_apiserver.tests.models import TestData
-from skyline_apiserver.tests.utils import utils
 
 if TYPE_CHECKING:
     from _pytest.python import Metafunc
@@ -35,16 +34,6 @@ async def client() -> Iterator[AsyncClient]:
             yield ac
 
     CONF.cleanup()
-
-
-@pytest.fixture(scope="function")
-async def session_token(client: AsyncClient) -> str:
-    return utils.get_session_token()
-
-
-@pytest.fixture(scope="function")
-async def login_jwt(client: AsyncClient) -> str:
-    return await utils.get_jwt_from_cookie(client)
 
 
 def pytest_generate_tests(metafunc: Optional["Metafunc"]) -> None:
