@@ -1915,19 +1915,23 @@
                 "properties": {
                     "region": {
                         "title": "Region",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Credential user region"
                     },
                     "domain": {
                         "title": "Domain",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Credential user domain"
                     },
                     "username": {
                         "title": "Username",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Credential username"
                     },
                     "password": {
                         "title": "Password",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Credential password for user"
                     }
                 },
                 "example": {
@@ -1947,11 +1951,13 @@
                 "properties": {
                     "id": {
                         "title": "Id",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Domain ID"
                     },
                     "name": {
                         "title": "Name",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Domain name"
                     }
                 }
             },
@@ -2960,7 +2966,8 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Policy"
-                        }
+                        },
+                        "description": "Policies list"
                     }
                 }
             },
@@ -2976,7 +2983,8 @@
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "description": "Policies rules list"
                     }
                 }
             },
@@ -2990,11 +2998,13 @@
                 "properties": {
                     "rule": {
                         "title": "Rule",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Policy rule"
                     },
                     "allowed": {
                         "title": "Allowed",
-                        "type": "boolean"
+                        "type": "boolean",
+                        "description": "Policy allowed"
                     }
                 }
             },
@@ -3003,74 +3013,97 @@
                 "required": [
                     "keystone_token",
                     "region",
+                    "exp",
+                    "uuid",
                     "project",
                     "user",
                     "roles",
                     "keystone_token_exp",
-                    "exp",
-                    "uuid",
                     "version"
                 ],
                 "type": "object",
                 "properties": {
                     "keystone_token": {
                         "title": "Keystone Token",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Keystone token"
                     },
                     "region": {
                         "title": "Region",
-                        "type": "string"
+                        "type": "string",
+                        "description": "User region"
+                    },
+                    "exp": {
+                        "title": "Exp",
+                        "type": "integer",
+                        "description": "Token expiration time"
+                    },
+                    "uuid": {
+                        "title": "Uuid",
+                        "type": "string",
+                        "description": "UUID"
                     },
                     "project": {
-                        "$ref": "#/components/schemas/Project"
+                        "title": "Project",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Project"
+                            }
+                        ],
+                        "description": "User project"
                     },
                     "user": {
-                        "$ref": "#/components/schemas/User"
+                        "title": "User",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        ],
+                        "description": "User"
                     },
                     "roles": {
                         "title": "Roles",
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Role"
-                        }
+                        },
+                        "description": "User roles"
                     },
                     "keystone_token_exp": {
                         "title": "Keystone Token Exp",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Keystone token expiration time"
                     },
                     "base_roles": {
                         "title": "Base Roles",
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "description": "User base roles"
                     },
                     "base_domains": {
                         "title": "Base Domains",
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "description": "User base domains"
                     },
                     "endpoints": {
                         "title": "Endpoints",
-                        "type": "object"
+                        "type": "object",
+                        "description": "Keystone endpoints"
                     },
                     "projects": {
                         "title": "Projects",
-                        "type": "object"
-                    },
-                    "exp": {
-                        "title": "Exp",
-                        "type": "integer"
-                    },
-                    "uuid": {
-                        "title": "Uuid",
-                        "type": "string"
+                        "type": "object",
+                        "description": "User projects"
                     },
                     "version": {
                         "title": "Version",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Version"
                     }
                 }
             },
@@ -3085,56 +3118,68 @@
                 "properties": {
                     "id": {
                         "title": "Id",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Project ID"
                     },
                     "name": {
                         "title": "Name",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Project name"
                     },
                     "domain": {
-                        "$ref": "#/components/schemas/Domain"
+                        "title": "Domain",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Domain"
+                            }
+                        ],
+                        "description": "Project domain"
                     }
                 }
             },
             "PrometheusQueryData": {
                 "title": "PrometheusQueryData",
                 "required": [
-                    "result",
-                    "resultType"
+                    "resultType",
+                    "result"
                 ],
                 "type": "object",
                 "properties": {
+                    "resultType": {
+                        "title": "Resulttype",
+                        "type": "string",
+                        "description": "Prometheus result type"
+                    },
                     "result": {
                         "title": "Result",
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/PrometheusQueryResult"
-                        }
-                    },
-                    "resultType": {
-                        "title": "Resulttype",
-                        "type": "string"
+                        },
+                        "description": "Prometheus query result"
                     }
                 }
             },
             "PrometheusQueryRangeData": {
                 "title": "PrometheusQueryRangeData",
                 "required": [
-                    "result",
-                    "resultType"
+                    "resultType",
+                    "result"
                 ],
                 "type": "object",
                 "properties": {
+                    "resultType": {
+                        "title": "Resulttype",
+                        "type": "string",
+                        "description": "Prometheus result type"
+                    },
                     "result": {
                         "title": "Result",
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/PrometheusQueryRangeResult"
-                        }
-                    },
-                    "resultType": {
-                        "title": "Resulttype",
-                        "type": "string"
+                        },
+                        "description": "Prometheus query range result"
                     }
                 }
             },
@@ -3147,22 +3192,32 @@
                 "properties": {
                     "status": {
                         "title": "Status",
-                        "type": "string"
-                    },
-                    "data": {
-                        "$ref": "#/components/schemas/PrometheusQueryRangeData"
+                        "type": "string",
+                        "description": "Prometheus status"
                     },
                     "errorType": {
                         "title": "Errortype",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Prometheus error type"
                     },
                     "error": {
                         "title": "Error",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Prometheus error"
                     },
                     "warnings": {
                         "title": "Warnings",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Prometheus warnings"
+                    },
+                    "data": {
+                        "title": "Data",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/PrometheusQueryRangeData"
+                            }
+                        ],
+                        "description": "Prometheus query range data"
                     }
                 }
             },
@@ -3170,7 +3225,7 @@
                 "title": "PrometheusQueryRangeResult",
                 "required": [
                     "metric",
-                    "values"
+                    "value"
                 ],
                 "type": "object",
                 "properties": {
@@ -3179,12 +3234,14 @@
                         "type": "object",
                         "additionalProperties": {
                             "type": "string"
-                        }
+                        },
+                        "description": "Prometheus metric"
                     },
-                    "values": {
-                        "title": "Values",
+                    "value": {
+                        "title": "Value",
                         "type": "array",
-                        "items": {}
+                        "items": {},
+                        "description": "Prometheus metric value"
                     }
                 }
             },
@@ -3197,22 +3254,32 @@
                 "properties": {
                     "status": {
                         "title": "Status",
-                        "type": "string"
-                    },
-                    "data": {
-                        "$ref": "#/components/schemas/PrometheusQueryData"
+                        "type": "string",
+                        "description": "Prometheus status"
                     },
                     "errorType": {
                         "title": "Errortype",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Prometheus error type"
                     },
                     "error": {
                         "title": "Error",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Prometheus error"
                     },
                     "warnings": {
                         "title": "Warnings",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Prometheus warnings"
+                    },
+                    "data": {
+                        "title": "Data",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/PrometheusQueryData"
+                            }
+                        ],
+                        "description": "Prometheus query data"
                     }
                 }
             },
@@ -3229,12 +3296,14 @@
                         "type": "object",
                         "additionalProperties": {
                             "type": "string"
-                        }
+                        },
+                        "description": "Prometheus metric"
                     },
                     "value": {
                         "title": "Value",
                         "type": "array",
-                        "items": {}
+                        "items": {},
+                        "description": "Prometheus metric value"
                     }
                 }
             },
@@ -3248,11 +3317,13 @@
                 "properties": {
                     "id": {
                         "title": "Id",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Role ID"
                     },
                     "name": {
                         "title": "Name",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Role name"
                     }
                 }
             },
@@ -3260,24 +3331,29 @@
                 "title": "Setting",
                 "required": [
                     "key",
+                    "value",
                     "restart_service"
                 ],
                 "type": "object",
                 "properties": {
                     "key": {
                         "title": "Key",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Key of setting"
                     },
                     "value": {
-                        "title": "Value"
+                        "title": "Value",
+                        "description": "Value of setting"
                     },
                     "hidden": {
                         "title": "Hidden",
-                        "type": "boolean"
+                        "type": "boolean",
+                        "description": "Hidden setting or not"
                     },
                     "restart_service": {
                         "title": "Restart Service",
-                        "type": "boolean"
+                        "type": "boolean",
+                        "description": "Restart service or not to apply setting"
                     }
                 }
             },
@@ -3293,7 +3369,8 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Setting"
-                        }
+                        },
+                        "description": "Settings"
                     }
                 }
             },
@@ -3314,16 +3391,19 @@
             "UpdateSetting": {
                 "title": "UpdateSetting",
                 "required": [
-                    "key"
+                    "key",
+                    "value"
                 ],
                 "type": "object",
                 "properties": {
                     "key": {
                         "title": "Key",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Key of setting"
                     },
                     "value": {
-                        "title": "Value"
+                        "title": "Value",
+                        "description": "Value of setting"
                     }
                 }
             },
@@ -3338,14 +3418,22 @@
                 "properties": {
                     "id": {
                         "title": "Id",
-                        "type": "string"
+                        "type": "string",
+                        "description": "User ID"
                     },
                     "name": {
                         "title": "Name",
-                        "type": "string"
+                        "type": "string",
+                        "description": "User name"
                     },
                     "domain": {
-                        "$ref": "#/components/schemas/Domain"
+                        "title": "Domain",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Domain"
+                            }
+                        ],
+                        "description": "User domain"
                     }
                 }
             },

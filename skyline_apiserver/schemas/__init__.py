@@ -42,8 +42,9 @@ from .extension import (
     ExtVolumeSortKey,
     ExtVolumeStatus,
 )
-from .login import Credential, Domain, License, Payload, Profile, Project, Region, Role
+from .login import Credential, Payload, Profile
 from .policy import Policies, PoliciesRules
+from .policy_manager import Operation, OperationsSchema, ScopeTypesSchema
 from .prometheus import (
     PrometheusQueryData,
     PrometheusQueryRangeData,

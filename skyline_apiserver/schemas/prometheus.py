@@ -2,40 +2,48 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
-class PrometheusQueryResult(BaseModel):
-    metric: Dict[str, str]
-    value: List[Any]
+class PrometheusQueryResultBase(BaseModel):
+    metric: Dict[str, str] = Field(..., description="Prometheus metric")
+    value: List[Any] = Field(..., description="Prometheus metric value")
 
 
-class PrometheusQueryData(BaseModel):
-    result: List[PrometheusQueryResult]
-    resultType: str
+class PrometheusQueryDataBase(BaseModel):
+    resultType: str = Field(..., description="Prometheus result type")
 
 
-class PrometheusQueryResponse(BaseModel):
-    status: str
-    data: Optional[PrometheusQueryData]
-    errorType: Optional[str]
-    error: Optional[str]
-    warnings: Optional[str]
+class PrometheusResponseBase(BaseModel):
+    status: str = Field(..., description="Prometheus status")
+    errorType: Optional[str] = Field(None, description="Prometheus error type")
+    error: Optional[str] = Field(None, description="Prometheus error")
+    warnings: Optional[str] = Field(None, description="Prometheus warnings")
 
 
-class PrometheusQueryRangeResult(BaseModel):
-    metric: Dict[str, str]
-    values: List[Any]
+class PrometheusQueryResult(PrometheusQueryResultBase):
+    """"""
 
 
-class PrometheusQueryRangeData(BaseModel):
-    result: List[PrometheusQueryRangeResult]
-    resultType: str
+class PrometheusQueryData(PrometheusQueryDataBase):
+    result: List[PrometheusQueryResult] = Field(..., description="Prometheus query result")
 
 
-class PrometheusQueryRangeResponse(BaseModel):
-    status: str
-    data: Optional[PrometheusQueryRangeData]
-    errorType: Optional[str]
-    error: Optional[str]
-    warnings: Optional[str]
+class PrometheusQueryResponse(PrometheusResponseBase):
+    data: Optional[PrometheusQueryData] = Field(None, description="Prometheus query data")
+
+
+class PrometheusQueryRangeResult(PrometheusQueryResultBase):
+    """"""
+
+
+class PrometheusQueryRangeData(PrometheusQueryDataBase):
+    result: List[PrometheusQueryRangeResult] = Field(
+        ..., description="Prometheus query range result"
+    )
+
+
+class PrometheusQueryRangeResponse(PrometheusResponseBase):
+    data: Optional[PrometheusQueryRangeData] = Field(
+        None, description="Prometheus query range data"
+    )

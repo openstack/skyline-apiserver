@@ -19,7 +19,7 @@ from typing import List
 from oslo_policy import _parser  # type: ignore
 from oslo_policy.policy import DocumentedRuleDefault, RuleDefault  # type: ignore
 
-from skyline_apiserver.schemas.policy_manager import Operation, OperationsSchema, ScopeTypesSchema
+from skyline_apiserver import schemas
 
 
 class Rule:
@@ -68,15 +68,15 @@ class APIRule(Rule):
         check_str: str,
         description: str,
         scope_types: List[str],
-        operations: List[Operation],
+        operations: List[schemas.Operation],
         basic_check_str: str = "",
     ) -> None:
         super().__init__(name, check_str, description, basic_check_str)
 
-        ScopeTypesSchema.parse_obj(scope_types)
+        schemas.ScopeTypesSchema.parse_obj(scope_types)
         self.scope_types = scope_types
 
-        OperationsSchema.parse_obj(operations)
+        schemas.OperationsSchema.parse_obj(operations)
         self.operations = operations
 
     def format_into_yaml(self) -> str:
@@ -105,13 +105,15 @@ class APIRule(Rule):
             method = operation.get("method")
             if isinstance(method, list):
                 for i in method:
-                    operations.append(Operation(method=i.upper(), path=operation.get("path", "")))
+                    operations.append(
+                        schemas.Operation(method=i.upper(), path=operation.get("path", ""))
+                    )
             elif isinstance(method, str):
                 operations.append(
-                    Operation(method=method.upper(), path=operation.get("path", "")),
+                    schemas.Operation(method=method.upper(), path=operation.get("path", "")),
                 )
             else:
-                operations.append(Operation(method="GET", path=operation.get("path", "")))
+                operations.append(schemas.Operation(method="GET", path=operation.get("path", "")))
         return cls(
             name=rule.name,
             check_str=rule.check_str,

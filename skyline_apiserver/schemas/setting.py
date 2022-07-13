@@ -14,20 +14,22 @@
 
 from typing import Any, List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
-class Setting(BaseModel):
-    key: str
-    value: Any
-    hidden: Optional[bool]
-    restart_service: bool
+class SettingBase(BaseModel):
+    key: str = Field(..., description="Key of setting")
+    value: Any = Field(..., description="Value of setting")
 
 
-class UpdateSetting(BaseModel):
-    key: str
-    value: Any
+class Setting(SettingBase):
+    hidden: Optional[bool] = Field(None, description="Hidden setting or not")
+    restart_service: bool = Field(..., description="Restart service or not to apply setting")
+
+
+class UpdateSetting(SettingBase):
+    """"""
 
 
 class Settings(BaseModel):
-    settings: List[Setting]
+    settings: List[Setting] = Field(..., description="Settings")

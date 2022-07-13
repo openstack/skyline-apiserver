@@ -16,17 +16,17 @@ from __future__ import annotations
 
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class Policy(BaseModel):
-    rule: str
-    allowed: bool
+    rule: str = Field(..., description="Policy rule")
+    allowed: bool = Field(..., description="Policy allowed")
 
 
 class Policies(BaseModel):
-    policies: List[Policy]
+    policies: List[Policy] = Field(..., description="Policies list")
 
 
 class PoliciesRules(BaseModel):
-    rules: List[str]
+    rules: List[str] = Field(..., description="Policies rules list")

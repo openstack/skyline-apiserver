@@ -17,17 +17,17 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional
 
 from jose import jwt
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from skyline_apiserver import config
 from skyline_apiserver.types import constants
 
 
 class Credential(BaseModel):
-    region: str
-    domain: str
-    username: str
-    password: str
+    region: str = Field(..., description="Credential user region")
+    domain: str = Field(..., description="Credential user domain")
+    username: str = Field(..., description="Credential username")
+    password: str = Field(..., description="Credential password for user")
 
     class Config:
         schema_extra = {
@@ -41,46 +41,35 @@ class Credential(BaseModel):
 
 
 class Domain(BaseModel):
-    id: str
-    name: str
-
-
-class License(BaseModel):
-    name: str
-    summary: str
-    macs: List[str]
-    features: List[Dict[str, Any]]
-    start: str
-    end: str
-
-
-class Region(BaseModel):
-    id: str
+    id: str = Field(..., description="Domain ID")
+    name: str = Field(..., description="Domain name")
 
 
 class Role(BaseModel):
-    id: str
-    name: str
+    id: str = Field(..., description="Role ID")
+    name: str = Field(..., description="Role name")
 
 
 class Project(BaseModel):
-    id: str
-    name: str
-    domain: Domain
+    id: str = Field(..., description="Project ID")
+    name: str = Field(..., description="Project name")
+    domain: Domain = Field(..., description="Project domain")
 
 
 class User(BaseModel):
-    id: str
-    name: str
-    domain: Domain
+    id: str = Field(..., description="User ID")
+    name: str = Field(..., description="User name")
+    domain: Domain = Field(..., description="User domain")
 
 
-class Payload(BaseModel):
-    keystone_token: str
-    region: str
-    exp: int
-    uuid: str
+class PayloadBase(BaseModel):
+    keystone_token: str = Field(..., description="Keystone token")
+    region: str = Field(..., description="User region")
+    exp: int = Field(..., description="Token expiration time")
+    uuid: str = Field(..., description="UUID")
 
+
+class Payload(PayloadBase):
     def toDict(self) -> Dict[str, Any]:
         return {
             "keystone_token": self.keystone_token,
@@ -97,20 +86,16 @@ class Payload(BaseModel):
         )
 
 
-class Profile(BaseModel):
-    keystone_token: str
-    region: str
-    project: Project
-    user: User
-    roles: List[Role]
-    keystone_token_exp: str
-    base_roles: Optional[List[str]]
-    base_domains: Optional[List[str]]
-    endpoints: Optional[Dict[str, Any]]
-    projects: Optional[Dict[str, Any]]
-    exp: int
-    uuid: str
-    version: str
+class Profile(PayloadBase):
+    project: Project = Field(..., description="User project")
+    user: User = Field(..., description="User")
+    roles: List[Role] = Field(..., description="User roles")
+    keystone_token_exp: str = Field(..., description="Keystone token expiration time")
+    base_roles: Optional[List[str]] = Field(None, description="User base roles")
+    base_domains: Optional[List[str]] = Field(None, description="User base domains")
+    endpoints: Optional[Dict[str, Any]] = Field(None, description="Keystone endpoints")
+    projects: Optional[Dict[str, Any]] = Field(None, description="User projects")
+    version: str = Field(..., description="Version")
 
     def toPayLoad(self) -> Payload:
         return Payload(
