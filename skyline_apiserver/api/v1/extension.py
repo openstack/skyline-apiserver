@@ -49,13 +49,13 @@ List Servers.
 - The `name` is to support for fuzzy queries.
 """,
     responses={
-        200: {"model": schemas.ExtListServersResponse},
+        200: {"model": schemas.ServersResponse},
         400: {"model": schemas.BadRequestMessage},
         401: {"model": schemas.UnauthorizedMessage},
         403: {"model": schemas.ForbiddenMessage},
         500: {"model": schemas.InternalServerErrorMessage},
     },
-    response_model=schemas.ExtListServersResponse,
+    response_model=schemas.ServersResponse,
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
@@ -68,8 +68,8 @@ async def list_servers(
     ),
     limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
     marker: str = None,
-    sort_dirs: schemas.ExtSortDir = None,
-    sort_keys: List[schemas.ExtServerSortKey] = Query(None),
+    sort_dirs: schemas.SortDir = None,
+    sort_keys: List[schemas.ServerSortKey] = Query(None),
     all_projects: bool = None,
     project_id: str = Query(
         None,
@@ -80,11 +80,11 @@ async def list_servers(
         description="Only works when the all_projects filter is also specified.",
     ),
     name: str = None,
-    status: schemas.ExtServerStatus = None,
+    status: schemas.ServerStatus = None,
     host: str = Query(None, description="It will be ignored for non-admin user."),
     flavor_id: str = None,
     uuid: str = Query(None, description="UUID of server."),
-) -> schemas.ExtListServersResponse:
+) -> schemas.ServersResponse:
     """Extension List Servers.
 
     :param profile: Profile object include token, role and so on,
@@ -96,9 +96,9 @@ async def list_servers(
     :param marker: Marker object to fetch, defaults to None
     :type marker: str, optional
     :param sort_dirs: Sort order, defaults to None
-    :type sort_dirs: schemas.ExtSortDir, optional
+    :type sort_dirs: schemas.SortDir, optional
     :param sort_keys: Sort keys, defaults to Query(None)
-    :type sort_keys: List[schemas.ExtServerSortKey], optional
+    :type sort_keys: List[schemas.ServerSortKey], optional
     :param all_projects: All projects to fetch, defaults to None
     :type all_projects: bool, optional
     :param project_id: Filter by id of project which server belongs to,
@@ -112,7 +112,7 @@ async def list_servers(
     :param name: Filter by server name, defaults to None
     :type name: str, optional
     :param status: Filter by server status, defaults to None
-    :type status: schemas.ExtServerStatus, optional
+    :type status: schemas.ServerStatus, optional
     :param host: Filter by host which server is located at,
                  defaults to Query(None, description="It will be ignored for non-admin user.")
     :type host: str, optional
@@ -122,7 +122,7 @@ async def list_servers(
     :type uuid: str, optional
     :raises HTTPException: HTTP Exception
     :return: Server List
-    :rtype: schemas.ExtListServersResponse
+    :rtype: schemas.ServersResponse
     """
     if all_projects:
         assert_system_admin_or_reader(
@@ -280,13 +280,13 @@ List Recycle Servers.
 - The `name` is to support for fuzzy queries.
 """,
     responses={
-        200: {"model": schemas.ExtListRecycleServersResponse},
+        200: {"model": schemas.RecycleServersResponse},
         400: {"model": schemas.BadRequestMessage},
         401: {"model": schemas.UnauthorizedMessage},
         403: {"model": schemas.ForbiddenMessage},
         500: {"model": schemas.InternalServerErrorMessage},
     },
-    response_model=schemas.ExtListRecycleServersResponse,
+    response_model=schemas.RecycleServersResponse,
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
@@ -299,8 +299,8 @@ async def list_recycle_servers(
     ),
     limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
     marker: str = None,
-    sort_dirs: schemas.ExtSortDir = None,
-    sort_keys: List[schemas.ExtRecycleServerSortKey] = Query(None),
+    sort_dirs: schemas.SortDir = None,
+    sort_keys: List[schemas.RecycleServerSortKey] = Query(None),
     all_projects: bool = None,
     project_id: str = Query(
         None,
@@ -312,7 +312,7 @@ async def list_recycle_servers(
     ),
     name: str = None,
     uuid: str = Query(None, description="UUID of recycle server."),
-) -> schemas.ExtListRecycleServersResponse:
+) -> schemas.RecycleServersResponse:
     """Extension List Recycle Servers.
 
     :param profile: Profile object include token, role and so on,
@@ -324,9 +324,9 @@ async def list_recycle_servers(
     :param marker: Marker object to fetch, defaults to None
     :type marker: str, optional
     :param sort_dirs: Sort order, defaults to None
-    :type sort_dirs: schemas.ExtSortDir, optional
+    :type sort_dirs: schemas.SortDir, optional
     :param sort_keys: Sort keys, defaults to Query(None)
-    :type sort_keys: List[schemas.ExtServerSortKey], optional
+    :type sort_keys: List[schemas.RecycleServerSortKey], optional
     :param all_projects: All projects to fetch, defaults to None
     :type all_projects: bool, optional
     :param project_id: Filter by id of project which recycle server belongs to,
@@ -344,7 +344,7 @@ async def list_recycle_servers(
     :type uuid: str, optional
     :raises HTTPException: HTTP Exception
     :return: Recycle server list
-    :rtype: schemas.ExtListRecycleServersResponse
+    :rtype: schemas.RecycleServersResponse
     """
 
     if all_projects:
@@ -503,12 +503,12 @@ async def list_recycle_servers(
     "/extension/volumes",
     description="List Volumes.",
     responses={
-        200: {"model": schemas.ExtListVolumesResponse},
+        200: {"model": schemas.VolumesResponse},
         401: {"model": schemas.UnauthorizedMessage},
         403: {"model": schemas.ForbiddenMessage},
         500: {"model": schemas.InternalServerErrorMessage},
     },
-    response_model=schemas.ExtListVolumesResponse,
+    response_model=schemas.VolumesResponse,
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
@@ -521,16 +521,16 @@ async def list_volumes(
     ),
     limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
     marker: str = None,
-    sort_dirs: schemas.ExtSortDir = None,
-    sort_keys: List[schemas.ExtVolumeSortKey] = Query(None),
+    sort_dirs: schemas.SortDir = None,
+    sort_keys: List[schemas.VolumeSortKey] = Query(None),
     all_projects: bool = None,
     project_id: str = None,
     name: str = None,
     multiattach: bool = None,
-    status: schemas.ExtVolumeStatus = None,
+    status: schemas.VolumeStatus = None,
     bootable: bool = None,
     uuid: List[str] = Query(None, description="UUID of volume."),
-) -> schemas.ExtListVolumesResponse:
+) -> schemas.VolumesResponse:
     """Extension List Volumes.
 
     :param profile: Profile object include token, role and so on,
@@ -542,9 +542,9 @@ async def list_volumes(
     :param marker: Marker object to fetch, defaults to None
     :type marker: str, optional
     :param sort_dirs: Sort order, defaults to None
-    :type sort_dirs: schemas.ExtSortDir, optional
+    :type sort_dirs: schemas.SortDir, optional
     :param sort_keys: Sort keys, defaults to Query(None)
-    :type sort_keys: List[schemas.ExtServerSortKey], optional
+    :type sort_keys: List[schemas.VolumeSortKey], optional
     :param all_projects: All projects to fetch, defaults to None
     :type all_projects: bool, optional
     :param project_id: Filter by id of project which volume belongs to,
@@ -556,14 +556,14 @@ async def list_volumes(
                         defaults to None
     :type multiattach: bool, optional
     :param status: Filter by volume status, defaults to None
-    :type status: schemas.ExtVolumeStatus, optional
+    :type status: schemas.VolumeStatus, optional
     :type bootable: Filter by bootable that server be used to create an instance quickly.
     :type bootable: bool, optional
     :param uuid: Filter by list uuid,
                  defaults to Query(None, description="UUID of volume.")
     :type uuid: List[str], optional
     :return: Volume list
-    :rtype: schemas.ExtListVolumesResponse
+    :rtype: schemas.VolumesResponse
     """
     if all_projects:
         assert_system_admin_or_reader(
@@ -699,12 +699,12 @@ async def list_volumes(
     "/extension/volume_snapshots",
     description="List Volume Snapshots.",
     responses={
-        200: {"model": schemas.ExtListVolumeSnapshotsResponse},
+        200: {"model": schemas.VolumeSnapshotsResponse},
         401: {"model": schemas.UnauthorizedMessage},
         403: {"model": schemas.ForbiddenMessage},
         500: {"model": schemas.InternalServerErrorMessage},
     },
-    response_model=schemas.ExtListVolumeSnapshotsResponse,
+    response_model=schemas.VolumeSnapshotsResponse,
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
@@ -717,14 +717,14 @@ async def list_volume_snapshots(
     ),
     limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
     marker: str = None,
-    sort_dirs: schemas.ExtSortDir = None,
-    sort_keys: List[schemas.ExtVolumeSnapshotSortKey] = Query(None),
+    sort_dirs: schemas.SortDir = None,
+    sort_keys: List[schemas.VolumeSnapshotSortKey] = Query(None),
     all_projects: bool = None,
     project_id: str = None,
     name: str = None,
-    status: schemas.ExtVolumeSnapshotStatus = None,
+    status: schemas.VolumeSnapshotStatus = None,
     volume_id: str = None,
-) -> schemas.ExtListVolumeSnapshotsResponse:
+) -> schemas.VolumeSnapshotsResponse:
     """Extension List Volume Snapshots.
 
     :param profile: Profile object include token, role and so on,
@@ -736,9 +736,9 @@ async def list_volume_snapshots(
     :param marker: Marker object to fetch, defaults to None
     :type marker: str, optional
     :param sort_dirs: Sort order, defaults to None
-    :type sort_dirs: schemas.ExtSortDir, optional
+    :type sort_dirs: schemas.SortDir, optional
     :param sort_keys: Sort keys, defaults to Query(None)
-    :type sort_keys: List[schemas.ExtServerSortKey], optional
+    :type sort_keys: List[schemas.VolumeSnapshotSortKey], optional
     :param all_projects: All projects to fetch, defaults to None
     :type all_projects: bool, optional
     :param project_id: Filter by id of project which volume snapshots belongs to,
@@ -747,11 +747,11 @@ async def list_volume_snapshots(
     :param name: Filter by volume snapshot name, defaults to None
     :type name: str, optional
     :param status: Filter by volume snapshot status, defaults to None
-    :type status: schemas.ExtVolumeSnapshotStatus, optional
+    :type status: schemas.VolumeSnapshotStatus, optional
     :param volume_id: Filter by volume id, defaults to None
     :type volume_id: str, optional
     :return: Volume snapshot list
-    :rtype: schemas.ExtListVolumeSnapshotsResponse
+    :rtype: schemas.VolumeSnapshotsResponse
     """
     if all_projects:
         assert_system_admin_or_reader(
@@ -877,7 +877,7 @@ async def list_volume_snapshots(
         403: {"model": schemas.ForbiddenMessage},
         500: {"model": schemas.InternalServerErrorMessage},
     },
-    response_model=schemas.ExtListPortsResponse,
+    response_model=schemas.PortsResponse,
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
@@ -890,18 +890,18 @@ async def list_ports(
     ),
     limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
     marker: str = None,
-    sort_dirs: schemas.ExtSortDir = None,
-    sort_keys: List[schemas.ExtPortSortKey] = Query(None),
+    sort_dirs: schemas.SortDir = None,
+    sort_keys: List[schemas.PortSortKey] = Query(None),
     all_projects: bool = None,
     project_id: str = None,
     name: str = None,
-    status: schemas.ExtPortStatus = None,
+    status: schemas.PortStatus = None,
     network_name: str = None,
     network_id: str = None,
     device_id: str = None,
-    device_owner: List[schemas.ExtPortDeviceOwner] = Query(None),
+    device_owner: List[schemas.PortDeviceOwner] = Query(None),
     uuid: List[str] = Query(None, description="UUID of port."),
-) -> schemas.ExtListPortsResponse:
+) -> schemas.PortsResponse:
     """Extension List Ports.
 
     :param profile: Profile object include token, role and so on,
@@ -913,7 +913,7 @@ async def list_ports(
     :param marker: Marker object to fetch, defaults to None
     :type marker: str, optional
     :param sort_dirs: Sort order, defaults to None
-    :type sort_dirs: schemas.ExtSortDir, optional
+    :type sort_dirs: schemas.SortDir, optional
     :param sort_keys: Sort keys, defaults to Query(None)
     :type sort_keys: List[schemas.ExtServerSortKey], optional
     :param all_projects: All projects to fetch, defaults to None
@@ -924,7 +924,7 @@ async def list_ports(
     :param name: Filter by port name, defaults to None
     :type name: str, optional
     :param status: Filter by port status, defaults to None
-    :type status: schemas.ExtPortStatus, optional
+    :type status: schemas.PortStatus, optional
     :param network_name: Filter by name of network, defaults to None
     :type network_name: str, optional
     :param network_id: Filter by id of network, defaults to None
@@ -932,12 +932,12 @@ async def list_ports(
     :param device_id: Filter by id of device, defaults to None
     :type device_id: str, optional
     :param device_owner: Filter by device owner, defaults to Query(None)
-    :type device_owner: List[schemas.ExtPortDeviceOwner], optional
+    :type device_owner: List[schemas.PortDeviceOwner], optional
     :param uuid: Filter by list uuid,
                  defaults to Query(None, description="UUID of port.")
     :type uuid: List[str], optional
     :return: Port list
-    :rtype: schemas.ExtListPortsResponse
+    :rtype: schemas.PortsResponse
     """
     current_session = await generate_session(profile=profile)
 
@@ -1062,11 +1062,11 @@ async def list_ports(
     "/extension/compute-services",
     description="List compute services.",
     responses={
-        200: {"model": schemas.ExtListComputeServicesResponse},
+        200: {"model": schemas.ComputeServicesResponse},
         401: {"model": schemas.UnauthorizedMessage},
         500: {"model": schemas.InternalServerErrorMessage},
     },
-    response_model=schemas.ExtListComputeServicesResponse,
+    response_model=schemas.ComputeServicesResponse,
     status_code=status.HTTP_200_OK,
     response_description="OK",
     response_model_exclude_none=True,
@@ -1080,7 +1080,7 @@ async def compute_services(
     ),
     binary: str = None,
     host: str = None,
-) -> schemas.ExtListComputeServicesResponse:
+) -> schemas.ComputeServicesResponse:
     """Extension List Compute Services.
 
     :param profile: Profile object include token, role and so on,
@@ -1091,7 +1091,7 @@ async def compute_services(
     :param host: Filter by host name, defaults to None
     :type host: str, optional
     :return: Compute service list
-    :rtype: schemas.ExtListComputeServicesResponse
+    :rtype: schemas.ComputeServicesResponse
     """
     assert_system_admin_or_reader(
         profile=profile,

@@ -265,7 +265,7 @@
                     {
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/ExtSortDir"
+                            "$ref": "#/components/schemas/SortDir"
                         },
                         "name": "sort_dirs",
                         "in": "query"
@@ -275,7 +275,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/components/schemas/ExtServerSortKey"
+                                "$ref": "#/components/schemas/ServerSortKey"
                             }
                         },
                         "name": "sort_keys",
@@ -324,7 +324,7 @@
                     {
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/ExtServerStatus"
+                            "$ref": "#/components/schemas/ServerStatus"
                         },
                         "name": "status",
                         "in": "query"
@@ -378,7 +378,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ExtListServersResponse"
+                                    "$ref": "#/components/schemas/ServersResponse"
                                 }
                             }
                         }
@@ -467,7 +467,7 @@
                     {
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/ExtSortDir"
+                            "$ref": "#/components/schemas/SortDir"
                         },
                         "name": "sort_dirs",
                         "in": "query"
@@ -477,7 +477,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/components/schemas/ExtRecycleServerSortKey"
+                                "$ref": "#/components/schemas/RecycleServerSortKey"
                             }
                         },
                         "name": "sort_keys",
@@ -552,7 +552,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ExtListRecycleServersResponse"
+                                    "$ref": "#/components/schemas/RecycleServersResponse"
                                 }
                             }
                         }
@@ -641,7 +641,7 @@
                     {
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/ExtSortDir"
+                            "$ref": "#/components/schemas/SortDir"
                         },
                         "name": "sort_dirs",
                         "in": "query"
@@ -651,7 +651,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/components/schemas/ExtVolumeSortKey"
+                                "$ref": "#/components/schemas/VolumeSortKey"
                             }
                         },
                         "name": "sort_keys",
@@ -696,7 +696,7 @@
                     {
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/ExtVolumeStatus"
+                            "$ref": "#/components/schemas/VolumeStatus"
                         },
                         "name": "status",
                         "in": "query"
@@ -742,7 +742,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ExtListVolumesResponse"
+                                    "$ref": "#/components/schemas/VolumesResponse"
                                 }
                             }
                         }
@@ -821,7 +821,7 @@
                     {
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/ExtSortDir"
+                            "$ref": "#/components/schemas/SortDir"
                         },
                         "name": "sort_dirs",
                         "in": "query"
@@ -831,7 +831,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/components/schemas/ExtVolumeSnapshotSortKey"
+                                "$ref": "#/components/schemas/VolumeSnapshotSortKey"
                             }
                         },
                         "name": "sort_keys",
@@ -867,7 +867,7 @@
                     {
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/ExtVolumeSnapshotStatus"
+                            "$ref": "#/components/schemas/VolumeSnapshotStatus"
                         },
                         "name": "status",
                         "in": "query"
@@ -899,7 +899,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ExtListVolumeSnapshotsResponse"
+                                    "$ref": "#/components/schemas/VolumeSnapshotsResponse"
                                 }
                             }
                         }
@@ -978,7 +978,7 @@
                     {
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/ExtSortDir"
+                            "$ref": "#/components/schemas/SortDir"
                         },
                         "name": "sort_dirs",
                         "in": "query"
@@ -988,7 +988,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/components/schemas/ExtPortSortKey"
+                                "$ref": "#/components/schemas/PortSortKey"
                             }
                         },
                         "name": "sort_keys",
@@ -1024,7 +1024,7 @@
                     {
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/ExtPortStatus"
+                            "$ref": "#/components/schemas/PortStatus"
                         },
                         "name": "status",
                         "in": "query"
@@ -1061,7 +1061,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/components/schemas/ExtPortDeviceOwner"
+                                "$ref": "#/components/schemas/PortDeviceOwner"
                             }
                         },
                         "name": "device_owner",
@@ -1099,7 +1099,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ExtListPortsResponse"
+                                    "$ref": "#/components/schemas/PortsResponse"
                                 }
                             }
                         }
@@ -1192,7 +1192,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ExtListComputeServicesResponse"
+                                    "$ref": "#/components/schemas/ComputeServicesResponse"
                                 }
                             }
                         }
@@ -1903,6 +1903,79 @@
                     }
                 }
             },
+            "ComputeServicesResponse": {
+                "title": "ComputeServicesResponse",
+                "required": [
+                    "services"
+                ],
+                "type": "object",
+                "properties": {
+                    "services": {
+                        "title": "Services",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ComputeServicesResponseBase"
+                        },
+                        "description": "Services list"
+                    }
+                }
+            },
+            "ComputeServicesResponseBase": {
+                "title": "ComputeServicesResponseBase",
+                "required": [
+                    "binary",
+                    "host",
+                    "status"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string",
+                        "description": "Service id"
+                    },
+                    "binary": {
+                        "title": "Binary",
+                        "type": "string",
+                        "description": "Service binary"
+                    },
+                    "disabled_reason": {
+                        "title": "Disabled Reason",
+                        "type": "string",
+                        "description": "Disabled reason"
+                    },
+                    "host": {
+                        "title": "Host",
+                        "type": "string",
+                        "description": "Host name"
+                    },
+                    "state": {
+                        "title": "State",
+                        "type": "string",
+                        "description": "Service state"
+                    },
+                    "status": {
+                        "title": "Status",
+                        "type": "string",
+                        "description": "Service status"
+                    },
+                    "updated_at": {
+                        "title": "Updated At",
+                        "type": "string",
+                        "description": "Updated at"
+                    },
+                    "forced_down": {
+                        "title": "Forced Down",
+                        "type": "boolean",
+                        "description": "Forced down"
+                    },
+                    "zone": {
+                        "title": "Zone",
+                        "type": "string",
+                        "description": "Zone"
+                    }
+                }
+            },
             "Credential": {
                 "title": "Credential",
                 "required": [
@@ -1961,897 +2034,46 @@
                     }
                 }
             },
-            "ExtFlavor": {
-                "title": "ExtFlavor",
+            "FlavorInServer": {
+                "title": "FlavorInServer",
                 "type": "object",
                 "properties": {
                     "ephemeral": {
                         "title": "Ephemeral",
-                        "type": "integer"
+                        "type": "integer",
+                        "description": "Ephemeral disk size in GB"
                     },
                     "ram": {
                         "title": "Ram",
-                        "type": "integer"
+                        "type": "integer",
+                        "description": "RAM size in MB"
                     },
                     "original_name": {
                         "title": "Original Name",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Original flavor name"
                     },
                     "vcpus": {
                         "title": "Vcpus",
-                        "type": "integer"
+                        "type": "integer",
+                        "description": "Number of vCPUs"
                     },
                     "extra_specs": {
                         "title": "Extra Specs",
-                        "type": "object"
+                        "type": "object",
+                        "description": "Extra specs"
                     },
                     "swap": {
                         "title": "Swap",
-                        "type": "integer"
+                        "type": "integer",
+                        "description": "Swap size in MB"
                     },
                     "disk": {
                         "title": "Disk",
-                        "type": "integer"
-                    }
-                }
-            },
-            "ExtListComputeServicesBaseResponse": {
-                "title": "ExtListComputeServicesBaseResponse",
-                "required": [
-                    "binary",
-                    "host",
-                    "status"
-                ],
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "title": "Id",
-                        "type": "string"
-                    },
-                    "binary": {
-                        "title": "Binary",
-                        "type": "string"
-                    },
-                    "disabled_reason": {
-                        "title": "Disabled Reason",
-                        "type": "string"
-                    },
-                    "host": {
-                        "title": "Host",
-                        "type": "string"
-                    },
-                    "state": {
-                        "title": "State",
-                        "type": "string"
-                    },
-                    "status": {
-                        "title": "Status",
-                        "type": "string"
-                    },
-                    "updated_at": {
-                        "title": "Updated At",
-                        "type": "string"
-                    },
-                    "forced_down": {
-                        "title": "Forced Down",
-                        "type": "boolean"
-                    },
-                    "zone": {
-                        "title": "Zone",
-                        "type": "string"
-                    }
-                }
-            },
-            "ExtListComputeServicesResponse": {
-                "title": "ExtListComputeServicesResponse",
-                "required": [
-                    "services"
-                ],
-                "type": "object",
-                "properties": {
-                    "services": {
-                        "title": "Services",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ExtListComputeServicesBaseResponse"
-                        }
-                    }
-                }
-            },
-            "ExtListPortsBaseResponse": {
-                "title": "ExtListPortsBaseResponse",
-                "required": [
-                    "id",
-                    "origin_data"
-                ],
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "title": "Id",
-                        "type": "string"
-                    },
-                    "origin_data": {
-                        "title": "Origin Data",
-                        "type": "object",
-                        "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/network/v2/index.html?expanded=list-ports-detail#list-ports"
-                    },
-                    "server_name": {
-                        "title": "Server Name",
-                        "type": "string"
-                    },
-                    "network_name": {
-                        "title": "Network Name",
-                        "type": "string"
-                    },
-                    "ipv4": {
-                        "title": "Ipv4",
-                        "type": "array",
-                        "items": {}
-                    },
-                    "ipv6": {
-                        "title": "Ipv6",
-                        "type": "array",
-                        "items": {}
-                    },
-                    "name": {
-                        "title": "Name",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[name]",
-                        "deprecated": true
-                    },
-                    "mac_address": {
-                        "title": "Mac Address",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[mac_address]",
-                        "deprecated": true
-                    },
-                    "project_id": {
-                        "title": "Project Id",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[project_id]",
-                        "deprecated": true
-                    },
-                    "device_owner": {
-                        "title": "Device Owner",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[device_owner]",
-                        "deprecated": true
-                    },
-                    "device_id": {
-                        "title": "Device Id",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[device_id]",
-                        "deprecated": true
-                    },
-                    "status": {
-                        "title": "Status",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[status]",
-                        "deprecated": true
-                    },
-                    "created_at": {
-                        "title": "Created At",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[created_at]",
-                        "deprecated": true
-                    },
-                    "network_id": {
-                        "title": "Network Id",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[network_id]",
-                        "deprecated": true
-                    },
-                    "binding_vnic_type": {
-                        "title": "Binding Vnic Type",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[binding:vnic_type]",
-                        "deprecated": true
-                    },
-                    "description": {
-                        "title": "Description",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[description]",
-                        "deprecated": true
-                    },
-                    "port_security_enabled": {
-                        "title": "Port Security Enabled",
-                        "type": "boolean",
-                        "description": "Will be removed, please use origin_data[port_security_enabled]",
-                        "deprecated": true
-                    },
-                    "qos_policy_id": {
-                        "title": "Qos Policy Id",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[qos_policy_id]",
-                        "deprecated": true
-                    },
-                    "fixed_ips": {
-                        "title": "Fixed Ips",
-                        "type": "array",
-                        "items": {},
-                        "description": "Will be removed, please use origin_data[fixed_ips]",
-                        "deprecated": true
-                    }
-                }
-            },
-            "ExtListPortsResponse": {
-                "title": "ExtListPortsResponse",
-                "required": [
-                    "ports"
-                ],
-                "type": "object",
-                "properties": {
-                    "ports": {
-                        "title": "Ports",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ExtListPortsBaseResponse"
-                        }
-                    }
-                }
-            },
-            "ExtListRecycleServersBaseResponse": {
-                "title": "ExtListRecycleServersBaseResponse",
-                "required": [
-                    "id",
-                    "origin_data",
-                    "reclaim_timestamp"
-                ],
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "title": "Id",
-                        "type": "string",
-                        "format": "uuid4"
-                    },
-                    "origin_data": {
-                        "title": "Origin Data",
-                        "type": "object",
-                        "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/compute/?expanded=list-servers-detailed-detail#list-servers-detailed"
-                    },
-                    "project_name": {
-                        "title": "Project Name",
-                        "type": "string"
-                    },
-                    "image": {
-                        "title": "Image",
-                        "type": "string",
-                        "format": "uuid4"
-                    },
-                    "image_name": {
-                        "title": "Image Name",
-                        "type": "string"
-                    },
-                    "image_os_distro": {
-                        "title": "Image Os Distro",
-                        "type": "string"
-                    },
-                    "fixed_addresses": {
-                        "title": "Fixed Addresses",
-                        "type": "array",
-                        "items": {}
-                    },
-                    "floating_addresses": {
-                        "title": "Floating Addresses",
-                        "type": "array",
-                        "items": {}
-                    },
-                    "deleted_at": {
-                        "title": "Deleted At",
-                        "type": "string"
-                    },
-                    "reclaim_timestamp": {
-                        "title": "Reclaim Timestamp",
-                        "type": "number"
-                    },
-                    "name": {
-                        "title": "Name",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[name]",
-                        "deprecated": true
-                    },
-                    "project_id": {
-                        "title": "Project Id",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[tenant_id]",
-                        "deprecated": true
-                    },
-                    "host": {
-                        "title": "Host",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:host]",
-                        "deprecated": true
-                    },
-                    "hostname": {
-                        "title": "Hostname",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:hostname]",
-                        "deprecated": true
-                    },
-                    "flavor": {
-                        "title": "Flavor",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[flavor][original_name]",
-                        "deprecated": true
-                    },
-                    "flavor_info": {
-                        "title": "Flavor Info",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/ExtFlavor"
-                            }
-                        ],
-                        "description": "Will be removed, please use origin_data[flavor]",
-                        "deprecated": true
-                    },
-                    "status": {
-                        "title": "Status",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[status]",
-                        "deprecated": true
-                    }
-                }
-            },
-            "ExtListRecycleServersResponse": {
-                "title": "ExtListRecycleServersResponse",
-                "required": [
-                    "recycle_servers"
-                ],
-                "type": "object",
-                "properties": {
-                    "recycle_servers": {
-                        "title": "Recycle Servers",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ExtListRecycleServersBaseResponse"
-                        }
-                    }
-                }
-            },
-            "ExtListServersBaseResponse": {
-                "title": "ExtListServersBaseResponse",
-                "required": [
-                    "id",
-                    "origin_data"
-                ],
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "title": "Id",
-                        "type": "string",
-                        "format": "uuid4"
-                    },
-                    "origin_data": {
-                        "title": "Origin Data",
-                        "type": "object",
-                        "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/compute/?expanded=list-servers-detailed-detail#list-servers-detailed"
-                    },
-                    "project_name": {
-                        "title": "Project Name",
-                        "type": "string"
-                    },
-                    "image": {
-                        "title": "Image",
-                        "type": "string",
-                        "format": "uuid4"
-                    },
-                    "image_name": {
-                        "title": "Image Name",
-                        "type": "string"
-                    },
-                    "image_os_distro": {
-                        "title": "Image Os Distro",
-                        "type": "string"
-                    },
-                    "fixed_addresses": {
-                        "title": "Fixed Addresses",
-                        "type": "array",
-                        "items": {}
-                    },
-                    "floating_addresses": {
-                        "title": "Floating Addresses",
-                        "type": "array",
-                        "items": {}
-                    },
-                    "name": {
-                        "title": "Name",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[name]",
-                        "deprecated": true
-                    },
-                    "project_id": {
-                        "title": "Project Id",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[tenant_id]",
-                        "deprecated": true
-                    },
-                    "host": {
-                        "title": "Host",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:host]",
-                        "deprecated": true
-                    },
-                    "hostname": {
-                        "title": "Hostname",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:hostname]",
-                        "deprecated": true
-                    },
-                    "flavor": {
-                        "title": "Flavor",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[flavor][original_name]",
-                        "deprecated": true
-                    },
-                    "flavor_info": {
-                        "title": "Flavor Info",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/ExtFlavor"
-                            }
-                        ],
-                        "description": "Will be removed, please use origin_data[flavor]",
-                        "deprecated": true
-                    },
-                    "status": {
-                        "title": "Status",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[status]",
-                        "deprecated": true
-                    },
-                    "locked": {
-                        "title": "Locked",
-                        "type": "boolean",
-                        "description": "Will be removed, please use origin_data[locked]",
-                        "deprecated": true
-                    },
-                    "created_at": {
-                        "title": "Created At",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[created]",
-                        "deprecated": true
-                    },
-                    "task_state": {
-                        "title": "Task State",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[OS-EXT-STS:task_state]",
-                        "deprecated": true
-                    },
-                    "vm_state": {
-                        "title": "Vm State",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[OS-EXT-STS:vm_state]",
-                        "deprecated": true
-                    },
-                    "power_state": {
-                        "title": "Power State",
                         "type": "integer",
-                        "description": "Will be removed, please use origin_data[OS-EXT-STS:power_state]",
-                        "deprecated": true
-                    },
-                    "root_device_name": {
-                        "title": "Root Device Name",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:root_device_name]",
-                        "deprecated": true
-                    },
-                    "metadata": {
-                        "title": "Metadata",
-                        "type": "object",
-                        "description": "Will be removed, please use origin_data[metadata]",
-                        "deprecated": true
+                        "description": "Disk size in GB"
                     }
                 }
-            },
-            "ExtListServersResponse": {
-                "title": "ExtListServersResponse",
-                "required": [
-                    "servers"
-                ],
-                "type": "object",
-                "properties": {
-                    "servers": {
-                        "title": "Servers",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ExtListServersBaseResponse"
-                        }
-                    }
-                }
-            },
-            "ExtListVolumeSnapshotsBaseResponse": {
-                "title": "ExtListVolumeSnapshotsBaseResponse",
-                "required": [
-                    "id",
-                    "origin_data"
-                ],
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "title": "Id",
-                        "type": "string"
-                    },
-                    "origin_data": {
-                        "title": "Origin Data",
-                        "type": "object",
-                        "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/block-storage/v3/index.html?expanded=list-snapshots-and-details-detail#list-snapshots-and-details"
-                    },
-                    "project_name": {
-                        "title": "Project Name",
-                        "type": "string"
-                    },
-                    "host": {
-                        "title": "Host",
-                        "type": "string"
-                    },
-                    "volume_name": {
-                        "title": "Volume Name",
-                        "type": "string"
-                    },
-                    "child_volumes": {
-                        "title": "Child Volumes",
-                        "type": "array",
-                        "items": {}
-                    },
-                    "name": {
-                        "title": "Name",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[name]",
-                        "deprecated": true
-                    },
-                    "project_id": {
-                        "title": "Project Id",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[os-extended-snapshot-attributes:project_id]",
-                        "deprecated": true
-                    },
-                    "size": {
-                        "title": "Size",
-                        "type": "integer",
-                        "description": "Will be removed, please use origin_data[size]",
-                        "deprecated": true
-                    },
-                    "status": {
-                        "title": "Status",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[status]",
-                        "deprecated": true
-                    },
-                    "volume_id": {
-                        "title": "Volume Id",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[volume_id]",
-                        "deprecated": true
-                    },
-                    "created_at": {
-                        "title": "Created At",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[created_at]",
-                        "deprecated": true
-                    },
-                    "metadata": {
-                        "title": "Metadata",
-                        "type": "object",
-                        "description": "Will be removed, please use origin_data[metadata]",
-                        "deprecated": true
-                    }
-                }
-            },
-            "ExtListVolumeSnapshotsResponse": {
-                "title": "ExtListVolumeSnapshotsResponse",
-                "required": [
-                    "volume_snapshots"
-                ],
-                "type": "object",
-                "properties": {
-                    "count": {
-                        "title": "Count",
-                        "type": "integer",
-                        "default": 0
-                    },
-                    "volume_snapshots": {
-                        "title": "Volume Snapshots",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ExtListVolumeSnapshotsBaseResponse"
-                        }
-                    }
-                }
-            },
-            "ExtListVolumesBaseResponse": {
-                "title": "ExtListVolumesBaseResponse",
-                "required": [
-                    "id",
-                    "origin_data"
-                ],
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "title": "Id",
-                        "type": "string",
-                        "format": "uuid4"
-                    },
-                    "origin_data": {
-                        "title": "Origin Data",
-                        "type": "object",
-                        "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/block-storage/v3/index.html?expanded=list-accessible-volumes-with-details-detail#list-accessible-volumes-with-details"
-                    },
-                    "project_name": {
-                        "title": "Project Name",
-                        "type": "string"
-                    },
-                    "attachments": {
-                        "title": "Attachments",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/VolumeAttachment"
-                        }
-                    },
-                    "name": {
-                        "title": "Name",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[name]",
-                        "deprecated": true
-                    },
-                    "project_id": {
-                        "title": "Project Id",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[os-vol-tenant-attr:tenant_id]",
-                        "deprecated": true
-                    },
-                    "host": {
-                        "title": "Host",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[os-vol-host-attr:host]",
-                        "deprecated": true
-                    },
-                    "snapshot_id": {
-                        "title": "Snapshot Id",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[snapshot_id]",
-                        "deprecated": true
-                    },
-                    "source_volid": {
-                        "title": "Source Volid",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[source_volid]",
-                        "deprecated": true
-                    },
-                    "size": {
-                        "title": "Size",
-                        "type": "integer",
-                        "description": "Will be removed, please use origin_data[size]",
-                        "deprecated": true
-                    },
-                    "status": {
-                        "title": "Status",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[status]",
-                        "deprecated": true
-                    },
-                    "volume_type": {
-                        "title": "Volume Type",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[volume_type]",
-                        "deprecated": true
-                    },
-                    "encrypted": {
-                        "title": "Encrypted",
-                        "type": "boolean",
-                        "description": "Will be removed, please use origin_data[encrypted]",
-                        "deprecated": true
-                    },
-                    "bootable": {
-                        "title": "Bootable",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[bootable]",
-                        "deprecated": true
-                    },
-                    "multiattach": {
-                        "title": "Multiattach",
-                        "type": "boolean",
-                        "description": "Will be removed, please use origin_data[multiattach]",
-                        "deprecated": true
-                    },
-                    "availability_zone": {
-                        "title": "Availability Zone",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[availability_zone]",
-                        "deprecated": true
-                    },
-                    "created_at": {
-                        "title": "Created At",
-                        "type": "string",
-                        "description": "Will be removed, please use origin_data[created_at]",
-                        "deprecated": true
-                    }
-                }
-            },
-            "ExtListVolumesResponse": {
-                "title": "ExtListVolumesResponse",
-                "required": [
-                    "volumes"
-                ],
-                "type": "object",
-                "properties": {
-                    "count": {
-                        "title": "Count",
-                        "type": "integer",
-                        "default": 0
-                    },
-                    "volumes": {
-                        "title": "Volumes",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ExtListVolumesBaseResponse"
-                        }
-                    }
-                }
-            },
-            "ExtPortDeviceOwner": {
-                "title": "ExtPortDeviceOwner",
-                "enum": [
-                    "",
-                    "compute:nova",
-                    "network:router_ha_interface",
-                    "network:ha_router_replicated_interface",
-                    "network:router_interface",
-                    "network:router_gateway",
-                    "network:floatingip",
-                    "network:local_ip",
-                    "network:dhcp",
-                    "network:router_interface_distributed",
-                    "network:floatingip_agent_gateway",
-                    "network:router_centralized_snat",
-                    "network:routed",
-                    "network:distributed"
-                ],
-                "type": "string",
-                "description": "An enumeration."
-            },
-            "ExtPortSortKey": {
-                "title": "ExtPortSortKey",
-                "enum": [
-                    "id",
-                    "name",
-                    "mac_address",
-                    "status",
-                    "project_id"
-                ],
-                "type": "string",
-                "description": "An enumeration."
-            },
-            "ExtPortStatus": {
-                "title": "ExtPortStatus",
-                "enum": [
-                    "ACTIVE",
-                    "DOWN",
-                    "BUILD",
-                    "ERROR",
-                    "N/A"
-                ],
-                "type": "string",
-                "description": "An enumeration."
-            },
-            "ExtRecycleServerSortKey": {
-                "title": "ExtRecycleServerSortKey",
-                "enum": [
-                    "uuid",
-                    "display_name",
-                    "updated_at",
-                    "project_id"
-                ],
-                "type": "string",
-                "description": "An enumeration."
-            },
-            "ExtServerSortKey": {
-                "title": "ExtServerSortKey",
-                "enum": [
-                    "uuid",
-                    "display_name",
-                    "vm_state",
-                    "locked",
-                    "created_at",
-                    "host",
-                    "project_id"
-                ],
-                "type": "string",
-                "description": "An enumeration."
-            },
-            "ExtServerStatus": {
-                "title": "ExtServerStatus",
-                "enum": [
-                    "ACTIVE",
-                    "BUILD",
-                    "ERROR",
-                    "HARD_REBOOT",
-                    "MIGRATING",
-                    "PAUSED",
-                    "REBOOT",
-                    "REBUILD",
-                    "RESCUE",
-                    "RESIZE",
-                    "SHELVED",
-                    "SHELVED_OFFLOADED",
-                    "SHUTOFF",
-                    "SOFT_DELETED",
-                    "SUSPENDED",
-                    "UNKNOWN"
-                ],
-                "type": "string",
-                "description": "An enumeration."
-            },
-            "ExtSortDir": {
-                "title": "ExtSortDir",
-                "enum": [
-                    "desc",
-                    "asc"
-                ],
-                "type": "string",
-                "description": "An enumeration."
-            },
-            "ExtVolumeSnapshotSortKey": {
-                "title": "ExtVolumeSnapshotSortKey",
-                "enum": [
-                    "id",
-                    "name",
-                    "status",
-                    "created_at"
-                ],
-                "type": "string",
-                "description": "An enumeration."
-            },
-            "ExtVolumeSnapshotStatus": {
-                "title": "ExtVolumeSnapshotStatus",
-                "enum": [
-                    "CREATING",
-                    "AVAILABLE",
-                    "DELETING",
-                    "ERROR",
-                    "ERROR_DELETING"
-                ],
-                "type": "string",
-                "description": "An enumeration."
-            },
-            "ExtVolumeSortKey": {
-                "title": "ExtVolumeSortKey",
-                "enum": [
-                    "id",
-                    "name",
-                    "size",
-                    "status",
-                    "bootable",
-                    "created_at"
-                ],
-                "type": "string",
-                "description": "An enumeration."
-            },
-            "ExtVolumeStatus": {
-                "title": "ExtVolumeStatus",
-                "enum": [
-                    "creating",
-                    "available",
-                    "reserved",
-                    "attaching",
-                    "detaching",
-                    "in-use",
-                    "maintenance",
-                    "deleting",
-                    "awaiting-transfer",
-                    "error",
-                    "error_deleting",
-                    "backing-up",
-                    "restoring-backup",
-                    "error_backing-up",
-                    "error_restoring",
-                    "error_extending",
-                    "downloading",
-                    "uploading",
-                    "retyping",
-                    "extending"
-                ],
-                "type": "string",
-                "description": "An enumeration."
             },
             "ForbiddenMessage": {
                 "title": "ForbiddenMessage",
@@ -3005,6 +2227,189 @@
                         "title": "Allowed",
                         "type": "boolean",
                         "description": "Policy allowed"
+                    }
+                }
+            },
+            "PortDeviceOwner": {
+                "title": "PortDeviceOwner",
+                "enum": [
+                    "",
+                    "compute:nova",
+                    "network:router_ha_interface",
+                    "network:ha_router_replicated_interface",
+                    "network:router_interface",
+                    "network:router_gateway",
+                    "network:floatingip",
+                    "network:local_ip",
+                    "network:dhcp",
+                    "network:router_interface_distributed",
+                    "network:floatingip_agent_gateway",
+                    "network:router_centralized_snat",
+                    "network:routed",
+                    "network:distributed"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "PortSortKey": {
+                "title": "PortSortKey",
+                "enum": [
+                    "id",
+                    "name",
+                    "mac_address",
+                    "status",
+                    "project_id"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "PortStatus": {
+                "title": "PortStatus",
+                "enum": [
+                    "ACTIVE",
+                    "DOWN",
+                    "BUILD",
+                    "ERROR",
+                    "N/A"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "PortsResponse": {
+                "title": "PortsResponse",
+                "required": [
+                    "ports"
+                ],
+                "type": "object",
+                "properties": {
+                    "ports": {
+                        "title": "Ports",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PortsResponseBase"
+                        },
+                        "description": "Ports list"
+                    }
+                }
+            },
+            "PortsResponseBase": {
+                "title": "PortsResponseBase",
+                "required": [
+                    "id",
+                    "origin_data"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string",
+                        "description": "Port ID"
+                    },
+                    "origin_data": {
+                        "title": "Origin Data",
+                        "type": "object",
+                        "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/network/v2/index.html?expanded=list-ports-detail#list-ports"
+                    },
+                    "server_name": {
+                        "title": "Server Name",
+                        "type": "string",
+                        "description": "Server name"
+                    },
+                    "network_name": {
+                        "title": "Network Name",
+                        "type": "string",
+                        "description": "Network name"
+                    },
+                    "ipv4": {
+                        "title": "Ipv4",
+                        "type": "array",
+                        "items": {},
+                        "description": "IPv4 addresses"
+                    },
+                    "ipv6": {
+                        "title": "Ipv6",
+                        "type": "array",
+                        "items": {},
+                        "description": "IPv6 addresses"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[name]",
+                        "deprecated": true
+                    },
+                    "mac_address": {
+                        "title": "Mac Address",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[mac_address]",
+                        "deprecated": true
+                    },
+                    "project_id": {
+                        "title": "Project Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[project_id]",
+                        "deprecated": true
+                    },
+                    "device_owner": {
+                        "title": "Device Owner",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[device_owner]",
+                        "deprecated": true
+                    },
+                    "device_id": {
+                        "title": "Device Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[device_id]",
+                        "deprecated": true
+                    },
+                    "status": {
+                        "title": "Status",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[status]",
+                        "deprecated": true
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[created_at]",
+                        "deprecated": true
+                    },
+                    "network_id": {
+                        "title": "Network Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[network_id]",
+                        "deprecated": true
+                    },
+                    "binding_vnic_type": {
+                        "title": "Binding Vnic Type",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[binding:vnic_type]",
+                        "deprecated": true
+                    },
+                    "description": {
+                        "title": "Description",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[description]",
+                        "deprecated": true
+                    },
+                    "port_security_enabled": {
+                        "title": "Port Security Enabled",
+                        "type": "boolean",
+                        "description": "Will be removed, please use origin_data[port_security_enabled]",
+                        "deprecated": true
+                    },
+                    "qos_policy_id": {
+                        "title": "Qos Policy Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[qos_policy_id]",
+                        "deprecated": true
+                    },
+                    "fixed_ips": {
+                        "title": "Fixed Ips",
+                        "type": "array",
+                        "items": {},
+                        "description": "Will be removed, please use origin_data[fixed_ips]",
+                        "deprecated": true
                     }
                 }
             },
@@ -3307,6 +2712,145 @@
                     }
                 }
             },
+            "RecycleServerSortKey": {
+                "title": "RecycleServerSortKey",
+                "enum": [
+                    "uuid",
+                    "display_name",
+                    "updated_at",
+                    "project_id"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "RecycleServersResponse": {
+                "title": "RecycleServersResponse",
+                "required": [
+                    "recycle_servers"
+                ],
+                "type": "object",
+                "properties": {
+                    "recycle_servers": {
+                        "title": "Recycle Servers",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RecycleServersResponseBase"
+                        },
+                        "description": "Recycle servers list"
+                    }
+                }
+            },
+            "RecycleServersResponseBase": {
+                "title": "RecycleServersResponseBase",
+                "required": [
+                    "id",
+                    "origin_data",
+                    "reclaim_timestamp"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string",
+                        "description": "Recycle server id",
+                        "format": "uuid4"
+                    },
+                    "origin_data": {
+                        "title": "Origin Data",
+                        "type": "object",
+                        "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/compute/?expanded=list-servers-detailed-detail#list-servers-detailed"
+                    },
+                    "project_name": {
+                        "title": "Project Name",
+                        "type": "string",
+                        "description": "Project name"
+                    },
+                    "image": {
+                        "title": "Image",
+                        "type": "string",
+                        "description": "Image id",
+                        "format": "uuid4"
+                    },
+                    "image_name": {
+                        "title": "Image Name",
+                        "type": "string",
+                        "description": "Image name"
+                    },
+                    "image_os_distro": {
+                        "title": "Image Os Distro",
+                        "type": "string",
+                        "description": "Image os distro"
+                    },
+                    "fixed_addresses": {
+                        "title": "Fixed Addresses",
+                        "type": "array",
+                        "items": {},
+                        "description": "Fixed addresses"
+                    },
+                    "floating_addresses": {
+                        "title": "Floating Addresses",
+                        "type": "array",
+                        "items": {},
+                        "description": "Floating addresses"
+                    },
+                    "deleted_at": {
+                        "title": "Deleted At",
+                        "type": "string",
+                        "description": "Deleted at"
+                    },
+                    "reclaim_timestamp": {
+                        "title": "Reclaim Timestamp",
+                        "type": "number",
+                        "description": "Reclaim timestamp"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[name]",
+                        "deprecated": true
+                    },
+                    "project_id": {
+                        "title": "Project Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[tenant_id]",
+                        "deprecated": true
+                    },
+                    "host": {
+                        "title": "Host",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:host]",
+                        "deprecated": true
+                    },
+                    "hostname": {
+                        "title": "Hostname",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:hostname]",
+                        "deprecated": true
+                    },
+                    "flavor": {
+                        "title": "Flavor",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[flavor][original_name]",
+                        "deprecated": true
+                    },
+                    "flavor_info": {
+                        "title": "Flavor Info",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/FlavorInServer"
+                            }
+                        ],
+                        "description": "Will be removed, please use origin_data[flavor]",
+                        "deprecated": true
+                    },
+                    "status": {
+                        "title": "Status",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[status]",
+                        "deprecated": true
+                    }
+                }
+            },
             "Role": {
                 "title": "Role",
                 "required": [
@@ -3324,6 +2868,201 @@
                         "title": "Name",
                         "type": "string",
                         "description": "Role name"
+                    }
+                }
+            },
+            "ServerSortKey": {
+                "title": "ServerSortKey",
+                "enum": [
+                    "uuid",
+                    "display_name",
+                    "vm_state",
+                    "locked",
+                    "created_at",
+                    "host",
+                    "project_id"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "ServerStatus": {
+                "title": "ServerStatus",
+                "enum": [
+                    "ACTIVE",
+                    "BUILD",
+                    "ERROR",
+                    "HARD_REBOOT",
+                    "MIGRATING",
+                    "PAUSED",
+                    "REBOOT",
+                    "REBUILD",
+                    "RESCUE",
+                    "RESIZE",
+                    "SHELVED",
+                    "SHELVED_OFFLOADED",
+                    "SHUTOFF",
+                    "SOFT_DELETED",
+                    "SUSPENDED",
+                    "UNKNOWN"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "ServersResponse": {
+                "title": "ServersResponse",
+                "required": [
+                    "servers"
+                ],
+                "type": "object",
+                "properties": {
+                    "servers": {
+                        "title": "Servers",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ServersResponseBase"
+                        },
+                        "description": "Servers list"
+                    }
+                }
+            },
+            "ServersResponseBase": {
+                "title": "ServersResponseBase",
+                "required": [
+                    "Server ID",
+                    "origin_data"
+                ],
+                "type": "object",
+                "properties": {
+                    "Server ID": {
+                        "title": "Server Id",
+                        "type": "string",
+                        "format": "uuid4"
+                    },
+                    "origin_data": {
+                        "title": "Origin Data",
+                        "type": "object",
+                        "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/compute/?expanded=list-servers-detailed-detail#list-servers-detailed"
+                    },
+                    "project_name": {
+                        "title": "Project Name",
+                        "type": "string",
+                        "description": "Project name"
+                    },
+                    "image": {
+                        "title": "Image",
+                        "type": "string",
+                        "description": "Image ID",
+                        "format": "uuid4"
+                    },
+                    "image_name": {
+                        "title": "Image Name",
+                        "type": "string",
+                        "description": "Image name"
+                    },
+                    "image_os_distro": {
+                        "title": "Image Os Distro",
+                        "type": "string",
+                        "description": "Image OS distro"
+                    },
+                    "fixed_addresses": {
+                        "title": "Fixed Addresses",
+                        "type": "array",
+                        "items": {},
+                        "description": "Fixed addresses"
+                    },
+                    "floating_addresses": {
+                        "title": "Floating Addresses",
+                        "type": "array",
+                        "items": {},
+                        "description": "Floating addresses"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[name]",
+                        "deprecated": true
+                    },
+                    "project_id": {
+                        "title": "Project Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[tenant_id]",
+                        "deprecated": true
+                    },
+                    "host": {
+                        "title": "Host",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:host]",
+                        "deprecated": true
+                    },
+                    "hostname": {
+                        "title": "Hostname",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:hostname]",
+                        "deprecated": true
+                    },
+                    "flavor": {
+                        "title": "Flavor",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[flavor][original_name]",
+                        "deprecated": true
+                    },
+                    "flavor_info": {
+                        "title": "Flavor Info",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/FlavorInServer"
+                            }
+                        ],
+                        "description": "Will be removed, please use origin_data[flavor]",
+                        "deprecated": true
+                    },
+                    "status": {
+                        "title": "Status",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[status]",
+                        "deprecated": true
+                    },
+                    "locked": {
+                        "title": "Locked",
+                        "type": "boolean",
+                        "description": "Will be removed, please use origin_data[locked]",
+                        "deprecated": true
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[created]",
+                        "deprecated": true
+                    },
+                    "task_state": {
+                        "title": "Task State",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[OS-EXT-STS:task_state]",
+                        "deprecated": true
+                    },
+                    "vm_state": {
+                        "title": "Vm State",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[OS-EXT-STS:vm_state]",
+                        "deprecated": true
+                    },
+                    "power_state": {
+                        "title": "Power State",
+                        "type": "integer",
+                        "description": "Will be removed, please use origin_data[OS-EXT-STS:power_state]",
+                        "deprecated": true
+                    },
+                    "root_device_name": {
+                        "title": "Root Device Name",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:root_device_name]",
+                        "deprecated": true
+                    },
+                    "metadata": {
+                        "title": "Metadata",
+                        "type": "object",
+                        "description": "Will be removed, please use origin_data[metadata]",
+                        "deprecated": true
                     }
                 }
             },
@@ -3373,6 +3112,15 @@
                         "description": "Settings"
                     }
                 }
+            },
+            "SortDir": {
+                "title": "SortDir",
+                "enum": [
+                    "desc",
+                    "asc"
+                ],
+                "type": "string",
+                "description": "An enumeration."
             },
             "UnauthorizedMessage": {
                 "title": "UnauthorizedMessage",
@@ -3472,19 +3220,327 @@
                 "properties": {
                     "id": {
                         "title": "Id",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Volume attachment id"
                     },
                     "device": {
                         "title": "Device",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Device name"
                     },
                     "server_id": {
                         "title": "Server Id",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Server id"
                     },
                     "server_name": {
                         "title": "Server Name",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Server name"
+                    }
+                }
+            },
+            "VolumeSnapshotSortKey": {
+                "title": "VolumeSnapshotSortKey",
+                "enum": [
+                    "id",
+                    "name",
+                    "status",
+                    "created_at"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "VolumeSnapshotStatus": {
+                "title": "VolumeSnapshotStatus",
+                "enum": [
+                    "CREATING",
+                    "AVAILABLE",
+                    "DELETING",
+                    "ERROR",
+                    "ERROR_DELETING"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "VolumeSnapshotsResponse": {
+                "title": "VolumeSnapshotsResponse",
+                "required": [
+                    "volume_snapshots"
+                ],
+                "type": "object",
+                "properties": {
+                    "count": {
+                        "title": "Count",
+                        "type": "integer",
+                        "description": "Count of volume snapshots",
+                        "default": 0
+                    },
+                    "volume_snapshots": {
+                        "title": "Volume Snapshots",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VolumeSnapshotsResponseBase"
+                        },
+                        "description": "Volume snapshots list"
+                    }
+                }
+            },
+            "VolumeSnapshotsResponseBase": {
+                "title": "VolumeSnapshotsResponseBase",
+                "required": [
+                    "id",
+                    "origin_data"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string",
+                        "description": "Snapshot ID"
+                    },
+                    "origin_data": {
+                        "title": "Origin Data",
+                        "type": "object",
+                        "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/block-storage/v3/index.html?expanded=list-snapshots-and-details-detail#list-snapshots-and-details"
+                    },
+                    "project_name": {
+                        "title": "Project Name",
+                        "type": "string",
+                        "description": "Project name"
+                    },
+                    "host": {
+                        "title": "Host",
+                        "type": "string",
+                        "description": "Host name"
+                    },
+                    "volume_name": {
+                        "title": "Volume Name",
+                        "type": "string",
+                        "description": "Volume name"
+                    },
+                    "child_volumes": {
+                        "title": "Child Volumes",
+                        "type": "array",
+                        "items": {},
+                        "description": "Child volumes"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[name]",
+                        "deprecated": true
+                    },
+                    "project_id": {
+                        "title": "Project Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[os-extended-snapshot-attributes:project_id]",
+                        "deprecated": true
+                    },
+                    "size": {
+                        "title": "Size",
+                        "type": "integer",
+                        "description": "Will be removed, please use origin_data[size]",
+                        "deprecated": true
+                    },
+                    "status": {
+                        "title": "Status",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[status]",
+                        "deprecated": true
+                    },
+                    "volume_id": {
+                        "title": "Volume Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[volume_id]",
+                        "deprecated": true
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[created_at]",
+                        "deprecated": true
+                    },
+                    "metadata": {
+                        "title": "Metadata",
+                        "type": "object",
+                        "description": "Will be removed, please use origin_data[metadata]",
+                        "deprecated": true
+                    }
+                }
+            },
+            "VolumeSortKey": {
+                "title": "VolumeSortKey",
+                "enum": [
+                    "id",
+                    "name",
+                    "size",
+                    "status",
+                    "bootable",
+                    "created_at"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "VolumeStatus": {
+                "title": "VolumeStatus",
+                "enum": [
+                    "creating",
+                    "available",
+                    "reserved",
+                    "attaching",
+                    "detaching",
+                    "in-use",
+                    "maintenance",
+                    "deleting",
+                    "awaiting-transfer",
+                    "error",
+                    "error_deleting",
+                    "backing-up",
+                    "restoring-backup",
+                    "error_backing-up",
+                    "error_restoring",
+                    "error_extending",
+                    "downloading",
+                    "uploading",
+                    "retyping",
+                    "extending"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "VolumesResponse": {
+                "title": "VolumesResponse",
+                "required": [
+                    "volumes"
+                ],
+                "type": "object",
+                "properties": {
+                    "count": {
+                        "title": "Count",
+                        "type": "integer",
+                        "description": "Count of volumes",
+                        "default": 0
+                    },
+                    "volumes": {
+                        "title": "Volumes",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VolumesResponseBase"
+                        },
+                        "description": "Volumes list"
+                    }
+                }
+            },
+            "VolumesResponseBase": {
+                "title": "VolumesResponseBase",
+                "required": [
+                    "id",
+                    "origin_data"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string",
+                        "description": "Volume ID",
+                        "format": "uuid4"
+                    },
+                    "origin_data": {
+                        "title": "Origin Data",
+                        "type": "object",
+                        "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/block-storage/v3/index.html?expanded=list-accessible-volumes-with-details-detail#list-accessible-volumes-with-details"
+                    },
+                    "project_name": {
+                        "title": "Project Name",
+                        "type": "string",
+                        "description": "Project name"
+                    },
+                    "attachments": {
+                        "title": "Attachments",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VolumeAttachment"
+                        },
+                        "description": "Volume attachments"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[name]",
+                        "deprecated": true
+                    },
+                    "project_id": {
+                        "title": "Project Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[os-vol-tenant-attr:tenant_id]",
+                        "deprecated": true
+                    },
+                    "host": {
+                        "title": "Host",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[os-vol-host-attr:host]",
+                        "deprecated": true
+                    },
+                    "snapshot_id": {
+                        "title": "Snapshot Id",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[snapshot_id]",
+                        "deprecated": true
+                    },
+                    "source_volid": {
+                        "title": "Source Volid",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[source_volid]",
+                        "deprecated": true
+                    },
+                    "size": {
+                        "title": "Size",
+                        "type": "integer",
+                        "description": "Will be removed, please use origin_data[size]",
+                        "deprecated": true
+                    },
+                    "status": {
+                        "title": "Status",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[status]",
+                        "deprecated": true
+                    },
+                    "volume_type": {
+                        "title": "Volume Type",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[volume_type]",
+                        "deprecated": true
+                    },
+                    "encrypted": {
+                        "title": "Encrypted",
+                        "type": "boolean",
+                        "description": "Will be removed, please use origin_data[encrypted]",
+                        "deprecated": true
+                    },
+                    "bootable": {
+                        "title": "Bootable",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[bootable]",
+                        "deprecated": true
+                    },
+                    "multiattach": {
+                        "title": "Multiattach",
+                        "type": "boolean",
+                        "description": "Will be removed, please use origin_data[multiattach]",
+                        "deprecated": true
+                    },
+                    "availability_zone": {
+                        "title": "Availability Zone",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[availability_zone]",
+                        "deprecated": true
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "description": "Will be removed, please use origin_data[created_at]",
+                        "deprecated": true
                     }
                 }
             }

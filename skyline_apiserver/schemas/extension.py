@@ -26,7 +26,7 @@ VOLUME_SNAPSHOTS_LIST_DOCS_LINKS = "https://docs.openstack.org/api-ref/block-sto
 PORTS_LIST_DOCS_LINKS = "https://docs.openstack.org/api-ref/network/v2/index.html?expanded=list-ports-detail#list-ports"  # noqa
 
 
-class ExtServerStatus(str, Enum):
+class ServerStatus(str, Enum):
     ACTIVE = "ACTIVE"
     BUILD = "BUILD"
     # DELETED = "DELETED"
@@ -52,7 +52,7 @@ class ExtServerStatus(str, Enum):
         return self.value
 
 
-class ExtVolumeStatus(str, Enum):
+class VolumeStatus(str, Enum):
     creating = "creating"
     available = "available"
     reserved = "reserved"
@@ -78,7 +78,7 @@ class ExtVolumeStatus(str, Enum):
         return self.value
 
 
-class ExtVolumeSnapshotStatus(str, Enum):
+class VolumeSnapshotStatus(str, Enum):
     CREATING = "CREATING"
     AVAILABLE = "AVAILABLE"
     # BACKING_UP = "BACKING_UP"
@@ -93,7 +93,7 @@ class ExtVolumeSnapshotStatus(str, Enum):
         return self.value
 
 
-class ExtPortStatus(str, Enum):
+class PortStatus(str, Enum):
     ACTIVE = "ACTIVE"
     DOWN = "DOWN"
     BUILD = "BUILD"
@@ -104,7 +104,7 @@ class ExtPortStatus(str, Enum):
         return self.value
 
 
-class ExtPortDeviceOwner(str, Enum):
+class PortDeviceOwner(str, Enum):
     null = ""
     # prefix compute
     compute_nova = "compute:nova"
@@ -126,7 +126,7 @@ class ExtPortDeviceOwner(str, Enum):
         return self.value
 
 
-class ExtSortDir(str, Enum):
+class SortDir(str, Enum):
     desc = "desc"
     asc = "asc"
 
@@ -134,7 +134,7 @@ class ExtSortDir(str, Enum):
         return self.value
 
 
-class ExtServerSortKey(str, Enum):
+class ServerSortKey(str, Enum):
     uuid = "uuid"
     display_name = "display_name"
     vm_state = "vm_state"
@@ -147,7 +147,7 @@ class ExtServerSortKey(str, Enum):
         return self.value
 
 
-class ExtRecycleServerSortKey(str, Enum):
+class RecycleServerSortKey(str, Enum):
     uuid = "uuid"
     display_name = "display_name"
     updated_at = "updated_at"
@@ -157,7 +157,7 @@ class ExtRecycleServerSortKey(str, Enum):
         return self.value
 
 
-class ExtVolumeSortKey(str, Enum):
+class VolumeSortKey(str, Enum):
     id = "id"
     name = "name"
     size = "size"
@@ -169,7 +169,7 @@ class ExtVolumeSortKey(str, Enum):
         return self.value
 
 
-class ExtVolumeSnapshotSortKey(str, Enum):
+class VolumeSnapshotSortKey(str, Enum):
     id = "id"
     name = "name"
     status = "status"
@@ -179,7 +179,7 @@ class ExtVolumeSnapshotSortKey(str, Enum):
         return self.value
 
 
-class ExtPortSortKey(str, Enum):
+class PortSortKey(str, Enum):
     id = "id"
     name = "name"
     mac_address = "mac_address"
@@ -190,27 +190,27 @@ class ExtPortSortKey(str, Enum):
         return self.value
 
 
-class ExtFlavor(BaseModel):
-    ephemeral: Optional[int]
-    ram: Optional[int]
-    original_name: Optional[str]
-    vcpus: Optional[int]
-    extra_specs: Optional[Dict[str, Any]]
-    swap: Optional[int]
-    disk: Optional[int]
+class FlavorInServer(BaseModel):
+    ephemeral: Optional[int] = Field(None, description="Ephemeral disk size in GB")
+    ram: Optional[int] = Field(None, description="RAM size in MB")
+    original_name: Optional[str] = Field(None, description="Original flavor name")
+    vcpus: Optional[int] = Field(None, description="Number of vCPUs")
+    extra_specs: Optional[Dict[str, Any]] = Field(None, description="Extra specs")
+    swap: Optional[int] = Field(None, description="Swap size in MB")
+    disk: Optional[int] = Field(None, description="Disk size in GB")
 
 
-class ExtListServersBaseResponse(BaseModel):
-    id: UUID4
+class ServersResponseBase(BaseModel):
+    id: UUID4 = Field(..., alias="Server ID")
     origin_data: Dict[str, Any] = Field(
         description=f"The origin_data is the same like the response of {SERVERS_LIST_DOCS_LINKS}",
     )
-    project_name: Optional[str]
-    image: Optional[UUID4]
-    image_name: Optional[str]
-    image_os_distro: Optional[str]
-    fixed_addresses: Optional[List]
-    floating_addresses: Optional[List]
+    project_name: Optional[str] = Field(None, description="Project name")
+    image: Optional[UUID4] = Field(None, description="Image ID")
+    image_name: Optional[str] = Field(None, description="Image name")
+    image_os_distro: Optional[str] = Field(None, description="Image OS distro")
+    fixed_addresses: Optional[List] = Field(None, description="Fixed addresses")
+    floating_addresses: Optional[List] = Field(None, description="Floating addresses")
 
     name: Optional[str] = Field(
         description="Will be removed, please use origin_data[name]",
@@ -232,7 +232,7 @@ class ExtListServersBaseResponse(BaseModel):
         description="Will be removed, please use origin_data[flavor][original_name]",
         deprecated=True,
     )
-    flavor_info: Optional[ExtFlavor] = Field(
+    flavor_info: Optional[FlavorInServer] = Field(
         description="Will be removed, please use origin_data[flavor]",
         deprecated=True,
     )
@@ -270,23 +270,23 @@ class ExtListServersBaseResponse(BaseModel):
     )
 
 
-class ExtListServersResponse(BaseModel):
-    servers: List[ExtListServersBaseResponse]
+class ServersResponse(BaseModel):
+    servers: List[ServersResponseBase] = Field(..., description="Servers list")
 
 
-class ExtListRecycleServersBaseResponse(BaseModel):
-    id: UUID4
+class RecycleServersResponseBase(BaseModel):
+    id: UUID4 = Field(..., description="Recycle server id")
     origin_data: Dict[str, Any] = Field(
         description=f"The origin_data is the same like the response of {SERVERS_LIST_DOCS_LINKS}",
     )
-    project_name: Optional[str]
-    image: Optional[UUID4]
-    image_name: Optional[str]
-    image_os_distro: Optional[str]
-    fixed_addresses: Optional[List]
-    floating_addresses: Optional[List]
-    deleted_at: Optional[str]
-    reclaim_timestamp: float
+    project_name: Optional[str] = Field(None, description="Project name")
+    image: Optional[UUID4] = Field(None, description="Image id")
+    image_name: Optional[str] = Field(None, description="Image name")
+    image_os_distro: Optional[str] = Field(None, description="Image os distro")
+    fixed_addresses: Optional[List] = Field(None, description="Fixed addresses")
+    floating_addresses: Optional[List] = Field(None, description="Floating addresses")
+    deleted_at: Optional[str] = Field(None, description="Deleted at")
+    reclaim_timestamp: float = Field(..., description="Reclaim timestamp")
 
     name: Optional[str] = Field(
         description="Will be removed, please use origin_data[name]",
@@ -308,7 +308,7 @@ class ExtListRecycleServersBaseResponse(BaseModel):
         description="Will be removed, please use origin_data[flavor][original_name]",
         deprecated=True,
     )
-    flavor_info: Optional[ExtFlavor] = Field(
+    flavor_info: Optional[FlavorInServer] = Field(
         description="Will be removed, please use origin_data[flavor]",
         deprecated=True,
     )
@@ -318,24 +318,26 @@ class ExtListRecycleServersBaseResponse(BaseModel):
     )
 
 
-class ExtListRecycleServersResponse(BaseModel):
-    recycle_servers: List[ExtListRecycleServersBaseResponse]
+class RecycleServersResponse(BaseModel):
+    recycle_servers: List[RecycleServersResponseBase] = Field(
+        ..., description="Recycle servers list"
+    )
 
 
 class VolumeAttachment(BaseModel):
-    id: str
-    device: Optional[str]
-    server_id: Optional[str]
-    server_name: Optional[str]
+    id: str = Field(..., description="Volume attachment id")
+    device: Optional[str] = Field(None, description="Device name")
+    server_id: Optional[str] = Field(None, description="Server id")
+    server_name: Optional[str] = Field(None, description="Server name")
 
 
-class ExtListVolumesBaseResponse(BaseModel):
-    id: UUID4
+class VolumesResponseBase(BaseModel):
+    id: UUID4 = Field(..., description="Volume ID")
     origin_data: Dict[str, Any] = Field(
         description=f"The origin_data is the same like the response of {VOLUMES_LIST_DOCS_LINKS}",
     )
-    project_name: Optional[str]
-    attachments: Optional[List[VolumeAttachment]]
+    project_name: Optional[str] = Field(None, description="Project name")
+    attachments: Optional[List[VolumeAttachment]] = Field(None, description="Volume attachments")
 
     name: Optional[str] = Field(
         description="Will be removed, please use origin_data[name]",
@@ -391,20 +393,20 @@ class ExtListVolumesBaseResponse(BaseModel):
     )
 
 
-class ExtListVolumesResponse(BaseModel):
-    count: int = 0
-    volumes: List[ExtListVolumesBaseResponse]
+class VolumesResponse(BaseModel):
+    count: Optional[int] = Field(0, description="Count of volumes")
+    volumes: List[VolumesResponseBase] = Field(..., description="Volumes list")
 
 
-class ExtListVolumeSnapshotsBaseResponse(BaseModel):
-    id: str
+class VolumeSnapshotsResponseBase(BaseModel):
+    id: str = Field(..., description="Snapshot ID")
     origin_data: Dict[str, Any] = Field(
         description=f"The origin_data is the same like the response of {VOLUME_SNAPSHOTS_LIST_DOCS_LINKS}",  # noqa
     )
-    project_name: Optional[str]
-    host: Optional[str]
-    volume_name: Optional[str]
-    child_volumes: Optional[List]
+    project_name: Optional[str] = Field(None, description="Project name")
+    host: Optional[str] = Field(None, description="Host name")
+    volume_name: Optional[str] = Field(None, description="Volume name")
+    child_volumes: Optional[List] = Field(None, description="Child volumes")
 
     name: Optional[str] = Field(
         description="Will be removed, please use origin_data[name]",
@@ -436,20 +438,22 @@ class ExtListVolumeSnapshotsBaseResponse(BaseModel):
     )
 
 
-class ExtListVolumeSnapshotsResponse(BaseModel):
-    count: int = 0
-    volume_snapshots: List[ExtListVolumeSnapshotsBaseResponse]
+class VolumeSnapshotsResponse(BaseModel):
+    count: Optional[int] = Field(0, description="Count of volume snapshots")
+    volume_snapshots: List[VolumeSnapshotsResponseBase] = Field(
+        ..., description="Volume snapshots list"
+    )
 
 
-class ExtListPortsBaseResponse(BaseModel):
-    id: str
+class PortsResponseBase(BaseModel):
+    id: str = Field(..., description="Port ID")
     origin_data: Dict[str, Any] = Field(
         description=f"The origin_data is the same like the response of {PORTS_LIST_DOCS_LINKS}",  # noqa
     )
-    server_name: Optional[str]
-    network_name: Optional[str]
-    ipv4: Optional[List]
-    ipv6: Optional[List]
+    server_name: Optional[str] = Field(None, description="Server name")
+    network_name: Optional[str] = Field(None, description="Network name")
+    ipv4: Optional[List] = Field(None, description="IPv4 addresses")
+    ipv6: Optional[List] = Field(None, description="IPv6 addresses")
 
     name: Optional[str] = Field(
         description="Will be removed, please use origin_data[name]",
@@ -505,21 +509,21 @@ class ExtListPortsBaseResponse(BaseModel):
     )
 
 
-class ExtListPortsResponse(BaseModel):
-    ports: List[ExtListPortsBaseResponse]
+class PortsResponse(BaseModel):
+    ports: List[PortsResponseBase] = Field(..., description="Ports list")
 
 
-class ExtListComputeServicesBaseResponse(BaseModel):
-    id: Optional[str]
-    binary: str
-    disabled_reason: Optional[str]
-    host: str
-    state: Optional[str]
-    status: str
-    updated_at: Optional[str]
-    forced_down: Optional[bool]
-    zone: Optional[str]
+class ComputeServicesResponseBase(BaseModel):
+    id: Optional[str] = Field(None, description="Service id")
+    binary: str = Field(..., description="Service binary")
+    disabled_reason: Optional[str] = Field(None, description="Disabled reason")
+    host: str = Field(..., description="Host name")
+    state: Optional[str] = Field(None, description="Service state")
+    status: str = Field(..., description="Service status")
+    updated_at: Optional[str] = Field(None, description="Updated at")
+    forced_down: Optional[bool] = Field(None, description="Forced down")
+    zone: Optional[str] = Field(None, description="Zone")
 
 
-class ExtListComputeServicesResponse(BaseModel):
-    services: List[ExtListComputeServicesBaseResponse]
+class ComputeServicesResponse(BaseModel):
+    services: List[ComputeServicesResponseBase] = Field(..., description="Services list")
