@@ -2928,14 +2928,15 @@
             "ServersResponseBase": {
                 "title": "ServersResponseBase",
                 "required": [
-                    "Server ID",
+                    "id",
                     "origin_data"
                 ],
                 "type": "object",
                 "properties": {
-                    "Server ID": {
-                        "title": "Server Id",
+                    "id": {
+                        "title": "Id",
                         "type": "string",
+                        "description": "Server ID",
                         "format": "uuid4"
                     },
                     "origin_data": {

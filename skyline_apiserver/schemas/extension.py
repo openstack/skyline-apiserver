@@ -201,7 +201,7 @@ class FlavorInServer(BaseModel):
 
 
 class ServersResponseBase(BaseModel):
-    id: UUID4 = Field(..., alias="Server ID")
+    id: UUID4 = Field(..., description="Server ID")
     origin_data: Dict[str, Any] = Field(
         description=f"The origin_data is the same like the response of {SERVERS_LIST_DOCS_LINKS}",
     )
