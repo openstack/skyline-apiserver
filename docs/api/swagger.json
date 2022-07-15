@@ -2207,6 +2207,14 @@
                             "type": "string"
                         },
                         "description": "Policies rules list"
+                    },
+                    "target": {
+                        "title": "Target",
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "description": "Policies targets"
                     }
                 }
             },

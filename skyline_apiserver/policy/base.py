@@ -45,7 +45,12 @@ class UserContext(MutableMapping):
         self._data.setdefault("domain_name", getattr(access, "domain_name", None))
         self._data.setdefault("user_domain_name", getattr(access, "user_domain_name", None))
         self._data.setdefault("project_domain_name", getattr(access, "project_domain_name", None))
-        self._data.setdefault("system_scope", getattr(access, "system_scope", None))
+        self._data.setdefault(
+            "system_scope",
+            "all"
+            if getattr(access, "system") and getattr(access, "system", {}).get("all", False)
+            else "",
+        )
         self._data.setdefault("role_ids", getattr(access, "role_ids", []))
         self._data.setdefault("roles", getattr(access, "role_names", []))
 

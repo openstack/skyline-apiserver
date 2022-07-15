@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -30,3 +30,4 @@ class Policies(BaseModel):
 
 class PoliciesRules(BaseModel):
     rules: List[str] = Field(..., description="Policies rules list")
+    target: Optional[Dict[str, str]] = Field(None, description="Policies targets")

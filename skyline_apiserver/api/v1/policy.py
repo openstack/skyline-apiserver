@@ -17,10 +17,12 @@ from __future__ import annotations
 from typing import Dict
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from keystoneauth1.exceptions.http import Unauthorized as KeystoneUnauthorized
 
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
-from skyline_apiserver.client.utils import generate_session, get_access
+from skyline_apiserver.client.utils import generate_session, get_access, get_system_scope_access
+from skyline_apiserver.log import LOG
 from skyline_apiserver.policy import ENFORCER, UserContext
 
 router = APIRouter()
@@ -75,10 +77,24 @@ def _generate_target(profile: schemas.Profile) -> Dict[str, str]:
 )
 async def list_policies(
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
-):
+) -> schemas.Policies:
     session = await generate_session(profile)
     access = await get_access(session)
     user_context = UserContext(access)
+    try:
+        system_scope_access = await get_system_scope_access(
+            profile.keystone_token, profile.region
+        )
+        user_context["system_scope"] = (
+            "all"
+            if getattr(system_scope_access, "system")
+            and getattr(system_scope_access, "system", {}).get("all", False)
+            else user_context["system_scope"]
+        )
+    except KeystoneUnauthorized:
+        # User is not authorized to access the system scope. So just ignore the
+        # exception and use the user_context as is.
+        LOG.debug("Keystone token is invalid. No privilege to access system scope.")
     target = _generate_target(profile)
     result = [
         {"rule": rule, "allowed": ENFORCER.authorize(rule, target, user_context)}
@@ -103,11 +119,26 @@ async def list_policies(
 async def check_policies(
     policy_rules: schemas.PoliciesRules,
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
-):
+) -> schemas.Policies:
     session = await generate_session(profile)
     access = await get_access(session)
     user_context = UserContext(access)
+    try:
+        system_scope_access = await get_system_scope_access(
+            profile.keystone_token, profile.region
+        )
+        user_context["system_scope"] = (
+            "all"
+            if getattr(system_scope_access, "system")
+            and getattr(system_scope_access, "system", {}).get("all", False)
+            else user_context["system_scope"]
+        )
+    except KeystoneUnauthorized:
+        # User is not authorized to access the system scope. So just ignore the
+        # exception and use the user_context as is.
+        LOG.debug("Keystone token is invalid. No privilege to access system scope.")
     target = _generate_target(profile)
+    target.update(policy_rules.target if policy_rules.target else {})
     try:
         result = [
             {"rule": rule, "allowed": ENFORCER.authorize(rule, target, user_context)}
