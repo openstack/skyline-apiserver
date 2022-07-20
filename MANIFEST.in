@@ -1,1 +1,0 @@
-include skyline_apiserver/templates/nginx.conf.j2
