@@ -68,7 +68,6 @@ async def generate_profile(
             user=token_data["token"]["user"],
             roles=token_data["token"]["roles"],
             keystone_token_exp=token_data["token"]["expires_at"],
-            base_roles=CONF.openstack.base_roles,
             base_domains=CONF.openstack.base_domains,
             exp=exp or int(time.time()) + CONF.default.access_token_expire,
             uuid=uuid_value or uuid.uuid4().hex,

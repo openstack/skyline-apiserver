@@ -2487,14 +2487,6 @@
                         "type": "string",
                         "description": "Keystone token expiration time"
                     },
-                    "base_roles": {
-                        "title": "Base Roles",
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "description": "User base roles"
-                    },
                     "base_domains": {
                         "title": "Base Domains",
                         "type": "array",

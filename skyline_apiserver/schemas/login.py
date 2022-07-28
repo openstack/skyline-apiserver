@@ -91,7 +91,6 @@ class Profile(PayloadBase):
     user: User = Field(..., description="User")
     roles: List[Role] = Field(..., description="User roles")
     keystone_token_exp: str = Field(..., description="Keystone token expiration time")
-    base_roles: Optional[List[str]] = Field(None, description="User base roles")
     base_domains: Optional[List[str]] = Field(None, description="User base domains")
     endpoints: Optional[Dict[str, Any]] = Field(None, description="Keystone endpoints")
     projects: Optional[Dict[str, Any]] = Field(None, description="User projects")
