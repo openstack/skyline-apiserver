@@ -29,7 +29,7 @@ from skyline_apiserver.types import constants
 
 
 class TokenCookie(APIKeyCookie):
-    async def __call__(self, request: Request) -> Optional[str]:
+    async def __call__(self, request: Request) -> str:
         api_key = request.cookies.get(self.model.name)
         if not api_key:
             raise HTTPException(
@@ -39,7 +39,7 @@ class TokenCookie(APIKeyCookie):
         return api_key
 
 
-async def getJWTPayload(request: Request) -> (str):
+async def getJWTPayload(request: Request) -> Optional[str]:
     token = request.cookies.get(CONF.default.session_name)
     return token
 

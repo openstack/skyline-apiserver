@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import TYPE_CHECKING, Iterator, Optional
+from typing import TYPE_CHECKING, AsyncGenerator
 
 import pytest
 from _pytest.mark import ParameterSet
@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture(scope="function")
-async def client() -> Iterator[AsyncClient]:
+async def client() -> AsyncGenerator:
     async with LifespanManager(app):
         async with AsyncClient(app=app, base_url="http://test") as ac:
             yield ac
@@ -36,7 +36,7 @@ async def client() -> Iterator[AsyncClient]:
     CONF.cleanup()
 
 
-def pytest_generate_tests(metafunc: Optional["Metafunc"]) -> None:
+def pytest_generate_tests(metafunc: "Metafunc") -> None:
     for marker in metafunc.definition.iter_markers(name="ddt"):
         test_data: TestData
         for test_data in marker.args:

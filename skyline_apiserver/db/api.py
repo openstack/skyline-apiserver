@@ -26,7 +26,7 @@ from .base import DB, inject_db
 from .models import RevokedToken, Settings
 
 
-def check_db_connected(fn: Fn) -> Fn:
+def check_db_connected(fn: Fn) -> Any:
     @wraps(fn)
     async def wrapper(*args: Any, **kwargs: Any) -> Any:
         await inject_db()

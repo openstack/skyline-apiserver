@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Callable, Dict, Iterable, List, Union
 
 import click
-from oslo_policy.policy import DocumentedRuleDefault, RuleDefault  # type: ignore
+from oslo_policy.policy import DocumentedRuleDefault, RuleDefault
 
 from skyline_apiserver.log import LOG, setup as log_setup
 from skyline_apiserver.policy.manager import get_service_rules

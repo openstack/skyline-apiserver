@@ -16,8 +16,8 @@ from __future__ import annotations
 
 from typing import List
 
-from oslo_policy import _parser  # type: ignore
-from oslo_policy.policy import DocumentedRuleDefault, RuleDefault  # type: ignore
+from oslo_policy import _parser
+from oslo_policy.policy import DocumentedRuleDefault, RuleDefault
 
 from skyline_apiserver import schemas
 

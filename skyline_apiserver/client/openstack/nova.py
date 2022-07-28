@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 from fastapi import HTTPException, status
 from keystoneauth1.exceptions.http import Unauthorized
@@ -30,11 +30,11 @@ async def list_servers(
     profile: schemas.Profile,
     session: Session,
     global_request_id: str,
-    search_opts: Dict[str, Any] = None,
-    marker: str = None,
-    limit: int = None,
-    sort_keys: str = None,
-    sort_dirs: str = None,
+    search_opts: Optional[Dict[str, Any]] = None,
+    marker: Optional[str] = None,
+    limit: Optional[int] = None,
+    sort_keys: Optional[List[str]] = None,
+    sort_dirs: Optional[List[str]] = None,
 ) -> Any:
     try:
         nc = await utils.nova_client(

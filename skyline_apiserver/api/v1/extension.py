@@ -18,10 +18,13 @@ import asyncio
 import math
 from asyncio import gather
 from functools import reduce
-from typing import List
+from typing import Any, Dict, List
 
+from cinderclient.v3.volumes import Volume as CinderVolume
 from dateutil import parser
 from fastapi import APIRouter, Depends, Header, Query, status
+from glanceclient.v2.schemas import SchemaBasedModel as GlanceModel
+from novaclient.v2.servers import Server as NovaServer
 
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
@@ -67,10 +70,10 @@ async def list_servers(
         regex=constants.INBOUND_HEADER_REGEX,
     ),
     limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
-    marker: str = None,
-    sort_dirs: schemas.SortDir = None,
+    marker: str = Query(None),
+    sort_dirs: schemas.SortDir = Query(None),
     sort_keys: List[schemas.ServerSortKey] = Query(None),
-    all_projects: bool = None,
+    all_projects: bool = Query(None),
     project_id: str = Query(
         None,
         description="Only works when the all_projects filter is also specified.",
@@ -79,10 +82,10 @@ async def list_servers(
         None,
         description="Only works when the all_projects filter is also specified.",
     ),
-    name: str = None,
-    status: schemas.ServerStatus = None,
+    name: str = Query(None),
+    status: schemas.ServerStatus = Query(None),
     host: str = Query(None, description="It will be ignored for non-admin user."),
-    flavor_id: str = None,
+    flavor_id: str = Query(None),
     uuid: str = Query(None, description="UUID of server."),
 ) -> schemas.ServersResponse:
     """Extension List Servers.
@@ -143,14 +146,14 @@ async def list_servers(
             search_opts={"name": project_name},
         )
         if not filter_projects:
-            return {"servers": []}
+            return schemas.ServersResponse(**{"servers": []})
         else:
             # Projects will not have the same name or same id in the same domain
             filter_project = filter_projects[0]
             # When we both supply the project_id and project_name filter, if the project's id does
             # not equal the project_id, just return [].
             if project_id and filter_project.id != project_id:
-                return {"servers": []}
+                return schemas.ServersResponse(**{"servers": []})
             project_id = filter_project.id
 
     search_opts = {
@@ -169,8 +172,8 @@ async def list_servers(
         search_opts=search_opts,
         marker=marker,
         limit=limit,
-        sort_keys=sort_keys,
-        sort_dirs=[sort_dirs] if sort_dirs else None,
+        sort_keys=[sort_key.value for sort_key in sort_keys] if sort_keys else None,
+        sort_dirs=[sort_dirs.value] if sort_dirs else None,
     )
 
     result = []
@@ -228,8 +231,12 @@ async def list_servers(
     projects = task_result[0] if task_result[0] else []
     proj_mappings = {project.id: project.name for project in projects}
     total_image_tasks = math.ceil(len(image_ids) / STEP)
-    images = reduce(lambda x, y: list(x) + list(y), task_result[1 : 1 + total_image_tasks], [])
-    volumes = reduce(lambda x, y: x + y, task_result[1 + total_image_tasks :], [])
+    images: List[GlanceModel] = reduce(
+        lambda x, y: list(x) + list(y), task_result[1 : 1 + total_image_tasks], []
+    )
+    volumes: List[CinderVolume] = reduce(
+        lambda x, y: x + y, task_result[1 + total_image_tasks :], []
+    )
     image_mappings = {
         image.id: {"name": image.name, "image_os_distro": getattr(image, "os_distro", None)}
         for image in list(images)
@@ -267,7 +274,7 @@ async def list_servers(
         else:
             values = {"image": None, "image_name": None, "image_os_distro": None}
         server.update(values)
-    return {"servers": result}
+    return schemas.ServersResponse(**{"servers": result})
 
 
 @router.get(
@@ -298,10 +305,10 @@ async def list_recycle_servers(
         regex=constants.INBOUND_HEADER_REGEX,
     ),
     limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
-    marker: str = None,
-    sort_dirs: schemas.SortDir = None,
+    marker: str = Query(None),
+    sort_dirs: schemas.SortDir = Query(None),
     sort_keys: List[schemas.RecycleServerSortKey] = Query(None),
-    all_projects: bool = None,
+    all_projects: bool = Query(None),
     project_id: str = Query(
         None,
         description="Only works when the all_projects filter is also specified.",
@@ -310,7 +317,7 @@ async def list_recycle_servers(
         None,
         description="Only works when the all_projects filter is also specified.",
     ),
-    name: str = None,
+    name: str = Query(None),
     uuid: str = Query(None, description="UUID of recycle server."),
 ) -> schemas.RecycleServersResponse:
     """Extension List Recycle Servers.
@@ -366,14 +373,14 @@ async def list_recycle_servers(
             search_opts={"name": project_name},
         )
         if not filter_projects:
-            return {"recycle_servers": []}
+            return schemas.RecycleServersResponse(**{"recycle_servers": []})
         else:
             # Projects will not have the same name or same id in the same domain
             filter_project = filter_projects[0]
             # When we both supply the project_id and project_name filter, if the project's id does
             # not equal the project_id, just return [].
             if project_id and filter_project.id != project_id:
-                return {"recycle_servers": []}
+                return schemas.RecycleServersResponse(**{"recycle_servers": []})
             project_id = filter_project.id
 
     search_opts = {
@@ -393,8 +400,8 @@ async def list_recycle_servers(
         search_opts=search_opts,
         marker=marker,
         limit=limit,
-        sort_keys=sort_keys,
-        sort_dirs=[sort_dirs] if sort_dirs else None,
+        sort_keys=[sort_key.value for sort_key in sort_keys] if sort_keys else None,
+        sort_dirs=[sort_dirs.value] if sort_dirs else None,
     )
 
     result = []
@@ -452,8 +459,12 @@ async def list_recycle_servers(
     projects = task_result[0] if task_result[0] else []
     proj_mappings = {project.id: project.name for project in projects}
     total_image_tasks = math.ceil(len(image_ids) / STEP)
-    images = reduce(lambda x, y: list(x) + list(y), task_result[1 : 1 + total_image_tasks], [])
-    volumes = reduce(lambda x, y: x + y, task_result[1 + total_image_tasks :], [])
+    images: List[GlanceModel] = reduce(
+        lambda x, y: list(x) + list(y), task_result[1 : 1 + total_image_tasks], []
+    )
+    volumes: List[CinderVolume] = reduce(
+        lambda x, y: x + y, task_result[1 + total_image_tasks :], []
+    )
     image_mappings = {
         image.id: {"name": image.name, "image_os_distro": getattr(image, "os_distro", None)}
         for image in list(images)
@@ -496,7 +507,7 @@ async def list_recycle_servers(
         else:
             values = {"image": None, "image_name": None, "image_os_distro": None}
         recycle_server.update(values)
-    return {"recycle_servers": result}
+    return schemas.RecycleServersResponse(**{"recycle_servers": result})
 
 
 @router.get(
@@ -520,15 +531,15 @@ async def list_volumes(
         regex=constants.INBOUND_HEADER_REGEX,
     ),
     limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
-    marker: str = None,
-    sort_dirs: schemas.SortDir = None,
+    marker: str = Query(None),
+    sort_dirs: schemas.SortDir = Query(None),
     sort_keys: List[schemas.VolumeSortKey] = Query(None),
-    all_projects: bool = None,
-    project_id: str = None,
-    name: str = None,
-    multiattach: bool = None,
-    status: schemas.VolumeStatus = None,
-    bootable: bool = None,
+    all_projects: bool = Query(None),
+    project_id: str = Query(None),
+    name: str = Query(None),
+    multiattach: bool = Query(None),
+    status: schemas.VolumeStatus = Query(None),
+    bootable: bool = Query(None),
     uuid: List[str] = Query(None, description="UUID of volume."),
 ) -> schemas.VolumesResponse:
     """Extension List Volumes.
@@ -683,7 +694,7 @@ async def list_volumes(
     task_result = await gather(*tasks)
 
     projects = [] if not task_result[0] else task_result[0]
-    servers = reduce(lambda x, y: x + y, task_result[1:], [])
+    servers: List[NovaServer] = reduce(lambda x, y: x + y, task_result[1:], [])
     proj_mappings = {project.id: project.name for project in projects}
     ser_mappings = {server.id: server.name for server in servers}
 
@@ -692,7 +703,7 @@ async def list_volumes(
         volume["project_name"] = proj_mappings.get(volume["project_id"])
         for attachment in volume["attachments"]:
             attachment["server_name"] = ser_mappings.get(attachment["server_id"])
-    return {"count": count, "volumes": result}
+    return schemas.VolumesResponse(**{"count": count, "volumes": result})
 
 
 @router.get(
@@ -716,14 +727,14 @@ async def list_volume_snapshots(
         regex=constants.INBOUND_HEADER_REGEX,
     ),
     limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
-    marker: str = None,
-    sort_dirs: schemas.SortDir = None,
+    marker: str = Query(None),
+    sort_dirs: schemas.SortDir = Query(None),
     sort_keys: List[schemas.VolumeSnapshotSortKey] = Query(None),
-    all_projects: bool = None,
-    project_id: str = None,
-    name: str = None,
-    status: schemas.VolumeSnapshotStatus = None,
-    volume_id: str = None,
+    all_projects: bool = Query(None),
+    project_id: str = Query(None),
+    name: str = Query(None),
+    status: schemas.VolumeSnapshotStatus = Query(None),
+    volume_id: str = Query(None),
 ) -> schemas.VolumeSnapshotsResponse:
     """Extension List Volume Snapshots.
 
@@ -844,8 +855,12 @@ async def list_volume_snapshots(
 
     projects = task_result[0] if task_result[0] else []
     total_volume_tasks = math.ceil(len(volume_ids) / STEP)
-    volumes = reduce(lambda x, y: x + y, task_result[1 : 1 + total_volume_tasks], [])
-    volumes_from_snapshot = reduce(lambda x, y: x + y, task_result[1 + total_volume_tasks :], [])
+    volumes: List[CinderVolume] = reduce(
+        lambda x, y: x + y, task_result[1 : 1 + total_volume_tasks], []
+    )
+    volumes_from_snapshot: List[CinderVolume] = reduce(
+        lambda x, y: x + y, task_result[1 + total_volume_tasks :], []
+    )
 
     proj_mappings = {project.id: project.name for project in projects}
     vol_mappings = {}
@@ -854,7 +869,7 @@ async def list_volume_snapshots(
             "name": volume.name,
             "host": getattr(volume, "os-vol-host-attr:host", None),
         }
-    child_volumes = {}
+    child_volumes: Dict[str, Any] = {}
     for volume in volumes_from_snapshot:
         child_volumes.setdefault(volume.snapshot_id, [])
         child_volumes[volume.snapshot_id].append(volume.name)
@@ -866,7 +881,7 @@ async def list_volume_snapshots(
             snapshot["volume_name"] = vol_mapping["name"]
             snapshot["host"] = vol_mapping["host"] if all_projects else None
         snapshot["child_volumes"] = child_volumes.get(snapshot["id"], [])
-    return {"count": count, "volume_snapshots": result}
+    return schemas.VolumeSnapshotsResponse(**{"count": count, "volume_snapshots": result})
 
 
 @router.get(
@@ -889,16 +904,16 @@ async def list_ports(
         regex=constants.INBOUND_HEADER_REGEX,
     ),
     limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
-    marker: str = None,
-    sort_dirs: schemas.SortDir = None,
+    marker: str = Query(None),
+    sort_dirs: schemas.SortDir = Query(None),
     sort_keys: List[schemas.PortSortKey] = Query(None),
-    all_projects: bool = None,
-    project_id: str = None,
-    name: str = None,
-    status: schemas.PortStatus = None,
-    network_name: str = None,
-    network_id: str = None,
-    device_id: str = None,
+    all_projects: bool = Query(None),
+    project_id: str = Query(None),
+    name: str = Query(None),
+    status: schemas.PortStatus = Query(None),
+    network_name: str = Query(None),
+    network_id: str = Query(None),
+    device_id: str = Query(None),
     device_owner: List[schemas.PortDeviceOwner] = Query(None),
     uuid: List[str] = Query(None, description="UUID of port."),
 ) -> schemas.PortsResponse:
@@ -941,7 +956,7 @@ async def list_ports(
     """
     current_session = await generate_session(profile=profile)
 
-    kwargs = {}
+    kwargs: Dict[str, Any] = {}
     if limit is not None:
         kwargs["limit"] = limit
     if marker is not None:
@@ -966,13 +981,13 @@ async def list_ports(
             **{"name": network_name},
         )
         if not networks["networks"]:
-            return {"ports": []}
+            return schemas.PortsResponse(**{"ports": []})
         network_ids = [network["id"] for network in networks["networks"]]
         kwargs["network_id"] = network_ids
     if network_id is not None:
         network_ids = kwargs.get("network_id", [])
         if network_ids and network_id not in network_ids:
-            return {"ports": []}
+            return schemas.PortsResponse(**{"ports": []})
         elif not network_ids:
             network_ids.append(network_id)
         kwargs["network_id"] = network_ids
@@ -1003,7 +1018,7 @@ async def list_ports(
             server_ids.append(port["device_id"])
         network_ids.append(port["network_id"])
 
-    network_params = {}
+    network_params: Dict[str, Any] = {}
     tasks = [
         neutron.list_networks(
             profile=profile,
@@ -1046,7 +1061,9 @@ async def list_ports(
     task_result = await gather(*tasks)
 
     total_network_tasks = math.ceil(len(network_ids) / STEP)
-    servers = reduce(lambda x, y: x + y, task_result[1 + total_network_tasks :], [])
+    servers: List[NovaServer] = reduce(
+        lambda x, y: x + y, task_result[1 + total_network_tasks :], []
+    )
     ser_mappings = {server.id: server.name for server in servers}
     _networks = [net.get("networks", []) for net in task_result[1 : 1 + total_network_tasks]]
     shared_nets = task_result[0].get("networks", [])
@@ -1055,7 +1072,7 @@ async def list_ports(
     for port in result:
         port["server_name"] = ser_mappings.get(port["device_id"])
         port["network_name"] = network_mappings.get(port["network_id"])
-    return {"ports": result}
+    return schemas.PortsResponse(**{"ports": result})
 
 
 @router.get(
@@ -1078,8 +1095,8 @@ async def compute_services(
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-    binary: str = None,
-    host: str = None,
+    binary: str = Query(None),
+    host: str = Query(None),
 ) -> schemas.ComputeServicesResponse:
     """Extension List Compute Services.
 
@@ -1112,4 +1129,4 @@ async def compute_services(
         **kwargs,
     )
     services = [Service(service).to_dict() for service in services]
-    return {"services": services}
+    return schemas.ComputeServicesResponse(**{"services": services})

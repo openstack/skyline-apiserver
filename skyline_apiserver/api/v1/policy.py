@@ -100,7 +100,7 @@ async def list_policies(
         {"rule": rule, "allowed": ENFORCER.authorize(rule, target, user_context)}
         for rule in ENFORCER.rules
     ]
-    return {"policies": result}
+    return schemas.Policies(**{"policies": result})
 
 
 @router.post(
@@ -150,4 +150,4 @@ async def check_policies(
             detail=str(e),
         )
 
-    return {"policies": result}
+    return schemas.Policies(**{"policies": result})

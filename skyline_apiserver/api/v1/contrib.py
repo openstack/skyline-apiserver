@@ -47,7 +47,7 @@ async def list_keystone_endpoints() -> List[schemas.KeystoneEndpoints]:
         tasks = [asyncio.create_task(get_endpoints(region)) for region in regions]
         endpoints = await asyncio.gather(*tasks)
         result = [
-            {"region_name": region, "url": endpoint.get("keystone")}
+            schemas.KeystoneEndpoints(**{"region_name": region, "url": endpoint.get("keystone")})
             for region, endpoint in zip(regions, endpoints)
         ]
         return result

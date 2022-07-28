@@ -115,8 +115,7 @@ async def list_settings(
     for item in db_settings:
         if item.key in CONF.setting.base_settings:
             settings[item.key].value = item.value
-    settings = list(settings.values())
-    return schemas.Settings(settings=settings)
+    return schemas.Settings(settings=list(settings.values()))
 
 
 @router.delete(

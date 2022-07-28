@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 import copy
+from typing import Dict, List
 
 
 class APIResourceWrapper(object):
@@ -24,7 +25,7 @@ class APIResourceWrapper(object):
     api object as the only argument to the constructor
     """
 
-    _attrs = []
+    _attrs: List[str] = []
     _apiresource = None  # Make sure _apiresource is there even in __init__.
 
     def __init__(self, apiresource):
@@ -67,7 +68,7 @@ class APIDictWrapper(object):
     consistent with api resource objects from novaclient.
     """
 
-    _apidict = {}  # Make sure _apidict is there even in __init__.
+    _apidict: Dict[str, str] = {}  # Make sure _apidict is there even in __init__.
 
     def __init__(self, apidict):
         self._apidict = apidict

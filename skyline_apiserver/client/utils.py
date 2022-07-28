@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 from cinderclient.client import Client as CinderClient
 from glanceclient.client import Client as GlanceClient
@@ -99,7 +99,7 @@ async def get_endpoint(region: str, service: str, session: Session) -> Any:
 async def keystone_client(
     session: Session,
     region: str,
-    global_request_id: str = None,
+    global_request_id: Optional[str] = None,
     version: str = constants.KEYSTONE_API_VERSION,
 ) -> HTTPClient:
     endpoint = await get_endpoint(region, "keystone", session=session)
@@ -116,7 +116,7 @@ async def keystone_client(
 async def glance_client(
     session: Session,
     region: str,
-    global_request_id: str = None,
+    global_request_id: Optional[str] = None,
     version: str = constants.GLANCE_API_VERSION,
 ) -> HTTPClient:
     endpoint = await get_endpoint(region, "glance", session=session)
@@ -132,7 +132,7 @@ async def glance_client(
 async def nova_client(
     session: Session,
     region: str,
-    global_request_id: str = None,
+    global_request_id: Optional[str] = None,
     version: str = constants.NOVA_API_VERSION,
 ) -> HTTPClient:
     endpoint = await get_endpoint(region, "nova", session=session)
@@ -148,7 +148,7 @@ async def nova_client(
 async def cinder_client(
     session: Session,
     region: str,
-    global_request_id: str,
+    global_request_id: Optional[str] = None,
     version: str = constants.CINDER_API_VERSION,
 ) -> HTTPClient:
     endpoint = await get_endpoint(region, "cinderv3", session=session)
@@ -164,7 +164,7 @@ async def cinder_client(
 async def neutron_client(
     session: Session,
     region: str,
-    global_request_id: str = None,
+    global_request_id: Optional[str] = None,
     version: str = constants.NEUTRON_API_VERSION,
 ) -> HTTPClient:
     endpoint = await get_endpoint(region, "neutron", session=session)

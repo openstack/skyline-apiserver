@@ -99,11 +99,11 @@ def get_proxy_endpoints() -> Dict[str, ProxyEndpoint]:
                     # 2. $(project_id)s or %(project_id)s
                     # 3. AUTH_$(tenant_id)s or AUTH_%(tenant_id)s
                     # 4. AUTH_$(project_id)s or AUTH_%(project_id)s
-                    path = "" if str(raw_path.parents[1]) == "/" else raw_path.parents[1]
+                    path = "" if str(raw_path.parents[1]) == "/" else str(raw_path.parents[1])
                 elif raw_path.match("v[0-9]") or raw_path.match("v[0-9][.][0-9]"):
-                    path = "" if str(raw_path.parents[0]) == "/" else raw_path.parents[0]
+                    path = "" if str(raw_path.parents[0]) == "/" else str(raw_path.parents[0])
                 else:
-                    path = raw_path
+                    path = str(raw_path)
 
         proxy.url = raw_url._replace(path=f"{str(path)}/").geturl()
         endpoints[f"{region}-{service_type}"] = proxy

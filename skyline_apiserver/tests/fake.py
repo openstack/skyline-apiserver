@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import sys
 from dataclasses import asdict, dataclass, field
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 from mimesis import Generic
 from pydantic import StrictBool, StrictInt, StrictStr
@@ -56,10 +56,10 @@ class FakeOptData:
 
 @dataclass
 class FakeOperation:
-    method: str = field(
+    method: Union[str, Any] = field(
         default_factory=lambda: FAKER.choice(["GET", "POST", "PUT", "PATCH", "DELETE"]),
     )
-    path: str = field(
+    path: Union[str, Any] = field(
         default_factory=lambda: FAKER.choice(["/resources", "/resources/{resource_id}"]),
     )
 
@@ -71,7 +71,7 @@ class FakeDocumentedRuleData:
     check_str: str = field(
         default_factory=lambda: f'role:{FAKER.choice(["admin", "member", "reader"])}',
     )
-    scope_types: List[str] = field(
+    scope_types: Union[List[str], Any] = field(
         default_factory=lambda: FAKER.choice(
             ["system", "domain", "project"],
             length=FAKER.numbers.integer_number(1, 3),
@@ -92,7 +92,7 @@ class FakeRuleData:
     check_str: str = field(
         default_factory=lambda: f'role:{FAKER.choice(["admin", "member", "reader"])}',
     )
-    scope_types: List[str] = field(
+    scope_types: Union[List[str], Any] = field(
         default_factory=lambda: FAKER.choice(
             ["system", "domain", "project"],
             length=FAKER.numbers.integer_number(1, 3),

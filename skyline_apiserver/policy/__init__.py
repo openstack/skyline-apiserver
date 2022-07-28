@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from oslo_policy import _parser  # type: ignore
+from oslo_policy import _parser
 
 from .base import Enforcer, UserContext
 from .manager import get_service_rules

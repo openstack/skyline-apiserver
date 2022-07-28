@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Set
+
 ALGORITHM = "HS256"
 
 KEYSTONE_API_VERSION = "3.13"
@@ -36,8 +38,8 @@ EXTENSION_API_LIMIT_GT = 0
 
 ID_UUID_RANGE_STEP = 100
 
-SETTINGS_HIDDEN_SET = set()
-SETTINGS_RESTART_SET = set()
+SETTINGS_HIDDEN_SET: Set = set()
+SETTINGS_RESTART_SET: Set = set()
 
 DEFAULT_TIMEOUT = 30
 

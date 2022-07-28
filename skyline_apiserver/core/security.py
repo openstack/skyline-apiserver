@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import time
 import uuid
+from typing import Optional
 
 from fastapi import HTTPException, status
 from jose import jwt
@@ -48,8 +49,8 @@ async def generate_profile_by_token(token: schemas.Payload) -> schemas.Profile:
 async def generate_profile(
     keystone_token: str,
     region: str,
-    exp: int = None,
-    uuid_value: str = None,
+    exp: Optional[int] = None,
+    uuid_value: Optional[str] = None,
 ) -> schemas.Profile:
     try:
         kc = await utils.keystone_client(session=get_system_session(), region=region)

@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from fastapi import HTTPException, status
 from keystoneauth1.exceptions.http import Unauthorized
@@ -30,7 +30,7 @@ async def list_projects(
     session: Session,
     global_request_id: str,
     all_projects: bool,
-    search_opts: Dict[str, Any] = None,
+    search_opts: Optional[Dict[str, Any]] = None,
 ) -> Any:
     try:
         search_opts = search_opts if search_opts else {}

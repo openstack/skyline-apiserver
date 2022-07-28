@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 from collections.abc import MutableMapping
-from typing import Any, Dict, Iterable, Iterator
+from typing import Any, Dict, Iterator, List, Union
 
 import attr
 from immutables import Map
@@ -24,7 +24,7 @@ from oslo_policy._checks import _check
 
 from skyline_apiserver.config import CONF
 
-from .manager.base import APIRule
+from .manager.base import APIRule, Rule
 
 
 class UserContext(MutableMapping):
@@ -32,7 +32,7 @@ class UserContext(MutableMapping):
         self,
         access: AccessInfoV3,
     ):
-        self._data = {}
+        self._data: Dict[str, Any] = {}
         self.access = access
         self._data.setdefault("auth_token", getattr(access, "auth_token", None))
         self._data.setdefault("user_id", getattr(access, "user_id", None))
@@ -96,7 +96,7 @@ class UserContext(MutableMapping):
 class Enforcer:
     rules: Map = attr.ib(factory=Map, repr=True, init=False)
 
-    def register_rules(self, rules: Iterable[APIRule]) -> None:
+    def register_rules(self, rules: List[Union[Rule, APIRule]]) -> None:
         rule_map = {}
         for rule in rules:
             if rule.name in rule_map:

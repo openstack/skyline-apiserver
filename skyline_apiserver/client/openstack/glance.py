@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from fastapi import HTTPException, status
 from keystoneauth1.exceptions.http import Unauthorized
@@ -29,7 +29,7 @@ async def list_images(
     profile: schemas.Profile,
     session: Session,
     global_request_id: str,
-    filters: Dict[str, Any] = None,
+    filters: Optional[Dict[str, Any]] = None,
 ) -> Any:
     try:
         kwargs = {}

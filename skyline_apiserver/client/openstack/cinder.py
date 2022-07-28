@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from fastapi import HTTPException, status
 from keystoneauth1.exceptions.http import Unauthorized
@@ -29,10 +29,10 @@ async def list_volumes(
     profile: schemas.Profile,
     session: Session,
     global_request_id: str,
-    limit: int = None,
-    marker: str = None,
-    search_opts: Dict[str, Any] = None,
-    sort: str = None,
+    limit: Optional[int] = None,
+    marker: Optional[str] = None,
+    search_opts: Optional[Dict[str, Any]] = None,
+    sort: Optional[str] = None,
 ) -> Any:
     try:
         cc = await utils.cinder_client(
@@ -63,10 +63,10 @@ async def list_volume_snapshots(
     profile: schemas.Profile,
     session: Session,
     global_request_id: str,
-    limit: int = None,
-    marker: str = None,
-    search_opts: Dict[str, Any] = None,
-    sort: str = None,
+    limit: Optional[int] = None,
+    marker: Optional[str] = None,
+    search_opts: Optional[Dict[str, Any]] = None,
+    sort: Optional[str] = None,
 ) -> Any:
     try:
         cc = await utils.cinder_client(

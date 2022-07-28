@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from httpx import codes
 
 from skyline_apiserver import schemas
@@ -93,9 +93,9 @@ def get_prometheus_query_range_response(
     response_model_exclude_none=True,
 )
 async def prometheus_query(
-    query: str = None,
-    time: str = None,
-    timeout: str = None,
+    query: str = Query(None),
+    time: str = Query(None),
+    timeout: str = Query(None),
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
 ) -> schemas.PrometheusQueryResponse:
     kwargs = {}
@@ -138,11 +138,11 @@ async def prometheus_query(
     response_model_exclude_none=True,
 )
 async def prometheus_query_range(
-    query: str = None,
-    start: str = None,
-    end: str = None,
-    step: str = None,
-    timeout: str = None,
+    query: str = Query(None),
+    start: str = Query(None),
+    end: str = Query(None),
+    step: str = Query(None),
+    timeout: str = Query(None),
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
 ) -> schemas.PrometheusQueryRangeResponse:
     kwargs = {}

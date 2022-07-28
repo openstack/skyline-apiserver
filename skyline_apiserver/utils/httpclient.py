@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import types
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import httpx
 from fastapi import HTTPException, status
@@ -21,7 +21,7 @@ from httpx import Response, codes
 
 
 async def _http_request(
-    method: types.FunctionType = httpx.AsyncClient.get,
+    method: types.FunctionType = httpx.AsyncClient.get,  # type: ignore
     **kwargs,
 ) -> Response:
     async with httpx.AsyncClient(verify=False) as client:
@@ -37,7 +37,7 @@ async def _http_request(
 
 async def assert_http_request(
     method: types.FunctionType,
-    expectedStatus: str = codes.OK,
+    expectedStatus: codes = codes.OK,
     **kwargs,
 ) -> Response:
     response = await _http_request(method, **kwargs)
@@ -51,12 +51,12 @@ async def assert_http_request(
 
 async def get_assert_200(
     url: str,
-    cookies: Dict[str, Any] = None,
-    headers: Dict[str, Any] = None,
-    params: Dict[str, Any] = None,
+    cookies: Optional[Dict[str, Any]] = None,
+    headers: Optional[Dict[str, Any]] = None,
+    params: Optional[Dict[str, Any]] = None,
 ) -> Response:
     return await assert_http_request(
-        method=httpx.AsyncClient.get,
+        method=httpx.AsyncClient.get,  # type: ignore
         expectedStatus=codes.OK,
         url=url,
         cookies=cookies,
@@ -65,9 +65,9 @@ async def get_assert_200(
     )
 
 
-async def delete_assert_200(url, cookies: Dict[str, Any] = None) -> Response:
+async def delete_assert_200(url, cookies: Optional[Dict[str, Any]] = None) -> Response:
     return await assert_http_request(
-        method=httpx.AsyncClient.delete,
+        method=httpx.AsyncClient.delete,  # type: ignore
         expectedStatus=codes.OK,
         url=url,
         cookies=cookies,
@@ -76,7 +76,7 @@ async def delete_assert_200(url, cookies: Dict[str, Any] = None) -> Response:
 
 async def post_assert_201(url: str, json: Dict[str, Any], cookies: Dict[str, Any]) -> Response:
     return await assert_http_request(
-        method=httpx.AsyncClient.post,
+        method=httpx.AsyncClient.post,  # type: ignore
         expectedStatus=codes.CREATED,
         url=url,
         json=json,
@@ -86,7 +86,7 @@ async def post_assert_201(url: str, json: Dict[str, Any], cookies: Dict[str, Any
 
 async def put_assert_200(url: str, json: Dict[str, Any], cookies: Dict[str, Any]) -> Response:
     return await assert_http_request(
-        method=httpx.AsyncClient.put,
+        method=httpx.AsyncClient.put,  # type: ignore
         expectedStatus=codes.OK,
         url=url,
         json=json,

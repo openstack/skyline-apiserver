@@ -21,7 +21,7 @@ from databases import Database, DatabaseURL, core
 from skyline_apiserver.config import CONF
 
 DATABASE = None
-DB = ContextVar("skyline_db", default=None)
+DB: ContextVar = ContextVar("skyline_db")
 
 
 class ParallelDatabase(Database):
