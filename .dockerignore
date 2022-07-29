@@ -73,6 +73,8 @@ tmp/
 test_results.html
 nginx.conf
 **/mypy-report/
+**/doc/build
+**/doc/source/_static
 
 # MAC OS
 .DS_Store

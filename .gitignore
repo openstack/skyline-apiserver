@@ -76,6 +76,8 @@ test_results.html
 skyline-console-*
 nginx.conf
 mypy-report/
+doc/build
+doc/source/_static
 
 # MAC OS
 .DS_Store
