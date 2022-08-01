@@ -1,6 +1,6 @@
-===========
-Admin Guide
-===========
+====================
+Administration Guide
+====================
 
 .. toctree::
    :maxdepth: 1

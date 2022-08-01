@@ -11,84 +11,52 @@
       License for the specific language governing permissions and limitations
       under the License.
 
+=====================================================
+Skyline APIServer (API of OpenStack Modern Dashboard)
+=====================================================
 
-============================================================
-OpenStack Modern Dashboard (Skyline APIServer) documentation
-============================================================
+Introduction
+============
 
-What is Skyline APIServer?
---------------------------
+`Skyline APIServer <https://github.com/openstack/skyline-apiserver>`_ is one
+part of OpenStack Modern Dashboard, which provides RESTful APIs to
+`Skyline Console <https://github.com/openstack/skyline-console>`_.
 
-Skyline APIServer is one part of the OpenStack Modern Dashboard for providing
-restful api.
+Using Skyline APIServer
+=======================
 
-For end users
--------------
-
-As an end user, we don't suggest you to use this Skyline APIServer directly.
-Instead, you should use Skyline Dashboard(With Skyline Console).
-
-For operators
--------------
-
-Installing Skyline APIServer
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+How to use Skyline APIServer in your own projects.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    install/index
-
-Administrating Skyline APIServer
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Contents:
-
-.. toctree::
-   :maxdepth: 1
-
+   configuration/index
+   User Documentation <user/index>
    admin/index
 
-Reference
-~~~~~~~~~
-
-Contents:
+Contributor Docs
+================
 
 .. toctree::
-   :maxdepth: 1
-
-   configuration/index
-   cli/index
-
-Additional resources
-~~~~~~~~~~~~~~~~~~~~
-
-
-For contributors
-----------------
-
-
-.. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    contributor/index
 
-Additional reference
-~~~~~~~~~~~~~~~~~~~~
+Release Notes
+=============
 
-Contents:
+See https://docs.openstack.org/releasenotes/skyline-apiserver
+
+Information
+===========
 
 .. toctree::
    :maxdepth: 1
 
-   reference/index
+   glossary
 
 .. only:: html
 
-   Additional reference
-   ~~~~~~~~~~~~~~~~~~~~
-
-   Contents:
-
    * :ref:`genindex`
-
+   * :ref:`modindex`
