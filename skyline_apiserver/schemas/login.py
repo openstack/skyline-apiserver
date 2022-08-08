@@ -106,3 +106,13 @@ class Profile(PayloadBase):
 
     def toJWTPayload(self) -> str:
         return self.toPayLoad().toJWTPayload()
+
+
+class SSOInfo(BaseModel):
+    protocol: str
+    url: str
+
+
+class SSO(BaseModel):
+    enable_sso: bool
+    protocols: List[SSOInfo]

@@ -14,8 +14,11 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response, status
-from keystoneauth1.identity.v3 import Password
+from pathlib import PurePath
+
+from fastapi import APIRouter, Depends, Form, Header, HTTPException, Request, Response, status
+from fastapi.responses import RedirectResponse
+from keystoneauth1.identity.v3 import Password, Token
 from keystoneauth1.session import Session
 from keystoneclient.client import Client as KeystoneClient
 
@@ -124,6 +127,118 @@ async def login(
     else:
         response.set_cookie(CONF.default.session_name, profile.toJWTPayload())
         return profile
+
+
+@router.get(
+    "/sso",
+    description="SSO configuration.",
+    responses={
+        200: {"model": schemas.SSO},
+    },
+    response_model=schemas.SSO,
+    status_code=status.HTTP_200_OK,
+    response_description="OK",
+)
+async def get_sso(
+    request: Request,
+) -> schemas.SSO:
+    sso = {
+        "enable_sso": False,
+        "protocols": [],
+    }
+    if CONF.openstack.sso_enabled:
+        protocols = []
+
+        ks_url = CONF.openstack.keystone_url.rstrip("/")
+        url_scheme = "https" if CONF.default.ssl_enabled else "http"
+        base_url = f"{url_scheme}://{request.url.hostname}:{request.url.port}"
+        base_path = str(PurePath("/").joinpath(CONF.openstack.nginx_prefix, "skyline"))
+
+        for protocol in CONF.openstack.sso_protocols:
+
+            url = (
+                f"{ks_url}/auth/OS-FEDERATION/websso/{protocol}"
+                f"?origin={base_url}{base_path}{constants.API_PREFIX}/websso"
+            )
+
+            protocols.append(
+                {
+                    "protocol": protocol,
+                    "url": url,
+                }
+            )
+
+        sso = {
+            "enable_sso": CONF.openstack.sso_enabled,
+            "protocols": protocols,
+        }
+
+    return schemas.SSO(**sso)
+
+
+@router.post(
+    "/websso",
+    description="Websso",
+    responses={
+        302: {"class": RedirectResponse},
+        401: {"model": schemas.common.UnauthorizedMessage},
+    },
+    response_class=RedirectResponse,
+    status_code=status.HTTP_302_FOUND,
+    response_description="Redirect",
+)
+async def websso(
+    token: str = Form(...),
+    x_openstack_request_id: str = Header(
+        "",
+        alias=constants.INBOUND_HEADER,
+        regex=constants.INBOUND_HEADER_REGEX,
+    ),
+) -> RedirectResponse:
+    try:
+        auth_url = await utils.get_endpoint(
+            region=CONF.openstack.sso_region,
+            service="keystone",
+            session=get_system_session(),
+        )
+        unscope_auth = Token(
+            auth_url=auth_url,
+            token=token,
+            reauthenticate=False,
+        )
+        session = Session(auth=unscope_auth, verify=False, timeout=constants.DEFAULT_TIMEOUT)
+        unscope_client = KeystoneClient(
+            session=session,
+            endpoint=auth_url,
+            interface=CONF.openstack.interface_type,
+        )
+        project_scope = unscope_client.auth.projects()
+        # we must get the project_scope with enabled project
+        project_scope = [scope for scope in project_scope if scope.enabled]
+        if not project_scope:
+            raise Exception("You are not authorized for any projects or domains.")
+
+        project_scope_token = await get_project_scope_token(
+            keystone_token=token,
+            region=CONF.openstack.sso_region,
+            project_id=project_scope[0].id,
+        )
+
+        profile = await generate_profile(
+            keystone_token=project_scope_token,
+            region=CONF.openstack.sso_region,
+        )
+
+        profile = await _patch_profile(profile, x_openstack_request_id)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e),
+        )
+    else:
+        response = RedirectResponse(url="/base/overview", status_code=status.HTTP_302_FOUND)
+        response.set_cookie(CONF.default.session_name, profile.toJWTPayload())
+        return response
 
 
 @router.get(

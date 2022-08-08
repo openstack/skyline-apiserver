@@ -45,6 +45,8 @@ DEFAULT_TIMEOUT = 30
 
 POLICY_NS = "oslo.policy.policies"
 
+API_PREFIX = "/api/v1"
+
 SUPPORTED_SERVICE_EPS = {
     # openstack_service: [<entry_point_name>, <entry_point_name>,]
     "barbican": ["barbican"],

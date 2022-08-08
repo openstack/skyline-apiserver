@@ -70,6 +70,86 @@
                 }
             }
         },
+        "/api/v1/sso": {
+            "get": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Get Sso",
+                "description": "SSO configuration.",
+                "operationId": "get_sso_api_v1_sso_get",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SSO"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/websso": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Websso",
+                "description": "Websso",
+                "operationId": "websso_api_v1_websso_post",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "X-Openstack-Request-Id",
+                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "type": "string",
+                            "default": ""
+                        },
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Body_websso_api_v1_websso_post"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirect"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/profile": {
             "get": {
                 "tags": [
@@ -1903,6 +1983,19 @@
                     }
                 }
             },
+            "Body_websso_api_v1_websso_post": {
+                "title": "Body_websso_api_v1_websso_post",
+                "required": [
+                    "token"
+                ],
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "title": "Token",
+                        "type": "string"
+                    }
+                }
+            },
             "ComputeServicesResponse": {
                 "title": "ComputeServicesResponse",
                 "required": [
@@ -2868,6 +2961,45 @@
                         "title": "Name",
                         "type": "string",
                         "description": "Role name"
+                    }
+                }
+            },
+            "SSO": {
+                "title": "SSO",
+                "required": [
+                    "enable_sso",
+                    "protocols"
+                ],
+                "type": "object",
+                "properties": {
+                    "enable_sso": {
+                        "title": "Enable Sso",
+                        "type": "boolean"
+                    },
+                    "protocols": {
+                        "title": "Protocols",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SSOInfo"
+                        }
+                    }
+                }
+            },
+            "SSOInfo": {
+                "title": "SSOInfo",
+                "required": [
+                    "protocol",
+                    "url"
+                ],
+                "type": "object",
+                "properties": {
+                    "protocol": {
+                        "title": "Protocol",
+                        "type": "string"
+                    },
+                    "url": {
+                        "title": "Url",
+                        "type": "string"
                     }
                 }
             },

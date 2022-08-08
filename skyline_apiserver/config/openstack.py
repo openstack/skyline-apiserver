@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from typing import Dict, List
 
-from pydantic import HttpUrl, StrictInt, StrictStr
+from pydantic import HttpUrl, StrictBool, StrictInt, StrictStr
 
 from skyline_apiserver.config.base import Opt
 from skyline_apiserver.types import InterfaceType
@@ -152,9 +152,34 @@ reclaim_instance_interval = Opt(
     default=60 * 60 * 24 * 7,
 )
 
+sso_enabled = Opt(
+    name="sso_enabled",
+    description="enable sso",
+    schema=StrictBool,
+    default=False,
+)
+
+sso_protocols = Opt(
+    name="sso_protocols",
+    description="SSO protocol list",
+    schema=List[StrictStr],
+    default=[
+        "openid",
+    ],
+)
+
+sso_region = Opt(
+    name="sso_region",
+    description="SSO region",
+    schema=StrictStr,
+    default="RegionOne",
+)
 
 GROUP_NAME = __name__.split(".")[-1]
 ALL_OPTS = (
+    sso_enabled,
+    sso_protocols,
+    sso_region,
     keystone_url,
     system_project_domain,
     system_project,

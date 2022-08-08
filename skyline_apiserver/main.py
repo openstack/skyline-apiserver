@@ -24,9 +24,9 @@ from skyline_apiserver.config import CONF, configure
 from skyline_apiserver.db import setup as db_setup
 from skyline_apiserver.log import LOG, setup as log_setup
 from skyline_apiserver.policy import setup as policies_setup
+from skyline_apiserver.types import constants
 
 PROJECT_NAME = "Skyline API"
-API_PREFIX = "/api/v1"
 
 
 async def on_startup() -> None:
@@ -56,9 +56,9 @@ async def on_shutdown() -> None:
 
 app = FastAPI(
     title=PROJECT_NAME,
-    openapi_url=f"{API_PREFIX}/openapi.json",
+    openapi_url=f"{constants.API_PREFIX}/openapi.json",
     on_startup=[on_startup],
     on_shutdown=[on_shutdown],
 )
 
-app.include_router(api_router, prefix=API_PREFIX)
+app.include_router(api_router, prefix=constants.API_PREFIX)

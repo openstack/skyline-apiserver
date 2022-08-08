@@ -104,6 +104,13 @@ prometheus_basic_auth_password = Opt(
     default="",
 )
 
+ssl_enabled = Opt(
+    name="ssl_enabled",
+    description="enable ssl",
+    schema=StrictBool,
+    default=True,
+)
+
 GROUP_NAME = __name__.split(".")[-1]
 ALL_OPTS = (
     debug,
@@ -113,6 +120,7 @@ ALL_OPTS = (
     access_token_renew,
     cors_allow_origins,
     session_name,
+    ssl_enabled,
     database_url,
     prometheus_endpoint,
     prometheus_enable_basic_auth,
