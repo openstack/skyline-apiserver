@@ -19,6 +19,7 @@ from typing import Any
 from fastapi import HTTPException, status
 from keystoneauth1.exceptions.http import Unauthorized
 from keystoneauth1.session import Session
+from neutronclient.v2_0.client import _GeneratorWithMeta
 from starlette.concurrency import run_in_threadpool
 
 from skyline_apiserver import schemas
@@ -54,15 +55,16 @@ async def list_ports(
     session: Session,
     region_name: str,
     global_request_id: str,
+    retrieve_all: bool = False,
     **kwargs: Any,
-) -> Any:
+) -> _GeneratorWithMeta:
     try:
         nc = await utils.neutron_client(
             session=session,
             region=region_name,
             global_request_id=global_request_id,
         )
-        return await run_in_threadpool(nc.list_ports, **kwargs)
+        return await run_in_threadpool(nc.list_ports, retrieve_all=retrieve_all, **kwargs)
     except Unauthorized as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

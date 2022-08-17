@@ -1009,7 +1009,7 @@ async def list_ports(
     server_ids = []
     network_ids = []
     result = []
-    for port in ports.get("ports", []):
+    for port in ports.next().get("ports", []):
         origin_data = OSPort(port).to_dict()
         port = Port(port).to_dict()
         port["origin_data"] = origin_data
