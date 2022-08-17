@@ -1230,6 +1230,13 @@ list_rules = (
         operations=[{"method": "POST", "path": "/servers/{server_id}/action (unshelve)"}],
     ),
     base.APIRule(
+        name="os_compute_api:os-shelve:unshelve_to_host",
+        check_str=("rule:project_admin_api"),
+        description="Unshelve (restore) shelve offloaded server to a specific host",
+        scope_types=["project"],
+        operations=[{"method": "POST", "path": "/servers/{server_id}/action (unshelve)"}],
+    ),
+    base.APIRule(
         name="os_compute_api:os-shelve:shelve_offload",
         check_str=("rule:project_admin_api"),
         description="Shelf-offload (remove) server",
