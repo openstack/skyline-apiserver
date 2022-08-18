@@ -17,7 +17,10 @@ from __future__ import annotations
 from typing import Dict
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from keystoneauth1.exceptions.http import Unauthorized as KeystoneUnauthorized
+from keystoneauth1.exceptions.http import (
+    InternalServerError as KeystoneInternalServerError,
+    Unauthorized as KeystoneUnauthorized,
+)
 
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
@@ -95,6 +98,10 @@ async def list_policies(
         # User is not authorized to access the system scope. So just ignore the
         # exception and use the user_context as is.
         LOG.debug("Keystone token is invalid. No privilege to access system scope.")
+    except KeystoneInternalServerError:
+        # Keystone is not reachable. So just ignore the exception and use the
+        # user_context as is.
+        LOG.debug("Keystone is not reachable. No privilege to access system scope.")
     target = _generate_target(profile)
     result = [
         {"rule": rule, "allowed": ENFORCER.authorize(rule, target, user_context)}
@@ -137,6 +144,10 @@ async def check_policies(
         # User is not authorized to access the system scope. So just ignore the
         # exception and use the user_context as is.
         LOG.debug("Keystone token is invalid. No privilege to access system scope.")
+    except KeystoneInternalServerError:
+        # Keystone is not reachable. So just ignore the exception and use the
+        # user_context as is.
+        LOG.debug("Keystone is not reachable. No privilege to access system scope.")
     target = _generate_target(profile)
     target.update(policy_rules.target if policy_rules.target else {})
     try:
