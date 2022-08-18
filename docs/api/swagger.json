@@ -1037,118 +1037,150 @@
                 "operationId": "list_ports_api_v1_extension_ports_get",
                 "parameters": [
                     {
+                        "description": "Requests a page size of items. Returns a number of items up to a limit value.",
                         "required": false,
                         "schema": {
                             "title": "Limit",
                             "exclusiveMinimum": 0.0,
-                            "type": "integer"
+                            "type": "integer",
+                            "description": "Requests a page size of items. Returns a number of items up to a limit value."
                         },
                         "name": "limit",
                         "in": "query"
                     },
                     {
+                        "description": "The ID of the last-seen item.",
                         "required": false,
                         "schema": {
                             "title": "Marker",
-                            "type": "string"
+                            "type": "string",
+                            "description": "The ID of the last-seen item."
                         },
                         "name": "marker",
                         "in": "query"
                     },
                     {
+                        "description": "Indicates in which directions to sort.",
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/SortDir"
+                            "allOf": [
+                                {
+                                    "$ref": "#/components/schemas/SortDir"
+                                }
+                            ],
+                            "description": "Indicates in which directions to sort."
                         },
                         "name": "sort_dirs",
                         "in": "query"
                     },
                     {
+                        "description": "Indicates in which attributes to sort.",
                         "required": false,
                         "schema": {
                             "type": "array",
                             "items": {
                                 "$ref": "#/components/schemas/PortSortKey"
-                            }
+                            },
+                            "description": "Indicates in which attributes to sort."
                         },
                         "name": "sort_keys",
                         "in": "query"
                     },
                     {
+                        "description": "List ports for all projects.",
                         "required": false,
                         "schema": {
                             "title": "All Projects",
-                            "type": "boolean"
+                            "type": "boolean",
+                            "description": "List ports for all projects."
                         },
                         "name": "all_projects",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of ports by the given project ID.",
                         "required": false,
                         "schema": {
                             "title": "Project Id",
-                            "type": "string"
+                            "type": "string",
+                            "description": "Filter the list of ports by the given project ID."
                         },
                         "name": "project_id",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of ports by the given port name.",
                         "required": false,
                         "schema": {
                             "title": "Name",
-                            "type": "string"
+                            "type": "string",
+                            "description": "Filter the list of ports by the given port name."
                         },
                         "name": "name",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of ports by the given port status.",
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/PortStatus"
+                            "allOf": [
+                                {
+                                    "$ref": "#/components/schemas/PortStatus"
+                                }
+                            ],
+                            "description": "Filter the list of ports by the given port status."
                         },
                         "name": "status",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of ports by the given network name.",
                         "required": false,
                         "schema": {
                             "title": "Network Name",
-                            "type": "string"
+                            "type": "string",
+                            "description": "Filter the list of ports by the given network name."
                         },
                         "name": "network_name",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of ports by the given network ID.",
                         "required": false,
                         "schema": {
                             "title": "Network Id",
-                            "type": "string"
+                            "type": "string",
+                            "description": "Filter the list of ports by the given network ID."
                         },
                         "name": "network_id",
                         "in": "query"
                     },
                     {
+                        "description": "The ID of the device that uses this port. For example, a server instance or a logical router.",
                         "required": false,
                         "schema": {
                             "title": "Device Id",
-                            "type": "string"
+                            "type": "string",
+                            "description": "The ID of the device that uses this port. For example, a server instance or a logical router."
                         },
                         "name": "device_id",
                         "in": "query"
                     },
                     {
+                        "description": "The entity type that uses this port.",
                         "required": false,
                         "schema": {
                             "type": "array",
                             "items": {
                                 "$ref": "#/components/schemas/PortDeviceOwner"
-                            }
+                            },
+                            "description": "The entity type that uses this port."
                         },
                         "name": "device_owner",
                         "in": "query"
                     },
                     {
-                        "description": "UUID of port.",
+                        "description": "Filter the list of ports by the given port UUID.",
                         "required": false,
                         "schema": {
                             "title": "Uuid",
@@ -1156,7 +1188,7 @@
                             "items": {
                                 "type": "string"
                             },
-                            "description": "UUID of port."
+                            "description": "Filter the list of ports by the given port UUID."
                         },
                         "name": "uuid",
                         "in": "query"

@@ -903,57 +903,46 @@ async def list_ports(
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-    limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
-    marker: str = Query(None),
-    sort_dirs: schemas.SortDir = Query(None),
-    sort_keys: List[schemas.PortSortKey] = Query(None),
-    all_projects: bool = Query(None),
-    project_id: str = Query(None),
-    name: str = Query(None),
-    status: schemas.PortStatus = Query(None),
-    network_name: str = Query(None),
-    network_id: str = Query(None),
-    device_id: str = Query(None),
-    device_owner: List[schemas.PortDeviceOwner] = Query(None),
-    uuid: List[str] = Query(None, description="UUID of port."),
+    limit: int = Query(
+        None,
+        description=(
+            "Requests a page size of items. Returns a number of items up to a limit value."
+        ),
+        gt=constants.EXTENSION_API_LIMIT_GT,
+    ),
+    marker: str = Query(None, description="The ID of the last-seen item."),
+    sort_dirs: schemas.SortDir = Query(
+        None, description="Indicates in which directions to sort."
+    ),
+    sort_keys: List[schemas.PortSortKey] = Query(
+        None, description="Indicates in which attributes to sort."
+    ),
+    all_projects: bool = Query(None, description="List ports for all projects."),
+    project_id: str = Query(
+        None, description="Filter the list of ports by the given project ID."
+    ),
+    name: str = Query(None, description="Filter the list of ports by the given port name."),
+    status: schemas.PortStatus = Query(
+        None, description="Filter the list of ports by the given port status."
+    ),
+    network_name: str = Query(
+        None, description="Filter the list of ports by the given network name."
+    ),
+    network_id: str = Query(
+        None, description="Filter the list of ports by the given network ID."
+    ),
+    device_id: str = Query(
+        None,
+        description=(
+            "The ID of the device that uses this port. For example, "
+            "a server instance or a logical router."
+        ),
+    ),
+    device_owner: List[schemas.PortDeviceOwner] = Query(
+        None, description="The entity type that uses this port."
+    ),
+    uuid: List[str] = Query(None, description="Filter the list of ports by the given port UUID."),
 ) -> schemas.PortsResponse:
-    """Extension List Ports.
-
-    :param profile: Profile object include token, role and so on,
-                    defaults to Depends(deps.get_profile_update_jwt)
-    :type profile: schemas.Profile, optional
-    :param limit: Limit count to fetch,
-                  defaults to Query(None, gt=constants.EXTENSION_API_LIMIT_GT)
-    :type limit: int, optional
-    :param marker: Marker object to fetch, defaults to None
-    :type marker: str, optional
-    :param sort_dirs: Sort order, defaults to None
-    :type sort_dirs: schemas.SortDir, optional
-    :param sort_keys: Sort keys, defaults to Query(None)
-    :type sort_keys: List[schemas.ExtServerSortKey], optional
-    :param all_projects: All projects to fetch, defaults to None
-    :type all_projects: bool, optional
-    :param project_id: Filter by id of project which ports belongs to,
-                       defaults to None
-    :type project_id: str, optional
-    :param name: Filter by port name, defaults to None
-    :type name: str, optional
-    :param status: Filter by port status, defaults to None
-    :type status: schemas.PortStatus, optional
-    :param network_name: Filter by name of network, defaults to None
-    :type network_name: str, optional
-    :param network_id: Filter by id of network, defaults to None
-    :type network_id: str, optional
-    :param device_id: Filter by id of device, defaults to None
-    :type device_id: str, optional
-    :param device_owner: Filter by device owner, defaults to Query(None)
-    :type device_owner: List[schemas.PortDeviceOwner], optional
-    :param uuid: Filter by list uuid,
-                 defaults to Query(None, description="UUID of port.")
-    :type uuid: List[str], optional
-    :return: Port list
-    :rtype: schemas.PortsResponse
-    """
     current_session = await generate_session(profile=profile)
 
     kwargs: Dict[str, Any] = {}
@@ -1043,17 +1032,15 @@ async def list_ports(
             ),
         )
 
-    # We should split the server_ids with 100 number.
-    # If we do not do this, the length of url will be too long to do request.
     server_ids = list(set(server_ids))
-    for i in range(0, len(server_ids), STEP):
+    for server_id in server_ids:
         tasks.append(
             nova.list_servers(
                 profile=profile,
                 session=current_session,
                 global_request_id=x_openstack_request_id,
                 search_opts={
-                    "uuid": server_ids[i : i + STEP],
+                    "uuid": server_id,
                     "all_tenants": all_projects,
                 },
             ),
