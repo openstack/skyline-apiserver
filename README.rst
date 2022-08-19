@@ -1,198 +1,33 @@
-==================
-Skyline API Server
-==================
+===========================
+OpenStack Skyline APIServer
+===========================
 
 .. image:: https://governance.openstack.org/tc/badges/skyline-apiserver.svg
     :target: https://governance.openstack.org/tc/reference/tags/index.html
 
 .. Change things from this point on
 
+OpenStack Skyline APIServer is the back-end server of Skyline.
 
-English \| `简体中文 <./README-zh_CN.rst>`__
+Skyline is an OpenStack dashboard optimized by UI and UE, support OpenStack
+Train+. It has a modern technology stack and ecology, is easier for developers
+to maintain and operate by users, and has higher concurrency performance.
 
-Skyline is an OpenStack dashboard optimized by UI and UE, support
-OpenStack Train+. It has a modern technology stack and ecology, is
-easier for developers to maintain and operate by users, and has higher
-concurrency performance.
+You can learn more about Skyline APIServer at:
 
-Skyline's mascot is the nine-color deer. The nine-color deer comes from
-Dunhuang mural “the nine-color king deer”, whose moral is Buddhist
-cause-effect and gratefulness, which is consistent with 99cloud's
-philosophy of embracing and feedback community since its inception. We
-also hope Skyline can keep light, elegant and powerful as the nine-color
-deer, to provide a better dashboard for the openstack community and
-users.
+* `Wiki <https://wiki.openstack.org/Skyline/>`__
+* `Developer Docs <https://docs.openstack.org/skyline-apiserver/latest/>`__
+* `Blueprints <https://blueprints.launchpad.net/skyline-apiserver/>`__
+* `Release notes <https://docs.openstack.org/releasenotes/skyline-apiserver/>`__
 
-|image0|
+Getting Started
+---------------
 
-**Table of contents**
+If you'd like to run from the master branch, you can clone the git repo:
 
--  `Skyline API Server <#skyline-api-server>`__
+    git clone https://opendev.org/openstack/skyline-apiserver
 
-   -  `Resources <#resources>`__
-   -  `Quick Start <#quick-start>`__
-
-      -  `Prerequisites <#prerequisites>`__
-      -  `Configure <#configure>`__
-      -  `Deployment with Sqlite <#deployment-with-sqlite>`__
-      -  `Deployment with MariaDB <#deployment-with-mariadb>`__
-      -  `Test Access <#test-access>`__
-
-   -  `Develop Skyline-apiserver <#develop-skyline-apiserver>`__
-
-      -  `Dependent tools <#dependent-tools>`__
-      -  `Install & Run <#install--run>`__
-
-   -  `Devstack Integration <#devstack-integration>`__
-   -  `Kolla Ansible Deployment <#kolla-ansible-deployment>`__
-
-Resources
----------
-
--  `Wiki <https://wiki.openstack.org/wiki/Skyline>`__
--  `Bug Tracker <https://launchpad.net/skyline-apiserver>`__
-
-Quick Start
------------
-
-Prerequisites
-~~~~~~~~~~~~~
-
--  An OpenStack environment that runs at least core components and can
-   access OpenStack components through Keystone endpoints
--  A Linux server with container engine
-   (`docker <https://docs.docker.com/engine/install/>`__ or
-   `podman <https://podman.io/getting-started/installation>`__)
-   installed
-
-Configure
-~~~~~~~~~
-
-1. Edit the ``/etc/skyline/skyline.yaml`` file in linux server
-
-   You can refer to the `sample file <etc/skyline.yaml.sample>`__, and
-   modify the following parameters according to the actual environment
-
-   -  database_url
-   -  keystone_url
-   -  default_region
-   -  interface_type
-   -  system_project_domain
-   -  system_project
-   -  system_user_domain
-   -  system_user_name
-   -  system_user_password
-
-Deployment with Sqlite
-~~~~~~~~~~~~~~~~~~~~~~
-
-1. Run the skyline_bootstrap container to bootstrap
-
-   .. code:: bash
-
-      rm -rf /tmp/skyline && mkdir /tmp/skyline
-
-      docker run -d --name skyline_bootstrap -e KOLLA_BOOTSTRAP="" -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml -v /tmp/skyline:/tmp --net=host 99cloud/skyline:latest
-
-      # Check bootstrap is normal `exit 0`
-      docker logs skyline_bootstrap
-
-2. Run the skyline service after bootstrap is complete
-
-   .. code:: bash
-
-      docker rm -f skyline_bootstrap
-
-   ..
-
-      If you need to modify skyline port, add
-      ``-e LISTEN_ADDRESS=<ip:port>`` in the following command
-
-      ``LISTEN_ADDRESS`` defaults to ``0.0.0.0:9999``
-
-   .. code:: bash
-
-      docker run -d --name skyline --restart=always -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml -v /tmp/skyline:/tmp --net=host 99cloud/skyline:latest
-
-Deployment with MariaDB
-~~~~~~~~~~~~~~~~~~~~~~~
-
-1. Connect to database of the OpenStack environment and create the
-   ``skyline`` database
-
-   .. code:: bash
-
-      $ mysql -u root -p
-      MariaDB [(none)]> CREATE DATABASE IF NOT EXISTS skyline DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
-      Query OK, 1 row affected (0.001 sec)
-
-2. Grant proper access to the databases
-
-   Replace ``SKYLINE_DBPASS`` with a suitable password.
-
-   .. code:: bash
-
-      MariaDB [(none)]> GRANT ALL PRIVILEGES ON skyline.* TO 'skyline'@'localhost' IDENTIFIED BY 'SKYLINE_DBPASS';
-      Query OK, 0 rows affected (0.001 sec)
-
-      MariaDB [(none)]> GRANT ALL PRIVILEGES ON skyline.* TO 'skyline'@'%'  IDENTIFIED BY 'SKYLINE_DBPASS';
-      Query OK, 0 rows affected (0.001 sec)
-
-3. Create skyline service credentials
-
-   .. code:: bash
-
-      # Source the admin credentials
-      $ source admin-openrc
-
-      # Create the skyline user
-      $ openstack user create --domain default --password-prompt skyline
-      User Password:
-      Repeat User Password:
-      +---------------------+----------------------------------+
-      | Field               | Value                            |
-      +---------------------+----------------------------------+
-      | domain_id           | default                          |
-      | enabled             | True                             |
-      | id                  | 1qaz2wsx3edc4rfv5tgb6yhn7ujm8ikl |
-      | name                | skyline                          |
-      | options             | {}                               |
-      | password_expires_at | 2020-08-08T08:08:08.123456       |
-      +---------------------+----------------------------------+
-
-      # Add the admin role to the skyline user:
-      $ openstack role add --project service --user skyline admin
-
-4. Run the skyline_bootstrap container to bootstrap
-
-   .. code:: bash
-
-      docker run -d --name skyline_bootstrap -e KOLLA_BOOTSTRAP="" -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml --net=host 99cloud/skyline:latest
-
-      # Check bootstrap is normal `exit 0`
-      docker logs skyline_bootstrap
-
-5. Run the skyline service after bootstrap is complete
-
-   .. code:: bash
-
-      docker rm -f skyline_bootstrap
-
-   ..
-
-      If you need to modify skyline port, add
-      ``-e LISTEN_ADDRESS=<ip:port>`` in the following command
-
-      ``LISTEN_ADDRESS`` defaults to ``0.0.0.0:9999``
-
-   .. code:: bash
-
-      docker run -d --name skyline --restart=always -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml --net=host 99cloud/skyline:latest
-
-Test Access
-~~~~~~~~~~~
-
-You can now access the dashboard: ``https://<ip_address>:9999``
+You can raise bugs on `Launchpad <https://bugs.launchpad.net/skyline-apiserver>`__
 
 Develop Skyline-apiserver
 -------------------------
@@ -295,5 +130,4 @@ Kolla Ansible Deployment
 
 |image1|
 
-.. |image0| image:: docs/images/OpenStack_Project_Skyline_horizontal.png
 .. |image1| image:: docs/images/nine-color-deer-64.png

@@ -18,9 +18,23 @@ Skyline APIServer (API of OpenStack Modern Dashboard)
 Introduction
 ============
 
-`Skyline APIServer <https://github.com/openstack/skyline-apiserver>`_ is one
-part of OpenStack Modern Dashboard, which provides RESTful APIs to
-`Skyline Console <https://github.com/openstack/skyline-console>`_.
+.. image:: images/logo/skyline.png
+
+OpenStack `Skyline APIServer <https://github.com/openstack/skyline-apiserver>`_
+is the back-end server of Skyline. It provides RESTful APIs to `Skyline Console
+<https://github.com/openstack/skyline-console>`_.
+
+Skyline is an OpenStack dashboard optimized by UI and UE, support OpenStack
+Train+. It has a modern technology stack and ecology, is easier for developers
+to maintain and operate by users, and has higher concurrency performance.
+
+Skyline's mascot is the nine-color deer. The nine-color deer comes from
+Dunhuang mural “the nine-color king deer”, whose moral is Buddhist
+cause-effect and gratefulness, which is consistent with 99cloud's
+philosophy of embracing and feedback community since its inception. We
+also hope Skyline can keep light, elegant and powerful as the nine-color
+deer, to provide a better dashboard for the openstack community and
+users.
 
 Using Skyline APIServer
 =======================

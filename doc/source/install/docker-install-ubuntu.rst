@@ -1,11 +1,16 @@
-.. _source-install-ubuntu:
+.. _docker-install-ubuntu:
 
-Source Install Ubuntu
+Docker Install Ubuntu
 ~~~~~~~~~~~~~~~~~~~~~
 
 This section describes how to install and configure the Skyline APIServer
 service. Before you begin, you must have a ready OpenStack environment. At
 least it includes ``keystone, glance, nova and neutron service``.
+
+.. note::
+
+  You have install the docker service on the host machine. You can follow
+  the `docker installation <https://docs.docker.com/engine/install/ubuntu/>`_.
 
 Prerequisites
 -------------
@@ -83,49 +88,22 @@ must create a database.
 Install and configure components
 --------------------------------
 
-We will install the Skyline APIServer service from source code.
+We will install the Skyline APIServer service from docker image.
 
-#. Git clone the repository from OpenDev (GitHub)
-
-   .. code-block:: console
-
-      $ sudo apt update
-      $ sudo apt install -y git
-      $ cd ${HOME}
-      $ git clone https://opendev.org/openstack/skyline-apiserver.git
-
-   .. note::
-
-      If you meet the following error, you need to run command ``sudo apt install -y ca-certificates``:
-
-      `fatal: unable to access 'https://opendev.org/openstack/skyline-apiserver.git/': server
-      certificate verification failed. CAfile: none CRLfile: none`
-
-#. Install skyline-apiserver from source
+#. Pull the Skyline APIServer service image from Docker Hub:
 
    .. code-block:: console
 
-      $ sudo apt install -y python3-pip
-      $ sudo pip3 install skyline-apiserver/
+      $ sudo docker pull 99cloud/skyline:latest
 
 #. Ensure that some folders of skyline-apiserver have been created
 
    .. code-block:: console
 
-      $ sudo mkdir -p /etc/skyline /var/log/skyline
+      $ sudo mkdir -p /etc/skyline /var/log/skyline /var/lib/skyline /var/log/nginx
 
-#. Copy the configuration file to the configuration folder ``/etc/skyline``
-
-   .. code-block:: console
-
-      $ sudo cp ${HOME}/skyline-apiserver/etc/gunicorn.py /etc/skyline/gunicorn.py
-      $ sudo sed -i "s/^bind = *.*/bind = ['0.0.0.0:28000']/g" /etc/skyline/gunicorn.py
-      $ sudo cp ${HOME}/skyline-apiserver/etc/skyline.yaml.sample /etc/skyline/skyline.yaml
-
-   .. note::
-
-      We need to change the ``bind`` value in ``/etc/skyline/gunicorn.py`` to ``0.0.0.0:28000``.
-      Default value is ``unix:/var/lib/skyline/skyline.sock``.
+#. Set all value from :ref:`configuration-settings` into the configuration file
+   ``/etc/skyline/skyline.yaml``
 
    .. note::
 
@@ -145,33 +123,60 @@ We will install the Skyline APIServer service from source code.
       Replace ``SKYLINE_DBPASS``, ``DB_SERVER``, ``KEYSTONE_SERVER`` and
       ``SKYLINE_SERVICE_PASSWORD`` with a correct value.
 
-#. Populate the Skyline APIServer database
-
-   .. code-block:: console
-
-      $ cd ${HOME}/skyline-apiserver/
-      $ make db_sync
-
 Finalize installation
 ---------------------
 
-#. Set start service config ``/etc/systemd/system/skyline-apiserver.service``
-
-   .. code-block:: text
-
-      [Unit]
-      Description=Skyline APIServer
-
-      [Service]
-      Type=simple
-      ExecStart=/usr/local/bin/gunicorn -c /etc/skyline/gunicorn.py skyline_apiserver.main:app
-      LimitNOFILE=32768
-
-      [Install]
-      WantedBy=multi-user.target
+#. Run bootstrap server
 
    .. code-block:: console
 
-      $ sudo systemctl daemon-reload
-      $ sudo systemctl enable skyline-apiserver
-      $ sudo systemctl start skyline-apiserver
+      $ sudo docker run -d --name skyline_bootstrap \
+        -e KOLLA_BOOTSTRAP="" \
+        -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml \
+        -v /var/log:/var/log \
+        --net=host 99cloud/skyline:latest
+
+   .. code-block:: text
+
+      If you see the following message, it means that the bootstrap server is successful:
+
+      + echo '/usr/local/bin/gunicorn -c /etc/skyline/gunicorn.py skyline_apiserver.main:app'
+      + mapfile -t CMD
+      ++ xargs -n 1
+      ++ tail /run_command
+      + [[ -n 0 ]]
+      + cd /skyline-apiserver/
+      + make db_sync
+      alembic -c skyline_apiserver/db/alembic/alembic.ini upgrade head
+      2022-08-19 07:49:16.004 | INFO     | alembic.runtime.migration:__init__:204 - Context impl MySQLImpl.
+      2022-08-19 07:49:16.005 | INFO     | alembic.runtime.migration:__init__:207 - Will assume non-transactional DDL.
+      + exit 0
+
+#. Cleanup bootstrap server
+
+   .. code-block:: console
+
+      $ sudo docker rm -f skyline_bootstrap
+
+#. Run skyline-apiserver
+
+   .. code-block:: console
+
+      $ sudo docker run -d --name skyline --restart=always \
+        -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml \
+        -v /var/log:/var/log \
+        --net=host 99cloud/skyline:latest
+
+   .. note::
+
+      The skyline image is both include skyline-apiserver and skyline-console.
+      And the skyline-apiserver is bound as socket file
+      ``/var/lib/skyline/skyline.sock``.
+
+      So you can not access the skyline-apiserver openapi swagger. But now you
+      can visit the skyline UI ``https://xxxxx:9999``.
+
+   .. note::
+
+      If you need to modify skyline port, add ``-e LISTEN_ADDRESS=<ip:port>`` in run command.
+      Default port is 9999.

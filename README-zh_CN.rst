@@ -1,8 +1,6 @@
-==================
-Skyline API Server
-==================
-
-`English <./README.rst>`__ \| 简体中文
+===========================
+OpenStack Skyline APIServer
+===========================
 
 Skyline 是一个经过 UI 和 UE 优化过的 OpenStack 仪表盘，支持 OpenStack
 Train 及以上版本。Skyline 拥有现代化的技术栈和生态，更易于开发者维护和
@@ -12,8 +10,6 @@ Skyline 的吉祥物是九色鹿。九色鹿源自于敦煌壁画《九色鹿本
 因果和知恩图报，这与九州云自创办以来秉持的拥抱和反馈社区理念一致。我们也希望
 Skyline 像九色鹿一样，轻巧、优雅，而又能力强大，为 OpenStack 社区和用户
 提供更优质的 Dashboard。
-
-|image0|
 
 **目录**
 
@@ -280,5 +276,4 @@ Kolla Ansible 部署
 
 |image1|
 
-.. |image0| image:: docs/images/OpenStack_Project_Skyline_horizontal.png
-.. |image1| image:: docs/images/nine-color-deer-64.png
+.. |image1| image:: doc/source/images/logo/nine-color-deer-64.png

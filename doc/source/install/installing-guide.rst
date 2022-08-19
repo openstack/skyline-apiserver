@@ -9,4 +9,5 @@ Skyline APIServer on Ubuntu 20.04 LTS.
     :maxdepth: 2
 
     source-install-ubuntu
+    docker-install-ubuntu
     verify-install
