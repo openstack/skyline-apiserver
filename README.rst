@@ -2,6 +2,12 @@
 Skyline API Server
 ==================
 
+.. image:: https://governance.openstack.org/tc/badges/skyline-apiserver.svg
+    :target: https://governance.openstack.org/tc/reference/tags/index.html
+
+.. Change things from this point on
+
+
 English \| `简体中文 <./README-zh_CN.rst>`__
 
 Skyline is an OpenStack dashboard optimized by UI and UE, support

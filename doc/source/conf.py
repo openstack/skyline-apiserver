@@ -209,7 +209,7 @@ htmlhelp_basename = 'SkylineAPIServerdoc'
 # (source start file, target name, title, author, documentclass
 # [howto/manual]).
 latex_documents = [
-    ('index', 'SkylineAPIServerdoc.tex', u'Skyline APIServer Developer Documentation',
+    ('index', 'doc-skyline-apiserver.tex', u'Skyline APIServer Developer Documentation',
      u'Skyline APIServer contributors', 'manual'),
 ]
 

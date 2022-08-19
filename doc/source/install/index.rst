@@ -2,22 +2,18 @@
 Installation Guide
 ==================
 
-This section describes how to install and configure the dashboard on the controller node.
+This section describes how to install and configure the skyline-apiserver.
 
 System Requirements
 ===================
 
 .. toctree::
-   :maxdepth: 1
 
-Installing from Packages
-========================
+   system-requirements
 
-.. toctree::
-   :maxdepth: 1
-
-Installing from Source
-======================
+Installing Guide
+================
 
 .. toctree::
-   :maxdepth: 1
+
+   installing-guide
