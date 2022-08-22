@@ -22,6 +22,7 @@ file ``skyline.yaml.sample`` in ``etc`` directory.
       prometheus_endpoint: http://localhost:9091
       secret_key: aCtmgbcUqYUy_HNVg5BDXCaeJgJQzHJXwqbXr0Nmb2o
       session_name: session
+      ssl_enabled: true
     openstack:
       base_domains:
       - heat_user_domain
@@ -51,6 +52,10 @@ file ``skyline.yaml.sample`` in ``etc`` directory.
         placement: placement
         sharev2: manilav2
         volumev3: cinder
+      sso_enabled: false
+      sso_protocols:
+      - openid
+      sso_region: RegionOne
       system_admin_roles:
       - admin
       - system_admin
@@ -87,4 +92,3 @@ file ``skyline.yaml.sample`` in ``etc`` directory.
       - nvidia_t4
       usb_models:
       - usb_c
-

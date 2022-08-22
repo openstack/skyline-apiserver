@@ -11,6 +11,29 @@ Getting Started
     :maxdepth: 2
 
     contributing
+    backporting
+    releases
+    documentation
+
+Writing Release Notes
+---------------------
+
+Please follow the format, it will make everyone's life easier.
+
+.. toctree::
+    :maxdepth: 2
+
+    releasenotes
+
+.. _programming-howtos:
+
+Programming HowTos and Tutorials
+--------------------------------
+
+.. toctree::
+    :maxdepth: 2
+
+    development.environment
 
 Other Resources
 ---------------

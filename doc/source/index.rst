@@ -46,8 +46,6 @@ How to use Skyline APIServer in your own projects.
 
    install/index
    configuration/index
-   User Documentation <user/index>
-   admin/index
 
 Contributor Docs
 ================
