@@ -62,15 +62,23 @@ Release Notes
 
 See https://docs.openstack.org/releasenotes/skyline-apiserver
 
-Information
-===========
+Additional reference
+--------------------
+
+Contents:
 
 .. toctree::
    :maxdepth: 1
 
-   glossary
+   common/glossary.rst
+
 
 .. only:: html
 
+   Indices and tables
+   ------------------
+
+   Contents:
+
    * :ref:`genindex`
-   * :ref:`modindex`
+   * :ref:`search`

@@ -15,7 +15,7 @@ to maintain and operate by users, and has higher concurrency performance.
 
 You can learn more about Skyline APIServer at:
 
-* `Wiki <https://wiki.openstack.org/Skyline/>`__
+* `Wiki <https://wiki.openstack.org/Skyline>`__
 * `Developer Docs <https://docs.openstack.org/skyline-apiserver/latest/>`__
 * `Blueprints <https://blueprints.launchpad.net/skyline-apiserver/>`__
 * `Release notes <https://docs.openstack.org/releasenotes/skyline-apiserver/>`__
