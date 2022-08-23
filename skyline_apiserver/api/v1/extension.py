@@ -632,13 +632,6 @@ async def list_volumes(
     )
     result = []
     server_ids = []
-    # commit: https://review.opendev.org/c/openstack/python-cinderclient/+/767451
-    # here is just a workaround way.
-    while True:
-        if volumes and isinstance(volumes[-1], int):
-            volumes = volumes[0]
-        else:
-            break
     for volume in volumes:
         origin_data = OSVolume(volume).to_dict()
         volume = Volume(volume).to_dict()
@@ -798,13 +791,6 @@ async def list_volume_snapshots(
     result = []
     volume_ids = []
     snapshot_ids = []
-    # commit: https://review.opendev.org/c/openstack/python-cinderclient/+/767451
-    # here is just a workaround way.
-    while True:
-        if volume_snapshots and isinstance(volume_snapshots[-1], int):
-            volume_snapshots = volume_snapshots[0]
-        else:
-            break
     for volume_snapshot in volume_snapshots:
         origin_data = OSVolumeSnapshot(volume_snapshot).to_dict()
         volume_snapshot = VolumeSnapshot(volume_snapshot).to_dict()
