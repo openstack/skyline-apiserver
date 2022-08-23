@@ -840,14 +840,18 @@ async def list_volume_snapshots(
             ),
         )
     for i in range(0, len(snapshot_ids), STEP):
+        # Here we use system_session to filter volume with snapshot_id list.
+        # So we need to set all_tenants as True to filter volume from
+        # all volumes. Otherwise, we just filter volume from the user
+        # of system_session.
         tasks.append(
             cinder.list_volumes(
                 profile=profile,
-                session=current_session,
+                session=get_system_session(),
                 global_request_id=x_openstack_request_id,
                 search_opts={
                     "snapshot_id": snapshot_ids[i : i + STEP],
-                    "all_tenants": all_projects,
+                    "all_tenants": True,
                 },
             ),
         )
