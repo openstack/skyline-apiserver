@@ -3442,6 +3442,24 @@
                     }
                 }
             },
+            "VolumeSnapshotChildVolume": {
+                "title": "VolumeSnapshotChildVolume",
+                "type": "object",
+                "properties": {
+                    "volume_id": {
+                        "title": "Volume Id",
+                        "type": "string",
+                        "description": "ID of volume",
+                        "example": "00000000-0000-0000-0000-000000000000"
+                    },
+                    "volume_name": {
+                        "title": "Volume Name",
+                        "type": "string",
+                        "description": "Name of volume",
+                        "example": "child-volume-demo"
+                    }
+                }
+            },
             "VolumeSnapshotSortKey": {
                 "title": "VolumeSnapshotSortKey",
                 "enum": [
@@ -3519,12 +3537,15 @@
                     "volume_name": {
                         "title": "Volume Name",
                         "type": "string",
-                        "description": "Volume name"
+                        "description": "Name of volume",
+                        "example": "volume-demo"
                     },
                     "child_volumes": {
                         "title": "Child Volumes",
                         "type": "array",
-                        "items": {},
+                        "items": {
+                            "$ref": "#/components/schemas/VolumeSnapshotChildVolume"
+                        },
                         "description": "Child volumes"
                     },
                     "name": {

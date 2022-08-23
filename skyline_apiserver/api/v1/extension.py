@@ -862,7 +862,9 @@ async def list_volume_snapshots(
     child_volumes: Dict[str, Any] = {}
     for volume in volumes_from_snapshot:
         child_volumes.setdefault(volume.snapshot_id, [])
-        child_volumes[volume.snapshot_id].append(volume.name)
+        child_volumes[volume.snapshot_id].append(
+            {"volume_id": volume.id, "volume_name": volume.name}
+        )
 
     for snapshot in result:
         snapshot["project_name"] = proj_mappings.get(snapshot["project_id"])

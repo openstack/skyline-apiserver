@@ -398,6 +398,13 @@ class VolumesResponse(BaseModel):
     volumes: List[VolumesResponseBase] = Field(..., description="Volumes list")
 
 
+class VolumeSnapshotChildVolume(BaseModel):
+    volume_id: str = Field(
+        None, description="ID of volume", example="00000000-0000-0000-0000-000000000000"
+    )
+    volume_name: str = Field(None, description="Name of volume", example="child-volume-demo")
+
+
 class VolumeSnapshotsResponseBase(BaseModel):
     id: str = Field(..., description="Snapshot ID")
     origin_data: Dict[str, Any] = Field(
@@ -405,8 +412,10 @@ class VolumeSnapshotsResponseBase(BaseModel):
     )
     project_name: Optional[str] = Field(None, description="Project name")
     host: Optional[str] = Field(None, description="Host name")
-    volume_name: Optional[str] = Field(None, description="Volume name")
-    child_volumes: Optional[List] = Field(None, description="Child volumes")
+    volume_name: Optional[str] = Field(None, description="Name of volume", example="volume-demo")
+    child_volumes: Optional[List[VolumeSnapshotChildVolume]] = Field(
+        None, description="Child volumes"
+    )
 
     name: Optional[str] = Field(
         description="Will be removed, please use origin_data[name]",
