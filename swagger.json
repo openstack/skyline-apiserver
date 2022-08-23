@@ -880,85 +880,122 @@
                 "operationId": "list_volume_snapshots_api_v1_extension_volume_snapshots_get",
                 "parameters": [
                     {
+                        "description": "Requests a page size of items. Returns a number of items up to a limit value.",
                         "required": false,
                         "schema": {
                             "title": "Limit",
                             "exclusiveMinimum": 0.0,
-                            "type": "integer"
+                            "type": "integer",
+                            "description": "Requests a page size of items. Returns a number of items up to a limit value."
                         },
                         "name": "limit",
                         "in": "query"
                     },
                     {
+                        "description": "The ID of the last-seen item.",
                         "required": false,
                         "schema": {
                             "title": "Marker",
-                            "type": "string"
+                            "type": "string",
+                            "description": "The ID of the last-seen item."
                         },
                         "name": "marker",
                         "in": "query"
                     },
                     {
+                        "description": "Indicates in which directions to sort.",
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/SortDir"
+                            "allOf": [
+                                {
+                                    "$ref": "#/components/schemas/SortDir"
+                                }
+                            ],
+                            "description": "Indicates in which directions to sort."
                         },
                         "name": "sort_dirs",
                         "in": "query"
                     },
                     {
+                        "description": "Indicates in which attributes to sort.",
                         "required": false,
                         "schema": {
                             "type": "array",
                             "items": {
                                 "$ref": "#/components/schemas/VolumeSnapshotSortKey"
-                            }
+                            },
+                            "description": "Indicates in which attributes to sort."
                         },
                         "name": "sort_keys",
                         "in": "query"
                     },
                     {
+                        "description": "List volume snapshots for all projects.",
                         "required": false,
                         "schema": {
                             "title": "All Projects",
-                            "type": "boolean"
+                            "type": "boolean",
+                            "description": "List volume snapshots for all projects."
                         },
                         "name": "all_projects",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of volume snapshots by the given project ID.",
                         "required": false,
                         "schema": {
                             "title": "Project Id",
-                            "type": "string"
+                            "type": "string",
+                            "description": "Filter the list of volume snapshots by the given project ID."
                         },
                         "name": "project_id",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of volume snapshots by the given volume snapshot name.",
                         "required": false,
                         "schema": {
                             "title": "Name",
-                            "type": "string"
+                            "type": "string",
+                            "description": "Filter the list of volume snapshots by the given volume snapshot name."
                         },
                         "name": "name",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of volume snapshots by the given volume snapshot status.",
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/VolumeSnapshotStatus"
+                            "allOf": [
+                                {
+                                    "$ref": "#/components/schemas/VolumeSnapshotStatus"
+                                }
+                            ],
+                            "description": "Filter the list of volume snapshots by the given volume snapshot status."
                         },
                         "name": "status",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of volume snapshots by the given volume ID.",
                         "required": false,
                         "schema": {
                             "title": "Volume Id",
-                            "type": "string"
+                            "type": "string",
+                            "description": "Filter the list of volume snapshots by the given volume ID."
                         },
                         "name": "volume_id",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Filter the list of volume snapshots by the given volume snapshot UUID.",
+                        "required": false,
+                        "schema": {
+                            "title": "Uuid",
+                            "type": "string",
+                            "description": "Filter the list of volume snapshots by the given volume snapshot UUID."
+                        },
+                        "name": "uuid",
                         "in": "query"
                     },
                     {

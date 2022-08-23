@@ -710,7 +710,6 @@ async def list_volumes(
     "/extension/volume_snapshots",
     description="List Volume Snapshots.",
     responses={
-        200: {"model": schemas.VolumeSnapshotsResponse},
         401: {"model": schemas.UnauthorizedMessage},
         403: {"model": schemas.ForbiddenMessage},
         500: {"model": schemas.InternalServerErrorMessage},
@@ -726,44 +725,38 @@ async def list_volume_snapshots(
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-    limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
-    marker: str = Query(None),
-    sort_dirs: schemas.SortDir = Query(None),
-    sort_keys: List[schemas.VolumeSnapshotSortKey] = Query(None),
-    all_projects: bool = Query(None),
-    project_id: str = Query(None),
-    name: str = Query(None),
-    status: schemas.VolumeSnapshotStatus = Query(None),
-    volume_id: str = Query(None),
+    limit: int = Query(
+        None,
+        description=(
+            "Requests a page size of items. Returns a number of items up to a limit value."
+        ),
+        gt=constants.EXTENSION_API_LIMIT_GT,
+    ),
+    marker: str = Query(None, description="The ID of the last-seen item."),
+    sort_dirs: schemas.SortDir = Query(
+        None, description="Indicates in which directions to sort."
+    ),
+    sort_keys: List[schemas.VolumeSnapshotSortKey] = Query(
+        None, description="Indicates in which attributes to sort."
+    ),
+    all_projects: bool = Query(None, description="List volume snapshots for all projects."),
+    project_id: str = Query(
+        None, description="Filter the list of volume snapshots by the given project ID."
+    ),
+    name: str = Query(
+        None, description="Filter the list of volume snapshots by the given volume snapshot name."
+    ),
+    status: schemas.VolumeSnapshotStatus = Query(
+        None,
+        description="Filter the list of volume snapshots by the given volume snapshot status.",
+    ),
+    volume_id: str = Query(
+        None, description="Filter the list of volume snapshots by the given volume ID."
+    ),
+    uuid: str = Query(
+        None, description="Filter the list of volume snapshots by the given volume snapshot UUID."
+    ),
 ) -> schemas.VolumeSnapshotsResponse:
-    """Extension List Volume Snapshots.
-
-    :param profile: Profile object include token, role and so on,
-                    defaults to Depends(deps.get_profile_update_jwt)
-    :type profile: schemas.Profile, optional
-    :param limit: Limit count to fetch,
-                  defaults to Query(None, gt=constants.EXTENSION_API_LIMIT_GT)
-    :type limit: int, optional
-    :param marker: Marker object to fetch, defaults to None
-    :type marker: str, optional
-    :param sort_dirs: Sort order, defaults to None
-    :type sort_dirs: schemas.SortDir, optional
-    :param sort_keys: Sort keys, defaults to Query(None)
-    :type sort_keys: List[schemas.VolumeSnapshotSortKey], optional
-    :param all_projects: All projects to fetch, defaults to None
-    :type all_projects: bool, optional
-    :param project_id: Filter by id of project which volume snapshots belongs to,
-                       defaults to None
-    :type project_id: str, optional
-    :param name: Filter by volume snapshot name, defaults to None
-    :type name: str, optional
-    :param status: Filter by volume snapshot status, defaults to None
-    :type status: schemas.VolumeSnapshotStatus, optional
-    :param volume_id: Filter by volume id, defaults to None
-    :type volume_id: str, optional
-    :return: Volume snapshot list
-    :rtype: schemas.VolumeSnapshotsResponse
-    """
     if all_projects:
         assert_system_admin_or_reader(
             profile=profile,
@@ -785,10 +778,17 @@ async def list_volume_snapshots(
         "volume_id": volume_id,
         "all_tenants": all_projects,
         "project_id": project_id,
+        "id": uuid,
     }
+
+    snapshot_session = current_session
+    if uuid:
+        snapshot_session = get_system_session()
+        search_opts["all_tenants"] = True
+
     volume_snapshots, count = await cinder.list_volume_snapshots(
         profile=profile,
-        session=current_session,
+        session=snapshot_session,
         global_request_id=x_openstack_request_id,
         limit=limit,
         marker=marker,
