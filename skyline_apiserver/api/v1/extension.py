@@ -28,8 +28,8 @@ from novaclient.v2.servers import Server as NovaServer
 
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
-from skyline_apiserver.api.v1.openstack.base import OSPort, OSServer, OSVolume, OSVolumeSnapshot
-from skyline_apiserver.api.v1.utils import Port, Server, Service, Volume, VolumeSnapshot
+from skyline_apiserver.api.wrapper.openstack import OSPort, OSServer, OSVolume, OSVolumeSnapshot
+from skyline_apiserver.api.wrapper.skyline import Port, Server, Service, Volume, VolumeSnapshot
 from skyline_apiserver.client import utils
 from skyline_apiserver.client.openstack import cinder, glance, keystone, neutron, nova
 from skyline_apiserver.client.utils import generate_session, get_system_session
