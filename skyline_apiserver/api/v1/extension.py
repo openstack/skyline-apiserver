@@ -592,16 +592,14 @@ async def list_volumes(
         else:
             sort = ",".join(sort_keys)
 
-    # If bootable is false, it is ineffective, due to existed issue of community
-    # https://bugs.launchpad.net/python-cinderclient/+bug/1925737
     search_opts = {
         "with_count": True,
         "name": name,
-        "multiattach": multiattach,
+        "multiattach": str(multiattach) if multiattach is not None else multiattach,
         "status": status,
         "all_tenants": all_projects,
         "project_id": project_id,
-        "bootable": bootable,
+        "bootable": str(bootable) if bootable is not None else bootable,
         "id": uuid,
     }
     # if not is_admin, cinder will ignore the all_projects query param.
