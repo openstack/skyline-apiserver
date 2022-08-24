@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 from pathlib import PurePath
+from typing import Any, List, Optional, Tuple
 
 from fastapi import APIRouter, Depends, Form, Header, HTTPException, Request, Response, status
 from fastapi.responses import RedirectResponse
@@ -45,14 +46,75 @@ from skyline_apiserver.types import constants
 router = APIRouter()
 
 
+async def _get_projects_and_unscope_token(
+    region: str,
+    domain: Optional[str] = None,
+    username: Optional[str] = None,
+    password: Optional[str] = None,
+    token: Optional[str] = None,
+) -> Tuple[List[Any], str]:
+    try:
+        auth_url = await utils.get_endpoint(
+            region=region,
+            service="keystone",
+            session=get_system_session(),
+        )
+
+        if token:
+            unscope_auth = Token(
+                auth_url=auth_url,
+                token=token,
+                reauthenticate=False,
+            )
+        else:
+            unscope_auth = Password(
+                auth_url=auth_url,
+                user_domain_name=domain,
+                username=username,
+                password=password,
+                reauthenticate=False,
+            )
+
+        session = Session(auth=unscope_auth, verify=False, timeout=constants.DEFAULT_TIMEOUT)
+        unscope_client = KeystoneClient(
+            session=session,
+            endpoint=auth_url,
+            interface=CONF.openstack.interface_type,
+        )
+
+        project_scope = unscope_client.auth.projects()
+        unscope_token = token if token else session.get_token()
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e),
+        )
+
+    # we must get the project_scope with enabled project
+    project_scope = [scope for scope in project_scope if scope.enabled]
+    if not project_scope:
+        raise Exception("You are not authorized for any projects or domains.")
+
+    return project_scope, unscope_token
+
+
 async def _patch_profile(profile: schemas.Profile, global_request_id: str) -> schemas.Profile:
     try:
         profile.endpoints = await get_endpoints(region=profile.region)
-        profile.projects = await get_projects(
+
+        projects = await get_projects(
             global_request_id=global_request_id,
             region=profile.region,
             user=profile.user.id,
         )
+
+        if not projects:
+            projects, _ = await _get_projects_and_unscope_token(
+                region=profile.region, token=profile.keystone_token
+            )
+
+        profile.projects = {i.id: {"name": i.name, "domain_id": i.domain_id} for i in projects}
+
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -83,32 +145,15 @@ async def login(
     ),
 ):
     try:
-        auth_url = await utils.get_endpoint(
+        project_scope, unscope_token = await _get_projects_and_unscope_token(
             region=credential.region,
-            service="keystone",
-            session=get_system_session(),
-        )
-        unscope_auth = Password(
-            auth_url=auth_url,
-            user_domain_name=credential.domain,
+            domain=credential.domain,
             username=credential.username,
             password=credential.password,
-            reauthenticate=False,
         )
-        session = Session(auth=unscope_auth, verify=False, timeout=constants.DEFAULT_TIMEOUT)
-        unscope_client = KeystoneClient(
-            session=session,
-            endpoint=auth_url,
-            interface=CONF.openstack.interface_type,
-        )
-        project_scope = unscope_client.auth.projects()
-        # we must get the project_scope with enabled project
-        project_scope = [scope for scope in project_scope if scope.enabled]
-        if not project_scope:
-            raise Exception("You are not authorized for any projects or domains.")
 
         project_scope_token = await get_project_scope_token(
-            keystone_token=session.get_token(),
+            keystone_token=unscope_token,
             region=credential.region,
             project_id=project_scope[0].id,
         )
@@ -196,27 +241,9 @@ async def websso(
     ),
 ) -> RedirectResponse:
     try:
-        auth_url = await utils.get_endpoint(
-            region=CONF.openstack.sso_region,
-            service="keystone",
-            session=get_system_session(),
+        project_scope, _ = await _get_projects_and_unscope_token(
+            region=CONF.openstack.sso_region, token=token
         )
-        unscope_auth = Token(
-            auth_url=auth_url,
-            token=token,
-            reauthenticate=False,
-        )
-        session = Session(auth=unscope_auth, verify=False, timeout=constants.DEFAULT_TIMEOUT)
-        unscope_client = KeystoneClient(
-            session=session,
-            endpoint=auth_url,
-            interface=CONF.openstack.interface_type,
-        )
-        project_scope = unscope_client.auth.projects()
-        # we must get the project_scope with enabled project
-        project_scope = [scope for scope in project_scope if scope.enabled]
-        if not project_scope:
-            raise Exception("You are not authorized for any projects or domains.")
 
         project_scope_token = await get_project_scope_token(
             keystone_token=token,

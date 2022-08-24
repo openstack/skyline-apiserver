@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 from pathlib import PurePath
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from keystoneauth1.identity.v3 import Token
 from keystoneauth1.session import Session
@@ -76,15 +76,14 @@ async def get_endpoints(region: str) -> Dict[str, Any]:
     return endpoints
 
 
-async def get_projects(global_request_id: str, region: str, user: str) -> Dict[str, Any]:
+async def get_projects(global_request_id: str, region: str, user: str) -> List[Any]:
     kc = await utils.keystone_client(
         session=get_system_session(),
         region=region,
         global_request_id=global_request_id,
     )
-    projects = {
-        i.id: {"name": i.name, "domain_id": i.domain_id} for i in kc.projects.list(user=user)
-    }
+
+    projects = kc.projects.list(user=user)
     return projects
 
 
