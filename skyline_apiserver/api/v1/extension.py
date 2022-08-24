@@ -20,6 +20,7 @@ from asyncio import gather
 from functools import reduce
 from typing import Any, Dict, List
 
+from cinderclient.exceptions import NotFound
 from cinderclient.v3.volumes import Volume as CinderVolume
 from dateutil import parser
 from fastapi import APIRouter, Depends, Header, Query, status
@@ -34,6 +35,7 @@ from skyline_apiserver.client import utils
 from skyline_apiserver.client.openstack import cinder, glance, keystone, neutron, nova
 from skyline_apiserver.client.utils import generate_session, get_system_session
 from skyline_apiserver.config import CONF
+from skyline_apiserver.log import LOG
 from skyline_apiserver.types import constants
 from skyline_apiserver.utils.roles import assert_system_admin_or_reader, is_system_reader_no_admin
 
@@ -774,6 +776,25 @@ async def list_volume_snapshots(
 
     snapshot_session = current_session
     if uuid:
+        if not all_projects:
+            # We need to check the project_id of volume snapshot is the same
+            # of current project id.
+            try:
+                volume_snapshot = await cinder.get_volume_snapshot(
+                    session=current_session,
+                    region=profile.region,
+                    global_request_id=x_openstack_request_id,
+                    snapshot_id=uuid,
+                )
+            except NotFound as ex:
+                LOG.debug(f"Not found volume snapshot with id '{uuid}': {ex}")
+                return schemas.VolumeSnapshotsResponse(**{"count": 0, "volume_snapshots": []})
+            if volume_snapshot.project_id != profile.project.id:
+                LOG.debug(
+                    f"Volume snapshot with id '{uuid}' is in project "
+                    f"'{volume_snapshot.project_id}', not in '{profile.project.id}'"
+                )
+                return schemas.VolumeSnapshotsResponse(**{"count": 0, "volume_snapshots": []})
         snapshot_session = get_system_session()
         search_opts["all_tenants"] = True
 

@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 
+from cinderclient.exceptions import NotFound
 from fastapi import HTTPException, status
 from keystoneauth1.exceptions.http import Unauthorized
 from keystoneauth1.session import Session
@@ -91,3 +92,23 @@ async def list_volume_snapshots(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e),
         )
+
+
+async def get_volume_snapshot(
+    session: Session,
+    region: str,
+    global_request_id: str,
+    snapshot_id: str,
+) -> Any:
+    try:
+        cc = await utils.cinder_client(
+            session=session, region=region, global_request_id=global_request_id
+        )
+        return await run_in_threadpool(cc.volume_snapshots.get, snapshot_id)
+    except Unauthorized as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e),
+        )
+    except NotFound as e:
+        raise e
