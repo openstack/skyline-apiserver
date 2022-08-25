@@ -52,6 +52,7 @@ async def _get_projects_and_unscope_token(
     username: Optional[str] = None,
     password: Optional[str] = None,
     token: Optional[str] = None,
+    project_enabled: bool = False,
 ) -> Tuple[List[Any], str]:
     try:
         auth_url = await utils.get_endpoint(
@@ -90,8 +91,9 @@ async def _get_projects_and_unscope_token(
             detail=str(e),
         )
 
-    # we must get the project_scope with enabled project
-    project_scope = [scope for scope in project_scope if scope.enabled]
+    if project_enabled:
+        project_scope = [scope for scope in project_scope if scope.enabled]
+
     if not project_scope:
         raise Exception("You are not authorized for any projects or domains.")
 
@@ -113,7 +115,15 @@ async def _patch_profile(profile: schemas.Profile, global_request_id: str) -> sc
                 region=profile.region, token=profile.keystone_token
             )
 
-        profile.projects = {i.id: {"name": i.name, "domain_id": i.domain_id} for i in projects}
+        profile.projects = {
+            i.id: {
+                "name": i.name,
+                "enabled": i.enabled,
+                "domain_id": i.domain_id,
+                "description": i.description,
+            }
+            for i in projects
+        }
 
     except Exception as e:
         raise HTTPException(
@@ -150,6 +160,7 @@ async def login(
             domain=credential.domain,
             username=credential.username,
             password=credential.password,
+            project_enabled=True,
         )
 
         project_scope_token = await get_project_scope_token(
@@ -242,7 +253,9 @@ async def websso(
 ) -> RedirectResponse:
     try:
         project_scope, _ = await _get_projects_and_unscope_token(
-            region=CONF.openstack.sso_region, token=token
+            region=CONF.openstack.sso_region,
+            token=token,
+            project_enabled=True,
         )
 
         project_scope_token = await get_project_scope_token(
