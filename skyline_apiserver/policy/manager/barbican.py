@@ -1,3 +1,17 @@
+# Copyright 2022 99cloud
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 # flake8: noqa
 # fmt: off
 
@@ -100,8 +114,28 @@ list_rules = (
         description="No description",
     ),
     base.Rule(
+        name="secret_project_reader",
+        check_str=("role:reader and rule:secret_project_match"),
+        description="No description",
+    ),
+    base.Rule(
+        name="secret_project_member",
+        check_str=("role:member and rule:secret_project_match"),
+        description="No description",
+    ),
+    base.Rule(
         name="secret_project_admin",
         check_str=("rule:admin and rule:secret_project_match"),
+        description="No description",
+    ),
+    base.Rule(
+        name="secret_owner",
+        check_str=("user_id:%(target.secret.creator_id)s"),
+        description="No description",
+    ),
+    base.Rule(
+        name="secret_is_not_private",
+        check_str=("True:%(target.secret.read_project_access)s"),
         description="No description",
     ),
     base.Rule(
@@ -355,42 +389,42 @@ list_rules = (
     ),
     base.APIRule(
         name="secret:decrypt",
-        check_str=("rule:secret_decrypt_non_private_read or rule:secret_project_creator or rule:secret_project_admin or rule:secret_acl_read or (role:member and project_id:%(target.secret.project_id)s and (user_id:%(target.secret.creator_id)s or True:%(target.secret.read_project_access)s)) or role:admin and project_id:%(target.secret.project_id)s"),
+        check_str=("True:%(enforce_new_defaults)s and (rule:secret_project_admin or (rule:secret_project_member and rule:secret_owner) or (rule:secret_project_member and rule:secret_is_not_private) or rule:secret_acl_read)"),
         description="Retrieve a secrets payload.",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v1/secrets/{uuid}/payload"}],
     ),
     base.APIRule(
         name="secret:get",
-        check_str=("rule:secret_non_private_read or rule:secret_project_creator or rule:secret_project_admin or rule:secret_acl_read or (role:member and project_id:%(target.secret.project_id)s and (user_id:%(target.secret.creator_id)s or True:%(target.secret.read_project_access)s)) or role:admin and project_id:%(target.secret.project_id)s"),
+        check_str=("True:%(enforce_new_defaults)s and (rule:secret_project_admin or (rule:secret_project_member and rule:secret_owner) or (rule:secret_project_member and rule:secret_is_not_private) or rule:secret_acl_read)"),
         description="Retrieves a secrets metadata.",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v1/secrets/{secret-id}"}],
     ),
     base.APIRule(
         name="secret:put",
-        check_str=("rule:admin_or_creator and rule:secret_project_match or (role:member and project_id:%(target.secret.project_id)s and (user_id:%(target.secret.creator_id)s or True:%(target.secret.read_project_access)s)) or role:admin and project_id:%(target.secret.project_id)s"),
+        check_str=("True:%(enforce_new_defaults)s and (rule:secret_project_admin or (rule:secret_project_member and rule:secret_owner) or (rule:secret_project_member and rule:secret_is_not_private))"),
         description="Add the payload to an existing metadata-only secret.",
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/v1/secrets/{secret-id}"}],
     ),
     base.APIRule(
         name="secret:delete",
-        check_str=("rule:secret_project_admin or rule:secret_project_creator or (rule:secret_project_creator_role and not rule:secret_private_read) or (role:member and project_id:%(target.secret.project_id)s and (user_id:%(target.secret.creator_id)s or True:%(target.secret.read_project_access)s)) or role:admin and project_id:%(target.secret.project_id)s"),
+        check_str=("True:%(enforce_new_defaults)s and (rule:secret_project_admin or (rule:secret_project_member and rule:secret_owner) or (rule:secret_project_member and rule:secret_is_not_private))"),
         description="Delete a secret by uuid.",
         scope_types=["project"],
         operations=[{"method": "DELETE", "path": "/v1/secrets/{secret-id}"}],
     ),
     base.APIRule(
         name="secrets:post",
-        check_str=("rule:admin_or_creator or role:member"),
+        check_str=("True:%(enforce_new_defaults)s and role:member"),
         description="Creates a Secret entity.",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/v1/secrets"}],
     ),
     base.APIRule(
         name="secrets:get",
-        check_str=("rule:all_but_audit or role:member"),
+        check_str=("True:%(enforce_new_defaults)s and role:member"),
         description="Lists a projects secrets.",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v1/secrets"}],
