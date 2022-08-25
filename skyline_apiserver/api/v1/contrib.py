@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Any, List
+from typing import List
 
 from fastapi import APIRouter, Header, HTTPException, status
 
@@ -41,7 +41,6 @@ router = APIRouter()
     response_description="OK",
 )
 async def list_keystone_endpoints() -> List[schemas.KeystoneEndpoints]:
-    """Contrib List Keystone Endpoints."""
     try:
         regions = await system.get_regions()
         tasks = [asyncio.create_task(get_endpoints(region)) for region in regions]
@@ -75,9 +74,7 @@ async def list_domains(
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-) -> Any:
-    """Contrib List Domain Names."""
-
+) -> List[str]:
     try:
         regions = await system.get_regions()
     except Exception as e:
@@ -107,8 +104,7 @@ async def list_domains(
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def list_regions() -> Any:
-    """Contrib List Regions."""
+async def list_regions() -> List[str]:
     try:
         return await system.get_regions()
     except Exception as e:

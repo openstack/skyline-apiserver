@@ -46,13 +46,7 @@ STEP = constants.ID_UUID_RANGE_STEP
 
 @router.get(
     "/extension/servers",
-    description="""
-List Servers.
-
-*Notes*:
-- The `host` of **sort_keys** is only used for admin/system_admin role users.
-- The `name` is to support for fuzzy queries.
-""",
+    description="List Servers",
     responses={
         200: {"model": schemas.ServersResponse},
         400: {"model": schemas.BadRequestMessage},
@@ -71,64 +65,57 @@ async def list_servers(
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-    limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
-    marker: str = Query(None),
-    sort_dirs: schemas.SortDir = Query(None),
-    sort_keys: List[schemas.ServerSortKey] = Query(None),
-    all_projects: bool = Query(None),
+    limit: int = Query(
+        None,
+        description=(
+            "Requests a page size of items. Returns a number of items up to a limit value."
+        ),
+        gt=constants.EXTENSION_API_LIMIT_GT,
+    ),
+    marker: str = Query(None, description="The ID of the last-seen item."),
+    sort_dirs: schemas.SortDir = Query(
+        None, description="Indicates in which directions to sort."
+    ),
+    sort_keys: List[schemas.ServerSortKey] = Query(
+        None,
+        description=(
+            "Indicates in which attributes to sort. Host is only used for admin role users"
+        ),
+    ),
+    all_projects: bool = Query(None, description="List servers for all projects."),
     project_id: str = Query(
         None,
-        description="Only works when the all_projects filter is also specified.",
+        description=(
+            "Filter the list of servers by the given project ID. "
+            "Only works when the all_projects filter is also specified."
+        ),
     ),
     project_name: str = Query(
         None,
-        description="Only works when the all_projects filter is also specified.",
+        description=(
+            "Filter the list of servers by the given project name. "
+            "Only works when the all_projects filter is also specified."
+        ),
     ),
-    name: str = Query(None),
-    status: schemas.ServerStatus = Query(None),
-    host: str = Query(None, description="It will be ignored for non-admin user."),
-    flavor_id: str = Query(None),
-    uuid: str = Query(None, description="UUID of server."),
+    name: str = Query(
+        None,
+        description=("Filter the list of servers by the given server name. Support fuzzy query."),
+    ),
+    status: schemas.ServerStatus = Query(
+        None, description="Filter the list of servers by the given server status."
+    ),
+    host: str = Query(
+        None,
+        description=(
+            "Filter the list of servers by the given host. "
+            "It will be ignored for non-admin user."
+        ),
+    ),
+    flavor_id: str = Query(
+        None, description="Filter the list of servers by the given flavor ID."
+    ),
+    uuid: str = Query(None, description="Filter the list of servers by the given server UUID."),
 ) -> schemas.ServersResponse:
-    """Extension List Servers.
-
-    :param profile: Profile object include token, role and so on,
-                    defaults to Depends(deps.get_profile_update_jwt)
-    :type profile: schemas.Profile, optional
-    :param limit: Limit count to fetch,
-                  defaults to Query(None, gt=constants.EXTENSION_API_LIMIT_GT)
-    :type limit: int, optional
-    :param marker: Marker object to fetch, defaults to None
-    :type marker: str, optional
-    :param sort_dirs: Sort order, defaults to None
-    :type sort_dirs: schemas.SortDir, optional
-    :param sort_keys: Sort keys, defaults to Query(None)
-    :type sort_keys: List[schemas.ServerSortKey], optional
-    :param all_projects: All projects to fetch, defaults to None
-    :type all_projects: bool, optional
-    :param project_id: Filter by id of project which server belongs to,
-                       defaults to Query(None, description="
-                       Only works when the all_projects filter is also specified.")
-    :type project_id: str, optional
-    :param project_name: Filter by name of project which server belongs to,
-                         defaults to Query(None, description="
-                         Only works when the all_projects filter is also specified.")
-    :type project_name: str, optional
-    :param name: Filter by server name, defaults to None
-    :type name: str, optional
-    :param status: Filter by server status, defaults to None
-    :type status: schemas.ServerStatus, optional
-    :param host: Filter by host which server is located at,
-                 defaults to Query(None, description="It will be ignored for non-admin user.")
-    :type host: str, optional
-    :param flavor_id: Filter by id of flavor which server is created by, defaults to None
-    :type flavor_id: str, optional
-    :param uuid: Filter by uuid, defaults to Query(None, description="UUID of server.")
-    :type uuid: str, optional
-    :raises HTTPException: HTTP Exception
-    :return: Server List
-    :rtype: schemas.ServersResponse
-    """
     if all_projects:
         assert_system_admin_or_reader(
             profile=profile,
@@ -281,13 +268,7 @@ async def list_servers(
 
 @router.get(
     "/extension/recycle_servers",
-    description="""
-List Recycle Servers.
-
-*Notes*:
-- The `updated_at` of **sort_keys** is used as `deleted_at`.
-- The `name` is to support for fuzzy queries.
-""",
+    description="List Recycle Servers",
     responses={
         200: {"model": schemas.RecycleServersResponse},
         400: {"model": schemas.BadRequestMessage},
@@ -306,56 +287,46 @@ async def list_recycle_servers(
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-    limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
-    marker: str = Query(None),
-    sort_dirs: schemas.SortDir = Query(None),
-    sort_keys: List[schemas.RecycleServerSortKey] = Query(None),
-    all_projects: bool = Query(None),
+    limit: int = Query(
+        None,
+        description=(
+            "Requests a page size of items. Returns a number of items up to a limit value."
+        ),
+        gt=constants.EXTENSION_API_LIMIT_GT,
+    ),
+    marker: str = Query(None, description="The ID of the last-seen item."),
+    sort_dirs: schemas.SortDir = Query(
+        None, description="Indicates in which directions to sort."
+    ),
+    sort_keys: List[schemas.RecycleServerSortKey] = Query(
+        None,
+        description=("Indicates in which attributes to sort. Updated_at is used as deleted_at"),
+    ),
+    all_projects: bool = Query(None, description="List recycle servers for all projects."),
     project_id: str = Query(
         None,
-        description="Only works when the all_projects filter is also specified.",
+        description=(
+            "Filter the list of recycle servers by the given project ID. "
+            "Only works when the all_projects filter is also specified."
+        ),
     ),
     project_name: str = Query(
         None,
-        description="Only works when the all_projects filter is also specified.",
+        description=(
+            "Filter the list of recycle servers by the given project name. "
+            "Only works when the all_projects filter is also specified."
+        ),
     ),
-    name: str = Query(None),
-    uuid: str = Query(None, description="UUID of recycle server."),
+    name: str = Query(
+        None,
+        description=(
+            "Filter the list of recycle servers by the given server name. Support fuzzy query."
+        ),
+    ),
+    uuid: str = Query(
+        None, description="Filter the list of recycle servers by the given recycle server UUID."
+    ),
 ) -> schemas.RecycleServersResponse:
-    """Extension List Recycle Servers.
-
-    :param profile: Profile object include token, role and so on,
-                    defaults to Depends(deps.get_profile_update_jwt)
-    :type profile: schemas.Profile, optional
-    :param limit: Limit count to fetch,
-                  defaults to Query(None, gt=constants.EXTENSION_API_LIMIT_GT)
-    :type limit: int, optional
-    :param marker: Marker object to fetch, defaults to None
-    :type marker: str, optional
-    :param sort_dirs: Sort order, defaults to None
-    :type sort_dirs: schemas.SortDir, optional
-    :param sort_keys: Sort keys, defaults to Query(None)
-    :type sort_keys: List[schemas.RecycleServerSortKey], optional
-    :param all_projects: All projects to fetch, defaults to None
-    :type all_projects: bool, optional
-    :param project_id: Filter by id of project which recycle server belongs to,
-                       defaults to Query(None, description="
-                       Only works when the all_projects filter is also specified.")
-    :type project_id: str, optional
-    :param project_name: Filter by name of project which server belongs to,
-                         defaults to Query(None, description="
-                         Only works when the all_projects filter is also specified.")
-    :type project_name: str, optional
-    :param name: Filter by recycle server name, defaults to None
-    :type name: str, optional
-    :param uuid: Filter by uuid,
-                 defaults to Query(None, description="UUID of recycle server.")
-    :type uuid: str, optional
-    :raises HTTPException: HTTP Exception
-    :return: Recycle server list
-    :rtype: schemas.RecycleServersResponse
-    """
-
     if all_projects:
         assert_system_admin_or_reader(
             profile=profile,
@@ -514,7 +485,7 @@ async def list_recycle_servers(
 
 @router.get(
     "/extension/volumes",
-    description="List Volumes.",
+    description="List Volumes",
     responses={
         200: {"model": schemas.VolumesResponse},
         401: {"model": schemas.UnauthorizedMessage},
@@ -532,52 +503,46 @@ async def list_volumes(
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-    limit: int = Query(None, gt=constants.EXTENSION_API_LIMIT_GT),
-    marker: str = Query(None),
-    sort_dirs: schemas.SortDir = Query(None),
-    sort_keys: List[schemas.VolumeSortKey] = Query(None),
-    all_projects: bool = Query(None),
-    project_id: str = Query(None),
-    name: str = Query(None),
-    multiattach: bool = Query(None),
-    status: schemas.VolumeStatus = Query(None),
-    bootable: bool = Query(None),
-    uuid: List[str] = Query(None, description="UUID of volume."),
+    limit: int = Query(
+        None,
+        description=(
+            "Requests a page size of items. Returns a number of items up to a limit value."
+        ),
+        gt=constants.EXTENSION_API_LIMIT_GT,
+    ),
+    marker: str = Query(None, description="The ID of the last-seen item."),
+    sort_dirs: schemas.SortDir = Query(
+        None, description="Indicates in which directions to sort."
+    ),
+    sort_keys: List[schemas.VolumeSortKey] = Query(
+        None,
+        description=("Indicates in which attributes to sort. Updated_at is used as deleted_at"),
+    ),
+    all_projects: bool = Query(None, description="List volumes for all projects."),
+    project_id: str = Query(
+        None,
+        description="Filter the list of volumes by the given project ID.",
+    ),
+    name: str = Query(
+        None,
+        description="Filter the list of volumes by the given server name.",
+    ),
+    multiattach: bool = Query(
+        None,
+        description="Filter the list of volumes by the given multiattach.",
+    ),
+    status: schemas.VolumeStatus = Query(
+        None,
+        description="Filter the list of volumes by the given status.",
+    ),
+    bootable: bool = Query(
+        None,
+        description="Filter the list of volumes by the given bootable.",
+    ),
+    uuid: List[str] = Query(
+        None, description="Filter the list of volumes by the given volumes UUID."
+    ),
 ) -> schemas.VolumesResponse:
-    """Extension List Volumes.
-
-    :param profile: Profile object include token, role and so on,
-                    defaults to Depends(deps.get_profile_update_jwt)
-    :type profile: schemas.Profile, optional
-    :param limit: Limit count to fetch,
-                  defaults to Query(None, gt=constants.EXTENSION_API_LIMIT_GT)
-    :type limit: int, optional
-    :param marker: Marker object to fetch, defaults to None
-    :type marker: str, optional
-    :param sort_dirs: Sort order, defaults to None
-    :type sort_dirs: schemas.SortDir, optional
-    :param sort_keys: Sort keys, defaults to Query(None)
-    :type sort_keys: List[schemas.VolumeSortKey], optional
-    :param all_projects: All projects to fetch, defaults to None
-    :type all_projects: bool, optional
-    :param project_id: Filter by id of project which volume belongs to,
-                       defaults to None
-    :type project_id: str, optional
-    :param name: Filter by volume name, defaults to None
-    :type name: str, optional
-    :param multiattach: Filter by multiattach that server is support multiattach or not,
-                        defaults to None
-    :type multiattach: bool, optional
-    :param status: Filter by volume status, defaults to None
-    :type status: schemas.VolumeStatus, optional
-    :type bootable: Filter by bootable that server be used to create an instance quickly.
-    :type bootable: bool, optional
-    :param uuid: Filter by list uuid,
-                 defaults to Query(None, description="UUID of volume.")
-    :type uuid: List[str], optional
-    :return: Volume list
-    :rtype: schemas.VolumesResponse
-    """
     if all_projects:
         assert_system_admin_or_reader(
             profile=profile,
@@ -1075,7 +1040,7 @@ async def list_ports(
 
 @router.get(
     "/extension/compute-services",
-    description="List compute services.",
+    description="List compute services",
     responses={
         200: {"model": schemas.ComputeServicesResponse},
         401: {"model": schemas.UnauthorizedMessage},
@@ -1093,21 +1058,11 @@ async def compute_services(
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-    binary: str = Query(None),
-    host: str = Query(None),
+    binary: str = Query(
+        None, description="Filter the list of compute services by the given binary."
+    ),
+    host: str = Query(None, description="Filter the list of compute services by the given host."),
 ) -> schemas.ComputeServicesResponse:
-    """Extension List Compute Services.
-
-    :param profile: Profile object include token, role and so on,
-                    defaults to Depends(deps.get_profile_update_jwt)
-    :type profile: schemas.Profile, optional
-    :param binary: Filter by service binary name, defaults to None
-    :type binary: str, optional
-    :param host: Filter by host name, defaults to None
-    :type host: str, optional
-    :return: Compute service list
-    :rtype: schemas.ComputeServicesResponse
-    """
     assert_system_admin_or_reader(
         profile=profile,
         exception="Not allowed to get compute services.",

@@ -320,122 +320,146 @@
                     "Extension"
                 ],
                 "summary": "List Servers",
-                "description": "\nList Servers.\n\n*Notes*:\n- The `host` of **sort_keys** is only used for admin/system_admin role users.\n- The `name` is to support for fuzzy queries.\n",
+                "description": "List Servers",
                 "operationId": "list_servers_api_v1_extension_servers_get",
                 "parameters": [
                     {
+                        "description": "Requests a page size of items. Returns a number of items up to a limit value.",
                         "required": false,
                         "schema": {
                             "title": "Limit",
                             "exclusiveMinimum": 0.0,
-                            "type": "integer"
+                            "type": "integer",
+                            "description": "Requests a page size of items. Returns a number of items up to a limit value."
                         },
                         "name": "limit",
                         "in": "query"
                     },
                     {
+                        "description": "The ID of the last-seen item.",
                         "required": false,
                         "schema": {
                             "title": "Marker",
-                            "type": "string"
+                            "type": "string",
+                            "description": "The ID of the last-seen item."
                         },
                         "name": "marker",
                         "in": "query"
                     },
                     {
+                        "description": "Indicates in which directions to sort.",
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/SortDir"
+                            "allOf": [
+                                {
+                                    "$ref": "#/components/schemas/SortDir"
+                                }
+                            ],
+                            "description": "Indicates in which directions to sort."
                         },
                         "name": "sort_dirs",
                         "in": "query"
                     },
                     {
+                        "description": "Indicates in which attributes to sort. Host is only used for admin role users",
                         "required": false,
                         "schema": {
                             "type": "array",
                             "items": {
                                 "$ref": "#/components/schemas/ServerSortKey"
-                            }
+                            },
+                            "description": "Indicates in which attributes to sort. Host is only used for admin role users"
                         },
                         "name": "sort_keys",
                         "in": "query"
                     },
                     {
+                        "description": "List servers for all projects.",
                         "required": false,
                         "schema": {
                             "title": "All Projects",
-                            "type": "boolean"
+                            "type": "boolean",
+                            "description": "List servers for all projects."
                         },
                         "name": "all_projects",
                         "in": "query"
                     },
                     {
-                        "description": "Only works when the all_projects filter is also specified.",
+                        "description": "Filter the list of servers by the given project ID. Only works when the all_projects filter is also specified.",
                         "required": false,
                         "schema": {
                             "title": "Project Id",
                             "type": "string",
-                            "description": "Only works when the all_projects filter is also specified."
+                            "description": "Filter the list of servers by the given project ID. Only works when the all_projects filter is also specified."
                         },
                         "name": "project_id",
                         "in": "query"
                     },
                     {
-                        "description": "Only works when the all_projects filter is also specified.",
+                        "description": "Filter the list of servers by the given project name. Only works when the all_projects filter is also specified.",
                         "required": false,
                         "schema": {
                             "title": "Project Name",
                             "type": "string",
-                            "description": "Only works when the all_projects filter is also specified."
+                            "description": "Filter the list of servers by the given project name. Only works when the all_projects filter is also specified."
                         },
                         "name": "project_name",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of servers by the given server name. Support fuzzy query.",
                         "required": false,
                         "schema": {
                             "title": "Name",
-                            "type": "string"
+                            "type": "string",
+                            "description": "Filter the list of servers by the given server name. Support fuzzy query."
                         },
                         "name": "name",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of servers by the given server status.",
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/ServerStatus"
+                            "allOf": [
+                                {
+                                    "$ref": "#/components/schemas/ServerStatus"
+                                }
+                            ],
+                            "description": "Filter the list of servers by the given server status."
                         },
                         "name": "status",
                         "in": "query"
                     },
                     {
-                        "description": "It will be ignored for non-admin user.",
+                        "description": "Filter the list of servers by the given host. It will be ignored for non-admin user.",
                         "required": false,
                         "schema": {
                             "title": "Host",
                             "type": "string",
-                            "description": "It will be ignored for non-admin user."
+                            "description": "Filter the list of servers by the given host. It will be ignored for non-admin user."
                         },
                         "name": "host",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of servers by the given flavor ID.",
                         "required": false,
                         "schema": {
                             "title": "Flavor Id",
-                            "type": "string"
+                            "type": "string",
+                            "description": "Filter the list of servers by the given flavor ID."
                         },
                         "name": "flavor_id",
                         "in": "query"
                     },
                     {
-                        "description": "UUID of server.",
+                        "description": "Filter the list of servers by the given server UUID.",
                         "required": false,
                         "schema": {
                             "title": "Uuid",
                             "type": "string",
-                            "description": "UUID of server."
+                            "description": "Filter the list of servers by the given server UUID."
                         },
                         "name": "uuid",
                         "in": "query"
@@ -522,94 +546,110 @@
                     "Extension"
                 ],
                 "summary": "List Recycle Servers",
-                "description": "\nList Recycle Servers.\n\n*Notes*:\n- The `updated_at` of **sort_keys** is used as `deleted_at`.\n- The `name` is to support for fuzzy queries.\n",
+                "description": "List Recycle Servers",
                 "operationId": "list_recycle_servers_api_v1_extension_recycle_servers_get",
                 "parameters": [
                     {
+                        "description": "Requests a page size of items. Returns a number of items up to a limit value.",
                         "required": false,
                         "schema": {
                             "title": "Limit",
                             "exclusiveMinimum": 0.0,
-                            "type": "integer"
+                            "type": "integer",
+                            "description": "Requests a page size of items. Returns a number of items up to a limit value."
                         },
                         "name": "limit",
                         "in": "query"
                     },
                     {
+                        "description": "The ID of the last-seen item.",
                         "required": false,
                         "schema": {
                             "title": "Marker",
-                            "type": "string"
+                            "type": "string",
+                            "description": "The ID of the last-seen item."
                         },
                         "name": "marker",
                         "in": "query"
                     },
                     {
+                        "description": "Indicates in which directions to sort.",
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/SortDir"
+                            "allOf": [
+                                {
+                                    "$ref": "#/components/schemas/SortDir"
+                                }
+                            ],
+                            "description": "Indicates in which directions to sort."
                         },
                         "name": "sort_dirs",
                         "in": "query"
                     },
                     {
+                        "description": "Indicates in which attributes to sort. Updated_at is used as deleted_at",
                         "required": false,
                         "schema": {
                             "type": "array",
                             "items": {
                                 "$ref": "#/components/schemas/RecycleServerSortKey"
-                            }
+                            },
+                            "description": "Indicates in which attributes to sort. Updated_at is used as deleted_at"
                         },
                         "name": "sort_keys",
                         "in": "query"
                     },
                     {
+                        "description": "List recycle servers for all projects.",
                         "required": false,
                         "schema": {
                             "title": "All Projects",
-                            "type": "boolean"
+                            "type": "boolean",
+                            "description": "List recycle servers for all projects."
                         },
                         "name": "all_projects",
                         "in": "query"
                     },
                     {
-                        "description": "Only works when the all_projects filter is also specified.",
+                        "description": "Filter the list of recycle servers by the given project ID. Only works when the all_projects filter is also specified.",
                         "required": false,
                         "schema": {
                             "title": "Project Id",
                             "type": "string",
-                            "description": "Only works when the all_projects filter is also specified."
+                            "description": "Filter the list of recycle servers by the given project ID. Only works when the all_projects filter is also specified."
                         },
                         "name": "project_id",
                         "in": "query"
                     },
                     {
-                        "description": "Only works when the all_projects filter is also specified.",
+                        "description": "Filter the list of recycle servers by the given project name. Only works when the all_projects filter is also specified.",
                         "required": false,
                         "schema": {
                             "title": "Project Name",
                             "type": "string",
-                            "description": "Only works when the all_projects filter is also specified."
+                            "description": "Filter the list of recycle servers by the given project name. Only works when the all_projects filter is also specified."
                         },
                         "name": "project_name",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of recycle servers by the given server name. Support fuzzy query.",
                         "required": false,
                         "schema": {
                             "title": "Name",
-                            "type": "string"
+                            "type": "string",
+                            "description": "Filter the list of recycle servers by the given server name. Support fuzzy query."
                         },
                         "name": "name",
                         "in": "query"
                     },
                     {
-                        "description": "UUID of recycle server.",
+                        "description": "Filter the list of recycle servers by the given recycle server UUID.",
                         "required": false,
                         "schema": {
                             "title": "Uuid",
                             "type": "string",
-                            "description": "UUID of recycle server."
+                            "description": "Filter the list of recycle servers by the given recycle server UUID."
                         },
                         "name": "uuid",
                         "in": "query"
@@ -696,102 +736,130 @@
                     "Extension"
                 ],
                 "summary": "List Volumes",
-                "description": "List Volumes.",
+                "description": "List Volumes",
                 "operationId": "list_volumes_api_v1_extension_volumes_get",
                 "parameters": [
                     {
+                        "description": "Requests a page size of items. Returns a number of items up to a limit value.",
                         "required": false,
                         "schema": {
                             "title": "Limit",
                             "exclusiveMinimum": 0.0,
-                            "type": "integer"
+                            "type": "integer",
+                            "description": "Requests a page size of items. Returns a number of items up to a limit value."
                         },
                         "name": "limit",
                         "in": "query"
                     },
                     {
+                        "description": "The ID of the last-seen item.",
                         "required": false,
                         "schema": {
                             "title": "Marker",
-                            "type": "string"
+                            "type": "string",
+                            "description": "The ID of the last-seen item."
                         },
                         "name": "marker",
                         "in": "query"
                     },
                     {
+                        "description": "Indicates in which directions to sort.",
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/SortDir"
+                            "allOf": [
+                                {
+                                    "$ref": "#/components/schemas/SortDir"
+                                }
+                            ],
+                            "description": "Indicates in which directions to sort."
                         },
                         "name": "sort_dirs",
                         "in": "query"
                     },
                     {
+                        "description": "Indicates in which attributes to sort. Updated_at is used as deleted_at",
                         "required": false,
                         "schema": {
                             "type": "array",
                             "items": {
                                 "$ref": "#/components/schemas/VolumeSortKey"
-                            }
+                            },
+                            "description": "Indicates in which attributes to sort. Updated_at is used as deleted_at"
                         },
                         "name": "sort_keys",
                         "in": "query"
                     },
                     {
+                        "description": "List volumes for all projects.",
                         "required": false,
                         "schema": {
                             "title": "All Projects",
-                            "type": "boolean"
+                            "type": "boolean",
+                            "description": "List volumes for all projects."
                         },
                         "name": "all_projects",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of volumes by the given project ID.",
                         "required": false,
                         "schema": {
                             "title": "Project Id",
-                            "type": "string"
+                            "type": "string",
+                            "description": "Filter the list of volumes by the given project ID."
                         },
                         "name": "project_id",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of volumes by the given server name.",
                         "required": false,
                         "schema": {
                             "title": "Name",
-                            "type": "string"
+                            "type": "string",
+                            "description": "Filter the list of volumes by the given server name."
                         },
                         "name": "name",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of volumes by the given multiattach.",
                         "required": false,
                         "schema": {
                             "title": "Multiattach",
-                            "type": "boolean"
+                            "type": "boolean",
+                            "description": "Filter the list of volumes by the given multiattach."
                         },
                         "name": "multiattach",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of volumes by the given status.",
                         "required": false,
                         "schema": {
-                            "$ref": "#/components/schemas/VolumeStatus"
+                            "allOf": [
+                                {
+                                    "$ref": "#/components/schemas/VolumeStatus"
+                                }
+                            ],
+                            "description": "Filter the list of volumes by the given status."
                         },
                         "name": "status",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of volumes by the given bootable.",
                         "required": false,
                         "schema": {
                             "title": "Bootable",
-                            "type": "boolean"
+                            "type": "boolean",
+                            "description": "Filter the list of volumes by the given bootable."
                         },
                         "name": "bootable",
                         "in": "query"
                     },
                     {
-                        "description": "UUID of volume.",
+                        "description": "Filter the list of volumes by the given volumes UUID.",
                         "required": false,
                         "schema": {
                             "title": "Uuid",
@@ -799,7 +867,7 @@
                             "items": {
                                 "type": "string"
                             },
-                            "description": "UUID of volume."
+                            "description": "Filter the list of volumes by the given volumes UUID."
                         },
                         "name": "uuid",
                         "in": "query"
@@ -1302,23 +1370,27 @@
                     "Extension"
                 ],
                 "summary": "Compute Services",
-                "description": "List compute services.",
+                "description": "List compute services",
                 "operationId": "compute_services_api_v1_extension_compute_services_get",
                 "parameters": [
                     {
+                        "description": "Filter the list of compute services by the given binary.",
                         "required": false,
                         "schema": {
                             "title": "Binary",
-                            "type": "string"
+                            "type": "string",
+                            "description": "Filter the list of compute services by the given binary."
                         },
                         "name": "binary",
                         "in": "query"
                     },
                     {
+                        "description": "Filter the list of compute services by the given host.",
                         "required": false,
                         "schema": {
                             "title": "Host",
-                            "type": "string"
+                            "type": "string",
+                            "description": "Filter the list of compute services by the given host."
                         },
                         "name": "host",
                         "in": "query"
@@ -1389,28 +1461,34 @@
                 "operationId": "prometheus_query_api_v1_query_get",
                 "parameters": [
                     {
+                        "description": "The query expression of prometheus to filter.",
                         "required": false,
                         "schema": {
                             "title": "Query",
-                            "type": "string"
+                            "type": "string",
+                            "description": "The query expression of prometheus to filter."
                         },
                         "name": "query",
                         "in": "query"
                     },
                     {
+                        "description": "The time to filter.",
                         "required": false,
                         "schema": {
                             "title": "Time",
-                            "type": "string"
+                            "type": "string",
+                            "description": "The time to filter."
                         },
                         "name": "time",
                         "in": "query"
                     },
                     {
+                        "description": "The timeout to filter.",
                         "required": false,
                         "schema": {
                             "title": "Timeout",
-                            "type": "string"
+                            "type": "string",
+                            "description": "The timeout to filter."
                         },
                         "name": "timeout",
                         "in": "query"
@@ -1470,46 +1548,56 @@
                 "operationId": "prometheus_query_range_api_v1_query_range_get",
                 "parameters": [
                     {
+                        "description": "The query expression of prometheus to filter.",
                         "required": false,
                         "schema": {
                             "title": "Query",
-                            "type": "string"
+                            "type": "string",
+                            "description": "The query expression of prometheus to filter."
                         },
                         "name": "query",
                         "in": "query"
                     },
                     {
+                        "description": "The start time to filter.",
                         "required": false,
                         "schema": {
                             "title": "Start",
-                            "type": "string"
+                            "type": "string",
+                            "description": "The start time to filter."
                         },
                         "name": "start",
                         "in": "query"
                     },
                     {
+                        "description": "The end time to filter.",
                         "required": false,
                         "schema": {
                             "title": "End",
-                            "type": "string"
+                            "type": "string",
+                            "description": "The end time to filter."
                         },
                         "name": "end",
                         "in": "query"
                     },
                     {
+                        "description": "The step to filter.",
                         "required": false,
                         "schema": {
                             "title": "Step",
-                            "type": "string"
+                            "type": "string",
+                            "description": "The step to filter."
                         },
                         "name": "step",
                         "in": "query"
                     },
                     {
+                        "description": "The timeout to filter.",
                         "required": false,
                         "schema": {
                             "title": "Timeout",
-                            "type": "string"
+                            "type": "string",
+                            "description": "The timeout to filter."
                         },
                         "name": "timeout",
                         "in": "query"

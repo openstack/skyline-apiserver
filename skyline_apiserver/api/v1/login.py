@@ -143,7 +143,7 @@ async def login(
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-):
+) -> schemas.Profile:
     try:
         project_scope, unscope_token = await _get_projects_and_unscope_token(
             region=credential.region,
@@ -184,9 +184,7 @@ async def login(
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def get_sso(
-    request: Request,
-) -> schemas.SSO:
+async def get_sso(request: Request) -> schemas.SSO:
     sso = {
         "enable_sso": False,
         "protocols": [],
@@ -286,7 +284,7 @@ async def get_profile(
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-):
+) -> schemas.Profile:
     return await _patch_profile(profile, x_openstack_request_id)
 
 
@@ -309,7 +307,7 @@ async def logout(
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-):
+) -> schemas.Message:
     if payload:
         try:
             token = parse_access_token(payload)
@@ -343,7 +341,7 @@ async def switch_project(
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-):
+) -> schemas.Profile:
     try:
         project_scope_token = await get_project_scope_token(
             keystone_token=profile.keystone_token,

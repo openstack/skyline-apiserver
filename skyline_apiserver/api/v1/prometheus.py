@@ -107,9 +107,9 @@ def get_prometheus_query_range_response(
     response_model_exclude_none=True,
 )
 async def prometheus_query(
-    query: str = Query(None),
-    time: str = Query(None),
-    timeout: str = Query(None),
+    query: str = Query(None, description="The query expression of prometheus to filter."),
+    time: str = Query(None, description="The time to filter."),
+    timeout: str = Query(None, description="The timeout to filter."),
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
 ) -> schemas.PrometheusQueryResponse:
     kwargs = {}
@@ -152,11 +152,11 @@ async def prometheus_query(
     response_model_exclude_none=True,
 )
 async def prometheus_query_range(
-    query: str = Query(None),
-    start: str = Query(None),
-    end: str = Query(None),
-    step: str = Query(None),
-    timeout: str = Query(None),
+    query: str = Query(None, description="The query expression of prometheus to filter."),
+    start: str = Query(None, description="The start time to filter."),
+    end: str = Query(None, description="The end time to filter."),
+    step: str = Query(None, description="The step to filter."),
+    timeout: str = Query(None, description="The timeout to filter."),
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
 ) -> schemas.PrometheusQueryRangeResponse:
     kwargs = {}
