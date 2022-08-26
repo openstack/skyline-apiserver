@@ -606,10 +606,6 @@ async def list_volumes(
             if attachment["server_id"] not in server_ids:
                 server_ids.append(attachment["server_id"])
 
-    # Sometimes, the servers have been soft deleted, but the volumes will
-    # be still displayed on the volume page. If we do not get the recycle
-    # servers, the attachment server name for those volumes which are attached
-    # to these servers will be blank.
     if all_projects:
         tasks = [
             keystone.list_projects(
@@ -621,10 +617,13 @@ async def list_volumes(
         ]
     else:
         tasks = [asyncio.sleep(0.01)]
-    # We should split the server_ids with 100 number.
-    # If we do not do this, the length of url will be too long to do request.
+
+    # Sometimes, the servers have been soft deleted, but the volumes will
+    # be still displayed on the volume page. If we do not get the recycle
+    # servers, the attachment server name for those volumes which are attached
+    # to these servers will be blank.
     server_ids = list(set(server_ids))
-    for i in range(0, len(server_ids), STEP):
+    for server_id in server_ids:
         tasks.extend(
             [
                 nova.list_servers(
@@ -632,7 +631,7 @@ async def list_volumes(
                     session=current_session,
                     global_request_id=x_openstack_request_id,
                     search_opts={
-                        "uuid": server_ids[i : i + STEP],
+                        "uuid": server_id,
                         "all_tenants": all_projects,
                     },
                 ),
@@ -641,7 +640,7 @@ async def list_volumes(
                     session=current_session,
                     global_request_id=x_openstack_request_id,
                     search_opts={
-                        "uuid": server_ids[i : i + STEP],
+                        "uuid": server_id,
                         "status": "soft_deleted",
                         "deleted": True,
                         "all_tenants": all_projects,
