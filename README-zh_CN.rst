@@ -95,12 +95,9 @@ Skyline 像九色鹿一样，轻巧、优雅，而又能力强大，为 OpenStac
 
       docker rm -f skyline_bootstrap
 
-   ..
+   如果需要修改 skyline 端口号，则在以下命令中添加 ``-e LISTEN_ADDRESS=<ip:port>``
 
-      如果需要修改 skyline 端口号，则在以下命令中添加
-      ``-e LISTEN_ADDRESS=<ip:port>``
-
-      ``LISTEN_ADDRESS`` 默认为 ``0.0.0.0:9999``
+   ``LISTEN_ADDRESS`` 默认为 ``0.0.0.0:9999``
 
    .. code:: bash
 
@@ -108,6 +105,8 @@ Skyline 像九色鹿一样，轻巧、优雅，而又能力强大，为 OpenStac
 
 部署 - 数据库使用 MariaDB
 ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+参考：<https://docs.openstack.org/skyline-apiserver/latest/install/docker-install-ubuntu.html>
 
 1. 连接 OpenStack 环境的数据库, 并创建 ``skyline`` 数据库
 
@@ -169,12 +168,9 @@ Skyline 像九色鹿一样，轻巧、优雅，而又能力强大，为 OpenStac
 
       docker rm -f skyline_bootstrap
 
-   ..
+   如果需要修改 skyline 端口号，则在以下命令中添加 ``-e LISTEN_ADDRESS=<ip:port>``
 
-      如果需要修改 skyline 端口号，则在以下命令中添加
-      ``-e LISTEN_ADDRESS=<ip:port>``
-
-      ``LISTEN_ADDRESS`` 默认为 ``0.0.0.0:9999``
+   ``LISTEN_ADDRESS`` 默认为 ``0.0.0.0:9999``
 
    .. code:: bash
 
@@ -193,9 +189,9 @@ Skyline 像九色鹿一样，轻巧、优雅，而又能力强大，为 OpenStac
 依赖工具
 ~~~~~~~~
 
-   python 使用了 3.7 版本的新特性 Context Variables 以及 uvloop (0.15.0+
-   需要 python3.7+)，考虑大部分系统不支持 python3.7 ，所以选择支持
-   python3.8 及以上版本
+python 使用了 3.7 版本的新特性 Context Variables 以及 uvloop (0.15.0+
+需要 python 3.7+)，考虑大部分系统不支持 python 3.7 ，所以选择支持
+python 3.8 及以上版本
 
 -  make >= 3.82
 -  python >= 3.8
@@ -232,12 +228,10 @@ Skyline 像九色鹿一样，轻巧、优雅，而又能力强大，为 OpenStac
       - system_user_name
       - system_user_password
 
-   ..
-
-      如果你为 ``database_url`` 设置了类似 ``sqlite:////tmp/skyline.db``
-      ，只需要执行以下操作。 如果你为 ``database_url`` 设置了类似
-      ``mysql://root:root@localhost:3306/skyline`` ，你应该先参考
-      ``部署 - 数据库使用 MariaDB`` 一章中的 ``1`` 和 ``2`` 步骤。
+   如果你为 ``database_url`` 设置了类似 ``sqlite:////tmp/skyline.db``
+   ，只需要执行以下操作。 如果你为 ``database_url`` 设置了类似
+   ``mysql://root:root@localhost:3306/skyline`` ，你应该先参考
+   ``部署 - 数据库使用 MariaDB`` 一章中的 ``1`` 和 ``2`` 步骤。
 
 3. 初始化 skyline 数据库
 

@@ -99,12 +99,9 @@ Deployment with Sqlite
 
       docker rm -f skyline_bootstrap
 
-   ..
+   If you need to modify skyline port, add ``-e LISTEN_ADDRESS=<ip:port>`` in the following command
 
-      If you need to modify skyline port, add
-      ``-e LISTEN_ADDRESS=<ip:port>`` in the following command
-
-      ``LISTEN_ADDRESS`` defaults to ``0.0.0.0:9999``
+   ``LISTEN_ADDRESS`` defaults to ``0.0.0.0:9999``
 
    .. code:: bash
 
@@ -113,77 +110,7 @@ Deployment with Sqlite
 Deployment with MariaDB
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-1. Connect to database of the OpenStack environment and create the
-   ``skyline`` database
-
-   .. code:: bash
-
-      $ mysql -u root -p
-      MariaDB [(none)]> CREATE DATABASE IF NOT EXISTS skyline DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
-      Query OK, 1 row affected (0.001 sec)
-
-2. Grant proper access to the databases
-
-   Replace ``SKYLINE_DBPASS`` with a suitable password.
-
-   .. code:: bash
-
-      MariaDB [(none)]> GRANT ALL PRIVILEGES ON skyline.* TO 'skyline'@'localhost' IDENTIFIED BY 'SKYLINE_DBPASS';
-      Query OK, 0 rows affected (0.001 sec)
-
-      MariaDB [(none)]> GRANT ALL PRIVILEGES ON skyline.* TO 'skyline'@'%'  IDENTIFIED BY 'SKYLINE_DBPASS';
-      Query OK, 0 rows affected (0.001 sec)
-
-3. Create skyline service credentials
-
-   .. code:: bash
-
-      # Source the admin credentials
-      $ source admin-openrc
-
-      # Create the skyline user
-      $ openstack user create --domain default --password-prompt skyline
-      User Password:
-      Repeat User Password:
-      +---------------------+----------------------------------+
-      | Field               | Value                            |
-      +---------------------+----------------------------------+
-      | domain_id           | default                          |
-      | enabled             | True                             |
-      | id                  | 1qaz2wsx3edc4rfv5tgb6yhn7ujm8ikl |
-      | name                | skyline                          |
-      | options             | {}                               |
-      | password_expires_at | 2020-08-08T08:08:08.123456       |
-      +---------------------+----------------------------------+
-
-      # Add the admin role to the skyline user:
-      $ openstack role add --project service --user skyline admin
-
-4. Run the skyline_bootstrap container to bootstrap
-
-   .. code:: bash
-
-      docker run -d --name skyline_bootstrap -e KOLLA_BOOTSTRAP="" -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml --net=host 99cloud/skyline:latest
-
-      # Check bootstrap is normal `exit 0`
-      docker logs skyline_bootstrap
-
-5. Run the skyline service after bootstrap is complete
-
-   .. code:: bash
-
-      docker rm -f skyline_bootstrap
-
-   ..
-
-      If you need to modify skyline port, add
-      ``-e LISTEN_ADDRESS=<ip:port>`` in the following command
-
-      ``LISTEN_ADDRESS`` defaults to ``0.0.0.0:9999``
-
-   .. code:: bash
-
-      docker run -d --name skyline --restart=always -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml --net=host 99cloud/skyline:latest
+<https://docs.openstack.org/skyline-apiserver/latest/install/docker-install-ubuntu.html>
 
 Test Access
 ~~~~~~~~~~~
@@ -198,9 +125,9 @@ Develop Skyline-apiserver
 Dependent tools
 ~~~~~~~~~~~~~~~
 
-   Use the new feature Context Variables of python37 & uvloop(0.15.0+
-   requires python37). Considering that most systems do not support
-   python37, we choose to support python38 at least.
+Use the new feature Context Variables of python37 & uvloop(0.15.0+
+requires python37). Considering that most systems do not support
+python37, we choose to support python38 at least.
 
 -  make >= 3.82
 -  python >= 3.8
@@ -238,13 +165,11 @@ Install & Run
       - system_user_name
       - system_user_password
 
-   ..
-
-      If you set such as ``sqlite:////tmp/skyline.db`` for
-      ``database_url`` , just do as followed. If you set such as
-      ``mysql://root:root@localhost:3306/skyline`` for ``database_url``
-      , you should refer to steps ``1`` and ``2`` of the chapter
-      ``Deployment with MariaDB`` at first.
+   If you set such as ``sqlite:////tmp/skyline.db`` for
+   ``database_url`` , just do as followed. If you set such as
+   ``mysql://root:root@localhost:3306/skyline`` for ``database_url``
+   , you should refer to steps ``1`` and ``2`` of the chapter
+   ``Deployment with MariaDB`` at first.
 
 3. Init skyline database
 
