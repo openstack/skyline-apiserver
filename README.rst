@@ -110,7 +110,7 @@ Deployment with Sqlite
 Deployment with MariaDB
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-<https://docs.openstack.org/skyline-apiserver/latest/install/docker-install-ubuntu.html>
+https://docs.openstack.org/skyline-apiserver/latest/install/docker-install-ubuntu.html
 
 Test Access
 ~~~~~~~~~~~

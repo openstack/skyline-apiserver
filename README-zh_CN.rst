@@ -106,7 +106,7 @@ Skyline 像九色鹿一样，轻巧、优雅，而又能力强大，为 OpenStac
 部署 - 数据库使用 MariaDB
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-参考：<https://docs.openstack.org/skyline-apiserver/latest/install/docker-install-ubuntu.html>
+参考：https://docs.openstack.org/skyline-apiserver/latest/install/docker-install-ubuntu.html
 
 1. 连接 OpenStack 环境的数据库, 并创建 ``skyline`` 数据库
 
