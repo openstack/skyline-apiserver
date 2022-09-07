@@ -2493,6 +2493,7 @@
                 "enum": [
                     "",
                     "compute:nova",
+                    "compute:kuryr",
                     "network:router_ha_interface",
                     "network:ha_router_replicated_interface",
                     "network:router_interface",

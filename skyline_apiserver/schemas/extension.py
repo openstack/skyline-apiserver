@@ -108,6 +108,7 @@ class PortDeviceOwner(str, Enum):
     null = ""
     # prefix compute
     compute_nova = "compute:nova"
+    compute_kuryr = "compute:kuryr"
     # prefix network
     network_router_ha_interface = "network:router_ha_interface"
     network_ha_router_replicated_interface = "network:ha_router_replicated_interface"
