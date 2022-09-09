@@ -72,7 +72,14 @@ list_rules = (
         name="baremetal:node:create",
         check_str=("role:admin and system_scope:all"),
         description="Create Node records",
-        scope_types=["system"],
+        scope_types=["system", "project"],
+        operations=[{"method": "POST", "path": "/nodes"}],
+    ),
+    base.APIRule(
+        name="baremetal:node:create:self_owned_node",
+        check_str=("role:admin"),
+        description="Create node records which will be tracked as owned by the associated user project.",
+        scope_types=["project"],
         operations=[{"method": "POST", "path": "/nodes"}],
     ),
     base.APIRule(
@@ -241,6 +248,13 @@ list_rules = (
         check_str=("role:admin and system_scope:all"),
         description="Delete Node records",
         scope_types=["system", "project"],
+        operations=[{"method": "DELETE", "path": "/nodes/{node_ident}"}],
+    ),
+    base.APIRule(
+        name="baremetal:node:delete:self_owned_node",
+        check_str=("role:admin and project_id:%(node.owner)s"),
+        description="Delete node records which are associated with the requesting project.",
+        scope_types=["project"],
         operations=[{"method": "DELETE", "path": "/nodes/{node_ident}"}],
     ),
     base.APIRule(

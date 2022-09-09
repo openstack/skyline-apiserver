@@ -510,6 +510,27 @@ list_rules = (
         operations=[{"method": "POST", "path": "/snapshots/{snapshot_id}/action"}],
     ),
     base.APIRule(
+        name="share_snapshot:update_metadata",
+        check_str=("(rule:system-admin) or (rule:project-member)"),
+        description="Update snapshot metadata.",
+        scope_types=["system", "project"],
+        operations=[{"method": "PUT", "path": "/snapshots/{snapshot_id}/metadata"}, {"method": "POST", "path": "/snapshots/{snapshot_id}/metadata/{key}"}, {"method": "POST", "path": "/snapshots/{snapshot_id}/metadata"}],
+    ),
+    base.APIRule(
+        name="share_snapshot:delete_metadata",
+        check_str=("(rule:system-admin) or (rule:project-member)"),
+        description="Delete snapshot metadata.",
+        scope_types=["system", "project"],
+        operations=[{"method": "DELETE", "path": "/snapshots/{snapshot_id}/metadata/{key}"}],
+    ),
+    base.APIRule(
+        name="share_snapshot:get_metadata",
+        check_str=("(rule:system-reader) or (rule:project-reader)"),
+        description="Get snapshot metadata.",
+        scope_types=["system", "project"],
+        operations=[{"method": "GET", "path": "/snapshots/{snapshot_id}/metadata"}, {"method": "GET", "path": "/snapshots/{snapshot_id}/metadata/{key}"}],
+    ),
+    base.APIRule(
         name="share_snapshot_export_location:index",
         check_str=("(rule:system-reader) or (rule:project-reader)"),
         description="List export locations of a share snapshot.",
