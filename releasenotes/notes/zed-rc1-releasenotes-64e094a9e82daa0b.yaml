@@ -1,0 +1,14 @@
+---
+features:
+  - |
+    Supply login releated APIs.
+  - |
+    Supply sso(only support openid) related APIs.
+  - |
+    Supply prometheus releated APIs.
+  - |
+    Supply extension related APIs which encapsulates back-end OpenStack APIs.
+  - |
+    Supply policy releated APIs.
+  - |
+    Supply system settings releated APIs.
