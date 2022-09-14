@@ -122,6 +122,8 @@ class PortDeviceOwner(str, Enum):
     network_router_centralized_snat = "network:router_centralized_snat"
     network_routed = "network:routed"
     network_distributed = "network:distributed"
+    # octavia
+    octavia = "Octavia"
 
     def __str__(self):
         return self.value

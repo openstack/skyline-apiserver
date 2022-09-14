@@ -2505,7 +2505,8 @@
                     "network:floatingip_agent_gateway",
                     "network:router_centralized_snat",
                     "network:routed",
-                    "network:distributed"
+                    "network:distributed",
+                    "Octavia"
                 ],
                 "type": "string",
                 "description": "An enumeration."
