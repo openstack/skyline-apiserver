@@ -152,6 +152,18 @@ reclaim_instance_interval = Opt(
     default=60 * 60 * 24 * 7,
 )
 
+enforce_new_defaults = Opt(
+    name="enforce_new_defaults",
+    description=(
+        "This configuration is associated with `enforce_new_defaults`"
+        "in oslo policy, which you can refer to the oslo policy parameters."
+        "Skyline does not currently support deprecated policy setting, specify"
+        "default:True."
+    ),
+    schema=StrictBool,
+    default=True,
+)
+
 sso_enabled = Opt(
     name="sso_enabled",
     description="enable sso",
@@ -177,6 +189,7 @@ sso_region = Opt(
 
 GROUP_NAME = __name__.split(".")[-1]
 ALL_OPTS = (
+    enforce_new_defaults,
     sso_enabled,
     sso_protocols,
     sso_region,
