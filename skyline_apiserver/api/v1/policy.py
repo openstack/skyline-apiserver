@@ -25,6 +25,7 @@ from keystoneauth1.exceptions.http import (
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
 from skyline_apiserver.client.utils import generate_session, get_access, get_system_scope_access
+from skyline_apiserver.config import CONF
 from skyline_apiserver.log import LOG
 from skyline_apiserver.policy import ENFORCER, UserContext
 
@@ -35,6 +36,8 @@ def _generate_target(profile: schemas.Profile) -> Dict[str, str]:
     return {
         "user_id": profile.user.id,
         "project_id": profile.project.id,
+        # oslo policy
+        "enforce_new_defaults": CONF.openstack.enforce_new_defaults,
         # trove
         "tenant": profile.project.id,
         # keystone
