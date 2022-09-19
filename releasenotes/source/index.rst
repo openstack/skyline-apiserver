@@ -6,3 +6,4 @@ Skyline APIServer Release Notes
    :maxdepth: 1
 
    unreleased
+   zed
