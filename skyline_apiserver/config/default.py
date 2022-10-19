@@ -34,6 +34,13 @@ log_dir = Opt(
     default="./log",
 )
 
+log_file = Opt(
+    name="log_file",
+    description="Log file",
+    schema=StrictStr,
+    default="skyline.log",
+)
+
 secret_key = Opt(
     name="secret_key",
     description="Secret key",
@@ -115,6 +122,7 @@ GROUP_NAME = __name__.split(".")[-1]
 ALL_OPTS = (
     debug,
     log_dir,
+    log_file,
     secret_key,
     access_token_expire,
     access_token_renew,

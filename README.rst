@@ -86,9 +86,9 @@ Deployment with Sqlite
 
    .. code:: bash
 
-      rm -rf /tmp/skyline && mkdir /tmp/skyline
+      rm -rf /tmp/skyline && mkdir /tmp/skyline && mkdir /var/log/skyline
 
-      docker run -d --name skyline_bootstrap -e KOLLA_BOOTSTRAP="" -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml -v /tmp/skyline:/tmp --net=host 99cloud/skyline:latest
+      docker run -d --name skyline_bootstrap -e KOLLA_BOOTSTRAP="" -v /var/log/skyline:/var/log/skyline -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml -v /tmp/skyline:/tmp --net=host 99cloud/skyline:latest
 
       # Check bootstrap is normal `exit 0`
       docker logs skyline_bootstrap
@@ -105,7 +105,7 @@ Deployment with Sqlite
 
    .. code:: bash
 
-      docker run -d --name skyline --restart=always -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml -v /tmp/skyline:/tmp --net=host 99cloud/skyline:latest
+      docker run -d --name skyline --restart=always -v /var/log/skyline:/var/log/skyline -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml -v /tmp/skyline:/tmp --net=host 99cloud/skyline:latest
 
 Deployment with MariaDB
 ~~~~~~~~~~~~~~~~~~~~~~~

@@ -44,8 +44,8 @@ http {
                     '"$upstream_response_time" "$request" '
                     '$status $body_bytes_sent "$http_referer" '
                     '"$http_user_agent" "$http_x_forwarded_for"';
-    access_log {{ log_dir | default('/var/log') }}/skyline/nginx_access.log main;
-    error_log {{ log_dir | default('/var/log') }}/skyline/nginx_error.log;
+    access_log {{ log_dir | default('/var/log/skyline') }}/skyline-nginx-access.log main;
+    error_log {{ log_dir | default('/var/log/skyline') }}/skyline-nginx-error.log;
 
     ##
     # Gzip Settings

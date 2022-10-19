@@ -19,6 +19,4 @@ GITDIR["skyline-console"]=$DEST/skyline-console
 SKYLINE_CONF_DIR=${SKYLINE_CONF_DIR:-/etc/skyline}
 SKYLINE_CONF_FILE=${SKYLINE_CONF_DIR}/skyline.yaml
 SKYLINE_LOG_DIR=/var/log/skyline
-SKYLINE_ERROR_LOG_FILE=${SKYLINE_LOG_DIR}/error.log
-SKYLINE_ACCESS_LOG_FILE=${SKYLINE_LOG_DIR}/access.log
 SKYLINE_RUN_DIR=/var/lib/skyline

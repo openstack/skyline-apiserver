@@ -32,7 +32,7 @@ PROJECT_NAME = "Skyline API"
 async def on_startup() -> None:
     configure("skyline")
     log_setup(
-        Path(CONF.default.log_dir).joinpath("skyline", "skyline-apiserver.log"),
+        Path(CONF.default.log_dir).joinpath(CONF.default.log_file),
         debug=CONF.default.debug,
     )
     policies_setup()

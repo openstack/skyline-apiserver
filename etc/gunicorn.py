@@ -44,12 +44,12 @@ logconfig_dict = {
         "error_file": {
             "class": "logging.handlers.RotatingFileHandler",
             "formatter": "generic",
-            "filename": "/var/log/skyline/error.log",
+            "filename": "/var/log/skyline/skyline-error.log",
         },
         "access_file": {
             "class": "logging.handlers.RotatingFileHandler",
             "formatter": "generic",
-            "filename": "/var/log/skyline/access.log",
+            "filename": "/var/log/skyline/skyline-access.log",
         },
         "console": {
             "class": "logging.StreamHandler",

@@ -115,7 +115,7 @@ We will install the Skyline APIServer service from docker image.
         default:
           database_url: mysql://skyline:SKYLINE_DBPASS@DB_SERVER:3306/skyline
           debug: true
-          log_dir: /var/log
+          log_dir: /var/log/skyline
         openstack:
           keystone_url: http://KEYSTONE_SERVER:5000/v3/
           system_user_password: SKYLINE_SERVICE_PASSWORD

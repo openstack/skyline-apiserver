@@ -16,6 +16,7 @@ file ``skyline.yaml.sample`` in ``etc`` directory.
       database_url: sqlite:////tmp/skyline.db
       debug: false
       log_dir: ./log
+      log_file: skyline.log
       prometheus_basic_auth_password: ''
       prometheus_basic_auth_user: ''
       prometheus_enable_basic_auth: false

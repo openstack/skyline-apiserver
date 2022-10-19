@@ -124,7 +124,7 @@ function configure_skyline {
     # devstack will not create internal interface
     # we can see more details from devstack/lib/keystone
     _skyline_config_set $SKYLINE_CONF_FILE "interface_type: *.*" "interface_type: public"
-    _skyline_config_set $SKYLINE_CONF_FILE "log_dir: *.*" "log_dir: /var/log"
+    _skyline_config_set $SKYLINE_CONF_FILE "log_dir: *.*" "log_dir: $SKYLINE_LOG_DIR"
 }
 
 # create_skyline_accounts() - Create required service accounts
