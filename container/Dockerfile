@@ -31,7 +31,7 @@ RUN export LANG=C.UTF-8 \
     && cd /skyline-apiserver \
     && git init \
     && cd / \
-    && pip install skyline-apiserver/ \
+    && pip install skyline-apiserver/ -chttps://releases.openstack.org/constraints/upper/master \
     && pip install -U ${SKYLINE_CONSOLE_PACKAGE_URL} \
     && apt-get clean \
     && rm -rf ~/.cache/pip
