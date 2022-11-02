@@ -180,3 +180,8 @@ Finalize installation
 
       If you need to modify skyline port, add ``-e LISTEN_ADDRESS=<ip:port>`` in run command.
       Default port is 9999.
+
+API Doc
+---------
+
+You can visit the API doc ``https://<ip_address>:9999/api/openstack/skyline/docs``

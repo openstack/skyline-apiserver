@@ -112,6 +112,11 @@ Deployment with MariaDB
 
 https://docs.openstack.org/skyline-apiserver/latest/install/docker-install-ubuntu.html
 
+API Doc
+~~~~~~~~~
+
+You can visit the API doc ``https://<ip_address>:9999/api/openstack/skyline/docs``
+
 Test Access
 ~~~~~~~~~~~
 

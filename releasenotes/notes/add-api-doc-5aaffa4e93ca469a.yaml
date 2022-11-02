@@ -1,0 +1,6 @@
+---
+features:
+  - |
+    Added ``api_prefix`` forwarding to the nginx configuration file.
+    Now You can visit the API doc
+    ``https://<ip_address>:9999/api/openstack/skyline/docs``.

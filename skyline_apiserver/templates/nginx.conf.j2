@@ -98,6 +98,16 @@ http {
             proxy_set_header Host $http_host;
         }
 
+        location {{ api_prefix }}/ {
+            proxy_pass http://skyline{{ api_prefix }}/;
+            proxy_redirect off;
+            proxy_buffering off;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Host $host;
+            proxy_set_header Host $http_host;
+        }
+
         {% for endpoint in endpoints %}
         {{ endpoint["part"] }}
         location {{ endpoint["location"] }} {

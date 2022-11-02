@@ -176,6 +176,11 @@ Skyline 像九色鹿一样，轻巧、优雅，而又能力强大，为 OpenStac
 
       docker run -d --name skyline --restart=always -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml --net=host 99cloud/skyline:latest
 
+API Doc
+~~~~~~~~~
+
+你可以使用 ``https://<ip_address>:9999/api/openstack/skyline/docs`` 来访问 API doc
+
 访问测试
 ~~~~~~~~
 

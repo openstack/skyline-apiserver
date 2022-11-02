@@ -31,6 +31,7 @@ from skyline_console import static_path
 import skyline_apiserver
 from skyline_apiserver.config import CONF, configure
 from skyline_apiserver.log import LOG, setup
+from skyline_apiserver.types import constants
 
 
 class CommandException(Exception):
@@ -166,6 +167,7 @@ def main(
         context = {
             "skyline_console_static_path": static_path,
             "endpoints": [i.dict() for i in endpoints.values()],
+            "api_prefix": constants.API_PREFIX,
         }
         if ssl_certfile:
             context.update(ssl_certfile=ssl_certfile)
