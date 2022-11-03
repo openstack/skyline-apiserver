@@ -209,8 +209,8 @@ htmlhelp_basename = 'SkylineAPIServerdoc'
 # (source start file, target name, title, author, documentclass
 # [howto/manual]).
 latex_documents = [
-    ('index', 'doc-skyline-apiserver.tex', u'Skyline APIServer Developer Documentation',
-     u'Skyline APIServer contributors', 'manual'),
+    ('index', 'doc-skyline-apiserver.tex', 'Skyline APIServer Developer Documentation',
+     'Skyline APIServer contributors', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
