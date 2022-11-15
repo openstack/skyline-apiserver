@@ -174,14 +174,19 @@ Finalize installation
       ``/var/lib/skyline/skyline.sock``.
 
       So you can not access the skyline-apiserver openapi swagger. But now you
-      can visit the skyline UI ``https://xxxxx:9999``.
+      can visit the skyline UI ``http://xxxxx:9999``.
 
    .. note::
 
       If you need to modify skyline port, add ``-e LISTEN_ADDRESS=<ip:port>`` in run command.
       Default port is 9999.
 
+   .. note::
+
+      If you want to enable ssl, add ``-e SSL_CERTFILE=<ssl-certfile> -e SSL_KEYFILE=<ssl-keyfile>``
+      in run command. Default does not enable ssl.
+
 API Doc
 ---------
 
-You can visit the API doc ``https://<ip_address>:9999/api/openstack/skyline/docs``
+You can visit the API doc ``http(s)://<ip_address>:9999/api/openstack/skyline/docs``
