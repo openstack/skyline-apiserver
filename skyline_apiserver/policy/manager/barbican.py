@@ -25,7 +25,7 @@ list_rules = (
     ),
     base.Rule(
         name="system_admin",
-        check_str=("role:amdin and system_scope:all"),
+        check_str=("role:admin and system_scope:all"),
         description="No description",
     ),
     base.Rule(
