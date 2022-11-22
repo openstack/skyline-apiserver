@@ -62,10 +62,8 @@ function _install_dependent_tools {
     install_package make
 
     # python
-    if is_fedora; then
-        install_package python38
-    else
-        install_package python3.8 python-is-python3 # make sure python exists
+    if is_ubuntu; then
+        install_package python-is-python3 # make sure python exists
     fi
 
     # nvm
