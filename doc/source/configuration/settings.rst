@@ -35,7 +35,7 @@ file ``skyline.yaml.sample`` in ``etc`` directory.
         qos: neutron_qos
         vpnaas: neutron_vpn
       interface_type: public
-      keystone_url: http://localhost:5000/v3/
+      keystone_url: http://127.0.0.1:5000/v3/
       nginx_prefix: /api/openstack
       reclaim_instance_interval: 604800
       service_mapping:

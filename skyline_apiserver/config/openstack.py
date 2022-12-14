@@ -23,9 +23,12 @@ from skyline_apiserver.types import InterfaceType
 
 keystone_url = Opt(
     name="keystone_url",
-    description="Keystone endpoint address",
+    description=(
+        "Keystone endpoint address. If using domain, "
+        "top level domain is required. For example: example.org"
+    ),
     schema=HttpUrl,
-    default="http://localhost:5000/v3/",
+    default="http://127.0.0.1:5000/v3/",
 )
 
 system_project_domain = Opt(
