@@ -1,0 +1,5 @@
+---
+features:
+  - |
+    Support keystone ssl verify.
+    Add configuration item cafile to skyline configuration file.

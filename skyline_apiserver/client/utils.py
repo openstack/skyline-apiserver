@@ -46,7 +46,7 @@ async def generate_session(profile: schemas.Profile) -> Any:
         "project_id": profile.project.id,
     }
     auth = Token(**kwargs)
-    session = Session(auth=auth, verify=False, timeout=constants.DEFAULT_TIMEOUT)
+    session = Session(auth=auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT)
     session.auth.auth_ref = await run_in_threadpool(session.auth.get_auth_ref, session)
     return session
 
@@ -65,14 +65,16 @@ def get_system_session() -> Session:
         project_domain_name=CONF.openstack.system_project_domain,
         reauthenticate=True,
     )
-    SESSION = Session(auth=auth, verify=False, timeout=constants.DEFAULT_TIMEOUT)
+    SESSION = Session(auth=auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT)
     return SESSION
 
 
 async def get_system_scope_access(keystone_token: str, region: str) -> AccessInfoV3:
     auth_url = await get_endpoint(region, "keystone", get_system_session())
     scope_auth = Token(auth_url, keystone_token, system_scope="all")
-    session = Session(auth=scope_auth, verify=False, timeout=constants.DEFAULT_TIMEOUT)
+    session = Session(
+        auth=scope_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT
+    )
     return await run_in_threadpool(session.auth.get_auth_ref, session)
 
 

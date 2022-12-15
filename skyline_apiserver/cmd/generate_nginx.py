@@ -54,7 +54,7 @@ def get_system_session() -> Session:
         project_domain_name=CONF.openstack.system_project_domain,
         reauthenticate=True,
     )
-    return Session(auth=auth, verify=False, timeout=30)
+    return Session(auth=auth, verify=CONF.default.cafile, timeout=30)
 
 
 def get_proxy_endpoints() -> Dict[str, ProxyEndpoint]:

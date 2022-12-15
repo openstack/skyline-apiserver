@@ -113,9 +113,16 @@ prometheus_basic_auth_password = Opt(
 
 ssl_enabled = Opt(
     name="ssl_enabled",
-    description="enable ssl",
+    description="Enable ssl",
     schema=StrictBool,
     default=True,
+)
+
+cafile = Opt(
+    name="cafile",
+    description="A path to a CA file",
+    schema=StrictStr,
+    default="",
 )
 
 GROUP_NAME = __name__.split(".")[-1]
@@ -129,6 +136,7 @@ ALL_OPTS = (
     cors_allow_origins,
     session_name,
     ssl_enabled,
+    cafile,
     database_url,
     prometheus_endpoint,
     prometheus_enable_basic_auth,

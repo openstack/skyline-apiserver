@@ -76,7 +76,9 @@ async def _get_projects_and_unscope_token(
                 reauthenticate=False,
             )
 
-        session = Session(auth=unscope_auth, verify=False, timeout=constants.DEFAULT_TIMEOUT)
+        session = Session(
+            auth=unscope_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT
+        )
         unscope_client = KeystoneClient(
             session=session,
             endpoint=auth_url,

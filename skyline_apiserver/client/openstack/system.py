@@ -41,7 +41,9 @@ async def get_project_scope_token(
     kwargs = {"project_id": project_id}
     scope_auth = Token(auth_url=auth_url, token=keystone_token, **kwargs)
 
-    session = Session(auth=scope_auth, verify=False, timeout=constants.DEFAULT_TIMEOUT)
+    session = Session(
+        auth=scope_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT
+    )
     keystone_token = session.get_token()
 
     return keystone_token
