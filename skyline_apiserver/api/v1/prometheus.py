@@ -73,7 +73,7 @@ def get_prometheus_query_range_response(
         ret.error = resp["error"]
     if "data" in resp:
         result = [
-            schemas.PrometheusQueryRangeResult(metric=i["metric"], values=i["values"])
+            schemas.PrometheusQueryRangeResult(metric=i["metric"], value=i["values"])
             for i in resp["data"]["result"]
         ]
 
