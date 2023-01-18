@@ -78,6 +78,11 @@ Skyline 像九色鹿一样，轻巧、优雅，而又能力强大，为 OpenStac
 部署 - 数据库使用 Sqlite
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
+如果从 dockerhub 拉取镜像失败可以从阿里镜像仓库中拉取，阿里镜像仓库中的镜像会每小时同步一下，镜像地址如下
+
+- registry.cn-shanghai.aliyuncs.com/99cloud-sh/skyline:zed
+- registry.cn-shanghai.aliyuncs.com/99cloud-sh/skyline:latest
+
 1. 运行 skyline_bootstrap 容器进行初始化引导
 
    .. code:: bash
