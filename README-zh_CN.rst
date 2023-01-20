@@ -75,6 +75,13 @@ Skyline 像九色鹿一样，轻巧、优雅，而又能力强大，为 OpenStac
    -  system_user_name
    -  system_user_password
 
+2. 如果需要对接 prometheus 则需要修改以下配置
+
+   -  prometheus_basic_auth_password
+   -  prometheus_basic_auth_user
+   -  prometheus_enable_basic_auth
+   -  prometheus_endpoint
+
 部署 - 数据库使用 Sqlite
 ~~~~~~~~~~~~~~~~~~~~~~~~
 

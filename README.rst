@@ -80,6 +80,13 @@ Configure
    -  system_user_name
    -  system_user_password
 
+2. If you need to dock prometheus, you need to modify the following parameters
+
+   -  prometheus_basic_auth_password
+   -  prometheus_basic_auth_user
+   -  prometheus_enable_basic_auth
+   -  prometheus_endpoint
+
 Deployment with Sqlite
 ~~~~~~~~~~~~~~~~~~~~~~
 
