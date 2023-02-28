@@ -19,8 +19,7 @@ COPY ./container/start_service.sh /usr/local/bin/start_service.sh
 COPY ./etc/skyline.yaml.sample /etc/skyline/skyline.yaml
 COPY ./etc/gunicorn.py /etc/skyline/gunicorn.py
 
-RUN export LANG=C.UTF-8 \
-    && apt-get update -y && apt-get install -y --no-install-recommends apt-utils \
+RUN apt-get update -y && apt-get install -y --no-install-recommends apt-utils \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     gcc make nginx traceroute lsof iputils-ping vim git wget curl locales-all ssl-cert \
     python3 python3-pip python3-dev python3-venv \
