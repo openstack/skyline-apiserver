@@ -22,10 +22,7 @@ COPY ./etc/gunicorn.py /etc/skyline/gunicorn.py
 RUN apt-get update -y && apt-get install -y --no-install-recommends apt-utils \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     gcc make nginx traceroute lsof iputils-ping vim git wget curl locales-all ssl-cert \
-    python3 python3-pip python3-dev python3-venv \
-    && rm -rf /usr/bin/python /usr/bin/pip \
-    && ln -s /usr/bin/python3 /usr/bin/python \
-    && ln -s /usr/bin/pip3 /usr/bin/pip \
+    python3 python3-pip python3-dev python3-venv python-dev-is-python3 \
     && mkdir -p /etc/skyline /var/log/skyline /var/lib/skyline \
     && git init /skyline-apiserver \
     && pip install skyline-apiserver/ -chttps://releases.openstack.org/constraints/upper/master \
