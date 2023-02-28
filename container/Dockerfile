@@ -21,6 +21,10 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends apt-utils \
     && mkdir -p /etc/skyline /var/log/skyline /var/lib/skyline \
     && pip install -U ${SKYLINE_CONSOLE_PACKAGE_URL}
 
+COPY ./requirements.txt /skyline-apiserver/requirements.txt
+
+RUN pip install -r skyline-apiserver/requirements.txt -chttps://releases.openstack.org/constraints/upper/master
+
 COPY ./ /skyline-apiserver/
 
 RUN git init /skyline-apiserver \
