@@ -62,8 +62,19 @@ endif
 
 .PHONY: clean
 clean:
-	rm -rf .venv dist htmlcov .coverage log test_results.html build .tox skyline_apiserver.egg-info AUTHORS ChangeLog
+	rm -rf .venv dist htmlcov .coverage log test_results.html build .tox skyline_apiserver.egg-info AUTHORS ChangeLog skyline_console
 
+
+skyline_console:
+	mkdir skyline_console
+
+skyline_console/skyline_console.tar.gz: | skyline_console
+	wget -O $@ $(SKYLINE_CONSOLE_PACKAGE_URL)
+
+skyline_console/commit_id: skyline_console/skyline_console.tar.gz
+	commit_id_file="$$(tar tzf $< | grep -P '/commit_id\.txt$$')" \
+	  && tar xzf $< --directory skyline_console "$${commit_id_file}" \
+	  && mv "skyline_console/$${commit_id_file}" $@
 
 .PHONY: build devbuild
 BUILD_ENGINE ?= docker
@@ -78,26 +89,20 @@ else ifeq ($(BUILD_ENGINE), buildah)
 else
     $(error Unsupported build engine $(BUILD_ENGINE))
 endif
-build:
-	GIT_CONSOLE_COMMIT=$(shell rm -rf skyline-console-master.tar.gz && wget $(SKYLINE_CONSOLE_PACKAGE_URL) && tar -zxf skyline-console-master.tar.gz && cat skyline-console-*/skyline_console/static/commit_id.txt); \
+build: skyline_console/skyline_console.tar.gz skyline_console/commit_id
 	$(build_cmd) --no-cache --pull --force-rm \
-	  --build-arg SKYLINE_CONSOLE_PACKAGE_URL=$(SKYLINE_CONSOLE_PACKAGE_URL) \
-	  --build-arg GIT_CONSOLE_COMMIT=$$GIT_CONSOLE_COMMIT \
+	  --build-arg GIT_CONSOLE_COMMIT=$(file < skyline_console/commit_id) \
 	  --build-arg GIT_BRANCH=$(GIT_BRANCH) \
 	  --build-arg GIT_COMMIT=$(GIT_COMMIT) \
 	  --build-arg RELEASE_VERSION=$(RELEASE_VERSION) \
 	  $(BUILD_ARGS) -f $(DOCKER_FILE) -t $(IMAGE):$(IMAGE_TAG) $(BUILD_CONTEXT)
-	rm -rf skyline-console-*
-devbuild:
-	GIT_CONSOLE_COMMIT=$(shell rm -rf skyline-console-master.tar.gz && wget $(SKYLINE_CONSOLE_PACKAGE_URL) && tar -zxf skyline-console-master.tar.gz && cat skyline-console-*/skyline_console/static/commit_id.txt); \
+devbuild: skyline_console/skyline_console.tar.gz skyline_console/commit_id
 	$(build_cmd) \
-	  --build-arg SKYLINE_CONSOLE_PACKAGE_URL=$(SKYLINE_CONSOLE_PACKAGE_URL) \
-	  --build-arg GIT_CONSOLE_COMMIT=$$GIT_CONSOLE_COMMIT \
+	  --build-arg GIT_CONSOLE_COMMIT=$(file < skyline_console/commit_id) \
 	  --build-arg GIT_BRANCH=devbuild \
 	  --build-arg GIT_COMMIT=devbuild \
 	  --build-arg RELEASE_VERSION=devbuild \
 	  $(BUILD_ARGS) -f $(DOCKER_FILE) -t $(IMAGE):$(IMAGE_TAG) $(BUILD_CONTEXT)
-	rm -rf skyline-console-*
 
 
 .PHONY: db_revision
