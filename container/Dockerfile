@@ -27,9 +27,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends apt-utils \
     && ln -s /usr/bin/python3 /usr/bin/python \
     && ln -s /usr/bin/pip3 /usr/bin/pip \
     && mkdir -p /etc/skyline /var/log/skyline /var/lib/skyline \
-    && cd /skyline-apiserver \
-    && git init \
-    && cd / \
+    && git init /skyline-apiserver \
     && pip install skyline-apiserver/ -chttps://releases.openstack.org/constraints/upper/master \
     && pip install -U ${SKYLINE_CONSOLE_PACKAGE_URL} \
     && apt-get clean \
