@@ -65,7 +65,7 @@ clean:
 	rm -rf .venv dist htmlcov .coverage log test_results.html build .tox skyline_apiserver.egg-info AUTHORS ChangeLog
 
 
-.PHONY: build
+.PHONY: build devbuild
 BUILD_ENGINE ?= docker
 BUILD_CONTEXT ?= .
 DOCKER_FILE ?= container/Dockerfile
@@ -88,6 +88,17 @@ build:
 	  --build-arg RELEASE_VERSION=$(RELEASE_VERSION) \
 	  $(BUILD_ARGS) -f $(DOCKER_FILE) -t $(IMAGE):$(IMAGE_TAG) $(BUILD_CONTEXT)
 	rm -rf skyline-console-*
+devbuild:
+	GIT_CONSOLE_COMMIT=$(shell rm -rf skyline-console-master.tar.gz && wget $(SKYLINE_CONSOLE_PACKAGE_URL) && tar -zxf skyline-console-master.tar.gz && cat skyline-console-*/skyline_console/static/commit_id.txt); \
+	$(build_cmd) \
+	  --build-arg SKYLINE_CONSOLE_PACKAGE_URL=$(SKYLINE_CONSOLE_PACKAGE_URL) \
+	  --build-arg GIT_CONSOLE_COMMIT=$$GIT_CONSOLE_COMMIT \
+	  --build-arg GIT_BRANCH=devbuild \
+	  --build-arg GIT_COMMIT=devbuild \
+	  --build-arg RELEASE_VERSION=devbuild \
+	  $(BUILD_ARGS) -f $(DOCKER_FILE) -t $(IMAGE):$(IMAGE_TAG) $(BUILD_CONTEXT)
+	rm -rf skyline-console-*
+
 
 .PHONY: db_revision
 HEAD_REV ?= $(shell alembic -c skyline_apiserver/db/alembic/alembic.ini heads | awk '{print $$1}')
