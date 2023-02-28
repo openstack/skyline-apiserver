@@ -8,7 +8,7 @@ mapfile -t CMD < <(tail /run_command | xargs -n 1)
 
 # kolla_extend_start
 if [[ "${!KOLLA_BOOTSTRAP[*]}" ]]; then
-    cd /skyline-apiserver/
+    cd /opt/skyline_apiserver/
     make db_sync
     exit 0
 fi

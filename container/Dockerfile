@@ -19,18 +19,18 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends apt-utils \
     gcc make nginx traceroute lsof iputils-ping vim git wget curl locales-all ssl-cert \
     python3 python3-pip python3-dev python3-venv python-dev-is-python3
 
-COPY ./skyline_console /var/cache/skyline_apiserver/skyline_console
+COPY ./skyline_console /opt/skyline_apiserver/skyline_console
 
-RUN pip install -U /var/cache/skyline_apiserver/skyline_console/skyline_console.tar.gz
+RUN pip install -U /opt/skyline_apiserver/skyline_console/skyline_console.tar.gz
 
-COPY ./requirements.txt /skyline-apiserver/requirements.txt
+COPY ./requirements.txt /opt/skyline_apiserver/requirements.txt
 
-RUN pip install -r skyline-apiserver/requirements.txt -chttps://releases.openstack.org/constraints/upper/master
+RUN pip install -r /opt/skyline_apiserver/requirements.txt -chttps://releases.openstack.org/constraints/upper/master
 
-COPY ./ /skyline-apiserver/
+COPY ./ /opt/skyline_apiserver/
 
-RUN git init /skyline-apiserver \
-    && pip install skyline-apiserver/ -chttps://releases.openstack.org/constraints/upper/master \
+RUN git init /opt/skyline_apiserver \
+    && pip install /opt/skyline_apiserver -chttps://releases.openstack.org/constraints/upper/master \
     && apt-get clean \
     && rm -rf ~/.cache/pip \
     && mkdir -p /etc/skyline /var/log/skyline /var/lib/skyline
