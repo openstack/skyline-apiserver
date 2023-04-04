@@ -207,7 +207,8 @@ async def get_sso(request: Request) -> schemas.SSO:
 
         ks_url = CONF.openstack.keystone_url.rstrip("/")
         url_scheme = "https" if CONF.default.ssl_enabled else "http"
-        base_url = f"{url_scheme}://{request.url.hostname}:{request.url.port}"
+        port = f":{request.url.port}" if request.url.port else ""
+        base_url = f"{url_scheme}://{request.url.hostname}{port}"
         base_path = str(PurePath("/").joinpath(CONF.openstack.nginx_prefix, "skyline"))
 
         for protocol in CONF.openstack.sso_protocols:
