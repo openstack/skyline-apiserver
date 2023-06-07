@@ -66,3 +66,6 @@ SUPPORTED_SERVICE_EPS = {
     "trove": ["trove"],
     "zun": ["zun"],
 }
+
+# Key of Time Expired in Cookie
+TIME_EXPIRED_KEY = "time_expired"

@@ -184,6 +184,7 @@ async def login(
         )
     else:
         response.set_cookie(CONF.default.session_name, profile.toJWTPayload())
+        response.set_cookie(constants.TIME_EXPIRED_KEY, str(profile.exp))
         return profile
 
 
@@ -279,6 +280,7 @@ async def websso(
     else:
         response = RedirectResponse(url="/base/overview", status_code=status.HTTP_302_FOUND)
         response.set_cookie(CONF.default.session_name, profile.toJWTPayload())
+        response.set_cookie(constants.TIME_EXPIRED_KEY, str(profile.exp))
         return response
 
 
@@ -378,4 +380,5 @@ async def switch_project(
         )
     else:
         response.set_cookie(CONF.default.session_name, profile.toJWTPayload())
+        response.set_cookie(constants.TIME_EXPIRED_KEY, str(profile.exp))
         return profile

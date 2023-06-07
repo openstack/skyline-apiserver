@@ -80,4 +80,5 @@ async def get_profile_update_jwt(request: Request, response: Response) -> schema
     if 0 < profile.exp - time.time() < CONF.default.access_token_renew:
         profile.exp = int(time.time()) + CONF.default.access_token_expire
         response.set_cookie(CONF.default.session_name, profile.toJWTPayload())
+        response.set_cookie(constants.TIME_EXPIRED_KEY, str(profile.exp))
     return profile
