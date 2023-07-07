@@ -10,8 +10,6 @@
 
 - kolla : `https://github.com/openstack/kolla`
 - kolla-ansible : `https://github.com/openstack/kolla-ansible`
-- kolla skyline patch : `https://opendev.org/skyline/skyline-apiserver/src/branch/master/kolla/kolla-xxxxxxx.diff`
-- kolla-ansible skyline patch : `https://opendev.org/skyline/skyline-apiserver/src/branch/master/kolla/kolla-ansible-xxxxxxx.diff`
 
 ## kolla build docker image
 
@@ -20,32 +18,8 @@
   ```shell
   cd /opt
   git clone https://github.com/openstack/kolla-ansible
-  curl https://opendev.org/skyline/skyline-apiserver/src/branch/master/kolla/kolla-ansible-xxxxxxx.diff -o kolla-ansible.diff
   cd /opt/kolla-ansible
-  git apply --check /opt/kolla-ansible.diff
-  git apply /opt/kolla-ansible.diff
   sudo pip3 install /opt/kolla-ansible
-  ```
-
-- If kolla has been installed in the deployment environment
-
-  Get the kolla installation directory:
-
-  ```shell
-  KOLLA_PACKAGE_PATH=$(python3 -c "import kolla;from pathlib import Path;print(Path(kolla.__file__).parents[1])")
-  KOLLA_DATA_FILES_PATH=$(python3 -c "import kolla;from pathlib import Path;print(Path(kolla.__file__).parents[4].joinpath('share/kolla'))")
-  ```
-
-  Install kolla patch
-
-  ```shell
-  curl https://opendev.org/skyline/skyline-apiserver/src/branch/master/kolla/kolla-xxxxxxx.diff -o /opt/kolla.diff
-  cd ${KOLLA_PACKAGE_PATH}
-  git apply --check --include='kolla/*' /opt/kolla.diff
-  git apply --include='kolla/*' /opt/kolla.diff
-  cd ${KOLLA_DATA_FILES_PATH}
-  git apply --check --include='docker/*' /opt/kolla.diff
-  git apply --include='docker/*' /opt/kolla.diff
   ```
 
 ### Build skyline image
@@ -72,28 +46,8 @@ kolla-build -b ubuntu -t source -n kolla --tag master --registry 127.0.0.1:4000 
   ```shell
   cd /opt
   git clone https://github.com/openstack/kolla-ansible
-  curl https://opendev.org/skyline/skyline-apiserver/src/branch/master/kolla/kolla-ansible-xxxxxxx.diff -o kolla-ansible.diff
   cd /opt/kolla-ansible
-  git apply --check /opt/kolla-ansible.diff
-  git apply /opt/kolla-ansible.diff
   sudo pip3 install /opt/kolla-ansible
-  ```
-
-- If kolla-ansible has been installed in the deployment environment
-
-  Get the kolla-ansible installation directory:
-
-  ```shell
-  KOLLA_ANSIBLE_DATA_FILES_PATH=$(python3 -c "import kolla_ansible;from pathlib import Path;print(Path(kolla_ansible.__file__).parents[4].joinpath('share/kolla-ansible'))")
-  ```
-
-  Install kolla-ansible patch
-
-  ```shell
-  curl https://opendev.org/skyline/skyline-apiserver/src/branch/master/kolla/kolla-ansible-xxxxxxx.diff -o /opt/kolla-ansible.diff
-  cd ${KOLLA_ANSIBLE_DATA_FILES_PATH}
-  git apply --check --include='ansible/*' /opt/kolla-ansible.diff
-  git apply --include='ansible/*' /opt/kolla-ansible.diff
   ```
 
 ### Configuration
