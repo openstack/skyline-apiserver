@@ -157,7 +157,11 @@ function start_skyline {
     # skyline-apiserver Start
     #-------------------------
 
-    run_process "skyline" "/usr/local/bin/gunicorn -c /etc/skyline/gunicorn.py skyline_apiserver.main:app"
+    if [[ "$GLOBAL_VENV" == "True" ]]; then
+        run_process "skyline" "$DEVSTACK_VENV/bin/gunicorn -c /etc/skyline/gunicorn.py skyline_apiserver.main:app"
+    else
+        run_process "skyline" "/usr/local/bin/gunicorn -c /etc/skyline/gunicorn.py skyline_apiserver.main:app"
+    fi
 
     # skyline-console Configuration
     #-------------------------
