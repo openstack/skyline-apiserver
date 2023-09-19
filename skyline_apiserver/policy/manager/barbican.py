@@ -40,7 +40,7 @@ list_rules = (
     ),
     base.Rule(
         name="secret_project_member",
-        check_str=("role:member and rule:secret_project_match"),
+        check_str=("(role:member or role:_member_) and rule:secret_project_match"),
         description="No description",
     ),
     base.Rule(
@@ -70,7 +70,7 @@ list_rules = (
     ),
     base.Rule(
         name="container_project_member",
-        check_str=("role:member and rule:container_project_match"),
+        check_str=("(role:member or role:_member_) and rule:container_project_match"),
         description="No description",
     ),
     base.Rule(
@@ -100,7 +100,7 @@ list_rules = (
     ),
     base.Rule(
         name="order_project_member",
-        check_str=("role:member and rule:order_project_match"),
+        check_str=("(role:member or role:_member_) and rule:order_project_match"),
         description="No description",
     ),
     base.Rule(
@@ -291,14 +291,14 @@ list_rules = (
     ),
     base.APIRule(
         name="containers:post",
-        check_str=("True:%(enforce_new_defaults)s and role:member"),
+        check_str=("True:%(enforce_new_defaults)s and (role:member or role:_member_)"),
         description="Creates a container.",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/v1/containers"}],
     ),
     base.APIRule(
         name="containers:get",
-        check_str=("True:%(enforce_new_defaults)s and role:member"),
+        check_str=("True:%(enforce_new_defaults)s and (role:member or role:_member_)"),
         description="Lists a projects containers.",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v1/containers"}],
@@ -333,21 +333,21 @@ list_rules = (
     ),
     base.APIRule(
         name="orders:get",
-        check_str=("True:%(enforce_new_defaults)s and role:member"),
+        check_str=("True:%(enforce_new_defaults)s and (role:member or role:_member_)"),
         description="Gets list of all orders associated with a project.",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v1/orders"}],
     ),
     base.APIRule(
         name="orders:post",
-        check_str=("True:%(enforce_new_defaults)s and role:member"),
+        check_str=("True:%(enforce_new_defaults)s and (role:member or role:_member_)"),
         description="Creates an order.",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/v1/orders"}],
     ),
     base.APIRule(
         name="orders:put",
-        check_str=("True:%(enforce_new_defaults)s and role:member"),
+        check_str=("True:%(enforce_new_defaults)s and (role:member or role:_member_)"),
         description="Unsupported method for the orders API.",
         scope_types=["project"],
         operations=[{"method": "PUT", "path": "/v1/orders"}],
@@ -452,14 +452,14 @@ list_rules = (
     ),
     base.APIRule(
         name="secrets:post",
-        check_str=("True:%(enforce_new_defaults)s and role:member"),
+        check_str=("True:%(enforce_new_defaults)s and (role:member or role:_member_)"),
         description="Creates a Secret entity.",
         scope_types=["project"],
         operations=[{"method": "POST", "path": "/v1/secrets"}],
     ),
     base.APIRule(
         name="secrets:get",
-        check_str=("True:%(enforce_new_defaults)s and role:member"),
+        check_str=("True:%(enforce_new_defaults)s and (role:member or role:_member_)"),
         description="Lists a projects secrets.",
         scope_types=["project"],
         operations=[{"method": "GET", "path": "/v1/secrets"}],
