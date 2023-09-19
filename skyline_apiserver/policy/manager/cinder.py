@@ -45,7 +45,7 @@ list_rules = (
     ),
     base.Rule(
         name="xena_system_admin_or_project_member",
-        check_str=("(role:admin) or (role:member and project_id:%(project_id)s)"),
+        check_str=("(role:admin) or ((role:member or role:_member_) and project_id:%(project_id)s)"),
         description="NOTE: this purely role-based rule recognizes only project scope",
     ),
     base.Rule(

@@ -25,7 +25,7 @@ list_rules = (
     ),
     base.Rule(
         name="project-member",
-        check_str=("role:member and project_id:%(project_id)s"),
+        check_str=("(role:member or role:_member_) and project_id:%(project_id)s"),
         description="Project scoped Member",
     ),
     base.Rule(
