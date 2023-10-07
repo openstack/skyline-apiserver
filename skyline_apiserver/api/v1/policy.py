@@ -57,6 +57,11 @@ def _generate_target(profile: schemas.Profile) -> Dict[str, str]:
         "target.limit.domain.id": profile.project.domain.id,
         "target.limit.project_id": profile.project.domain.id,
         "target.limit.project.domain_id": profile.project.domain.id,
+        # barbican
+        "target.container.project_id": profile.project.id,
+        "target.secret.project_id": profile.project.id,
+        "target.order.project_id": profile.project.id,
+        "target.secret.creator_id": profile.user.id,
         # ironic
         "allocation.owner": profile.project.id,
         "node.lessee": profile.project.id,
