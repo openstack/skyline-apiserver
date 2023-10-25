@@ -16,7 +16,9 @@ INSTALL_PROJECTS="keystone \
     manila \
     magnum \
     zun\
-    barbican"
+    barbican \
+    designate \
+    masakari"
 BRANCH=`git rev-parse --abbrev-ref HEAD`
 
 for project in ${INSTALL_PROJECTS}

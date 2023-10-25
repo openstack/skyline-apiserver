@@ -51,6 +51,7 @@ SUPPORTED_SERVICE_EPS = {
     # openstack_service: [<entry_point_name>, <entry_point_name>,]
     "barbican": ["barbican"],
     "cinder": ["cinder"],
+    "designate": ["designate"],
     "glance": ["glance"],
     "heat": ["heat"],
     "ironic": ["ironic.api"],
@@ -58,6 +59,7 @@ SUPPORTED_SERVICE_EPS = {
     "keystone": ["keystone"],
     "magnum": ["magnum"],
     "manila": ["manila"],
+    "masakari": ["masakari"],
     "neutron": ["neutron", "neutron-vpnaas"],
     "nova": ["nova"],
     "octavia": ["octavia"],

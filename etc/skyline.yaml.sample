@@ -1,6 +1,7 @@
 default:
   access_token_expire: 3600
   access_token_renew: 1800
+  cafile: ''
   cors_allow_origins: []
   database_url: sqlite:////tmp/skyline.db
   debug: false
@@ -33,8 +34,10 @@ openstack:
     container: zun
     container-infra: magnum
     database: trove
+    dns: designate
     identity: keystone
     image: glance
+    instance-ha: masakari
     key-manager: barbican
     load-balancer: octavia
     network: neutron

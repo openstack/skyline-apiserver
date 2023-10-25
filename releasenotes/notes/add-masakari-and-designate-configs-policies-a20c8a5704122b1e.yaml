@@ -1,0 +1,6 @@
+---
+features:
+  - |
+    Add masakari related policies. So that we provide policies of masakari to skyline-console.
+  - |
+    Add designate related policies. So that we provide policies of designate to skyline-console.
