@@ -125,6 +125,21 @@ cafile = Opt(
     default="",
 )
 
+policy_file_suffix = Opt(
+    name="policy_file_suffix",
+    description="policy file suffix",
+    schema=StrictStr,
+    default="policy.yaml",
+)
+
+policy_file_path = Opt(
+    name="policy_file_path",
+    description="A path to policy file",
+    schema=StrictStr,
+    default="/etc/skyline/policy",
+)
+
+
 GROUP_NAME = __name__.split(".")[-1]
 ALL_OPTS = (
     debug,
@@ -142,6 +157,8 @@ ALL_OPTS = (
     prometheus_enable_basic_auth,
     prometheus_basic_auth_user,
     prometheus_basic_auth_password,
+    policy_file_suffix,
+    policy_file_path,
 )
 
 __all__ = ("GROUP_NAME", "ALL_OPTS")

@@ -19,27 +19,20 @@ from oslo_policy import _parser
 from .base import Enforcer, UserContext
 from .manager import get_service_rules
 
-ENFORCER = Enforcer()
+ENFORCER = {}
 
 
 def setup() -> None:
     service_rules = get_service_rules()
-    all_api_rules = []
     for service, rules in service_rules.items():
         api_rules = []
         for rule in rules:
-            # Update rule name with prefix service.
-            rule.name = f"{service}:{rule.name}"
-            # Update check
-            rule.check_str = rule.check_str.replace("rule:", f"rule:{service}:")
             rule.check = _parser.parse_rule(rule.check_str)
-            # Update basic check
-            rule.basic_check_str = rule.basic_check_str.replace("rule:", f"rule:{service}:")
             rule.basic_check = _parser.parse_rule(rule.basic_check_str)
             api_rules.append(rule)
-        all_api_rules.extend(api_rules)
-
-    ENFORCER.register_rules(all_api_rules)
+            enforcer = Enforcer(service=service)
+            enforcer.register_rules(api_rules)
+            ENFORCER[service] = enforcer
 
 
 __all__ = (

@@ -1,0 +1,5 @@
+---
+features:
+  - |
+    Editable policy files are supported. Add policy yaml file name and path options
+    to the configuration file. Users can edit and modify the policy as needed.

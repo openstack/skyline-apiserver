@@ -28,6 +28,7 @@ from skyline_apiserver.client.utils import generate_session, get_access, get_sys
 from skyline_apiserver.config import CONF
 from skyline_apiserver.log import LOG
 from skyline_apiserver.policy import ENFORCER, UserContext
+from skyline_apiserver.types import constants
 
 router = APIRouter()
 
@@ -111,11 +112,27 @@ async def list_policies(
         # user_context as is.
         LOG.debug("Keystone is not reachable. No privilege to access system scope.")
     target = _generate_target(profile)
-    result = [
-        {"rule": rule, "allowed": ENFORCER.authorize(rule, target, user_context)}
-        for rule in ENFORCER.rules
-    ]
-    return schemas.Policies(**{"policies": result})
+
+    results = []
+    services = constants.SUPPORTED_SERVICE_EPS.keys()
+    for service in services:
+        try:
+            enforcer = ENFORCER[service]
+            result = [
+                {
+                    "rule": f"{service}:{rule}",
+                    "allowed": enforcer.authorize(rule, target, user_context),
+                }
+                for rule in enforcer.rules
+            ]
+            results.extend(result)
+        except Exception:
+            msg = "An error occurred when calling %(service)s enforcer." % {
+                "service": str(service)
+            }
+            LOG.warning(msg)
+
+    return schemas.Policies(**{"policies": results})
 
 
 @router.post(
@@ -159,10 +176,14 @@ async def check_policies(
     target = _generate_target(profile)
     target.update(policy_rules.target if policy_rules.target else {})
     try:
-        result = [
-            {"rule": rule, "allowed": ENFORCER.authorize(rule, target, user_context)}
-            for rule in policy_rules.rules
-        ]
+        result = []
+        for policy_rule in policy_rules.rules:
+            service = policy_rule.split(":", 1)[0]
+            rule = policy_rule.split(":", 1)[1]
+            enforcer = ENFORCER[service]
+            result.append(
+                {"rule": policy_rule, "allowed": enforcer.authorize(rule, target, user_context)}
+            )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

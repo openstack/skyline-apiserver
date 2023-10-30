@@ -15,14 +15,16 @@
 from __future__ import annotations
 
 from collections.abc import MutableMapping
+from pathlib import Path
 from typing import Any, Dict, Iterator, List, Union
 
 import attr
 from immutables import Map
 from keystoneauth1.access.access import AccessInfoV3
-from oslo_policy._checks import _check
+from oslo_policy import _cache_handler, _checks, policy
 
 from skyline_apiserver.config import CONF
+from skyline_apiserver.log import LOG
 
 from .manager.base import APIRule, Rule
 
@@ -94,7 +96,23 @@ class UserContext(MutableMapping):
 
 @attr.s(kw_only=True, repr=True, frozen=False, slots=True, auto_attribs=True)
 class Enforcer:
+    service: str = attr.ib(repr=True, init=True)
     rules: Map = attr.ib(factory=Map, repr=True, init=False)
+    file_rules: Dict[str, Any] = attr.ib(default={}, repr=True, init=True)
+    _file_cache: Dict[str, Any] = attr.ib(default={}, repr=True, init=True)
+
+    def load_rules(self) -> None:
+        path = Path(CONF.default.policy_file_path).joinpath(
+            str(self.service + "_" + CONF.default.policy_file_suffix)
+        )
+        if path.exists():
+            reloaded, data = _cache_handler.read_cached_file(
+                self._file_cache, path, force_reload=False
+            )
+            if reloaded or not self.file_rules:
+                self.file_rules = policy.Rules.load(data)
+        else:
+            self.file_rules = {}
 
     def register_rules(self, rules: List[Union[Rule, APIRule]]) -> None:
         rule_map = {}
@@ -107,16 +125,25 @@ class Enforcer:
         self.rules = Map(rule_map)
 
     def authorize(self, rule: str, target: Dict[str, Any], context: UserContext) -> bool:
-        result = False
-        do_check = self.rules.get(rule)
-        if do_check is None:
-            raise ValueError(f"Policy {rule} not registered.")
+        try:
+            self.load_rules()
+        except Exception:
+            LOG.debug(f"Failed to load {self.service} rules.")
 
-        result = _check(
-            rule=do_check,
-            target=target,
-            creds=context,
-            enforcer=self,
-            current_rule=rule,
-        )
+        do_check = self.file_rules.get(rule) or self.rules.get(rule)
+        if do_check is None:
+            LOG.debug(f"Policy {rule} not registered.")
+            return False
+
+        try:
+            result = _checks._check(
+                rule=do_check,
+                target=target,
+                creds=context,
+                enforcer=self,
+                current_rule=rule,
+            )
+        except Exception:
+            result = False
+
         return result
