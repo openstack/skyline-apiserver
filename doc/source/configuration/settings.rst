@@ -12,11 +12,14 @@ file ``skyline.yaml.sample`` in ``etc`` directory.
     default:
       access_token_expire: 3600
       access_token_renew: 1800
+      cafile: ''
       cors_allow_origins: []
       database_url: sqlite:////tmp/skyline.db
       debug: false
       log_dir: ./log
       log_file: skyline.log
+      policy_file_path: /etc/skyline/policy
+      policy_file_suffix: policy.yaml
       prometheus_basic_auth_password: ''
       prometheus_basic_auth_user: ''
       prometheus_enable_basic_auth: false
@@ -44,8 +47,10 @@ file ``skyline.yaml.sample`` in ``etc`` directory.
         container: zun
         container-infra: magnum
         database: trove
+        dns: designate
         identity: keystone
         image: glance
+        instance-ha: masakari
         key-manager: barbican
         load-balancer: octavia
         network: neutron

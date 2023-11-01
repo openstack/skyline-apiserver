@@ -103,6 +103,10 @@ Deployment with Sqlite
 
    ``LISTEN_ADDRESS`` defaults to ``0.0.0.0:9999``
 
+   If you need to modify the policy rules of a service, add ``-v /etc/skyline/policy:/etc/skyline/policy`` in the following command
+
+   Rename the service policy yaml file to ``<service_name>_policy.yaml``, and place it in ``/etc/skyline/policy`` folder
+
    .. code:: bash
 
       docker run -d --name skyline --restart=always -v /var/log/skyline:/var/log/skyline -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml -v /tmp/skyline:/tmp --net=host 99cloud/skyline:latest

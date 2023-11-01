@@ -114,6 +114,17 @@ We will install the Skyline APIServer service from source code.
 
       $ sudo mkdir -p /etc/skyline /var/log/skyline
 
+   .. note::
+
+      Modify policy rules of services
+
+      .. code-block:: console
+
+         $ sudo mkdir -p /etc/skyline/policy
+
+      Rename the service policy yaml file to ``<service_name>_policy.yaml``,
+      and place it in ``/etc/skyline/policy`` folder.
+
 #. Copy the configuration file to the configuration folder ``/etc/skyline``
 
    .. code-block:: console

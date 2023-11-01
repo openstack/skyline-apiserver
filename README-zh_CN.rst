@@ -104,6 +104,10 @@ Skyline 像九色鹿一样，轻巧、优雅，而又能力强大，为 OpenStac
 
    ``LISTEN_ADDRESS`` 默认为 ``0.0.0.0:9999``
 
+   如果需要修改某个 service 的 policy 规则，则在以下命令中添加 ``-v /etc/skyline/policy:/etc/skyline/policy``
+
+   将对应的 policy yaml 文件重命名为 ``<service_name>_policy.yaml``, 并放其在 ``/etc/skyline/policy`` 文件夹下
+
    .. code:: bash
 
       docker run -d --name skyline --restart=always -v /etc/skyline/skyline.yaml:/etc/skyline/skyline.yaml -v /tmp/skyline:/tmp --net=host 99cloud/skyline:latest
@@ -176,6 +180,10 @@ Skyline 像九色鹿一样，轻巧、优雅，而又能力强大，为 OpenStac
    如果需要修改 skyline 端口号，则在以下命令中添加 ``-e LISTEN_ADDRESS=<ip:port>``
 
    ``LISTEN_ADDRESS`` 默认为 ``0.0.0.0:9999``
+
+   如果需要修改某个 service 的 policy 规则，则在以下命令中添加 ``-v /etc/skyline/policy:/etc/skyline/policy``
+
+   将对应的 policy yaml 文件重命名为 ``<service_name>_policy.yaml``, 并放其在 ``/etc/skyline/policy`` 文件夹下
 
    .. code:: bash
 

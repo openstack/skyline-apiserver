@@ -7,6 +7,8 @@ default:
   debug: false
   log_dir: ./log
   log_file: skyline.log
+  policy_file_path: /etc/skyline/policy
+  policy_file_suffix: policy.yaml
   prometheus_basic_auth_password: ''
   prometheus_basic_auth_user: ''
   prometheus_enable_basic_auth: false

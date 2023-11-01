@@ -102,6 +102,17 @@ We will install the Skyline APIServer service from docker image.
 
       $ sudo mkdir -p /etc/skyline /var/log/skyline /var/lib/skyline /var/log/nginx
 
+   .. note::
+
+      Modify policy rules of services
+
+      .. code-block:: console
+
+         $ sudo mkdir -p /etc/skyline/policy
+
+      Rename the service policy yaml file to ``<service_name>_policy.yaml``,
+      and place it in ``/etc/skyline/policy`` folder.
+
 #. Set all value from :ref:`configuration-settings` into the configuration file
    ``/etc/skyline/skyline.yaml``
 
@@ -185,6 +196,11 @@ Finalize installation
 
       If you want to enable ssl, add ``-e SSL_CERTFILE=<ssl-certfile> -e SSL_KEYFILE=<ssl-keyfile>``
       in run command. Default does not enable ssl.
+
+   .. note::
+
+      If you need to modify the policy rules of services,
+      add ``-v /etc/skyline/policy:/etc/skyline/policy`` in run command.
 
 API Doc
 ---------
