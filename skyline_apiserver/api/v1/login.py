@@ -54,44 +54,38 @@ async def _get_projects_and_unscope_token(
     token: Optional[str] = None,
     project_enabled: bool = False,
 ) -> Tuple[List[Any], str]:
-    try:
-        auth_url = await utils.get_endpoint(
-            region=region,
-            service="keystone",
-            session=get_system_session(),
+    auth_url = await utils.get_endpoint(
+        region=region,
+        service="keystone",
+        session=get_system_session(),
+    )
+
+    if token:
+        unscope_auth = Token(
+            auth_url=auth_url,
+            token=token,
+            reauthenticate=False,
+        )
+    else:
+        unscope_auth = Password(
+            auth_url=auth_url,
+            user_domain_name=domain,
+            username=username,
+            password=password,
+            reauthenticate=False,
         )
 
-        if token:
-            unscope_auth = Token(
-                auth_url=auth_url,
-                token=token,
-                reauthenticate=False,
-            )
-        else:
-            unscope_auth = Password(
-                auth_url=auth_url,
-                user_domain_name=domain,
-                username=username,
-                password=password,
-                reauthenticate=False,
-            )
+    session = Session(
+        auth=unscope_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT
+    )
+    unscope_client = KeystoneClient(
+        session=session,
+        endpoint=auth_url,
+        interface=CONF.openstack.interface_type,
+    )
 
-        session = Session(
-            auth=unscope_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT
-        )
-        unscope_client = KeystoneClient(
-            session=session,
-            endpoint=auth_url,
-            interface=CONF.openstack.interface_type,
-        )
-
-        project_scope = unscope_client.auth.projects()
-        unscope_token = token if token else session.get_token()
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=str(e),
-        )
+    project_scope = unscope_client.auth.projects()
+    unscope_token = token if token else session.get_token()
 
     if project_enabled:
         project_scope = [scope for scope in project_scope if scope.enabled]
