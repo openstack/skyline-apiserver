@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from contextvars import ContextVar
 
-from databases import Database, DatabaseURL, core
+from databases import Database, DatabaseURL
 
 from skyline_apiserver.config import CONF
 
@@ -24,16 +24,11 @@ DATABASE = None
 DB: ContextVar = ContextVar("skyline_db")
 
 
-class ParallelDatabase(Database):
-    def connection(self) -> core.Connection:
-        return core.Connection(self._backend)
-
-
 async def setup():
     db_url = DatabaseURL(CONF.default.database_url)
     global DATABASE
     if db_url.scheme == "mysql":
-        DATABASE = ParallelDatabase(
+        DATABASE = Database(
             db_url,
             minsize=1,
             maxsize=100,
@@ -42,7 +37,7 @@ async def setup():
             client_flag=0,
         )
     elif db_url.scheme == "sqlite":
-        DATABASE = ParallelDatabase(db_url)
+        DATABASE = Database(db_url)
     else:
         raise ValueError("Unsupported database backend")
     await DATABASE.connect()
