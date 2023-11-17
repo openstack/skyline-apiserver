@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 from pathlib import PurePath
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Union
 
 from fastapi import APIRouter, Depends, Form, Header, HTTPException, Request, Response, status
 from fastapi.responses import RedirectResponse
@@ -26,7 +26,7 @@ from keystoneclient.client import Client as KeystoneClient
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
 from skyline_apiserver.client import utils
-from skyline_apiserver.client.openstack.keystone import revoke_token
+from skyline_apiserver.client.openstack.keystone import get_token_data, get_user, revoke_token
 from skyline_apiserver.client.openstack.system import (
     get_endpoints,
     get_project_scope_token,
@@ -46,6 +46,19 @@ from skyline_apiserver.types import constants
 router = APIRouter()
 
 
+async def _get_default_project_id(
+    session: Session, region: str, user_id: Optional[str] = None
+) -> Union[str, None]:
+    if not user_id:
+        token = session.get_token()
+        token_data = await get_token_data(token, region, session)
+        _user_id = token_data["token"]["user"]["id"]
+    else:
+        _user_id = user_id
+    user = await get_user(_user_id, region, session)
+    return getattr(user, "default_project_id", None)
+
+
 async def _get_projects_and_unscope_token(
     region: str,
     domain: Optional[str] = None,
@@ -53,7 +66,7 @@ async def _get_projects_and_unscope_token(
     password: Optional[str] = None,
     token: Optional[str] = None,
     project_enabled: bool = False,
-) -> Tuple[List[Any], str]:
+) -> Tuple[List[Any], str, Union[str, None]]:
     auth_url = await utils.get_endpoint(
         region=region,
         service="keystone",
@@ -78,6 +91,9 @@ async def _get_projects_and_unscope_token(
     session = Session(
         auth=unscope_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT
     )
+
+    default_project_id = await _get_default_project_id(session, region)
+
     unscope_client = KeystoneClient(
         session=session,
         endpoint=auth_url,
@@ -93,7 +109,7 @@ async def _get_projects_and_unscope_token(
     if not project_scope:
         raise Exception("You are not authorized for any projects or domains.")
 
-    return project_scope, unscope_token
+    return project_scope, unscope_token, default_project_id
 
 
 async def _patch_profile(profile: schemas.Profile, global_request_id: str) -> schemas.Profile:
@@ -107,8 +123,12 @@ async def _patch_profile(profile: schemas.Profile, global_request_id: str) -> sc
         )
 
         if not projects:
-            projects, _ = await _get_projects_and_unscope_token(
+            projects, _, default_project_id = await _get_projects_and_unscope_token(
                 region=profile.region, token=profile.keystone_token
+            )
+        else:
+            default_project_id = await _get_default_project_id(
+                get_system_session(), profile.region, user_id=profile.user.id
             )
 
         profile.projects = {
@@ -120,6 +140,8 @@ async def _patch_profile(profile: schemas.Profile, global_request_id: str) -> sc
             }
             for i in projects
         }
+
+        profile.default_project_id = default_project_id
 
     except Exception as e:
         raise HTTPException(
@@ -151,7 +173,7 @@ async def login(
     ),
 ) -> schemas.Profile:
     try:
-        project_scope, unscope_token = await _get_projects_and_unscope_token(
+        project_scope, unscope_token, default_project_id = await _get_projects_and_unscope_token(
             region=credential.region,
             domain=credential.domain,
             username=credential.username,
@@ -162,7 +184,7 @@ async def login(
         project_scope_token = await get_project_scope_token(
             keystone_token=unscope_token,
             region=credential.region,
-            project_id=project_scope[0].id,
+            project_id=default_project_id or project_scope[0].id,
         )
 
         profile = await generate_profile(
@@ -248,7 +270,7 @@ async def websso(
     ),
 ) -> RedirectResponse:
     try:
-        project_scope, _ = await _get_projects_and_unscope_token(
+        project_scope, _, default_project_id = await _get_projects_and_unscope_token(
             region=CONF.openstack.sso_region,
             token=token,
             project_enabled=True,
@@ -257,7 +279,7 @@ async def websso(
         project_scope_token = await get_project_scope_token(
             keystone_token=token,
             region=CONF.openstack.sso_region,
-            project_id=project_scope[0].id,
+            project_id=default_project_id or project_scope[0].id,
         )
 
         profile = await generate_profile(

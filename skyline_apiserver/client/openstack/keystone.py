@@ -17,7 +17,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional
 
 from fastapi import HTTPException, status
-from keystoneauth1.exceptions.http import Unauthorized
+from keystoneauth1.exceptions.http import NotFound, Unauthorized
 from keystoneauth1.session import Session
 from starlette.concurrency import run_in_threadpool
 
@@ -75,6 +75,46 @@ async def revoke_token(
     except Unauthorized as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e),
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e),
+        )
+
+
+async def get_token_data(token: str, region: str, session: Session) -> Any:
+    try:
+        kc = await utils.keystone_client(
+            session=session,
+            region=region,
+        )
+        return await run_in_threadpool(kc.tokens.get_token_data, token)
+    except Unauthorized as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e),
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e),
+        )
+
+
+async def get_user(id: str, region: str, session: Session) -> Any:
+    try:
+        kc = await utils.keystone_client(session=session, region=region)
+        return await run_in_threadpool(kc.users.get, id)
+    except Unauthorized as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e),
+        )
+    except NotFound as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=str(e),
         )
     except Exception as e:

@@ -2757,6 +2757,11 @@
                         "type": "object",
                         "description": "User projects"
                     },
+                    "default_project_id": {
+                        "title": "Default Project Id",
+                        "type": "string",
+                        "description": "User default project ID"
+                    },
                     "version": {
                         "title": "Version",
                         "type": "string",
