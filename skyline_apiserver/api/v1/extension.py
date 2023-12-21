@@ -165,7 +165,7 @@ async def list_servers(
         sort_dirs=[sort_dirs.value] if sort_dirs else None,
     )
 
-    result = []
+    result: List = []
     server_ids = []
     image_ids = []
     root_device_ids = []
@@ -752,13 +752,13 @@ async def list_volume_snapshots(
                 )
             except NotFound as ex:
                 LOG.debug(f"Not found volume snapshot with id '{uuid}': {ex}")
-                return schemas.VolumeSnapshotsResponse(**{"count": 0, "volume_snapshots": []})
+                return schemas.VolumeSnapshotsResponse(count=0, volume_snapshots=[])
             if volume_snapshot.project_id != profile.project.id:
                 LOG.debug(
                     f"Volume snapshot with id '{uuid}' is in project "
                     f"'{volume_snapshot.project_id}', not in '{profile.project.id}'"
                 )
-                return schemas.VolumeSnapshotsResponse(**{"count": 0, "volume_snapshots": []})
+                return schemas.VolumeSnapshotsResponse(count=0, volume_snapshots=[])
         snapshot_session = get_system_session()
         search_opts["all_tenants"] = True
 
