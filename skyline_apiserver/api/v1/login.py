@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 from pathlib import PurePath
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from fastapi import APIRouter, Depends, Form, Header, HTTPException, Request, Response, status
 from fastapi.responses import RedirectResponse
@@ -218,12 +218,12 @@ async def login(
     response_description="OK",
 )
 async def get_sso(request: Request) -> schemas.SSO:
-    sso = {
+    sso: Dict = {
         "enable_sso": False,
         "protocols": [],
     }
     if CONF.openstack.sso_enabled:
-        protocols = []
+        protocols: List = []
 
         ks_url = CONF.openstack.keystone_url.rstrip("/")
         url_scheme = "https" if CONF.default.ssl_enabled else "http"
