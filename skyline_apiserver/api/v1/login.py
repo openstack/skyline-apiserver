@@ -70,7 +70,7 @@ async def _get_projects_and_unscope_token(
 ) -> Tuple[List[Any], str, Union[str, None]]:
     auth_url = await utils.get_endpoint(
         region=region,
-        service="keystone",
+        service="identity",
         session=get_system_session(),
     )
 

@@ -37,7 +37,7 @@ SESSION = None
 async def generate_session(profile: schemas.Profile) -> Any:
     auth_url = await get_endpoint(
         region=profile.region,
-        service="keystone",
+        service="identity",
         session=get_system_session(),
     )
     kwargs = {
@@ -70,7 +70,7 @@ def get_system_session() -> Session:
 
 
 async def get_system_scope_access(keystone_token: str, region: str) -> AccessInfoV3:
-    auth_url = await get_endpoint(region, "keystone", get_system_session())
+    auth_url = await get_endpoint(region, "identity", get_system_session())
     scope_auth = Token(auth_url, keystone_token, system_scope="all")
     session = Session(
         auth=scope_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT
@@ -90,7 +90,7 @@ async def get_endpoint(region: str, service: str, session: Session) -> Any:
     service_catalog = access.service_catalog
     endpoint = service_catalog.get_urls(
         region_name=region,
-        service_name=service,
+        service_type=service,
         interface=CONF.openstack.interface_type,
     )
     if not endpoint:
@@ -104,7 +104,7 @@ async def keystone_client(
     global_request_id: Optional[str] = None,
     version: str = constants.KEYSTONE_API_VERSION,
 ) -> HTTPClient:
-    endpoint = await get_endpoint(region, "keystone", session=session)
+    endpoint = await get_endpoint(region, "identity", session=session)
     client = KeystoneClient(
         version=version,
         session=session,
@@ -121,7 +121,7 @@ async def glance_client(
     global_request_id: Optional[str] = None,
     version: str = constants.GLANCE_API_VERSION,
 ) -> HTTPClient:
-    endpoint = await get_endpoint(region, "glance", session=session)
+    endpoint = await get_endpoint(region, "image", session=session)
     client = GlanceClient(
         version=version,
         session=session,
@@ -137,7 +137,7 @@ async def nova_client(
     global_request_id: Optional[str] = None,
     version: str = constants.NOVA_API_VERSION,
 ) -> HTTPClient:
-    endpoint = await get_endpoint(region, "nova", session=session)
+    endpoint = await get_endpoint(region, "compute", session=session)
     client = NovaClient(
         version=version,
         session=session,
@@ -153,7 +153,7 @@ async def cinder_client(
     global_request_id: Optional[str] = None,
     version: str = constants.CINDER_API_VERSION,
 ) -> HTTPClient:
-    endpoint = await get_endpoint(region, "cinderv3", session=session)
+    endpoint = await get_endpoint(region, "volumev3", session=session)
     client = CinderClient(
         version=version,
         session=session,
@@ -169,7 +169,7 @@ async def neutron_client(
     global_request_id: Optional[str] = None,
     version: str = constants.NEUTRON_API_VERSION,
 ) -> HTTPClient:
-    endpoint = await get_endpoint(region, "neutron", session=session)
+    endpoint = await get_endpoint(region, "network", session=session)
     client = NeutronClient(
         version=version,
         session=session,

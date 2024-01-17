@@ -35,7 +35,7 @@ async def get_project_scope_token(
 ) -> str:
     auth_url = await utils.get_endpoint(
         region=region,
-        service="keystone",
+        service="identity",
         session=get_system_session(),
     )
     kwargs = {"project_id": project_id}
