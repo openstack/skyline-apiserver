@@ -79,7 +79,7 @@ else
     $(error Unsupported build engine $(BUILD_ENGINE))
 endif
 build:
-	GIT_CONSOLE_COMMIT=$(shell wget $(SKYLINE_CONSOLE_PACKAGE_URL) && tar -zxf skyline-console-master.tar.gz && cat skyline-console-*/skyline_console/static/commit_id.txt); \
+	GIT_CONSOLE_COMMIT=$(shell rm -rf skyline-console-master.tar.gz && wget $(SKYLINE_CONSOLE_PACKAGE_URL) && tar -zxf skyline-console-master.tar.gz && cat skyline-console-*/skyline_console/static/commit_id.txt); \
 	$(build_cmd) --no-cache --pull --force-rm --build-arg RELEASE_VERSION=$(RELEASE_VERSION) --build-arg SKYLINE_CONSOLE_PACKAGE_URL=$(SKYLINE_CONSOLE_PACKAGE_URL) --build-arg GIT_BRANCH=$(GIT_BRANCH) --build-arg GIT_COMMIT=$(GIT_COMMIT) --build-arg GIT_CONSOLE_COMMIT=$$GIT_CONSOLE_COMMIT $(BUILD_ARGS) -f $(DOCKER_FILE) -t $(IMAGE):$(IMAGE_TAG) $(BUILD_CONTEXT)
 	rm -rf skyline-console-*
 
