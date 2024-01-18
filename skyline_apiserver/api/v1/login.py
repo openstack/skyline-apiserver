@@ -93,8 +93,6 @@ async def _get_projects_and_unscope_token(
         auth=unscope_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT
     )
 
-    default_project_id = await _get_default_project_id(session, region)
-
     unscope_client = KeystoneClient(
         session=session,
         endpoint=auth_url,
@@ -109,6 +107,8 @@ async def _get_projects_and_unscope_token(
 
     if not project_scope:
         raise Exception("You are not authorized for any projects or domains.")
+
+    default_project_id = await _get_default_project_id(session, region)
 
     return project_scope, unscope_token, default_project_id
 
@@ -182,6 +182,8 @@ async def login(
             project_enabled=True,
         )
 
+        if default_project_id not in [i.id for i in project_scope]:
+            default_project_id = None
         project_scope_token = await get_project_scope_token(
             keystone_token=unscope_token,
             region=credential.region,
@@ -277,6 +279,8 @@ async def websso(
             project_enabled=True,
         )
 
+        if default_project_id not in [i.id for i in project_scope]:
+            default_project_id = None
         project_scope_token = await get_project_scope_token(
             keystone_token=token,
             region=CONF.openstack.sso_region,
