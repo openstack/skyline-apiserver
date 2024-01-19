@@ -17,7 +17,7 @@ GIT_BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD)
 GIT_COMMIT ?= $(shell git rev-parse --verify HEAD)
 
 # URL for skyline-console packages
-SKYLINE_CONSOLE_PACKAGE_URL ?= "https://tarballs.opendev.org/openstack/skyline-console/skyline-console-master.tar.gz"
+SKYLINE_CONSOLE_PACKAGE_URL ?= "https://tarballs.opendev.org/openstack/skyline-console/skyline-console-stable-2023.2.tar.gz"
 
 
 .PHONY: help
@@ -70,7 +70,7 @@ BUILD_ENGINE ?= docker
 BUILD_CONTEXT ?= .
 DOCKER_FILE ?= container/Dockerfile
 IMAGE ?= skyline
-IMAGE_TAG ?= latest
+IMAGE_TAG ?= 2023.2
 ifeq ($(BUILD_ENGINE), docker)
     build_cmd = docker build
 else ifeq ($(BUILD_ENGINE), buildah)
@@ -79,7 +79,7 @@ else
     $(error Unsupported build engine $(BUILD_ENGINE))
 endif
 build:
-	GIT_CONSOLE_COMMIT=$(shell wget $(SKYLINE_CONSOLE_PACKAGE_URL) && tar -zxf skyline-console-master.tar.gz && cat skyline-console-*/skyline_console/static/commit_id.txt); \
+	GIT_CONSOLE_COMMIT=$(shell wget $(SKYLINE_CONSOLE_PACKAGE_URL) && tar -zxf skyline-console-stable-2023.2.tar.gz && cat skyline-console-*/skyline_console/static/commit_id.txt); \
 	$(build_cmd) --no-cache --pull --force-rm --build-arg RELEASE_VERSION=$(RELEASE_VERSION) --build-arg SKYLINE_CONSOLE_PACKAGE_URL=$(SKYLINE_CONSOLE_PACKAGE_URL) --build-arg GIT_BRANCH=$(GIT_BRANCH) --build-arg GIT_COMMIT=$(GIT_COMMIT) --build-arg GIT_CONSOLE_COMMIT=$$GIT_CONSOLE_COMMIT $(BUILD_ARGS) -f $(DOCKER_FILE) -t $(IMAGE):$(IMAGE_TAG) $(BUILD_CONTEXT)
 	rm -rf skyline-console-*
 
