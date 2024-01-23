@@ -227,3 +227,38 @@ Kolla Ansible Deployment
 
 .. |image0| image:: doc/source/images/logo/OpenStack_Project_Skyline_horizontal.png
 .. |image1| image:: doc/source/images/logo/nine-color-deer-64.png
+
+FAQ
+---
+
+1. Policy
+
+   Q: Why common user could login, but could list the nova servers?
+      `Bug #2049807 <https://bugs.launchpad.net/skyline-apiserver/+bug/2049807>`_
+
+   ::
+
+      Symptom:
+      -----------------------------------
+      1. Login Horizon with common user A, list servers OK.
+      2. Login Skyline with same common user A, could list the nova servers, F12 show no http requests sent from network, however webpage show 401, do not allow to list servers
+
+      Root Cause Analysis:
+      -----------------------------------
+      1. Horizon don't know whether a user could do an action at a resource or not. It simply pass request to recording service, & service (Nova) do the check by its policy file. So it works.
+      2. Skyline check the action by itself, with /policy API. If you do not configure it, the default value follows community, like: https://docs.openstack.org/nova/2023.2/configuration/sample-policy.html
+
+      How to fix:
+      -----------------------------------
+      1. By default, list servers need "project_reader_api": "role:reader and project_id:%(project_id)s"
+      2. You should config your customized role, for example: member, _member_, projectAdmin, etc, create implied reader role. "openstack implied role create --implied-role member projectAdmin", or "openstack implied role create --implied-role reader _member_"
+
+      # openstack implied role list
+      +----------------------------------+-----------------+----------------------------------+-------------------+
+      | Prior Role ID | Prior Role Name | Implied Role ID | Implied Role Name |
+      +----------------------------------+-----------------+----------------------------------+-------------------+
+      | fe21c5a0d17149c2a7b02bf39154d110 | admin | 4376fc38ba6a44e794671af0a9c60ef5 | member |
+      | 4376fc38ba6a44e794671af0a9c60ef5 | member | e081e01b7a4345bc85f8d3210b95362d | reader |
+      | bee8fa36149e434ebb69b61d12113031 | projectAdmin | 4376fc38ba6a44e794671af0a9c60ef5 | member |
+      | 77cec9fc7e764bd4bf60581869c048de | _member_ | e081e01b7a4345bc85f8d3210b95362d | reader |
+      +----------------------------------+-----------------+----------------------------------+-------------------+
