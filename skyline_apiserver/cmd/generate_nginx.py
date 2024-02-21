@@ -42,6 +42,7 @@ class ProxyEndpoint(BaseModel):
     part: str
     location: str
     url: str
+    host: str
 
 
 def get_system_session() -> Session:
@@ -69,7 +70,7 @@ def get_proxy_endpoints() -> Dict[str, ProxyEndpoint]:
 
     endpoints = {}
     for endpoint in endpoints_list:
-        proxy = ProxyEndpoint(part="", location="", url="")
+        proxy = ProxyEndpoint(part="", location="", url="", host="")
         region = endpoint.region
         service_type = services.get(endpoint.service_id)
         service = CONF.openstack.service_mapping.get(service_type)
@@ -105,8 +106,9 @@ def get_proxy_endpoints() -> Dict[str, ProxyEndpoint]:
                     path = "" if str(raw_path.parents[0]) == "/" else str(raw_path.parents[0])
                 else:
                     path = str(raw_path)
-
-        proxy.url = raw_url._replace(path=f"{str(path)}/").geturl()
+        url = raw_url._replace(path=f"{str(path)}/")
+        proxy.url = url.geturl()
+        proxy.host = url.netloc
         endpoints[f"{region}-{service_type}"] = proxy
 
     return dict(sorted(endpoints.items(), key=lambda d: d[0]))
