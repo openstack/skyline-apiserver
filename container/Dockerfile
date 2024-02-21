@@ -1,7 +1,6 @@
 
 FROM ubuntu:20.04
 
-ARG SKYLINE_CONSOLE_PACKAGE_URL
 ARG GIT_CONSOLE_COMMIT
 ARG GIT_BRANCH
 ARG GIT_COMMIT
@@ -18,9 +17,11 @@ ENV LC_ALL C.UTF-8
 RUN apt-get update -y && apt-get install -y --no-install-recommends apt-utils \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     gcc make nginx traceroute lsof iputils-ping vim git wget curl locales-all ssl-cert \
-    python3 python3-pip python3-dev python3-venv python-dev-is-python3 \
-    && mkdir -p /etc/skyline /var/log/skyline /var/lib/skyline \
-    && pip install -U ${SKYLINE_CONSOLE_PACKAGE_URL}
+    python3 python3-pip python3-dev python3-venv python-dev-is-python3
+
+COPY ./skyline_console /var/cache/skyline_apiserver/skyline_console
+
+RUN pip install -U /var/cache/skyline_apiserver/skyline_console/skyline_console.tar.gz
 
 COPY ./requirements.txt /skyline-apiserver/requirements.txt
 
@@ -31,7 +32,8 @@ COPY ./ /skyline-apiserver/
 RUN git init /skyline-apiserver \
     && pip install skyline-apiserver/ -chttps://releases.openstack.org/constraints/upper/master \
     && apt-get clean \
-    && rm -rf ~/.cache/pip
+    && rm -rf ~/.cache/pip \
+    && mkdir -p /etc/skyline /var/log/skyline /var/lib/skyline
 
 COPY ./etc/gunicorn.py /etc/skyline/gunicorn.py
 COPY ./etc/skyline.yaml.sample /etc/skyline/skyline.yaml

@@ -8,6 +8,9 @@ sql_app.db
 # C extensions
 *.so
 
+# Skyline console
+skyline_console
+
 # Distribution / packaging
 .Python
 build/
@@ -73,7 +76,6 @@ venv.bak/
 /log/
 tmp/
 test_results.html
-skyline-console-*
 nginx.conf
 mypy-report/
 doc/build
