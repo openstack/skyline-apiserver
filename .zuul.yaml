@@ -25,40 +25,13 @@
         tox_install_siblings: false
         tox_envlist: functional
 
-- job:
-    name: skyline-tox-py38
-    parent: openstack-tox-py38
-    description: |
-      Skyline py38 unittest tests
-    vars:
-      python_version: 3.8
-      tox_envlist: py38
-
-- job:
-    name: skyline-tox-pep8-py38
-    parent: openstack-tox-py38
-    description: |
-      Skyline code static analysis
-    vars:
-      python_version: 3.8
-      tox_envlist: pep8
-
 - project:
     templates:
+      - openstack-python3-jobs
       - release-notes-jobs-python3
       - publish-openstack-docs-pti
     check:
       jobs:
-        - skyline-tox-py38:
-            irrelevant-files:
-              - ^container/.*$
-              - ^devstack/.*$
-              - ^docs/.*$
-              - ^tools/.*$
-              - ^.*\.rst$
-              - ^.*\.md$
-              - ^kolla/.*$
-        - skyline-tox-pep8-py38
         - skyline-functional-devstack:
             irrelevant-files:
               - ^container/.*$
@@ -71,16 +44,6 @@
               - ^releasenotes/.*$
     gate:
       jobs:
-        - skyline-tox-py38:
-            irrelevant-files:
-              - ^container/.*$
-              - ^devstack/.*$
-              - ^docs/.*$
-              - ^tools/.*$
-              - ^.*\.rst$
-              - ^.*\.md$
-              - ^kolla/.*$
-        - skyline-tox-pep8-py38
         - skyline-functional-devstack:
             irrelevant-files:
               - ^container/.*$
