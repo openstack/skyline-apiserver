@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from typing import Dict
+from typing import Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from keystoneauth1.exceptions.http import (
@@ -113,7 +113,7 @@ async def list_policies(
         LOG.debug("Keystone is not reachable. No privilege to access system scope.")
     target = _generate_target(profile)
 
-    results = []
+    results: List = []
     services = constants.SUPPORTED_SERVICE_EPS.keys()
     for service in services:
         try:
@@ -176,7 +176,7 @@ async def check_policies(
     target = _generate_target(profile)
     target.update(policy_rules.target if policy_rules.target else {})
     try:
-        result = []
+        result: List = []
         for policy_rule in policy_rules.rules:
             service = policy_rule.split(":", 1)[0]
             rule = policy_rule.split(":", 1)[1]

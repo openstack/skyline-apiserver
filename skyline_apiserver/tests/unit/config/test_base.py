@@ -79,7 +79,7 @@ class TestOpt:
                         {
                             "name": FAKER.text.word(),
                             "description": FAKER.text.word(),
-                            "schema": object,
+                            "schema": RuntimeError,
                         },
                         RuntimeError,
                     ),
