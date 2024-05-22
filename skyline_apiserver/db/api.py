@@ -18,7 +18,7 @@ import time
 from functools import wraps
 from typing import Any
 
-from sqlalchemy import delete, func, insert, select, update
+from sqlalchemy import delete, func, insert, select
 
 from skyline_apiserver.types import Fn
 
@@ -41,7 +41,7 @@ def check_db_connected(fn: Fn) -> Any:
 async def check_token(token_id: str) -> bool:
     count_label = "revoked_count"
     query = (
-        select([func.count(RevokedToken.c.uuid).label(count_label)])
+        select(func.count(RevokedToken.c.uuid).label(count_label))
         .select_from(RevokedToken)
         .where(RevokedToken.c.uuid == token_id)
     )
@@ -76,7 +76,7 @@ async def purge_revoked_token() -> Any:
 
 @check_db_connected
 async def list_settings() -> Any:
-    query = select([Settings])
+    query = select(Settings)
     db = DB.get()
     async with db.transaction():
         result = await db.fetch_all(query)
@@ -86,7 +86,7 @@ async def list_settings() -> Any:
 
 @check_db_connected
 async def get_setting(key: str) -> Any:
-    query = select([Settings]).where(Settings.c.key == key)
+    query = select(Settings).where(Settings.c.key == key)
     db = DB.get()
     async with db.transaction():
         result = await db.fetch_one(query)
@@ -97,7 +97,7 @@ async def get_setting(key: str) -> Any:
 @check_db_connected
 async def update_setting(key: str, value: Any) -> Any:
     get_query = (
-        select([Settings.c.key, Settings.c.value]).where(Settings.c.key == key).with_for_update()
+        select(Settings.c.key, Settings.c.value).where(Settings.c.key == key).with_for_update()
     )
     db = DB.get()
     async with db.transaction():
@@ -106,7 +106,7 @@ async def update_setting(key: str, value: Any) -> Any:
             query = insert(Settings)
             await db.execute(query, {"key": key, "value": value})
         else:
-            query = update(Settings).where(Settings.c.key == key)
+            query = insert(Settings).values(key=key, value=value)
             await db.execute(query, {"value": value})
         result = await db.fetch_one(get_query)
 
