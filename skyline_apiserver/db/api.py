@@ -16,9 +16,9 @@ from __future__ import annotations
 
 import time
 from functools import wraps
-from typing import Any
+from typing import Any, Union
 
-from sqlalchemy import delete, func, insert, select
+from sqlalchemy import Insert, Update, delete, func, insert, select, update
 
 from skyline_apiserver.types import Fn
 
@@ -102,12 +102,12 @@ async def update_setting(key: str, value: Any) -> Any:
     db = DB.get()
     async with db.transaction():
         is_exist = await db.fetch_one(get_query)
+        stmt: Union[Insert, Update]
         if is_exist is None:
-            query = insert(Settings)
-            await db.execute(query, {"key": key, "value": value})
+            stmt = insert(Settings).values(key=key, value=value)
         else:
-            query = insert(Settings).values(key=key, value=value)
-            await db.execute(query, {"value": value})
+            stmt = update(Settings).where(Settings.c.key == key).values(value=value)
+        await db.execute(stmt)
         result = await db.fetch_one(get_query)
 
     return result
