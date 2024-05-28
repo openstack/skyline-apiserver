@@ -1,18 +1,4 @@
-
-FROM ubuntu:20.04
-
-ARG GIT_CONSOLE_COMMIT
-ARG GIT_BRANCH
-ARG GIT_COMMIT
-ARG RELEASE_VERSION
-
-LABEL skyline.build_console_commit=${GIT_CONSOLE_COMMIT}
-LABEL skyline.build_branch=${GIT_BRANCH}
-LABEL skyline.build_commit=${GIT_COMMIT}
-LABEL skyline.release_version=${RELEASE_VERSION}
-
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
+FROM --platform=linux/amd64 ubuntu:jammy
 
 RUN apt-get update -y && apt-get install -y --no-install-recommends apt-utils \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -25,20 +11,16 @@ RUN pip install -U /opt/skyline_apiserver/skyline_console/skyline_console.tar.gz
 
 COPY ./requirements.txt /opt/skyline_apiserver/requirements.txt
 
-RUN pip install -r /opt/skyline_apiserver/requirements.txt -chttps://releases.openstack.org/constraints/upper/master
+COPY ./upper-constraints.txt /opt/skyline_apiserver/upper-constraints.txt
+
+RUN pip install -r /opt/skyline_apiserver/requirements.txt -c /opt/skyline_apiserver/upper-constraints.txt
 
 COPY ./ /opt/skyline_apiserver/
 
 RUN git init /opt/skyline_apiserver \
-    && pip install /opt/skyline_apiserver -chttps://releases.openstack.org/constraints/upper/master \
+    && pip install /opt/skyline_apiserver -c /opt/skyline_apiserver/upper-constraints.txt \
     && apt-get clean \
     && rm -rf ~/.cache/pip \
     && mkdir -p /etc/skyline /var/log/skyline /var/lib/skyline
 
-COPY ./etc/gunicorn.py /etc/skyline/gunicorn.py
-COPY ./etc/skyline.yaml.sample /etc/skyline/skyline.yaml
-COPY ./container/start_service.sh /usr/local/bin/start_service.sh
-
 EXPOSE 443
-
-CMD ["start_service.sh"]
