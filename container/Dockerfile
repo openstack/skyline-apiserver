@@ -1,4 +1,18 @@
-FROM --platform=linux/amd64 ubuntu:jammy
+
+FROM ubuntu:20.04
+
+ARG GIT_CONSOLE_COMMIT
+ARG GIT_BRANCH
+ARG GIT_COMMIT
+ARG RELEASE_VERSION
+
+LABEL skyline.build_console_commit=${GIT_CONSOLE_COMMIT}
+LABEL skyline.build_branch=${GIT_BRANCH}
+LABEL skyline.build_commit=${GIT_COMMIT}
+LABEL skyline.release_version=${RELEASE_VERSION}
+
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
 
 RUN apt-get update -y && apt-get install -y --no-install-recommends apt-utils \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -21,4 +35,10 @@ RUN git init /opt/skyline_apiserver \
     && rm -rf ~/.cache/pip \
     && mkdir -p /etc/skyline /var/log/skyline /var/lib/skyline
 
+COPY ./etc/gunicorn.py /etc/skyline/gunicorn.py
+COPY ./etc/skyline.yaml.sample /etc/skyline/skyline.yaml
+COPY ./container/start_service.sh /usr/local/bin/start_service.sh
+
 EXPOSE 443
+
+CMD ["start_service.sh"]
