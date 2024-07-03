@@ -91,14 +91,14 @@ else
 endif
 build: skyline_console/skyline_console.tar.gz skyline_console/commit_id
 	$(build_cmd) --no-cache --pull --force-rm \
-	  --build-arg GIT_CONSOLE_COMMIT=$(file < skyline_console/commit_id) \
+	  --build-arg GIT_CONSOLE_COMMIT=$(shell cat skyline_console/commit_id) \
 	  --build-arg GIT_BRANCH=$(GIT_BRANCH) \
 	  --build-arg GIT_COMMIT=$(GIT_COMMIT) \
 	  --build-arg RELEASE_VERSION=$(RELEASE_VERSION) \
 	  $(BUILD_ARGS) -f $(DOCKER_FILE) -t $(IMAGE):$(IMAGE_TAG) $(BUILD_CONTEXT)
 devbuild: skyline_console/skyline_console.tar.gz skyline_console/commit_id
 	$(build_cmd) \
-	  --build-arg GIT_CONSOLE_COMMIT=$(file < skyline_console/commit_id) \
+	  --build-arg GIT_CONSOLE_COMMIT=$(shell cat skyline_console/commit_id) \
 	  --build-arg GIT_BRANCH=devbuild \
 	  --build-arg GIT_COMMIT=devbuild \
 	  --build-arg RELEASE_VERSION=devbuild \
