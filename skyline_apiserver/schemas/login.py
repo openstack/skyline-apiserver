@@ -24,7 +24,7 @@ from skyline_apiserver.types import constants
 
 
 class Credential(BaseModel):
-    region: str = Field(..., description="Credential user region")
+    region: Optional[str] = Field(None, description="Credential identity service region")
     domain: str = Field(..., description="Credential user domain")
     username: str = Field(..., description="Credential username")
     password: str = Field(..., description="Credential password for user")

@@ -2229,7 +2229,6 @@
             "Credential": {
                 "title": "Credential",
                 "required": [
-                    "region",
                     "domain",
                     "username",
                     "password"
@@ -2239,7 +2238,7 @@
                     "region": {
                         "title": "Region",
                         "type": "string",
-                        "description": "Credential user region"
+                        "description": "Credential identity service region"
                     },
                     "domain": {
                         "title": "Domain",

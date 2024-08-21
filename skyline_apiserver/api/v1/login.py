@@ -173,9 +173,10 @@ async def login(
         regex=constants.INBOUND_HEADER_REGEX,
     ),
 ) -> schemas.Profile:
+    region = credential.region or CONF.openstack.default_region
     try:
         project_scope, unscope_token, default_project_id = await _get_projects_and_unscope_token(
-            region=credential.region,
+            region=region,
             domain=credential.domain,
             username=credential.username,
             password=credential.password,
@@ -186,13 +187,13 @@ async def login(
             default_project_id = None
         project_scope_token = await get_project_scope_token(
             keystone_token=unscope_token,
-            region=credential.region,
+            region=region,
             project_id=default_project_id or project_scope[0].id,
         )
 
         profile = await generate_profile(
             keystone_token=project_scope_token,
-            region=credential.region,
+            region=region,
         )
 
         profile = await _patch_profile(profile, x_openstack_request_id)
