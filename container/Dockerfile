@@ -25,12 +25,12 @@ RUN pip install -U /opt/skyline_apiserver/skyline_console/skyline_console.tar.gz
 
 COPY ./requirements.txt /opt/skyline_apiserver/requirements.txt
 
-RUN pip install -r /opt/skyline_apiserver/requirements.txt -chttps://releases.openstack.org/constraints/upper/master
+RUN pip install -r /opt/skyline_apiserver/requirements.txt -chttps://releases.openstack.org/constraints/upper/2024.2
 
 COPY ./ /opt/skyline_apiserver/
 
 RUN git init /opt/skyline_apiserver \
-    && pip install /opt/skyline_apiserver -chttps://releases.openstack.org/constraints/upper/master \
+    && pip install /opt/skyline_apiserver -chttps://releases.openstack.org/constraints/upper/2024.2 \
     && apt-get clean \
     && rm -rf ~/.cache/pip \
     && mkdir -p /etc/skyline /var/log/skyline /var/lib/skyline

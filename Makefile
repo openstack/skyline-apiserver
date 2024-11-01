@@ -17,7 +17,7 @@ GIT_BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD)
 GIT_COMMIT ?= $(shell git rev-parse --verify HEAD)
 
 # URL for skyline-console packages
-SKYLINE_CONSOLE_PACKAGE_URL ?= "https://tarballs.opendev.org/openstack/skyline-console/skyline-console-master.tar.gz"
+SKYLINE_CONSOLE_PACKAGE_URL ?= "https://tarballs.opendev.org/openstack/skyline-console/skyline-console-stable-2024.2.tar.gz"
 
 
 .PHONY: help
@@ -81,7 +81,7 @@ BUILD_ENGINE ?= docker
 BUILD_CONTEXT ?= .
 DOCKER_FILE ?= container/Dockerfile
 IMAGE ?= skyline
-IMAGE_TAG ?= latest
+IMAGE_TAG ?= 2024.2
 ifeq ($(BUILD_ENGINE), docker)
     build_cmd = docker build
 else ifeq ($(BUILD_ENGINE), buildah)
