@@ -7,7 +7,7 @@ openstackdocstheme>=2.2.1 # Apache-2.0
 sphinx>=2.0.0,!=2.1.0 # BSD
 isort<=5.9.3 # MIT
 black<=22.3.0 # MIT
-flake8<=3.9.2 # MIT
+flake8<=6.0.0 # MIT
 mypy>=0.910 # MIT
 pytest>=6.2.5 # MIT
 pytest-xdist>=2.4.0 # MIT

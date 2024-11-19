@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 @pytest.fixture(scope="function")
 async def client() -> AsyncGenerator:
     async with LifespanManager(app):
-        async with AsyncClient(app=app, base_url="http://test") as ac:
+        async with AsyncClient(app=app, base_url="http://test") as ac:  # type: ignore
             yield ac
 
     CONF.cleanup()

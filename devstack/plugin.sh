@@ -43,7 +43,12 @@ function _install_skyline_console {
     fi
     pushd $DEST/skyline-console
     make package
-    sudo pip3 install --force-reinstall dist/skyline_console-*.whl
+    if [[ "$GLOBAL_VENV" == "True" ]]; then
+        # TODO(frickler): make this more inline with the usual devstall installation process
+        $DEVSTACK_VENV/bin/pip install --force-reinstall dist/skyline_console-*.whl
+    else
+        sudo pip3 install --force-reinstall dist/skyline_console-*.whl
+    fi
     popd
 }
 
@@ -53,18 +58,13 @@ function _install_extra_tools {
     if is_fedora; then
         install_package xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
     else
-        install_package libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+        install_package libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libxtst6 xauth xvfb
     fi
 }
 
 function _install_dependent_tools {
     # make
     install_package make
-
-    # python
-    if is_ubuntu; then
-        install_package python-is-python3 # make sure python exists
-    fi
 
     # nvm
     NVM_INSTALL_FILE_NAME=nvm-install.sh
@@ -75,7 +75,7 @@ function _install_dependent_tools {
     . $HOME/.nvm/nvm.sh
 
     # nodejs
-    NODE_VERSION=erbium
+    NODE_VERSION=gallium
     nvm install --lts=$NODE_VERSION
     nvm alias default lts/$NODE_VERSION
     nvm use default

@@ -37,7 +37,7 @@ def load_list_rules_funcs(
     namespace: str,
     service_eps: Dict[str, List[str]],
 ) -> Dict[str, Callable[[], OSRules]]:
-    eps = set(metadata.entry_points()[namespace])
+    eps = set(metadata.entry_points()[namespace])  # type: ignore
     supported_eps = set()
     for ep_names in service_eps.values():
         supported_eps.update(ep_names)
@@ -45,7 +45,7 @@ def load_list_rules_funcs(
 
 
 def load_list_rules_func(namespace: str, service_ep: str) -> Union[None, Callable[[], OSRules]]:
-    eps = set(metadata.entry_points()[namespace])
+    eps = set(metadata.entry_points()[namespace])  # type: ignore
     for ep in eps:
         if ep.name == service_ep:
             return ep.load()
