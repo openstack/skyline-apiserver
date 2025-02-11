@@ -43,6 +43,7 @@ file ``skyline.yaml.sample`` in ``etc`` directory.
       reclaim_instance_interval: 604800
       service_mapping:
         baremetal: ironic
+        block-storage: cinder
         compute: nova
         container: zun
         container-infra: magnum
@@ -58,7 +59,6 @@ file ``skyline.yaml.sample`` in ``etc`` directory.
         orchestration: heat
         placement: placement
         sharev2: manilav2
-        volumev3: cinder
       sso_enabled: false
       sso_protocols:
       - openid

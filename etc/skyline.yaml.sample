@@ -48,7 +48,6 @@ openstack:
     orchestration: heat
     placement: placement
     sharev2: manilav2
-    volumev3: cinder
   sso_enabled: false
   sso_protocols:
   - openid

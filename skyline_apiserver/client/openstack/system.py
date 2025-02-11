@@ -57,12 +57,16 @@ async def get_endpoints(region: str) -> Dict[str, Any]:
     )
     endpoints = {}
     for service_type, endpoint in catalogs.items():
+        if not endpoint:
+            continue
+        # TODO(wu.wenxiang): Need refactor
+        # - different region may have different service_type for a service
+        # - suppose "cinder -> ['volumev3', 'block-storage']" maybe better
+        # - import os_service_types.service_types.BUILTIN_DATA
+        # - hardcode exclude cinderv2 / volumev2
+        # - also check generate_nginux::get_proxy_endpoints()
         service = CONF.openstack.service_mapping.get(service_type)
-        # Two cases:
-        # 1. The service is created, but no endpoints are created for it.
-        # 2. The service is not created.
-        # Both of them, we will not add the related endpoint into profile.
-        if service is None or not endpoint:
+        if not service:
             continue
 
         path = PurePath("/").joinpath(CONF.openstack.nginx_prefix, region.lower(), service)

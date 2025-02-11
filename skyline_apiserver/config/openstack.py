@@ -135,7 +135,6 @@ service_mapping = Opt(
         "orchestration": "heat",
         "placement": "placement",
         "sharev2": "manilav2",
-        "volumev3": "cinder",
     },
 )
 
