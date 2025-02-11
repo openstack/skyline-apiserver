@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Python: FastAPI",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
             "args": [
@@ -16,6 +16,9 @@
                 "--log-level", "debug",
                 "skyline_apiserver.main:app"
             ],
+            "env": {
+                "OS_CONFIG_DIR": "${workspaceFolder}/etc",
+            },
             "jinja": true,
             "justMyCode": true
         }
