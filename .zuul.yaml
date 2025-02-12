@@ -33,7 +33,6 @@
     check:
       jobs:
         - skyline-functional-devstack:
-            voting: false
             irrelevant-files:
               - ^container/.*$
               - ^docs/.*$
@@ -46,7 +45,6 @@
     gate:
       jobs:
         - skyline-functional-devstack:
-            voting: false
             irrelevant-files:
               - ^container/.*$
               - ^docs/.*$
