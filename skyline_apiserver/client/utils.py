@@ -47,7 +47,7 @@ async def generate_session(profile: schemas.Profile) -> Any:
     }
     auth = Token(**kwargs)
     session = Session(auth=auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT)
-    session.auth.auth_ref = await run_in_threadpool(session.auth.get_auth_ref, session)
+    session.auth.auth_ref = await run_in_threadpool(session.auth.get_auth_ref, session)  # type: ignore # noqa E501
     return session
 
 
@@ -75,14 +75,14 @@ async def get_system_scope_access(keystone_token: str, region: str) -> AccessInf
     session = Session(
         auth=scope_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT
     )
-    return await run_in_threadpool(session.auth.get_auth_ref, session)
+    return await run_in_threadpool(session.auth.get_auth_ref, session)  # type: ignore
 
 
 async def get_access(session: Session) -> AccessInfoV3:
     auth = session.auth
-    if auth._needs_reauthenticate():
-        auth.auth_ref = await run_in_threadpool(auth.get_auth_ref, session)
-    return auth.auth_ref
+    if auth._needs_reauthenticate():  # type: ignore
+        auth.auth_ref = await run_in_threadpool(auth.get_auth_ref, session)  # type: ignore
+    return auth.auth_ref  # type: ignore
 
 
 async def get_endpoint(region: str, service: str, session: Session) -> Any:

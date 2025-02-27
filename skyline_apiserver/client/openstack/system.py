@@ -39,12 +39,12 @@ async def get_project_scope_token(
         session=get_system_session(),
     )
     kwargs = {"project_id": project_id}
-    scope_auth = Token(auth_url=auth_url, token=keystone_token, **kwargs)
+    scope_auth = Token(auth_url=auth_url, token=keystone_token, **kwargs)  # type: ignore
 
     session = Session(
         auth=scope_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT
     )
-    keystone_token = session.get_token()
+    keystone_token = session.get_token()  # type: ignore
 
     return keystone_token
 
@@ -106,5 +106,5 @@ async def get_domains(global_request_id: str, region: str) -> Any:
 async def get_regions() -> Any:
     access = await utils.get_access(session=get_system_session())
     catalogs = access.service_catalog.get_endpoints(interface=CONF.openstack.interface_type)
-    regions = list(set(j["region_id"] for i in catalogs for j in catalogs[i]))
+    regions = list(set(j["region_id"] for i in catalogs for j in catalogs[i]))  # type: ignore
     return regions

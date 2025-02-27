@@ -52,7 +52,7 @@ async def _get_default_project_id(
     system_session = get_system_session()
     if not user_id:
         token = session.get_token()
-        token_data = await get_token_data(token, region, system_session)
+        token_data = await get_token_data(token, region, system_session)  # type: ignore
         _user_id = token_data["token"]["user"]["id"]
     else:
         _user_id = user_id
@@ -81,11 +81,11 @@ async def _get_projects_and_unscope_token(
             reauthenticate=False,
         )
     else:
-        unscope_auth = Password(
+        unscope_auth = Password(  # type: ignore
             auth_url=auth_url,
             user_domain_name=domain,
             username=username,
-            password=password,
+            password=password,  # type: ignore
             reauthenticate=False,
         )
 
@@ -110,7 +110,7 @@ async def _get_projects_and_unscope_token(
 
     default_project_id = await _get_default_project_id(session, region)
 
-    return project_scope, unscope_token, default_project_id
+    return project_scope, unscope_token, default_project_id  # type: ignore
 
 
 async def _patch_profile(profile: schemas.Profile, global_request_id: str) -> schemas.Profile:

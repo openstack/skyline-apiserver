@@ -26,7 +26,7 @@ from keystoneauth1.identity.v3 import Password
 from keystoneauth1.session import Session
 from keystoneclient.client import Client as KeystoneClient
 from pydantic import BaseModel
-from skyline_console import static_path
+from skyline_console import static_path  # type: ignore [attr-defined, unused-ignore]
 
 import skyline_apiserver
 from skyline_apiserver.config import CONF, configure
