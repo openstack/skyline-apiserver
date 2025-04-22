@@ -142,7 +142,33 @@ def get_proxy_endpoints() -> Dict[str, ProxyEndpoint]:
 @click.option(
     "--log-dir",
     "log_dir",
-    help=("skyline log file address."),
+    help="""Nginx log directory.
+
+When specifying the log directory and access/error log files
+paths, the following scenarios are possible:
+
+1) --log-dir is specified (or not, then the default is used)
+and --(access|error)-log-file is NOT specified. In this case the default
+values for the file path is used
+
+2) --log-dir is speficied (or not ...) and --(access|error)-log-file is also
+specified as a relative path. In this case the resulting path will be
+{log_dir}/{*_log_file}
+
+3) --log-dir is specified (or not ...) and --(access|error)-log-file is also
+specified as an absolute path. In this case the --log-dir is ignored and the
+resulting path will be {*_log_file}
+""",
+)
+@click.option(
+    "--access-log-file",
+    "access_log_file",
+    help=("Nginx access log file."),
+)
+@click.option(
+    "--error-log-file",
+    "error_log_file",
+    help=("Nginx error log file."),
 )
 def main(
     output_file_path: str,
@@ -150,6 +176,8 @@ def main(
     ssl_keyfile: str,
     listen_address: str,
     log_dir: str,
+    access_log_file: str,
+    error_log_file: str,
 ) -> None:
     try:
         configure("skyline")
@@ -177,8 +205,16 @@ def main(
             context.update(ssl_keyfile=ssl_keyfile)
         if listen_address:
             context.update(listen_address=listen_address)
-        if log_dir:
-            context.update(log_dir=log_dir)
+        _access_log_file = Path(log_dir or CONF.default.log_dir).joinpath(
+            access_log_file or CONF.default.access_log_file
+        )
+        _error_log_file = Path(log_dir or CONF.default.log_dir).joinpath(
+            error_log_file or CONF.default.error_log_file
+        )
+        context.update(
+            access_log_file=_access_log_file,
+            error_log_file=_error_log_file,
+        )
         result = template.render(**context)
 
         if output_file_path:
