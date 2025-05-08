@@ -12,3 +12,4 @@ Skyline APIServer on Ubuntu 20.04 LTS and RHEL/CentOS.
     docker-install-ubuntu
     verify-install
     source-install-rhel
+    integration-with-devstack

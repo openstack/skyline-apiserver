@@ -212,11 +212,11 @@ Install & Run
 
       make build
 
-Devstack Integration
+DevStack Integration
 --------------------
 
-`Fast integration with Devstack to build an
-environment. <./devstack/README.rst>`__
+`Fast integration with DevStack to build an
+environment. <https://docs.openstack.org/skyline-apiserver/latest/install/integration-with-devstack.html>`_
 
 Kolla Ansible Deployment
 ------------------------
