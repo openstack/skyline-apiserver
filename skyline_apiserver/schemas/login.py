@@ -91,10 +91,10 @@ class Profile(PayloadBase):
     user: User = Field(..., description="User")
     roles: List[Role] = Field(..., description="User roles")
     keystone_token_exp: str = Field(..., description="Keystone token expiration time")
-    base_domains: Optional[List[str]] = Field(None, description="User base domains")
-    endpoints: Optional[Dict[str, Any]] = Field(None, description="Keystone endpoints")
-    projects: Optional[Dict[str, Any]] = Field(None, description="User projects")
-    default_project_id: Optional[str] = Field(None, description="User default project ID")
+    base_domains: Optional[List[str]] = Field(default=None, description="User base domains")
+    endpoints: Optional[Dict[str, Any]] = Field(default=None, description="Keystone endpoints")
+    projects: Optional[Dict[str, Any]] = Field(default=None, description="User projects")
+    default_project_id: Optional[str] = Field(default=None, description="User default project ID")
     version: str = Field(..., description="Version")
 
     def toPayLoad(self) -> Payload:

@@ -17,8 +17,8 @@ from pydantic import BaseModel, Field
 
 class Message(BaseModel):
     message: str = Field(..., description="Message")
-    code: int = Field(200, description="Code")
-    title: str = Field("OK", description="Title")
+    code: int = Field(default=200, description="Code")
+    title: str = Field(default="OK", description="Title")
 
 
 class ErrorMessageBase(BaseModel):
