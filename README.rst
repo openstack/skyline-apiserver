@@ -262,3 +262,35 @@ FAQ
       | bee8fa36149e434ebb69b61d12113031 | projectAdmin | 4376fc38ba6a44e794671af0a9c60ef5 | member |
       | 77cec9fc7e764bd4bf60581869c048de | _member_ | e081e01b7a4345bc85f8d3210b95362d | reader |
       +----------------------------------+-----------------+----------------------------------+-------------------+
+
+OpenStack-Ansible Deployment
+----------------------------
+
+OpenStack-Ansible does support Skyline deployments starting with 2024.1 (Caracal) release.
+In order to install Skyline you need to specify following in ``/etc/openstack_deploy/openstack_user_config.yml``:
+
+.. code:: yaml
+
+   skyline_dashboard_hosts:
+     infra1:
+       ip: 172.20.236.111
+     infra2:
+       ip: 172.20.236.112
+     infra3:
+       ip: 172.20.236.113
+
+This defines on which hosts `skyline-apiserver` and `skyline-console` will be installed. A corresponding LXC containers
+will be spawned on these hosts, in case you are using LXC for your deployment.
+
+Once inventory is defined, you can run ``openstack-ansible openstack.osa.skyline`` to proceed with installation.
+
+OpenStack-Ansible does support building ``skyline-console`` with yarn. This scenario makes sense, when you want to install an
+untagged version of skyline-console from a commit SHA. For that you need to override a variable ``skyline_console_git_install_branch``
+with a required commit SHA. Role will detect that a custom version is being used and proceed with ``yarn build``. You can also
+specify ``skyline_console_yarn_build: true`` explicitly to enable this behavior regardlessly.
+
+For All-In-One (AIO) deployments it is sufficient to add ``skyline`` to the list of scenarios to get Skyline installed as
+a dashboard.
+
+You can also have both Skyline and Horizon deployed. In that case, Horizon will be served on ``/horizon`` URI, while Skyline remain
+on ``/``.
