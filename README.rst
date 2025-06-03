@@ -39,6 +39,7 @@ users.
 
    -  `Devstack Integration <#devstack-integration>`__
    -  `Kolla Ansible Deployment <#kolla-ansible-deployment>`__
+   -  `OpenStack-Ansible Deployment <#openstack-ansible-deployment>`__
 
 Resources
 ---------
