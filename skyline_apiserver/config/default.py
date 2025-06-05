@@ -31,7 +31,7 @@ log_dir = Opt(
     name="log_dir",
     description="Log directory",
     schema=StrictStr,
-    default="./log",
+    default="/var/log/skyline",
 )
 
 log_file = Opt(
@@ -39,6 +39,20 @@ log_file = Opt(
     description="Log file",
     schema=StrictStr,
     default="skyline.log",
+)
+
+access_log_file = Opt(
+    name="access_log_file",
+    description="Nginx access log file",
+    schema=StrictStr,
+    default="skyline-nginx-access.log",
+)
+
+error_log_file = Opt(
+    name="error_log_file",
+    description="Nginx error log file",
+    schema=StrictStr,
+    default="skyline-nginx-error.log",
 )
 
 secret_key = Opt(
@@ -145,6 +159,8 @@ ALL_OPTS = (
     debug,
     log_dir,
     log_file,
+    access_log_file,
+    error_log_file,
     secret_key,
     access_token_expire,
     access_token_renew,
