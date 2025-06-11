@@ -16,7 +16,7 @@ file ``skyline.yaml.sample`` in ``etc`` directory.
       cors_allow_origins: []
       database_url: sqlite:////tmp/skyline.db
       debug: false
-      log_dir: ./log
+      log_dir: /var/log/skyline
       log_file: skyline.log
       policy_file_path: /etc/skyline/policy
       policy_file_suffix: policy.yaml
