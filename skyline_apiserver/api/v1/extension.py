@@ -14,18 +14,13 @@
 
 from __future__ import annotations
 
-import asyncio
-import math
-from asyncio import gather
-from functools import reduce
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from cinderclient.exceptions import NotFound
-from cinderclient.v3.volumes import Volume as CinderVolume
 from dateutil import parser
-from fastapi import APIRouter, Depends, Header, Query, status
-from glanceclient.v2.schemas import SchemaBasedModel as GlanceModel
-from novaclient.v2.servers import Server as NovaServer
+from fastapi import status
+from fastapi.param_functions import Depends, Header, Query
+from fastapi.routing import APIRouter
 
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
@@ -36,7 +31,11 @@ from skyline_apiserver.client.openstack import cinder, glance, keystone, neutron
 from skyline_apiserver.client.utils import generate_session, get_system_session
 from skyline_apiserver.config import CONF
 from skyline_apiserver.log import LOG
-from skyline_apiserver.schemas.extension import PortsResponseBase, RecycleServersResponseBase
+from skyline_apiserver.schemas.extension import (
+    ComputeServicesResponseBase,
+    PortsResponseBase,
+    RecycleServersResponseBase,
+)
 from skyline_apiserver.types import constants
 from skyline_apiserver.utils.roles import assert_system_admin_or_reader, is_system_reader_no_admin
 
@@ -59,22 +58,22 @@ STEP = constants.ID_UUID_RANGE_STEP
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def list_servers(
+def list_servers(
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-    limit: int = Query(
+    limit: Optional[int] = Query(
         None,
         description=(
             "Requests a page size of items. Returns a number of items up to a limit value."
         ),
         gt=constants.EXTENSION_API_LIMIT_GT,
     ),
-    marker: str = Query(None, description="The ID of the last-seen item."),
-    sort_dirs: schemas.SortDir = Query(
+    marker: Optional[str] = Query(None, description="The ID of the last-seen item."),
+    sort_dirs: Optional[schemas.SortDir] = Query(
         None, description="Indicates in which directions to sort."
     ),
     sort_keys: List[schemas.ServerSortKey] = Query(
@@ -83,29 +82,29 @@ async def list_servers(
             "Indicates in which attributes to sort. Host is only used for admin role users"
         ),
     ),
-    all_projects: bool = Query(None, description="List servers for all projects."),
-    project_id: str = Query(
+    all_projects: Optional[bool] = Query(None, description="List servers for all projects."),
+    project_id: Optional[str] = Query(
         None,
         description=(
             "Filter the list of servers by the given project ID. "
             "Only works when the all_projects filter is also specified."
         ),
     ),
-    project_name: str = Query(
+    project_name: Optional[str] = Query(
         None,
         description=(
             "Filter the list of servers by the given project name. "
             "Only works when the all_projects filter is also specified."
         ),
     ),
-    name: str = Query(
+    name: Optional[str] = Query(
         None,
         description=("Filter the list of servers by the given server name. Support fuzzy query."),
     ),
-    status: schemas.ServerStatus = Query(
+    status: Optional[schemas.ServerStatus] = Query(
         None, description="Filter the list of servers by the given server status."
     ),
-    host: str = Query(
+    host: Optional[str] = Query(
         None,
         description=(
             "Filter the list of servers by the given host. "
@@ -117,20 +116,24 @@ async def list_servers(
     ),
     uuid: str = Query(None, description="Filter the list of servers by the given server UUID."),
 ) -> schemas.ServersResponse:
+    all_projects = all_projects or False
     if all_projects:
         assert_system_admin_or_reader(
             profile=profile,
             exception="Not allowed to get servers for all projects.",
         )
+    else:
+        project_id = None
+        project_name = None
 
-    current_session = await generate_session(profile=profile)
+    current_session = generate_session(profile)
     system_session = get_system_session()
 
     # Check first if we supply the project_name filter.
     if project_name:
-        filter_projects = await keystone.list_projects(
+        filter_projects = keystone.list_projects(
             profile=profile,
-            session=current_session,
+            session=system_session,
             global_request_id=x_openstack_request_id,
             all_projects=all_projects,
             search_opts={"name": project_name},
@@ -155,7 +158,7 @@ async def list_servers(
         "all_tenants": all_projects,
         "uuid": uuid,
     }
-    servers = await nova.list_servers(
+    servers = nova.list_servers(
         profile=profile,
         session=current_session,
         global_request_id=x_openstack_request_id,
@@ -181,56 +184,35 @@ async def list_servers(
         for volume_attached in server["volumes_attached"]:
             root_device_ids.append(volume_attached["id"])
 
-    if all_projects:
-        tasks = [
-            keystone.list_projects(
-                profile=profile,
-                session=current_session,
-                global_request_id=x_openstack_request_id,
-                all_projects=all_projects,
-            ),
-        ]
-    else:
-        tasks = [asyncio.sleep(0.01)]
-
+    # Get all images and merge image_mappings
+    images = []
     for i in range(0, len(image_ids), STEP):
-        tasks.append(
-            glance.list_images(
-                profile=profile,
-                session=system_session,
-                global_request_id=x_openstack_request_id,
-                filters={"id": "in:" + ",".join(image_ids[i : i + STEP])},
-            ),
+        images_batch = glance.list_images(
+            profile=profile,
+            session=system_session,
+            global_request_id=x_openstack_request_id,
+            filters={"id": "in:" + ",".join(image_ids[i : i + STEP])},
         )
-    root_device_ids = list(set(root_device_ids))
-    for i in range(0, len(root_device_ids), STEP):
-        # Here we use system_session to filter volume with id list.
-        # So we need to set all_tenants as True to filter volume from
-        # all volumes. Otherwise, we just filter volume from the user
-        # of system_session.
-        tasks.append(
-            cinder.list_volumes(
-                profile=profile,
-                session=system_session,
-                global_request_id=x_openstack_request_id,
-                search_opts={"id": root_device_ids[i : i + STEP], "all_tenants": True},
-            ),
-        )
-    task_result = await gather(*tasks)
-
-    projects = task_result[0] if task_result[0] else []
-    proj_mappings = {project.id: project.name for project in projects}
-    total_image_tasks = math.ceil(len(image_ids) / STEP)
-    images: List[GlanceModel] = reduce(
-        lambda x, y: list(x) + list(y), task_result[1 : 1 + total_image_tasks], []
-    )
-    volumes: List[CinderVolume] = reduce(
-        lambda x, y: x + y, task_result[1 + total_image_tasks :], []
-    )
+        images.extend(images_batch)
     image_mappings = {
-        image.id: {"name": image.name, "image_os_distro": getattr(image, "os_distro", None)}
-        for image in list(images)
+        image.id: {
+            "name": image.name,
+            "image_os_distro": getattr(image, "os_distro", None),
+        }
+        for image in images
     }
+
+    # Get all root device volumes and merge ser_image_mappings
+    root_device_ids = list(set(root_device_ids))
+    volumes = []
+    for i in range(0, len(root_device_ids), STEP):
+        volumes_batch = cinder.list_volumes(
+            profile=profile,
+            session=system_session,
+            global_request_id=x_openstack_request_id,
+            search_opts={"id": root_device_ids[i : i + STEP], "all_tenants": True},
+        )
+        volumes.extend(volumes_batch)
     ser_image_mappings = {}
     for volume in volumes:
         image_meta = getattr(volume, "volume_image_metadata", None)
@@ -242,28 +224,31 @@ async def list_servers(
                     "image_os_distro": image_meta.get("os_distro"),
                 }
 
+    # enrich server
     for server in result:
         server["host"] = server["host"] if all_projects else None
-        server["project_name"] = proj_mappings.get(server["project_id"])
+        server["project_name"] = None
         ser_image_mapping = ser_image_mappings.get(server["id"])
         if ser_image_mapping:
-            values = {
-                "image": ser_image_mapping["image"],
-                "image_name": ser_image_mapping["image_name"],
-                "image_os_distro": ser_image_mapping["image_os_distro"],
-            }
+            server.update(ser_image_mapping)
         elif server["image"]:
-            values = {
-                "image": server["image"],
-                "image_name": image_mappings.get(server["image"], {}).get("name", ""),
-                "image_os_distro": image_mappings.get(server["image"], {}).get(
-                    "image_os_distro",
-                    "",
-                ),
-            }
+            image_info = image_mappings.get(server["image"], {})
+            server["image_name"] = image_info.get("name", "")
+            server["image_os_distro"] = image_info.get("image_os_distro", "")
         else:
-            values = {"image": None, "image_name": None, "image_os_distro": None}
-        server.update(values)
+            server["image_name"] = None
+            server["image_os_distro"] = None
+    if all_projects:
+        projects = keystone.list_projects(
+            profile=profile,
+            session=current_session,
+            global_request_id=x_openstack_request_id,
+            all_projects=True,
+        )
+        project_id_name_map = {project.id: project.name for project in projects}
+        for server in result:
+            server["project_name"] = project_id_name_map[server["project_id"]]
+
     return schemas.ServersResponse(**{"servers": result})
 
 
@@ -281,67 +266,73 @@ async def list_servers(
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def list_recycle_servers(
+def list_recycle_servers(
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-    limit: int = Query(
+    limit: Optional[int] = Query(
         None,
         description=(
             "Requests a page size of items. Returns a number of items up to a limit value."
         ),
         gt=constants.EXTENSION_API_LIMIT_GT,
     ),
-    marker: str = Query(None, description="The ID of the last-seen item."),
-    sort_dirs: schemas.SortDir = Query(
+    marker: Optional[str] = Query(None, description="The ID of the last-seen item."),
+    sort_dirs: Optional[schemas.SortDir] = Query(
         None, description="Indicates in which directions to sort."
     ),
-    sort_keys: List[schemas.RecycleServerSortKey] = Query(
+    sort_keys: Optional[List[schemas.RecycleServerSortKey]] = Query(
         None,
         description=("Indicates in which attributes to sort. Updated_at is used as deleted_at"),
     ),
-    all_projects: bool = Query(None, description="List recycle servers for all projects."),
-    project_id: str = Query(
+    all_projects: Optional[bool] = Query(
+        None, description="List recycle servers for all projects."
+    ),
+    project_id: Optional[str] = Query(
         None,
         description=(
             "Filter the list of recycle servers by the given project ID. "
             "Only works when the all_projects filter is also specified."
         ),
     ),
-    project_name: str = Query(
+    project_name: Optional[str] = Query(
         None,
         description=(
             "Filter the list of recycle servers by the given project name. "
             "Only works when the all_projects filter is also specified."
         ),
     ),
-    name: str = Query(
+    name: Optional[str] = Query(
         None,
         description=(
             "Filter the list of recycle servers by the given server name. Support fuzzy query."
         ),
     ),
-    uuid: str = Query(
+    uuid: Optional[str] = Query(
         None, description="Filter the list of recycle servers by the given recycle server UUID."
     ),
 ) -> schemas.RecycleServersResponse:
+    all_projects = all_projects or False
     if all_projects:
         assert_system_admin_or_reader(
             profile=profile,
             exception="Not allowed to get recycle servers for all projects.",
         )
+    else:
+        project_id = None
+        project_name = None
 
-    current_session = await generate_session(profile=profile)
+    current_session = generate_session(profile)
     system_session = get_system_session()
 
     # Check first if we supply the project_name filter.
     if project_name:
-        filter_projects = await keystone.list_projects(
+        filter_projects = keystone.list_projects(
             profile=profile,
-            session=current_session,
+            session=system_session,
             global_request_id=x_openstack_request_id,
             all_projects=all_projects,
             search_opts={"name": project_name},
@@ -349,10 +340,7 @@ async def list_recycle_servers(
         if not filter_projects:
             return schemas.RecycleServersResponse(**{"recycle_servers": []})
         else:
-            # Projects will not have the same name or same id in the same domain
             filter_project = filter_projects[0]
-            # When we both supply the project_id and project_name filter, if the project's id does
-            # not equal the project_id, just return [].
             if project_id and filter_project.id != project_id:
                 return schemas.RecycleServersResponse(**{"recycle_servers": []})
             project_id = filter_project.id
@@ -360,16 +348,14 @@ async def list_recycle_servers(
     search_opts = {
         "status": "soft_deleted",
         "deleted": True,
-        "all_tenants": True,
+        "all_tenants": all_projects,
         "name": name,
         "project_id": project_id,
         "uuid": uuid,
     }
-    if not all_projects:
-        search_opts["tenant_id"] = profile.project.id
-    servers = await nova.list_servers(
+    servers = nova.list_servers(
         profile=profile,
-        session=system_session,
+        session=current_session,
         global_request_id=x_openstack_request_id,
         search_opts=search_opts,
         marker=marker,
@@ -393,56 +379,60 @@ async def list_recycle_servers(
         for volume_attached in server["volumes_attached"]:
             root_device_ids.append(volume_attached["id"])
 
-    if all_projects:
-        tasks = [
-            keystone.list_projects(
-                profile=profile,
-                session=current_session,
-                global_request_id=x_openstack_request_id,
-                all_projects=all_projects,
-            ),
-        ]
-    else:
-        tasks = [asyncio.sleep(0.01)]
-
     for i in range(0, len(image_ids), STEP):
-        tasks.append(
-            glance.list_images(
-                profile=profile,
-                session=system_session,
-                global_request_id=x_openstack_request_id,
-                filters={"id": "in:" + ",".join(image_ids[i : i + STEP])},
-            ),
+        images = glance.list_images(
+            profile=profile,
+            session=system_session,
+            global_request_id=x_openstack_request_id,
+            filters={"id": "in:" + ",".join(image_ids[i : i + STEP])},
         )
-    root_device_ids = list(set(root_device_ids))
-    for i in range(0, len(root_device_ids), STEP):
-        # Here we use system_session to filter volume with id list.
-        # So we need to set all_tenants as True to filter volume from
-        # all volumes. Otherwise, we just filter volume from the user
-        # of system_session.
-        tasks.append(
-            cinder.list_volumes(
-                profile=profile,
-                session=system_session,
-                global_request_id=x_openstack_request_id,
-                search_opts={"id": root_device_ids[i : i + STEP], "all_tenants": True},
-            ),
-        )
-    task_result = await gather(*tasks)
+        for image in images:
+            image_mappings = {
+                image.id: {
+                    "name": image.name,
+                    "image_os_distro": getattr(image, "os_distro", None),
+                }
+            }
+            for recycle_server in result:
+                if recycle_server.image and recycle_server.image in image_mappings:
+                    values = {
+                        "image": recycle_server.image,
+                        "image_name": image_mappings[recycle_server.image]["name"],
+                        "image_os_distro": image_mappings[recycle_server.image][
+                            "image_os_distro"
+                        ],
+                    }
+                    recycle_server = recycle_server.copy(update=values)
 
-    projects = task_result[0] if task_result[0] else []
-    proj_mappings = {project.id: project.name for project in projects}
-    total_image_tasks = math.ceil(len(image_ids) / STEP)
-    images: List[GlanceModel] = reduce(
-        lambda x, y: list(x) + list(y), task_result[1 : 1 + total_image_tasks], []
-    )
-    volumes: List[CinderVolume] = reduce(
-        lambda x, y: x + y, task_result[1 + total_image_tasks :], []
-    )
+    # Get all images and merge image_mappings
+    images = []
+    for i in range(0, len(image_ids), STEP):
+        images_batch = glance.list_images(
+            profile=profile,
+            session=system_session,
+            global_request_id=x_openstack_request_id,
+            filters={"id": "in:" + ",".join(image_ids[i : i + STEP])},
+        )
+        images.extend(images_batch)
     image_mappings = {
-        image.id: {"name": image.name, "image_os_distro": getattr(image, "os_distro", None)}
-        for image in list(images)
+        image.id: {
+            "name": image.name,
+            "image_os_distro": getattr(image, "os_distro", None),
+        }
+        for image in images
     }
+
+    # Get all root device volumes and merge ser_image_mappings
+    root_device_ids = list(set(root_device_ids))
+    volumes = []
+    for i in range(0, len(root_device_ids), STEP):
+        volumes_batch = cinder.list_volumes(
+            profile=profile,
+            session=system_session,
+            global_request_id=x_openstack_request_id,
+            search_opts={"id": root_device_ids[i : i + STEP], "all_tenants": True},
+        )
+        volumes.extend(volumes_batch)
     ser_image_mappings = {}
     for volume in volumes:
         image_meta = getattr(volume, "volume_image_metadata", None)
@@ -454,9 +444,10 @@ async def list_recycle_servers(
                     "image_os_distro": image_meta.get("os_distro"),
                 }
 
+    # enrich server
     for recycle_server in result:
         recycle_server.host = recycle_server.host if all_projects else None
-        recycle_server.project_name = proj_mappings.get(recycle_server.project_id)
+        recycle_server.project_name = None
         recycle_server.deleted_at = recycle_server.updated_at
         recycle_server.reclaim_timestamp = (
             parser.isoparse(str(recycle_server.updated_at or "")).timestamp()
@@ -464,23 +455,26 @@ async def list_recycle_servers(
         )
         ser_image_mapping = ser_image_mappings.get(recycle_server.id)
         if ser_image_mapping:
-            values = {
-                "image": ser_image_mapping["image"],
-                "image_name": ser_image_mapping["image_name"],
-                "image_os_distro": ser_image_mapping["image_os_distro"],
-            }
+            recycle_server.image = ser_image_mapping["image"]
+            recycle_server.image_name = ser_image_mapping["image_name"]
+            recycle_server.image_os_distro = ser_image_mapping["image_os_distro"]
         elif recycle_server.image:
-            values = {
-                "image": recycle_server.image,
-                "image_name": image_mappings.get(recycle_server.image, {}).get("name", ""),
-                "image_os_distro": image_mappings.get(recycle_server.image, {}).get(
-                    "image_os_distro",
-                    "",
-                ),
-            }
+            image_info = image_mappings.get(recycle_server.image, {})
+            recycle_server.image_name = image_info.get("name", "")
+            recycle_server.image_os_distro = image_info.get("image_os_distro", "")
         else:
-            values = {"image": None, "image_name": None, "image_os_distro": None}
-        recycle_server = recycle_server.copy(update=values)
+            recycle_server.image_name = None
+            recycle_server.image_os_distro = None
+    if all_projects:
+        projects = keystone.list_projects(
+            profile=profile,
+            session=current_session,
+            global_request_id=x_openstack_request_id,
+            all_projects=True,
+        )
+        project_id_name_map = {project.id: project.name for project in projects}
+        for recycle_server in result:
+            recycle_server.project_name = project_id_name_map.get(recycle_server.project_id)
     return schemas.RecycleServersResponse(recycle_servers=result)
 
 
@@ -497,61 +491,70 @@ async def list_recycle_servers(
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def list_volumes(
+def list_volumes(
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-    limit: int = Query(
+    limit: Optional[int] = Query(
         None,
         description=(
             "Requests a page size of items. Returns a number of items up to a limit value."
         ),
         gt=constants.EXTENSION_API_LIMIT_GT,
     ),
-    marker: str = Query(None, description="The ID of the last-seen item."),
-    sort_dirs: schemas.SortDir = Query(
+    marker: Optional[str] = Query(None, description="The ID of the last-seen item."),
+    sort_dirs: Optional[schemas.SortDir] = Query(
         None, description="Indicates in which directions to sort."
     ),
-    sort_keys: List[schemas.VolumeSortKey] = Query(
+    sort_keys: Optional[List[schemas.VolumeSortKey]] = Query(
         None,
         description=("Indicates in which attributes to sort. Updated_at is used as deleted_at"),
     ),
-    all_projects: bool = Query(None, description="List volumes for all projects."),
-    project_id: str = Query(
+    all_projects: Optional[bool] = Query(None, description="List volumes for all projects."),
+    project_id: Optional[str] = Query(
         None,
         description="Filter the list of volumes by the given project ID.",
     ),
-    name: str = Query(
+    name: Optional[str] = Query(
         None,
         description="Filter the list of volumes by the given server name.",
     ),
-    multiattach: bool = Query(
+    multiattach: Optional[bool] = Query(
         None,
         description="Filter the list of volumes by the given multiattach.",
     ),
-    status: schemas.VolumeStatus = Query(
+    status: Optional[schemas.VolumeStatus] = Query(
         None,
         description="Filter the list of volumes by the given status.",
     ),
-    bootable: bool = Query(
+    bootable: Optional[bool] = Query(
         None,
         description="Filter the list of volumes by the given bootable.",
     ),
-    uuid: List[str] = Query(
+    uuid: Optional[List[str]] = Query(
         None, description="Filter the list of volumes by the given volumes UUID."
     ),
 ) -> schemas.VolumesResponse:
+    all_projects = all_projects or False
+    current_session = generate_session(profile)
+    system_session = get_system_session()
+    cinder_session = current_session
+
     if all_projects:
         assert_system_admin_or_reader(
             profile=profile,
             exception="Not allowed to get volumes for all projects.",
         )
-
-    current_session = await generate_session(profile=profile)
-    system_session = get_system_session()
+        # if not is_admin, cinder will ignore the all_projects query param.
+        # role:admin or role:cinder_system_admin is is_admin.
+        # so here we just use skyline session to get all_projects' volumes.
+        if is_system_reader_no_admin(profile=profile):
+            cinder_session = system_session
+    else:
+        project_id = None
 
     sort = None
     if sort_keys:
@@ -570,24 +573,16 @@ async def list_volumes(
         "bootable": str(bootable) if bootable is not None else bootable,
         "id": uuid,
     }
-    # if not is_admin, cinder will ignore the all_projects query param.
-    # role:admin or role:cinder_system_admin is is_admin.
-    # so here we just use skyline session to get all_projects' volumes.
-    cinder_session = (
-        system_session
-        if all_projects and is_system_reader_no_admin(profile=profile)
-        else current_session
-    )
 
     if uuid:
         # Here we use system_session to filter volume with id list.
         # So we need to set all_tenants as True to filter volume from
         # all volumes. Otherwise, we just filter volume from the user
         # of system_session.
-        cinder_session = system_session
+        cinder_session = current_session
         search_opts["all_tenants"] = True
 
-    volumes, count = await cinder.list_volumes(
+    volumes, count = cinder.list_volumes(
         profile=profile,
         session=cinder_session,
         global_request_id=x_openstack_request_id,
@@ -607,60 +602,50 @@ async def list_volumes(
             if attachment["server_id"] not in server_ids:
                 server_ids.append(attachment["server_id"])
 
-    if all_projects:
-        tasks = [
-            keystone.list_projects(
-                profile=profile,
-                session=current_session,
-                global_request_id=x_openstack_request_id,
-                all_projects=all_projects,
-            ),
-        ]
-    else:
-        tasks = [asyncio.sleep(0.01)]
-
     # Sometimes, the servers have been soft deleted, but the volumes will
     # be still displayed on the volume page. If we do not get the recycle
     # servers, the attachment server name for those volumes which are attached
     # to these servers will be blank.
     server_ids = list(set(server_ids))
+    server_name_map = {}
+    servers = []
     for server_id in server_ids:
-        tasks.extend(
-            [
-                nova.list_servers(
-                    profile=profile,
-                    session=current_session,
-                    global_request_id=x_openstack_request_id,
-                    search_opts={
-                        "uuid": server_id,
-                        "all_tenants": all_projects,
-                    },
-                ),
-                nova.list_servers(
-                    profile=profile,
-                    session=current_session,
-                    global_request_id=x_openstack_request_id,
-                    search_opts={
-                        "uuid": server_id,
-                        "status": "soft_deleted",
-                        "deleted": True,
-                        "all_tenants": all_projects,
-                    },
-                ),
-            ],
+        normal_servers = nova.list_servers(
+            profile=profile,
+            session=current_session,
+            global_request_id=x_openstack_request_id,
+            search_opts={
+                "uuid": server_id,
+                "all_tenants": all_projects,
+            },
         )
-    task_result = await gather(*tasks)
+        if normal_servers:
+            servers.extend(normal_servers)
 
-    projects = [] if not task_result[0] else task_result[0]
-    servers: List[NovaServer] = reduce(lambda x, y: x + y, task_result[1:], [])
-    proj_mappings = {project.id: project.name for project in projects}
-    ser_mappings = {server.id: server.name for server in servers}
+    # Query soft deleted server
+    for server_id in server_ids:
+        soft_deleted_servers = nova.list_servers(
+            profile=profile,
+            session=current_session,
+            global_request_id=x_openstack_request_id,
+            search_opts={
+                "uuid": server_id,
+                "status": "soft_deleted",
+                "deleted": True,
+                "all_tenants": all_projects,
+            },
+        )
+        if soft_deleted_servers:
+            servers.extend(soft_deleted_servers)
+
+    for server in servers:
+        server_name_map[server.id] = server.name
 
     for volume in result:
-        volume["host"] = volume["host"] if all_projects else None
-        volume["project_name"] = proj_mappings.get(volume["project_id"])
         for attachment in volume["attachments"]:
-            attachment["server_name"] = ser_mappings.get(attachment["server_id"])
+            sid = attachment["server_id"]
+            attachment["server_name"] = server_name_map.get(sid)
+
     return schemas.VolumesResponse(**{"count": count, "volumes": result})
 
 
@@ -676,52 +661,53 @@ async def list_volumes(
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def list_volume_snapshots(
+def list_volume_snapshots(
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-    limit: int = Query(
+    limit: Optional[int] = Query(
         None,
-        description=(
-            "Requests a page size of items. Returns a number of items up to a limit value."
-        ),
+        description="Requests a page size of items. Return items up to the limit value.",
         gt=constants.EXTENSION_API_LIMIT_GT,
     ),
-    marker: str = Query(None, description="The ID of the last-seen item."),
-    sort_dirs: schemas.SortDir = Query(
+    marker: Optional[str] = Query(None, description="The ID of the last-seen item."),
+    sort_dirs: Optional[schemas.SortDir] = Query(
         None, description="Indicates in which directions to sort."
     ),
-    sort_keys: List[schemas.VolumeSnapshotSortKey] = Query(
+    sort_keys: Optional[List[schemas.VolumeSnapshotSortKey]] = Query(
         None, description="Indicates in which attributes to sort."
     ),
-    all_projects: bool = Query(None, description="List volume snapshots for all projects."),
-    project_id: str = Query(
-        None, description="Filter the list of volume snapshots by the given project ID."
+    all_projects: Optional[bool] = Query(None, description="List snapshots for all projects."),
+    project_id: Optional[str] = Query(
+        None, description="Filter the list of snapshots by the given project ID."
     ),
-    name: str = Query(
-        None, description="Filter the list of volume snapshots by the given volume snapshot name."
+    name: Optional[str] = Query(
+        None, description="Filter the list of snapshots by the given snapshot name."
     ),
-    status: schemas.VolumeSnapshotStatus = Query(
-        None,
-        description="Filter the list of volume snapshots by the given volume snapshot status.",
+    status: Optional[schemas.VolumeSnapshotStatus] = Query(
+        None, description="Filter the list of snapshots by the given snapshot status."
     ),
-    volume_id: str = Query(
-        None, description="Filter the list of volume snapshots by the given volume ID."
+    volume_id: Optional[str] = Query(
+        None, description="Filter the list of snapshots by the given volume ID."
     ),
-    uuid: str = Query(
-        None, description="Filter the list of volume snapshots by the given volume snapshot UUID."
+    uuid: Optional[str] = Query(
+        None, description="Filter the list of snapshots by the given snapshot UUID."
     ),
 ) -> schemas.VolumeSnapshotsResponse:
+    all_projects = all_projects or False
     if all_projects:
         assert_system_admin_or_reader(
             profile=profile,
             exception="Not allowed to get volume snapshots for all projects.",
         )
+    else:
+        project_id = None
 
-    current_session = await generate_session(profile=profile)
+    current_session = generate_session(profile=profile)
+    system_session = get_system_session()
 
     sort = None
     if sort_keys:
@@ -745,7 +731,7 @@ async def list_volume_snapshots(
             # We need to check the project_id of volume snapshot is the same
             # of current project id.
             try:
-                volume_snapshot = await cinder.get_volume_snapshot(
+                volume_snapshot = cinder.get_volume_snapshot(
                     session=current_session,
                     region=profile.region,
                     global_request_id=x_openstack_request_id,
@@ -763,7 +749,7 @@ async def list_volume_snapshots(
         snapshot_session = get_system_session()
         search_opts["all_tenants"] = True
 
-    volume_snapshots, count = await cinder.list_volume_snapshots(
+    volume_snapshots, count = cinder.list_volume_snapshots(
         profile=profile,
         session=snapshot_session,
         global_request_id=x_openstack_request_id,
@@ -784,67 +770,56 @@ async def list_volume_snapshots(
         snapshot_ids.append(volume_snapshot["id"])
 
     if all_projects:
-        tasks = [
-            keystone.list_projects(
-                profile=profile,
-                session=current_session,
-                global_request_id=x_openstack_request_id,
-                all_projects=all_projects,
-            ),
-        ]
+        projects = keystone.list_projects(
+            profile=profile,
+            session=current_session,
+            global_request_id=x_openstack_request_id,
+            all_projects=all_projects,
+        )
     else:
-        tasks = [asyncio.sleep(0.01)]
+        projects = []
 
     volume_ids = list(set(volume_ids))
+    all_volumes = []
     for i in range(0, len(volume_ids), STEP):
         # Here we use system_session to filter volume with id list.
         # So we need to set all_tenants as True to filter volume from
         # all volumes. Otherwise, we just filter volume from the user
         # of system_session.
-        tasks.append(
-            cinder.list_volumes(
-                profile=profile,
-                session=get_system_session(),
-                global_request_id=x_openstack_request_id,
-                search_opts={"id": volume_ids[i : i + STEP], "all_tenants": True},
-            ),
+        volumes = cinder.list_volumes(
+            profile=profile,
+            session=system_session,
+            global_request_id=x_openstack_request_id,
+            search_opts={"id": volume_ids[i : i + STEP], "all_tenants": True},
         )
+        all_volumes.extend(volumes)
+
+    all_volumes_from_snapshot = []
     for i in range(0, len(snapshot_ids), STEP):
         # Here we use system_session to filter volume with snapshot_id list.
         # So we need to set all_tenants as True to filter volume from
         # all volumes. Otherwise, we just filter volume from the user
         # of system_session.
-        tasks.append(
-            cinder.list_volumes(
-                profile=profile,
-                session=get_system_session(),
-                global_request_id=x_openstack_request_id,
-                search_opts={
-                    "snapshot_id": snapshot_ids[i : i + STEP],
-                    "all_tenants": True,
-                },
-            ),
+        volumes_from_snapshot = cinder.list_volumes(
+            profile=profile,
+            session=system_session,
+            global_request_id=x_openstack_request_id,
+            search_opts={
+                "snapshot_id": snapshot_ids[i : i + STEP],
+                "all_tenants": True,
+            },
         )
-    task_result = await gather(*tasks)
-
-    projects = task_result[0] if task_result[0] else []
-    total_volume_tasks = math.ceil(len(volume_ids) / STEP)
-    volumes: List[CinderVolume] = reduce(
-        lambda x, y: x + y, task_result[1 : 1 + total_volume_tasks], []
-    )
-    volumes_from_snapshot: List[CinderVolume] = reduce(
-        lambda x, y: x + y, task_result[1 + total_volume_tasks :], []
-    )
+        all_volumes_from_snapshot.extend(volumes_from_snapshot)
 
     proj_mappings = {project.id: project.name for project in projects}
     vol_mappings = {}
-    for volume in volumes:
+    for volume in all_volumes:
         vol_mappings[volume.id] = {
             "name": volume.name,
             "host": getattr(volume, "os-vol-host-attr:host", None),
         }
     child_volumes: Dict[str, Any] = {}
-    for volume in volumes_from_snapshot:
+    for volume in all_volumes_from_snapshot:
         child_volumes.setdefault(volume.snapshot_id, [])
         child_volumes[volume.snapshot_id].append(
             {"volume_id": volume.id, "volume_name": volume.name}
@@ -872,54 +847,67 @@ async def list_volume_snapshots(
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def list_ports(
+def list_ports(
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
-    limit: int = Query(
+    limit: Optional[int] = Query(
         None,
         description=(
             "Requests a page size of items. Returns a number of items up to a limit value."
         ),
         gt=constants.EXTENSION_API_LIMIT_GT,
     ),
-    marker: str = Query(None, description="The ID of the last-seen item."),
-    sort_dirs: schemas.SortDir = Query(
+    marker: Optional[str] = Query(None, description="The ID of the last-seen item."),
+    sort_dirs: Optional[schemas.SortDir] = Query(
         None, description="Indicates in which directions to sort."
     ),
-    sort_keys: List[schemas.PortSortKey] = Query(
+    sort_keys: Optional[List[schemas.PortSortKey]] = Query(
         None, description="Indicates in which attributes to sort."
     ),
-    all_projects: bool = Query(None, description="List ports for all projects."),
-    project_id: str = Query(
+    all_projects: Optional[bool] = Query(None, description="List ports for all projects."),
+    project_id: Optional[str] = Query(
         None, description="Filter the list of ports by the given project ID."
     ),
-    name: str = Query(None, description="Filter the list of ports by the given port name."),
-    status: schemas.PortStatus = Query(
+    name: Optional[str] = Query(
+        None, description="Filter the list of ports by the given port name."
+    ),
+    status: Optional[schemas.PortStatus] = Query(
         None, description="Filter the list of ports by the given port status."
     ),
-    network_name: str = Query(
+    network_name: Optional[str] = Query(
         None, description="Filter the list of ports by the given network name."
     ),
-    network_id: str = Query(
+    network_id: Optional[str] = Query(
         None, description="Filter the list of ports by the given network ID."
     ),
-    device_id: str = Query(
+    device_id: Optional[str] = Query(
         None,
         description=(
             "The ID of the device that uses this port. For example, "
             "a server instance or a logical router."
         ),
     ),
-    device_owner: List[schemas.PortDeviceOwner] = Query(
+    device_owner: Optional[List[schemas.PortDeviceOwner]] = Query(
         None, description="The entity type that uses this port."
     ),
-    uuid: List[str] = Query(None, description="Filter the list of ports by the given port UUID."),
+    uuid: Optional[List[str]] = Query(
+        None, description="Filter the list of ports by the given port UUID."
+    ),
 ) -> schemas.PortsResponse:
-    current_session = await generate_session(profile=profile)
+    all_projects = all_projects or False
+    if all_projects:
+        assert_system_admin_or_reader(
+            profile=profile,
+            exception="Not allowed to get ports for all projects.",
+        )
+    else:
+        project_id = None
+
+    current_session = generate_session(profile)
 
     kwargs: Dict[str, Any] = {}
     if limit is not None:
@@ -939,7 +927,7 @@ async def list_ports(
     if uuid is not None:
         kwargs["id"] = set(uuid)
     if network_name is not None:
-        networks = await neutron.list_networks(
+        networks = neutron.list_networks(
             profile=profile,
             session=current_session,
             global_request_id=x_openstack_request_id,
@@ -964,7 +952,7 @@ async def list_ports(
         kwargs["sort_dir"] = sort_dir
         kwargs["sort_key"] = sort_keys
 
-    ports = await neutron.list_ports(
+    ports = neutron.list_ports(
         current_session,
         profile.region,
         x_openstack_request_id,
@@ -984,14 +972,16 @@ async def list_ports(
         network_ids.append(port["network_id"])
 
     network_params: Dict[str, Any] = {}
-    tasks = [
-        neutron.list_networks(
-            profile=profile,
-            session=current_session,
-            global_request_id=x_openstack_request_id,
-            **{"shared": True},
-        ),
-    ]
+    shared_nets = neutron.list_networks(
+        profile=profile,
+        session=current_session,
+        global_request_id=x_openstack_request_id,
+        **{"shared": True},
+    )
+    networks_result = []
+    shared_nets_list = shared_nets.get("networks", [])
+    networks_result.extend(shared_nets_list)
+
     if not all_projects:
         network_params["project_id"] = profile.project.id
     network_ids = list(set(network_ids))
@@ -999,39 +989,31 @@ async def list_ports(
     # If we do not do this, the length of url will be too long to do request.
     for i in range(0, len(network_ids), STEP):
         network_params["id"] = set(network_ids[i : i + STEP])
-        tasks.append(
-            neutron.list_networks(
-                profile=profile,
-                session=current_session,
-                global_request_id=x_openstack_request_id,
-                **network_params,
-            ),
+        nets = neutron.list_networks(
+            profile=profile,
+            session=current_session,
+            global_request_id=x_openstack_request_id,
+            **network_params,
         )
+        nets_list = nets.get("networks", [])
+        networks_result.extend(nets_list)
 
     server_ids = list(set(server_ids))
+    ser_mappings = {}
     for server_id in server_ids:
-        tasks.append(
-            nova.list_servers(
-                profile=profile,
-                session=current_session,
-                global_request_id=x_openstack_request_id,
-                search_opts={
-                    "uuid": server_id,
-                    "all_tenants": all_projects,
-                },
-            ),
+        servers = nova.list_servers(
+            profile=profile,
+            session=current_session,
+            global_request_id=x_openstack_request_id,
+            search_opts={
+                "uuid": server_id,
+                "all_tenants": all_projects,
+            },
         )
-    task_result = await gather(*tasks)
-
-    total_network_tasks = math.ceil(len(network_ids) / STEP)
-    servers: List[NovaServer] = reduce(
-        lambda x, y: x + y, task_result[1 + total_network_tasks :], []
-    )
-    ser_mappings = {server.id: server.name for server in servers}
-    _networks = [net.get("networks", []) for net in task_result[1 : 1 + total_network_tasks]]
-    shared_nets = task_result[0].get("networks", [])
-    nets = reduce(lambda x, y: x + y, _networks, []) + shared_nets
-    network_mappings = {net["id"]: net["name"] for net in nets}
+        if servers:
+            server = servers[0]
+            ser_mappings[server.id] = server.name
+    network_mappings = {net["id"]: net["name"] for net in networks_result}
     for port in result:
         port.server_name = ser_mappings.get(port.device_id)
         port.network_name = network_mappings.get(port.network_id)
@@ -1051,7 +1033,7 @@ async def list_ports(
     response_description="OK",
     response_model_exclude_none=True,
 )
-async def compute_services(
+def compute_services(
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
     x_openstack_request_id: str = Header(
         "",
@@ -1075,11 +1057,13 @@ async def compute_services(
         kwargs["binary"] = binary
     if host is not None:
         kwargs["host"] = host
-    services = await nova.list_services(
+    services = nova.list_services(
         profile=profile,
         session=system_session,
         global_request_id=x_openstack_request_id,
         **kwargs,
     )
-    services = [Service(service).to_dict() for service in services]
+    services = [
+        ComputeServicesResponseBase.parse_obj(Service(service).to_dict()) for service in services
+    ]
     return schemas.ComputeServicesResponse(**{"services": services})

@@ -25,7 +25,6 @@ from keystoneclient.client import Client as KeystoneClient
 from keystoneclient.httpclient import HTTPClient
 from neutronclient.v2_0.client import Client as NeutronClient
 from novaclient.client import Client as NovaClient
-from starlette.concurrency import run_in_threadpool
 
 from skyline_apiserver import schemas
 from skyline_apiserver.config import CONF
@@ -34,8 +33,8 @@ from skyline_apiserver.types import constants
 SESSION = None
 
 
-async def generate_session(profile: schemas.Profile) -> Any:
-    auth_url = await get_endpoint(
+def generate_session(profile: schemas.Profile) -> Any:
+    auth_url = get_endpoint(
         region=profile.region,
         service="identity",
         session=get_system_session(),
@@ -47,7 +46,7 @@ async def generate_session(profile: schemas.Profile) -> Any:
     }
     auth = Token(**kwargs)
     session = Session(auth=auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT)
-    session.auth.auth_ref = await run_in_threadpool(session.auth.get_auth_ref, session)  # type: ignore # noqa E501
+    session.auth.auth_ref = session.auth.get_auth_ref(session)  # type: ignore # noqa E501
     return session
 
 
@@ -69,24 +68,24 @@ def get_system_session() -> Session:
     return SESSION
 
 
-async def get_system_scope_access(keystone_token: str, region: str) -> AccessInfoV3:
-    auth_url = await get_endpoint(region, "identity", get_system_session())
+def get_system_scope_access(keystone_token: str, region: str) -> AccessInfoV3:
+    auth_url = get_endpoint(region, "identity", get_system_session())
     scope_auth = Token(auth_url, keystone_token, system_scope="all")
     session = Session(
         auth=scope_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT
     )
-    return await run_in_threadpool(session.auth.get_auth_ref, session)  # type: ignore
+    return session.auth.get_auth_ref(session)  # type: ignore
 
 
-async def get_access(session: Session) -> AccessInfoV3:
+def get_access(session: Session) -> AccessInfoV3:
     auth = session.auth
     if auth._needs_reauthenticate():  # type: ignore
-        auth.auth_ref = await run_in_threadpool(auth.get_auth_ref, session)  # type: ignore
+        auth.auth_ref = auth.get_auth_ref(session)  # type: ignore
     return auth.auth_ref  # type: ignore
 
 
-async def get_endpoint(region: str, service: str, session: Session) -> Any:
-    access = await get_access(session=session)
+def get_endpoint(region: str, service: str, session: Session) -> Any:
+    access = get_access(session=session)
     service_catalog = access.service_catalog
     endpoint = service_catalog.get_urls(
         region_name=region,
@@ -98,13 +97,13 @@ async def get_endpoint(region: str, service: str, session: Session) -> Any:
     return endpoint[0]
 
 
-async def keystone_client(
+def keystone_client(
     session: Session,
     region: str,
     global_request_id: Optional[str] = None,
     version: str = constants.KEYSTONE_API_VERSION,
 ) -> HTTPClient:
-    endpoint = await get_endpoint(region, "identity", session=session)
+    endpoint = get_endpoint(region, "identity", session=session)
     client = KeystoneClient(
         version=version,
         session=session,
@@ -115,13 +114,13 @@ async def keystone_client(
     return client
 
 
-async def glance_client(
+def glance_client(
     session: Session,
     region: str,
     global_request_id: Optional[str] = None,
     version: str = constants.GLANCE_API_VERSION,
 ) -> HTTPClient:
-    endpoint = await get_endpoint(region, "image", session=session)
+    endpoint = get_endpoint(region, "image", session=session)
     client = GlanceClient(
         version=version,
         session=session,
@@ -131,13 +130,13 @@ async def glance_client(
     return client
 
 
-async def nova_client(
+def nova_client(
     session: Session,
     region: str,
     global_request_id: Optional[str] = None,
     version: str = constants.NOVA_API_VERSION,
 ) -> HTTPClient:
-    endpoint = await get_endpoint(region, "compute", session=session)
+    endpoint = get_endpoint(region, "compute", session=session)
     client = NovaClient(
         version=version,
         session=session,
@@ -147,14 +146,13 @@ async def nova_client(
     return client
 
 
-async def cinder_client(
+def cinder_client(
     session: Session,
     region: str,
     global_request_id: Optional[str] = None,
     version: str = constants.CINDER_API_VERSION,
 ) -> HTTPClient:
-    # https://service-types.openstack.org/service-types.json
-    endpoint = await get_endpoint(region, "block-storage", session=session)
+    endpoint = get_endpoint(region, "block-storage", session=session)
     client = CinderClient(
         version=version,
         session=session,
@@ -164,13 +162,13 @@ async def cinder_client(
     return client
 
 
-async def neutron_client(
+def neutron_client(
     session: Session,
     region: str,
     global_request_id: Optional[str] = None,
     version: str = constants.NEUTRON_API_VERSION,
-) -> HTTPClient:
-    endpoint = await get_endpoint(region, "network", session=session)
+) -> NeutronClient:
+    endpoint = get_endpoint(region, "network", session=session)
     client = NeutronClient(
         version=version,
         session=session,

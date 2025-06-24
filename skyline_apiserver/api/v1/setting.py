@@ -14,7 +14,10 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import status
+from fastapi.exceptions import HTTPException
+from fastapi.param_functions import Depends
+from fastapi.routing import APIRouter
 
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
@@ -46,16 +49,23 @@ def assert_setting_key_exist(key: str):
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def show_setting(
+def show_setting(
     key: str,
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
 ) -> schemas.Setting:
     assert_setting_key_exist(key)
-    setting = await db_api.get_setting(key)
-    value = getattr(CONF.setting, key) if setting is None else setting.value
+    value = getattr(CONF.setting, key)
     hidden = key in constants.SETTINGS_HIDDEN_SET
     restart_service = key in constants.SETTINGS_RESTART_SET
-    return schemas.Setting(key=key, value=value, hidden=hidden, restart_service=restart_service)
+    db_setting = db_api.get_setting(key)
+    if db_setting:
+        value = db_setting.value
+    return schemas.Setting(
+        key=key,
+        value=value,
+        hidden=hidden,
+        restart_service=restart_service,
+    )
 
 
 @router.put(
@@ -71,18 +81,18 @@ async def show_setting(
     status_code=status.HTTP_200_OK,
     response_description="ok",
 )
-async def update_setting(
+def update_setting(
     setting: schemas.UpdateSetting,
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
 ) -> schemas.Setting:
     assert_system_admin(profile=profile, exception="Not allowed to update settings.")
     assert_setting_key_exist(setting.key)
-    setting = await db_api.update_setting(setting.key, setting.value)
+    db_setting = db_api.update_setting(setting.key, setting.value)
     hidden = setting.key in constants.SETTINGS_HIDDEN_SET
     restart_service = setting.key in constants.SETTINGS_RESTART_SET
     return schemas.Setting(
         key=setting.key,
-        value=setting.value,
+        value=db_setting.value,
         hidden=hidden,
         restart_service=restart_service,
     )
@@ -99,7 +109,7 @@ async def update_setting(
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def list_settings(
+def list_settings(
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
 ) -> schemas.Settings:
     settings = {
@@ -111,7 +121,7 @@ async def list_settings(
         )
         for k in CONF.setting.base_settings
     }
-    db_settings = await db_api.list_settings()
+    db_settings = db_api.list_settings()
     for item in db_settings:
         if item.key in CONF.setting.base_settings:
             settings[item.key].value = item.value
@@ -122,18 +132,26 @@ async def list_settings(
     "/setting/{key}",
     description="Reset a setting item to default",
     responses={
-        204: {"model": None},
+        200: {"model": schemas.Setting},
         401: {"model": schemas.UnauthorizedMessage},
         403: {"model": schemas.ForbiddenMessage},
         404: {"model": schemas.NotFoundMessage},
     },
-    status_code=status.HTTP_204_NO_CONTENT,
-    response_description="No Content",
+    response_model=schemas.Setting,
+    status_code=status.HTTP_200_OK,
+    response_description="OK",
 )
-async def reset_setting(
+def reset_setting(
     key: str,
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
-) -> None:
-    assert_system_admin(profile=profile, exception="Not allowed to reset settings.")
+) -> schemas.Setting:
+    assert_system_admin(profile, exception="Not allowed to reset settings.")
     assert_setting_key_exist(key)
-    await db_api.delete_setting(key)
+    db_api.delete_setting(key)
+    value = getattr(CONF.setting, key)
+    return schemas.Setting(
+        key=key,
+        value=value,
+        hidden=key in constants.SETTINGS_HIDDEN_SET,
+        restart_service=key in constants.SETTINGS_RESTART_SET,
+    )

@@ -14,7 +14,10 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import status
+from fastapi.exceptions import HTTPException
+from fastapi.param_functions import Depends, Query
+from fastapi.routing import APIRouter
 from httpx import codes
 
 from skyline_apiserver import schemas
@@ -106,7 +109,7 @@ def get_prometheus_query_range_response(
     response_description="OK",
     response_model_exclude_none=True,
 )
-async def prometheus_query(
+def prometheus_query(
     query: str = Query(None, description="The query expression of prometheus to filter."),
     time: str = Query(None, description="The time to filter."),
     timeout: str = Query(None, description="The timeout to filter."),
@@ -126,7 +129,7 @@ async def prometheus_query(
             CONF.default.prometheus_basic_auth_user,
             CONF.default.prometheus_basic_auth_password,
         )
-    resp = await _http_request(
+    resp = _http_request(
         url=CONF.default.prometheus_endpoint + constants.PROMETHEUS_QUERY_API,
         params=kwargs,
         auth=auth,
@@ -151,7 +154,7 @@ async def prometheus_query(
     response_description="OK",
     response_model_exclude_none=True,
 )
-async def prometheus_query_range(
+def prometheus_query_range(
     query: str = Query(None, description="The query expression of prometheus to filter."),
     start: str = Query(None, description="The start time to filter."),
     end: str = Query(None, description="The end time to filter."),
@@ -177,7 +180,7 @@ async def prometheus_query_range(
             CONF.default.prometheus_basic_auth_user,
             CONF.default.prometheus_basic_auth_password,
         )
-    resp = await _http_request(
+    resp = _http_request(
         url=CONF.default.prometheus_endpoint + constants.PROMETHEUS_QUERY_RANGE_API,
         params=kwargs,
         auth=auth,

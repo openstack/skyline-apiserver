@@ -1,10 +1,12 @@
 default:
+  access_log_file: skyline-nginx-access.log
   access_token_expire: 3600
   access_token_renew: 1800
   cafile: ''
   cors_allow_origins: []
   database_url: sqlite:////tmp/skyline.db
   debug: false
+  error_log_file: skyline-nginx-error.log
   log_dir: /var/log/skyline
   log_file: skyline.log
   policy_file_path: /etc/skyline/policy

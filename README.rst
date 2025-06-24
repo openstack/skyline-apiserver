@@ -152,6 +152,8 @@ Install & Run
    .. code:: bash
 
       tox -e venv
+      pip install -r requirements.txt -r test-requirements.txt
+      pip install -e .
 
 2. Set skyline.yaml config file
 

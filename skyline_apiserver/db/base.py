@@ -16,7 +16,8 @@ from __future__ import annotations
 
 from contextvars import ContextVar
 
-from databases import Database, DatabaseURL
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from skyline_apiserver.config import CONF
 
@@ -24,25 +25,112 @@ DATABASE = None
 DB: ContextVar = ContextVar("skyline_db")
 
 
-async def setup():
-    db_url = DatabaseURL(CONF.default.database_url)
+class DBWrapper:
+    def __init__(self, engine):
+        self.engine = engine
+
+    def get_session(self):
+        Session = sessionmaker(bind=self.engine)
+        return Session()
+
+    def transaction(self):
+        session = self.get_session()
+        return Transaction(session)
+
+    def execute(self, query, params=None):
+        session = self.get_session()
+        with session.begin():
+            if params:
+                result = session.execute(query, params)
+            else:
+                result = session.execute(query)
+        session.close()
+        return result
+
+    def fetch_one(self, query):
+        session = self.get_session()
+        with session.begin():
+            result = session.execute(query).fetchone()
+        session.close()
+        return result
+
+    def fetch_all(self, query):
+        session = self.get_session()
+        with session.begin():
+            result = session.execute(query).fetchall()
+        session.close()
+        return result
+
+
+def setup():
+    db_url = CONF.default.database_url
     global DATABASE
-    if db_url.scheme == "mysql":
-        DATABASE = Database(
-            db_url,
-            minsize=1,
-            maxsize=100,
-            echo=CONF.default.debug,
-            charset="utf8",
-            client_flag=0,
-        )
-    elif db_url.scheme == "sqlite":
-        DATABASE = Database(db_url)
+    if db_url.startswith("sqlite"):
+        engine = create_engine(db_url, connect_args={"check_same_thread": False})
     else:
-        raise ValueError("Unsupported database backend")
-    await DATABASE.connect()
+        engine = create_engine(db_url, pool_pre_ping=True)
+    DATABASE = DBWrapper(engine)
+    DB.set(DATABASE)
 
 
-async def inject_db():
+def inject_db():
     global DATABASE
     DB.set(DATABASE)
+
+
+def get_session():
+    engine = DB.get()
+    Session = sessionmaker(bind=engine)
+    return Session()
+
+
+class Transaction:
+    def __init__(self, session):
+        self.session = session
+
+    def __enter__(self):
+        self.session.begin()
+        return self.session
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type:
+            self.session.rollback()
+        else:
+            self.session.commit()
+        self.session.close()
+
+
+# Usage compatible with async with db.transaction():
+def transaction():
+    session = get_session()
+    return Transaction(session)
+
+
+# Usage compatible with await db.execute(query, ...)
+def execute(query, params=None):
+    session = get_session()
+    with session.begin():
+        if params:
+            result = session.execute(query, params)
+        else:
+            result = session.execute(query)
+    session.close()
+    return result
+
+
+# Usage compatible with await db.fetch_one(query)
+def fetch_one(query):
+    session = get_session()
+    with session.begin():
+        result = session.execute(query).fetchone()
+    session.close()
+    return result
+
+
+# Usage compatible with await db.fetch_all(query)
+def fetch_all(query):
+    session = get_session()
+    with session.begin():
+        result = session.execute(query).fetchall()
+    session.close()
+    return result

@@ -14,21 +14,32 @@
 
 from __future__ import annotations
 
-import asyncio
+import sys
 from logging import StreamHandler
 from pprint import pprint
 
-import uvloop
+import uvicorn
 
 from skyline_apiserver.config import configure
 from skyline_apiserver.log import setup
 
 
-async def main() -> None:
+def main() -> None:
     configure("skyline")
     setup(StreamHandler())
     pprint("Run some debug code")
 
 
-uvloop.install()
-asyncio.run(main())
+if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "server":
+        # Start the FastAPI server
+        uvicorn.run(
+            "skyline_apiserver.main:app",
+            host="0.0.0.0",
+            port=28000,
+            reload=True,
+            log_level="debug",
+        )
+    else:
+        # Run debug code
+        main()

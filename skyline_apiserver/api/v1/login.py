@@ -17,11 +17,15 @@ from __future__ import annotations
 from pathlib import PurePath
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from fastapi import APIRouter, Depends, Form, Header, HTTPException, Request, Response, status
-from fastapi.responses import RedirectResponse
+from fastapi import status
+from fastapi.exceptions import HTTPException
+from fastapi.param_functions import Depends, Form, Header
+from fastapi.routing import APIRouter
 from keystoneauth1.identity.v3 import Password, Token
 from keystoneauth1.session import Session
 from keystoneclient.client import Client as KeystoneClient
+from starlette.requests import Request
+from starlette.responses import RedirectResponse, Response
 
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
@@ -46,21 +50,21 @@ from skyline_apiserver.types import constants
 router = APIRouter()
 
 
-async def _get_default_project_id(
+def _get_default_project_id(
     session: Session, region: str, user_id: Optional[str] = None
 ) -> Union[str, None]:
     system_session = get_system_session()
     if not user_id:
         token = session.get_token()
-        token_data = await get_token_data(token, region, system_session)  # type: ignore
+        token_data = get_token_data(token, region, system_session)  # type: ignore
         _user_id = token_data["token"]["user"]["id"]
     else:
         _user_id = user_id
-    user = await get_user(_user_id, region, system_session)
+    user = get_user(_user_id, region, system_session)
     return getattr(user, "default_project_id", None)
 
 
-async def _get_projects_and_unscope_token(
+def _get_projects_and_unscope_token(
     region: str,
     domain: Optional[str] = None,
     username: Optional[str] = None,
@@ -68,7 +72,7 @@ async def _get_projects_and_unscope_token(
     token: Optional[str] = None,
     project_enabled: bool = False,
 ) -> Tuple[List[Any], str, Union[str, None]]:
-    auth_url = await utils.get_endpoint(
+    auth_url = utils.get_endpoint(
         region=region,
         service="identity",
         session=get_system_session(),
@@ -108,27 +112,27 @@ async def _get_projects_and_unscope_token(
     if not project_scope:
         raise Exception("You are not authorized for any projects or domains.")
 
-    default_project_id = await _get_default_project_id(session, region)
+    default_project_id = _get_default_project_id(session, region)
 
     return project_scope, unscope_token, default_project_id  # type: ignore
 
 
-async def _patch_profile(profile: schemas.Profile, global_request_id: str) -> schemas.Profile:
+def _patch_profile(profile: schemas.Profile, global_request_id: str) -> schemas.Profile:
     try:
-        profile.endpoints = await get_endpoints(region=profile.region)
+        profile.endpoints = get_endpoints(region=profile.region)
 
-        projects = await get_projects(
+        projects = get_projects(
             global_request_id=global_request_id,
             region=profile.region,
             user=profile.user.id,
         )
 
         if not projects:
-            projects, _, default_project_id = await _get_projects_and_unscope_token(
+            projects, _, default_project_id = _get_projects_and_unscope_token(
                 region=profile.region, token=profile.keystone_token
             )
         else:
-            default_project_id = await _get_default_project_id(
+            default_project_id = _get_default_project_id(
                 get_system_session(), profile.region, user_id=profile.user.id
             )
 
@@ -163,7 +167,7 @@ async def _patch_profile(profile: schemas.Profile, global_request_id: str) -> sc
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def login(
+def login(
     request: Request,
     response: Response,
     credential: schemas.Credential,
@@ -175,7 +179,7 @@ async def login(
 ) -> schemas.Profile:
     region = credential.region or CONF.openstack.default_region
     try:
-        project_scope, unscope_token, default_project_id = await _get_projects_and_unscope_token(
+        project_scope, unscope_token, default_project_id = _get_projects_and_unscope_token(
             region=region,
             domain=credential.domain,
             username=credential.username,
@@ -185,18 +189,18 @@ async def login(
 
         if default_project_id not in [i.id for i in project_scope]:
             default_project_id = None
-        project_scope_token = await get_project_scope_token(
+        project_scope_token = get_project_scope_token(
             keystone_token=unscope_token,
             region=region,
             project_id=default_project_id or project_scope[0].id,
         )
 
-        profile = await generate_profile(
+        profile = generate_profile(
             keystone_token=project_scope_token,
             region=region,
         )
 
-        profile = await _patch_profile(profile, x_openstack_request_id)
+        profile = _patch_profile(profile, x_openstack_request_id)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -218,7 +222,7 @@ async def login(
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def get_sso(request: Request) -> schemas.SSO:
+def get_sso(request: Request) -> schemas.SSO:
     sso: Dict = {
         "enable_sso": False,
         "protocols": [],
@@ -265,7 +269,7 @@ async def get_sso(request: Request) -> schemas.SSO:
     status_code=status.HTTP_302_FOUND,
     response_description="Redirect",
 )
-async def websso(
+def websso(
     token: str = Form(...),
     x_openstack_request_id: str = Header(
         "",
@@ -274,7 +278,7 @@ async def websso(
     ),
 ) -> RedirectResponse:
     try:
-        project_scope, _, default_project_id = await _get_projects_and_unscope_token(
+        project_scope, _, default_project_id = _get_projects_and_unscope_token(
             region=CONF.openstack.sso_region,
             token=token,
             project_enabled=True,
@@ -282,18 +286,18 @@ async def websso(
 
         if default_project_id not in [i.id for i in project_scope]:
             default_project_id = None
-        project_scope_token = await get_project_scope_token(
+        project_scope_token = get_project_scope_token(
             keystone_token=token,
             region=CONF.openstack.sso_region,
             project_id=default_project_id or project_scope[0].id,
         )
 
-        profile = await generate_profile(
+        profile = generate_profile(
             keystone_token=project_scope_token,
             region=CONF.openstack.sso_region,
         )
 
-        profile = await _patch_profile(profile, x_openstack_request_id)
+        profile = _patch_profile(profile, x_openstack_request_id)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -317,7 +321,7 @@ async def websso(
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def get_profile(
+def get_profile(
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
     x_openstack_request_id: str = Header(
         "",
@@ -325,7 +329,7 @@ async def get_profile(
         regex=constants.INBOUND_HEADER_REGEX,
     ),
 ) -> schemas.Profile:
-    return await _patch_profile(profile, x_openstack_request_id)
+    return _patch_profile(profile, x_openstack_request_id)
 
 
 @router.post(
@@ -338,7 +342,7 @@ async def get_profile(
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def logout(
+def logout(
     response: Response,
     request: Request,
     payload: str = Depends(deps.getJWTPayload),
@@ -351,10 +355,10 @@ async def logout(
     if payload:
         try:
             token = parse_access_token(payload)
-            profile = await generate_profile_by_token(token)
-            session = await generate_session(profile)
-            await revoke_token(profile, session, x_openstack_request_id, token.keystone_token)
-            await db_api.revoke_token(profile.uuid, profile.exp)
+            profile = generate_profile_by_token(token)
+            session = generate_session(profile)
+            revoke_token(profile, session, x_openstack_request_id, token.keystone_token)
+            db_api.revoke_token(profile.uuid, profile.exp)
         except Exception as e:
             LOG.debug(str(e))
     response.delete_cookie(CONF.default.session_name)
@@ -372,7 +376,7 @@ async def logout(
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def switch_project(
+def switch_project(
     project_id: str,
     response: Response,
     profile: schemas.Profile = Depends(deps.get_profile),
@@ -383,18 +387,18 @@ async def switch_project(
     ),
 ) -> schemas.Profile:
     try:
-        project_scope_token = await get_project_scope_token(
+        project_scope_token = get_project_scope_token(
             keystone_token=profile.keystone_token,
             region=profile.region,
             project_id=project_id,
         )
 
-        profile = await generate_profile(
+        profile = generate_profile(
             keystone_token=project_scope_token,
             region=profile.region,
             uuid_value=profile.uuid,
         )
-        profile = await _patch_profile(profile, x_openstack_request_id)
+        profile = _patch_profile(profile, x_openstack_request_id)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

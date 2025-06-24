@@ -18,7 +18,8 @@ import time
 import uuid
 from typing import Optional
 
-from fastapi import HTTPException, status
+from fastapi import status
+from fastapi.exceptions import HTTPException
 from jose import jwt
 
 from skyline_apiserver import schemas, version
@@ -28,7 +29,7 @@ from skyline_apiserver.config import CONF
 
 
 def parse_access_token(token: str) -> (schemas.Payload):
-    payload = jwt.decode(token, CONF.default.secret_key)
+    payload = jwt.decode(token, CONF.default.secret_key, algorithms=["HS256"])
     return schemas.Payload(
         keystone_token=payload["keystone_token"],
         region=payload["region"],
@@ -37,8 +38,8 @@ def parse_access_token(token: str) -> (schemas.Payload):
     )
 
 
-async def generate_profile_by_token(token: schemas.Payload) -> schemas.Profile:
-    return await generate_profile(
+def generate_profile_by_token(token: schemas.Payload) -> schemas.Profile:
+    return generate_profile(
         keystone_token=token.keystone_token,
         region=token.region,
         exp=token.exp,
@@ -46,14 +47,14 @@ async def generate_profile_by_token(token: schemas.Payload) -> schemas.Profile:
     )
 
 
-async def generate_profile(
+def generate_profile(
     keystone_token: str,
     region: str,
     exp: Optional[int] = None,
     uuid_value: Optional[str] = None,
 ) -> schemas.Profile:
     try:
-        kc = await utils.keystone_client(session=get_system_session(), region=region)
+        kc = utils.keystone_client(session=get_system_session(), region=region)
         token_data = kc.tokens.get_token_data(token=keystone_token)
     except Exception as e:
         raise HTTPException(

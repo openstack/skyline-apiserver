@@ -16,29 +16,29 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import HTTPException, status
+from fastapi import status
+from fastapi.exceptions import HTTPException
 from keystoneauth1.exceptions.http import Unauthorized
 from keystoneauth1.session import Session
 from neutronclient.v2_0.client import _GeneratorWithMeta
-from starlette.concurrency import run_in_threadpool
 
 from skyline_apiserver import schemas
 from skyline_apiserver.client import utils
 
 
-async def list_networks(
+def list_networks(
     profile: schemas.Profile,
     session: Session,
     global_request_id: str,
     **kwargs: Any,
 ) -> Any:
     try:
-        nc = await utils.neutron_client(
+        nc = utils.neutron_client(
             session=session,
             region=profile.region,
             global_request_id=global_request_id,
         )
-        return await run_in_threadpool(nc.list_networks, **kwargs)
+        return nc.list_networks(**kwargs)
     except Unauthorized as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -51,7 +51,7 @@ async def list_networks(
         )
 
 
-async def list_ports(
+def list_ports(
     session: Session,
     region_name: str,
     global_request_id: str,
@@ -59,12 +59,12 @@ async def list_ports(
     **kwargs: Any,
 ) -> _GeneratorWithMeta:
     try:
-        nc = await utils.neutron_client(
+        nc = utils.neutron_client(
             session=session,
             region=region_name,
             global_request_id=global_request_id,
         )
-        return await run_in_threadpool(nc.list_ports, retrieve_all=retrieve_all, **kwargs)
+        return nc.list_ports(retrieve_all=retrieve_all, **kwargs)
     except Unauthorized as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

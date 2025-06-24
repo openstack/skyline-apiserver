@@ -16,17 +16,17 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from fastapi import HTTPException, status
+from fastapi import status
+from fastapi.exceptions import HTTPException
 from keystoneauth1.exceptions.http import Unauthorized
 from keystoneauth1.session import Session
 from novaclient.exceptions import BadRequest, Forbidden
-from starlette.concurrency import run_in_threadpool
 
 from skyline_apiserver import schemas
 from skyline_apiserver.client import utils
 
 
-async def list_servers(
+def list_servers(
     profile: schemas.Profile,
     session: Session,
     global_request_id: str,
@@ -37,13 +37,12 @@ async def list_servers(
     sort_dirs: Optional[List[str]] = None,
 ) -> Any:
     try:
-        nc = await utils.nova_client(
+        nc = utils.nova_client(
             region=profile.region,
             session=session,
             global_request_id=global_request_id,
         )
-        return await run_in_threadpool(
-            nc.servers.list,
+        return nc.servers.list(
             search_opts=search_opts,
             marker=marker,
             limit=limit,
@@ -72,19 +71,19 @@ async def list_servers(
         )
 
 
-async def list_services(
+def list_services(
     profile: schemas.Profile,
     session: Session,
     global_request_id: str,
     **kwargs: Any,
 ) -> Any:
     try:
-        nc = await utils.nova_client(
+        nc = utils.nova_client(
             region=profile.region,
             session=session,
             global_request_id=global_request_id,
         )
-        return await run_in_threadpool(nc.services.list, **kwargs)
+        return nc.services.list(**kwargs)
     except Unauthorized as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

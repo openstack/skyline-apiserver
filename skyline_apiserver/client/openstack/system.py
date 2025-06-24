@@ -19,7 +19,6 @@ from typing import Any, Dict, List
 
 from keystoneauth1.identity.v3 import Token
 from keystoneauth1.session import Session
-from starlette.concurrency import run_in_threadpool
 
 from skyline_apiserver.client import utils
 from skyline_apiserver.client.utils import get_system_session
@@ -28,12 +27,12 @@ from skyline_apiserver.log import LOG
 from skyline_apiserver.types import constants
 
 
-async def get_project_scope_token(
+def get_project_scope_token(
     keystone_token: str,
     region: str,
     project_id: str,
 ) -> str:
-    auth_url = await utils.get_endpoint(
+    auth_url = utils.get_endpoint(
         region=region,
         service="identity",
         session=get_system_session(),
@@ -49,8 +48,8 @@ async def get_project_scope_token(
     return keystone_token
 
 
-async def get_endpoints(region: str) -> Dict[str, Any]:
-    access = await utils.get_access(session=get_system_session())
+def get_endpoints(region: str) -> Dict[str, Any]:
+    access = utils.get_access(session=get_system_session())
     catalogs = access.service_catalog.get_endpoints(
         region_name=region,
         interface=CONF.openstack.interface_type,
@@ -71,9 +70,14 @@ async def get_endpoints(region: str) -> Dict[str, Any]:
 
         path = PurePath("/").joinpath(CONF.openstack.nginx_prefix, region.lower(), service)
         endpoints[service] = str(path)
-    nc = await utils.neutron_client(session=get_system_session(), region=region)
-    neutron_extentions = await run_in_threadpool(nc.list_extensions)
-    extentions_set = {i["alias"] for i in neutron_extentions["extensions"]}
+    nc = utils.neutron_client(session=get_system_session(), region=region)
+    neutron_extentions = nc.list_extensions()
+    ext_list = (
+        neutron_extentions["extensions"]
+        if isinstance(neutron_extentions, dict) and "extensions" in neutron_extentions
+        else []
+    )
+    extentions_set = {i["alias"] for i in ext_list}
     for alias, mapping_name in CONF.openstack.extension_mapping.items():
         if alias in extentions_set:
             endpoints[mapping_name] = endpoints["neutron"]
@@ -82,19 +86,18 @@ async def get_endpoints(region: str) -> Dict[str, Any]:
     return endpoints
 
 
-async def get_projects(global_request_id: str, region: str, user: str) -> List[Any]:
-    kc = await utils.keystone_client(
+def get_projects(global_request_id: str, region: str, user: str) -> List[Any]:
+    kc = utils.keystone_client(
         session=get_system_session(),
         region=region,
         global_request_id=global_request_id,
     )
-
     projects = kc.projects.list(user=user)
     return projects
 
 
-async def get_domains(global_request_id: str, region: str) -> Any:
-    kc = await utils.keystone_client(
+def get_domains(global_request_id: str, region: str) -> Any:
+    kc = utils.keystone_client(
         session=get_system_session(),
         region=region,
         global_request_id=global_request_id,
@@ -103,8 +106,8 @@ async def get_domains(global_request_id: str, region: str) -> Any:
     return domains
 
 
-async def get_regions() -> Any:
-    access = await utils.get_access(session=get_system_session())
+def get_regions() -> Any:
+    access = utils.get_access(session=get_system_session())
     catalogs = access.service_catalog.get_endpoints(interface=CONF.openstack.interface_type)
     regions = list(set(j["region_id"] for i in catalogs for j in catalogs[i]))  # type: ignore
     return regions

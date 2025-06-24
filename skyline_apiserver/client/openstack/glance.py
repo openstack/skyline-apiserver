@@ -16,16 +16,16 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 
-from fastapi import HTTPException, status
+from fastapi import status
+from fastapi.exceptions import HTTPException
 from keystoneauth1.exceptions.http import Unauthorized
 from keystoneauth1.session import Session
-from starlette.concurrency import run_in_threadpool
 
 from skyline_apiserver import schemas
 from skyline_apiserver.client import utils
 
 
-async def list_images(
+def list_images(
     profile: schemas.Profile,
     session: Session,
     global_request_id: str,
@@ -35,12 +35,12 @@ async def list_images(
         kwargs = {}
         if filters:
             kwargs["filters"] = filters
-        gc = await utils.glance_client(
+        gc = utils.glance_client(
             session=session,
             region=profile.region,
             global_request_id=global_request_id,
         )
-        return await run_in_threadpool(gc.images.list, **kwargs)
+        return gc.images.list(**kwargs)
     except Unauthorized as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

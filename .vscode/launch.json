@@ -10,14 +10,15 @@
             "request": "launch",
             "module": "uvicorn",
             "args": [
+                "skyline_apiserver.main:app",
                 "--reload",
-                "--reload-dir", "skyline_apiserver",
-                "--port", "28000",
-                "--log-level", "debug",
-                "skyline_apiserver.main:app"
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "28000"
             ],
             "env": {
-                "OS_CONFIG_DIR": "${workspaceFolder}/etc",
+                "OS_CONFIG_DIR": "${workspaceFolder}/etc"
             },
             "jinja": true,
             "justMyCode": true

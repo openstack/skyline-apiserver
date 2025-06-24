@@ -17,16 +17,16 @@ from __future__ import annotations
 from typing import Any, Dict, Optional
 
 from cinderclient.exceptions import NotFound
-from fastapi import HTTPException, status
+from fastapi import status
+from fastapi.exceptions import HTTPException
 from keystoneauth1.exceptions.http import Unauthorized
 from keystoneauth1.session import Session
-from starlette.concurrency import run_in_threadpool
 
 from skyline_apiserver import schemas
 from skyline_apiserver.client import utils
 
 
-async def list_volumes(
+def list_volumes(
     profile: schemas.Profile,
     session: Session,
     global_request_id: str,
@@ -36,13 +36,12 @@ async def list_volumes(
     sort: Optional[str] = None,
 ) -> Any:
     try:
-        cc = await utils.cinder_client(
+        cc = utils.cinder_client(
             region=profile.region,
             session=session,
             global_request_id=global_request_id,
         )
-        return await run_in_threadpool(
-            cc.volumes.list,
+        return cc.volumes.list(
             search_opts=search_opts,
             limit=limit,
             marker=marker,
@@ -60,7 +59,7 @@ async def list_volumes(
         )
 
 
-async def list_volume_snapshots(
+def list_volume_snapshots(
     profile: schemas.Profile,
     session: Session,
     global_request_id: str,
@@ -70,13 +69,12 @@ async def list_volume_snapshots(
     sort: Optional[str] = None,
 ) -> Any:
     try:
-        cc = await utils.cinder_client(
+        cc = utils.cinder_client(
             region=profile.region,
             session=session,
             global_request_id=global_request_id,
         )
-        return await run_in_threadpool(
-            cc.volume_snapshots.list,
+        return cc.volume_snapshots.list(
             search_opts=search_opts,
             limit=limit,
             marker=marker,
@@ -94,17 +92,17 @@ async def list_volume_snapshots(
         )
 
 
-async def get_volume_snapshot(
+def get_volume_snapshot(
     session: Session,
     region: str,
     global_request_id: str,
     snapshot_id: str,
 ) -> Any:
     try:
-        cc = await utils.cinder_client(
+        cc = utils.cinder_client(
             session=session, region=region, global_request_id=global_request_id
         )
-        return await run_in_threadpool(cc.volume_snapshots.get, snapshot_id)
+        return cc.volume_snapshots.get(snapshot_id)
     except Unauthorized as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

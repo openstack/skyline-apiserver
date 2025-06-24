@@ -2,7 +2,7 @@
 
 We have to make skyline more easier for development
 
-## 1. Use sync mode instead of async mode
+## 1. Use sync mode instead of async mode [Done]
 
 FastAPI sync mode is much more easier for coding than async.
 

@@ -33,6 +33,8 @@ help:
 	@echo "  db_revision         Generate database alembic version revision with model."
 	@echo "  db_sync             Sync database from alembic version revision."
 	@echo "  future_check        Find python files without 'type annotations'.(Alpha)"
+	@echo "  fmt                 Format code using tox -e pep8-format."
+	@echo "  all                 Run all major tox checks, tests, and generators."
 	@echo
 
 
@@ -122,3 +124,21 @@ db_sync:
 # Find python files without "type annotations"
 future_check:
 	@find skyline_apiserver ! -size 0 -type f -name *.py -exec grep -L 'from __future__ import annotations' {} \;
+
+.PHONY: fmt
+fmt:
+	tox -e pep8-format
+
+.PHONY: all
+all:
+	tox -e pep8-format
+	tox -e pep8
+	# tox -e mypy
+	tox -e docs
+	tox -e genswagger
+	tox -e genconfig
+	tox -e gennginx
+	# tox -e releasenotes
+	# tox -e pdf-docs
+	# tox -e functional
+	tox -e py3

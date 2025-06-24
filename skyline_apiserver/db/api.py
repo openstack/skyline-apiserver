@@ -28,17 +28,17 @@ from .models import RevokedToken, Settings
 
 def check_db_connected(fn: Fn) -> Any:
     @wraps(fn)
-    async def wrapper(*args: Any, **kwargs: Any) -> Any:
-        await inject_db()
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        inject_db()
         db = DB.get()
         assert db is not None, "Database is not connected."
-        return await fn(*args, **kwargs)
+        return fn(*args, **kwargs)
 
     return wrapper
 
 
 @check_db_connected
-async def check_token(token_id: str) -> bool:
+def check_token(token_id: str) -> bool:
     count_label = "revoked_count"
     query = (
         select(func.count(RevokedToken.c.uuid).label(count_label))
@@ -46,78 +46,71 @@ async def check_token(token_id: str) -> bool:
         .where(RevokedToken.c.uuid == token_id)
     )
     db = DB.get()
-    async with db.transaction():
-        result = await db.fetch_one(query)
-
+    with db.transaction():
+        result = db.fetch_one(query)
     count = getattr(result, count_label, 0)
     return count > 0
 
 
 @check_db_connected
-async def revoke_token(token_id: str, expire: int) -> Any:
+def revoke_token(token_id: str, expire: int) -> Any:
     query = insert(RevokedToken)
     db = DB.get()
-    async with db.transaction():
-        result = await db.execute(query, {"uuid": token_id, "expire": expire})
-
+    with db.transaction():
+        result = db.execute(query, {"uuid": token_id, "expire": expire})
     return result
 
 
 @check_db_connected
-async def purge_revoked_token() -> Any:
+def purge_revoked_token() -> Any:
     now = int(time.time()) - 1
     query = delete(RevokedToken).where(RevokedToken.c.expire < now)
     db = DB.get()
-    async with db.transaction():
-        result = await db.execute(query)
-
+    with db.transaction():
+        result = db.execute(query)
     return result
 
 
 @check_db_connected
-async def list_settings() -> Any:
+def list_settings() -> Any:
     query = select(Settings)
     db = DB.get()
-    async with db.transaction():
-        result = await db.fetch_all(query)
-
+    with db.transaction():
+        result = db.fetch_all(query)
     return result
 
 
 @check_db_connected
-async def get_setting(key: str) -> Any:
+def get_setting(key: str) -> Any:
     query = select(Settings).where(Settings.c.key == key)
     db = DB.get()
-    async with db.transaction():
-        result = await db.fetch_one(query)
-
+    with db.transaction():
+        result = db.fetch_one(query)
     return result
 
 
 @check_db_connected
-async def update_setting(key: str, value: Any) -> Any:
+def update_setting(key: str, value: Any) -> Any:
     get_query = (
         select(Settings.c.key, Settings.c.value).where(Settings.c.key == key).with_for_update()
     )
     db = DB.get()
-    async with db.transaction():
-        is_exist = await db.fetch_one(get_query)
+    with db.transaction():
+        is_exist = db.fetch_one(get_query)
         stmt: Union[Insert, Update]
         if is_exist is None:
             stmt = insert(Settings).values(key=key, value=value)
         else:
             stmt = update(Settings).where(Settings.c.key == key).values(value=value)
-        await db.execute(stmt)
-        result = await db.fetch_one(get_query)
-
+        db.execute(stmt)
+        result = db.fetch_one(get_query)
     return result
 
 
 @check_db_connected
-async def delete_setting(key: str) -> Any:
+def delete_setting(key: str) -> Any:
     query = delete(Settings).where(Settings.c.key == key)
     db = DB.get()
-    async with db.transaction():
-        result = await db.execute(query)
-
+    with db.transaction():
+        result = db.execute(query)
     return result

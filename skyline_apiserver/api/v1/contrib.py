@@ -14,17 +14,17 @@
 
 from __future__ import annotations
 
-import asyncio
 from typing import List
 
-from fastapi import APIRouter, Header, HTTPException, status
+from fastapi import status
+from fastapi.exceptions import HTTPException
+from fastapi.param_functions import Depends
+from fastapi.routing import APIRouter
 
 from skyline_apiserver import schemas
+from skyline_apiserver.api import deps
 from skyline_apiserver.client.openstack import system
-from skyline_apiserver.client.openstack.system import get_endpoints
-from skyline_apiserver.config import CONF
-from skyline_apiserver.log import LOG
-from skyline_apiserver.types import constants
+from skyline_apiserver.client.openstack.system import get_domains, get_endpoints, get_regions
 
 router = APIRouter()
 
@@ -40,15 +40,17 @@ router = APIRouter()
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def list_keystone_endpoints() -> List[schemas.KeystoneEndpoints]:
+def list_keystone_endpoints() -> List[schemas.KeystoneEndpoints]:
     try:
-        regions = await system.get_regions()
-        tasks = [asyncio.create_task(get_endpoints(region)) for region in regions]
-        endpoints = await asyncio.gather(*tasks)
-        result = [
-            schemas.KeystoneEndpoints(**{"region_name": region, "url": endpoint.get("keystone")})
-            for region, endpoint in zip(regions, endpoints)
-        ]
+        regions = system.get_regions()
+        result = []
+        for region in regions:
+            endpoints = get_endpoints(region)
+            result.append(
+                schemas.KeystoneEndpoints(
+                    **{"region_name": region, "url": endpoints.get("keystone")}
+                )
+            )
         return result
     except Exception as e:
         raise HTTPException(
@@ -68,29 +70,10 @@ async def list_keystone_endpoints() -> List[schemas.KeystoneEndpoints]:
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def list_domains(
-    x_openstack_request_id: str = Header(
-        "",
-        alias=constants.INBOUND_HEADER,
-        regex=constants.INBOUND_HEADER_REGEX,
-    ),
+def list_domains(
+    profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
 ) -> List[str]:
-    try:
-        regions = await system.get_regions()
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e),
-        )
-
-    for region in regions:
-        try:
-            domains = await system.get_domains(x_openstack_request_id, region)
-            return [domain for domain in domains if domain not in CONF.openstack.base_domains]
-        except Exception as e:
-            LOG.warning(str(e))
-            continue
-    return []
+    return get_domains("", profile.region)
 
 
 @router.get(
@@ -104,11 +87,5 @@ async def list_domains(
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-async def list_regions() -> List[str]:
-    try:
-        return await system.get_regions()
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e),
-        )
+def list_regions() -> List[str]:
+    return get_regions()
