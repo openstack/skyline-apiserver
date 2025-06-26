@@ -75,6 +75,8 @@ def _generate_target(profile: schemas.Profile) -> Dict[str, str]:
         "owner": profile.project.id,
         # cinder
         "domain_id": profile.project.domain.id,
+        # neutron
+        "tenant_id": profile.project.id,
     }
 
 
