@@ -149,7 +149,7 @@ async def validate_token(request: Request, call_next):
 
     # Handle token renewal in response
     if hasattr(request.state, "token_needs_renewal") and request.state.token_needs_renewal:
-        response.set_cookie(CONF.default.session_name, request.state.new_token)
+        response.set_cookie(CONF.default.session_name, request.state.new_token, secure = True, httponly=True)
         response.set_cookie(constants.TIME_EXPIRED_KEY, request.state.new_exp)
 
     return response
