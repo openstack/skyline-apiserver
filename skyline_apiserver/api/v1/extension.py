@@ -345,17 +345,21 @@ def list_recycle_servers(
                 return schemas.RecycleServersResponse(**{"recycle_servers": []})
             project_id = filter_project.id
 
+    # The deleted args will be ignored if non-admin user. So we have to use system session.
+    # System session don't have current project info. So we have to use all_tenants & project_id.
     search_opts = {
         "status": "soft_deleted",
         "deleted": True,
-        "all_tenants": all_projects,
+        "all_tenants": True,
         "name": name,
         "project_id": project_id,
         "uuid": uuid,
     }
+    if not all_projects:
+        search_opts["project_id"] = profile.project.id
     servers = nova.list_servers(
         profile=profile,
-        session=current_session,
+        session=system_session,
         global_request_id=x_openstack_request_id,
         search_opts=search_opts,
         marker=marker,
