@@ -583,8 +583,10 @@ def list_volumes(
         # So we need to set all_tenants as True to filter volume from
         # all volumes. Otherwise, we just filter volume from the user
         # of system_session.
-        cinder_session = current_session
-        search_opts["all_tenants"] = True
+        cinder_session = system_session
+        if not search_opts["all_tenants"]:
+            search_opts["project_id"] = profile.project.id
+            search_opts["all_tenants"] = True
 
     volumes, count = cinder.list_volumes(
         profile=profile,
