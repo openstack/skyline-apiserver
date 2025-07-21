@@ -15,9 +15,9 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import List, TypedDict
+from typing import List
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, RootModel
 
 
 class ScopeType(str, Enum):
@@ -26,8 +26,8 @@ class ScopeType(str, Enum):
     project = "project"
 
 
-class ScopeTypesSchema(BaseModel):
-    __root__: List[ScopeType] = Field(..., description="Scope types list")
+class ScopeTypesSchema(RootModel[List[ScopeType]]):
+    pass
 
 
 class Method(str, Enum):
@@ -39,7 +39,7 @@ class Method(str, Enum):
     HEAD = "HEAD"
 
 
-class Operation(TypedDict):
+class Operation(BaseModel):
     method: str
     path: str
 
@@ -49,8 +49,8 @@ class OperationSchema(BaseModel):
     path: str = Field(..., description="Operation path")
 
 
-class OperationsSchema(BaseModel):
-    __root__: List[OperationSchema] = Field(..., description="Operations list")
+class OperationsSchema(RootModel[List[OperationSchema]]):
+    pass
 
 
 __all__ = ("ScopeTypesSchema", "Operation", "OperationsSchema")

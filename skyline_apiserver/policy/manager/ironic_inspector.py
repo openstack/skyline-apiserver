@@ -15,6 +15,8 @@
 # flake8: noqa
 # fmt: off
 
+from skyline_apiserver.schemas.policy_manager import Operation
+
 from . import base
 
 list_rules = (
@@ -43,77 +45,77 @@ list_rules = (
         check_str=("rule:public_api"),
         description="Access the API root for available versions information",
         scope_types=["project"],
-        operations=[{"method": "GET", "path": "/"}],
+        operations=[Operation(method="GET", path="/")],
     ),
     base.APIRule(
         name="introspection:version",
         check_str=("rule:public_api"),
         description="Access the versioned API root for version information",
         scope_types=["project"],
-        operations=[{"method": "GET", "path": "/{version}"}],
+        operations=[Operation(method="GET", path="/{version}")],
     ),
     base.APIRule(
         name="introspection:continue",
         check_str=("rule:public_api"),
         description="Ramdisk callback to continue introspection",
         scope_types=["project"],
-        operations=[{"method": "POST", "path": "/continue"}],
+        operations=[Operation(method="POST", path="/continue")],
     ),
     base.APIRule(
         name="introspection:status",
         check_str=("role:reader and system_scope:all"),
         description="Get introspection status",
         scope_types=["project"],
-        operations=[{"method": "GET", "path": "/introspection"}, {"method": "GET", "path": "/introspection/{node_id}"}],
+        operations=[Operation(method="GET", path="/introspection"), Operation(method="GET", path="/introspection/{node_id}")],
     ),
     base.APIRule(
         name="introspection:start",
         check_str=("role:admin and system_scope:all"),
         description="Start introspection",
         scope_types=["project"],
-        operations=[{"method": "POST", "path": "/introspection/{node_id}"}],
+        operations=[Operation(method="POST", path="/introspection/{node_id}")],
     ),
     base.APIRule(
         name="introspection:abort",
         check_str=("role:admin and system_scope:all"),
         description="Abort introspection",
         scope_types=["project"],
-        operations=[{"method": "POST", "path": "/introspection/{node_id}/abort"}],
+        operations=[Operation(method="POST", path="/introspection/{node_id}/abort")],
     ),
     base.APIRule(
         name="introspection:data",
         check_str=("role:admin and system_scope:all"),
         description="Get introspection data",
         scope_types=["project"],
-        operations=[{"method": "GET", "path": "/introspection/{node_id}/data"}],
+        operations=[Operation(method="GET", path="/introspection/{node_id}/data")],
     ),
     base.APIRule(
         name="introspection:reapply",
         check_str=("role:admin and system_scope:all"),
         description="Reapply introspection on stored data",
         scope_types=["project"],
-        operations=[{"method": "POST", "path": "/introspection/{node_id}/data/unprocessed"}],
+        operations=[Operation(method="POST", path="/introspection/{node_id}/data/unprocessed")],
     ),
     base.APIRule(
         name="introspection:rule:get",
         check_str=("role:admin and system_scope:all"),
         description="Get introspection rule(s)",
         scope_types=["project"],
-        operations=[{"method": "GET", "path": "/rules"}, {"method": "GET", "path": "/rules/{rule_id}"}],
+        operations=[Operation(method="GET", path="/rules"), Operation(method="GET", path="/rules/{rule_id}")],
     ),
     base.APIRule(
         name="introspection:rule:delete",
         check_str=("role:admin and system_scope:all"),
         description="Delete introspection rule(s)",
         scope_types=["project"],
-        operations=[{"method": "DELETE", "path": "/rules"}, {"method": "DELETE", "path": "/rules/{rule_id}"}],
+        operations=[Operation(method="DELETE", path="/rules"), Operation(method="DELETE", path="/rules/{rule_id}")],
     ),
     base.APIRule(
         name="introspection:rule:create",
         check_str=("role:admin and system_scope:all"),
         description="Create introspection rule",
         scope_types=["project"],
-        operations=[{"method": "POST", "path": "/rules"}],
+        operations=[Operation(method="POST", path="/rules")],
     ),
 )
 

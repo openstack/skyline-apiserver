@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import sys
+import traceback
 
 import click
 
@@ -41,6 +42,7 @@ def main(output_file_path: str) -> None:
 
     except Exception as e:
         print(f"Generate swagger file failed: {str(e)}")
+        traceback.print_exc()
         sys.exit(1)
 
 

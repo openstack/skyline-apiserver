@@ -15,26 +15,26 @@
                 "operationId": "login_api_v1_login_post",
                 "parameters": [
                     {
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
-                            "title": "X-Openstack-Request-Id",
-                            "default": ""
-                        },
-                        "name": "X-Openstack-Request-Id",
-                        "in": "header"
+                            "default": "",
+                            "title": "X-Openstack-Request-Id"
+                        }
                     }
                 ],
                 "requestBody": {
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/Credential"
                             }
                         }
-                    },
-                    "required": true
+                    }
                 },
                 "responses": {
                     "200": {
@@ -48,14 +48,14 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UnauthorizedMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Unauthorized"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -102,44 +102,40 @@
                 "operationId": "websso_api_v1_websso_post",
                 "parameters": [
                     {
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
-                            "title": "X-Openstack-Request-Id",
-                            "default": ""
-                        },
-                        "name": "X-Openstack-Request-Id",
-                        "in": "header"
+                            "default": "",
+                            "title": "X-Openstack-Request-Id"
+                        }
                     }
                 ],
                 "requestBody": {
+                    "required": true,
                     "content": {
                         "application/x-www-form-urlencoded": {
                             "schema": {
                                 "$ref": "#/components/schemas/Body_websso_api_v1_websso_post"
                             }
                         }
-                    },
-                    "required": true
+                    }
                 },
                 "responses": {
                     "302": {
-                        "description": "Redirect",
-                        "class": {
-                            "__module__": "starlette.responses",
-                            "__init__": {}
-                        }
+                        "description": "Redirect to SSO provider"
                     },
                     "401": {
-                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UnauthorizedMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Unauthorized"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -164,15 +160,15 @@
                 "operationId": "get_profile_api_v1_profile_get",
                 "parameters": [
                     {
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
-                            "title": "X-Openstack-Request-Id",
-                            "default": ""
-                        },
-                        "name": "X-Openstack-Request-Id",
-                        "in": "header"
+                            "default": "",
+                            "title": "X-Openstack-Request-Id"
+                        }
                     }
                 ],
                 "responses": {
@@ -187,14 +183,14 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UnauthorizedMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Unauthorized"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -219,15 +215,15 @@
                 "operationId": "logout_api_v1_logout_post",
                 "parameters": [
                     {
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
-                            "title": "X-Openstack-Request-Id",
-                            "default": ""
-                        },
-                        "name": "X-Openstack-Request-Id",
-                        "in": "header"
+                            "default": "",
+                            "title": "X-Openstack-Request-Id"
+                        }
                     }
                 ],
                 "responses": {
@@ -264,24 +260,24 @@
                 "operationId": "switch_project_api_v1_switch_project__project_id__post",
                 "parameters": [
                     {
+                        "name": "project_id",
+                        "in": "path",
                         "required": true,
                         "schema": {
                             "type": "string",
                             "title": "Project Id"
-                        },
-                        "name": "project_id",
-                        "in": "path"
+                        }
                     },
                     {
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
-                            "title": "X-Openstack-Request-Id",
-                            "default": ""
-                        },
-                        "name": "X-Openstack-Request-Id",
-                        "in": "header"
+                            "default": "",
+                            "title": "X-Openstack-Request-Id"
+                        }
                     }
                 ],
                 "responses": {
@@ -296,14 +292,14 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UnauthorizedMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Unauthorized"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -328,156 +324,214 @@
                 "operationId": "list_servers_api_v1_extension_servers_get",
                 "parameters": [
                     {
-                        "description": "Requests a page size of items. Returns a number of items up to a limit value.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "exclusiveMinimum": 0.0,
-                            "title": "Limit",
-                            "description": "Requests a page size of items. Returns a number of items up to a limit value."
-                        },
                         "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The ID of the last-seen item.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Marker",
-                            "description": "The ID of the last-seen item."
-                        },
-                        "name": "marker",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Indicates in which directions to sort.",
-                        "required": false,
-                        "schema": {
-                            "allOf": [
+                            "anyOf": [
                                 {
-                                    "$ref": "#/components/schemas/SortDir"
+                                    "type": "integer",
+                                    "exclusiveMinimum": 0
+                                },
+                                {
+                                    "type": "null"
                                 }
                             ],
-                            "description": "Indicates in which directions to sort."
+                            "description": "Requests a page size of items. Returns a number of items up to a limit value.",
+                            "title": "Limit"
                         },
-                        "name": "sort_dirs",
-                        "in": "query"
+                        "description": "Requests a page size of items. Returns a number of items up to a limit value."
                     },
                     {
-                        "description": "Indicates in which attributes to sort. Host is only used for admin role users",
+                        "name": "marker",
+                        "in": "query",
                         "required": false,
                         "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "The ID of the last-seen item.",
+                            "title": "Marker"
+                        },
+                        "description": "The ID of the last-seen item."
+                    },
+                    {
+                        "name": "sort_dirs",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "$ref": "#/components/schemas/SortDir"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Indicates in which directions to sort.",
+                            "title": "Sort Dirs"
+                        },
+                        "description": "Indicates in which directions to sort."
+                    },
+                    {
+                        "name": "sort_keys",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
                             "items": {
                                 "$ref": "#/components/schemas/ServerSortKey"
                             },
-                            "type": "array",
-                            "description": "Indicates in which attributes to sort. Host is only used for admin role users"
+                            "description": "Indicates in which attributes to sort. Host is only used for admin role users",
+                            "title": "Sort Keys"
                         },
-                        "name": "sort_keys",
-                        "in": "query"
+                        "description": "Indicates in which attributes to sort. Host is only used for admin role users"
                     },
                     {
-                        "description": "List servers for all projects.",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "title": "All Projects",
-                            "description": "List servers for all projects."
-                        },
                         "name": "all_projects",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of servers by the given project ID. Only works when the all_projects filter is also specified.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Project Id",
-                            "description": "Filter the list of servers by the given project ID. Only works when the all_projects filter is also specified."
-                        },
-                        "name": "project_id",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of servers by the given project name. Only works when the all_projects filter is also specified.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "Project Name",
-                            "description": "Filter the list of servers by the given project name. Only works when the all_projects filter is also specified."
-                        },
-                        "name": "project_name",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of servers by the given server name. Support fuzzy query.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "Name",
-                            "description": "Filter the list of servers by the given server name. Support fuzzy query."
-                        },
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of servers by the given server status.",
-                        "required": false,
-                        "schema": {
-                            "allOf": [
+                            "anyOf": [
                                 {
-                                    "$ref": "#/components/schemas/ServerStatus"
+                                    "type": "boolean"
+                                },
+                                {
+                                    "type": "null"
                                 }
                             ],
-                            "description": "Filter the list of servers by the given server status."
+                            "description": "List servers for all projects.",
+                            "title": "All Projects"
                         },
+                        "description": "List servers for all projects."
+                    },
+                    {
+                        "name": "project_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of servers by the given project ID. Only works when the all_projects filter is also specified.",
+                            "title": "Project Id"
+                        },
+                        "description": "Filter the list of servers by the given project ID. Only works when the all_projects filter is also specified."
+                    },
+                    {
+                        "name": "project_name",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of servers by the given project name. Only works when the all_projects filter is also specified.",
+                            "title": "Project Name"
+                        },
+                        "description": "Filter the list of servers by the given project name. Only works when the all_projects filter is also specified."
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of servers by the given server name. Support fuzzy query.",
+                            "title": "Name"
+                        },
+                        "description": "Filter the list of servers by the given server name. Support fuzzy query."
+                    },
+                    {
                         "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of servers by the given host. It will be ignored for non-admin user.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Host",
-                            "description": "Filter the list of servers by the given host. It will be ignored for non-admin user."
+                            "anyOf": [
+                                {
+                                    "$ref": "#/components/schemas/ServerStatus"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of servers by the given server status.",
+                            "title": "Status"
                         },
+                        "description": "Filter the list of servers by the given server status."
+                    },
+                    {
                         "name": "host",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of servers by the given flavor ID.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Flavor Id",
-                            "description": "Filter the list of servers by the given flavor ID."
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of servers by the given host. It will be ignored for non-admin user.",
+                            "title": "Host"
                         },
+                        "description": "Filter the list of servers by the given host. It will be ignored for non-admin user."
+                    },
+                    {
                         "name": "flavor_id",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of servers by the given server UUID.",
+                        "in": "query",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "title": "Uuid",
-                            "description": "Filter the list of servers by the given server UUID."
+                            "description": "Filter the list of servers by the given flavor ID.",
+                            "title": "Flavor Id"
                         },
-                        "name": "uuid",
-                        "in": "query"
+                        "description": "Filter the list of servers by the given flavor ID."
                     },
                     {
+                        "name": "uuid",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "description": "Filter the list of servers by the given server UUID.",
+                            "title": "Uuid"
+                        },
+                        "description": "Filter the list of servers by the given server UUID."
+                    },
+                    {
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
-                            "title": "X-Openstack-Request-Id",
-                            "default": ""
-                        },
-                        "name": "X-Openstack-Request-Id",
-                        "in": "header"
+                            "default": "",
+                            "title": "X-Openstack-Request-Id"
+                        }
                     }
                 ],
                 "responses": {
@@ -492,44 +546,44 @@
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/BadRequestMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Bad Request"
                     },
                     "401": {
-                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UnauthorizedMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Unauthorized"
                     },
                     "403": {
-                        "description": "Forbidden",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ForbiddenMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Forbidden"
                     },
                     "500": {
-                        "description": "Internal Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/InternalServerErrorMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Internal Server Error"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -554,120 +608,181 @@
                 "operationId": "list_recycle_servers_api_v1_extension_recycle_servers_get",
                 "parameters": [
                     {
-                        "description": "Requests a page size of items. Returns a number of items up to a limit value.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "exclusiveMinimum": 0.0,
-                            "title": "Limit",
-                            "description": "Requests a page size of items. Returns a number of items up to a limit value."
-                        },
                         "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The ID of the last-seen item.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Marker",
-                            "description": "The ID of the last-seen item."
-                        },
-                        "name": "marker",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Indicates in which directions to sort.",
-                        "required": false,
-                        "schema": {
-                            "allOf": [
+                            "anyOf": [
                                 {
-                                    "$ref": "#/components/schemas/SortDir"
+                                    "type": "integer",
+                                    "exclusiveMinimum": 0
+                                },
+                                {
+                                    "type": "null"
                                 }
                             ],
-                            "description": "Indicates in which directions to sort."
+                            "description": "Requests a page size of items. Returns a number of items up to a limit value.",
+                            "title": "Limit"
                         },
+                        "description": "Requests a page size of items. Returns a number of items up to a limit value."
+                    },
+                    {
+                        "name": "marker",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "The ID of the last-seen item.",
+                            "title": "Marker"
+                        },
+                        "description": "The ID of the last-seen item."
+                    },
+                    {
                         "name": "sort_dirs",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Indicates in which attributes to sort. Updated_at is used as deleted_at",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "items": {
-                                "$ref": "#/components/schemas/RecycleServerSortKey"
-                            },
-                            "type": "array",
-                            "description": "Indicates in which attributes to sort. Updated_at is used as deleted_at"
+                            "anyOf": [
+                                {
+                                    "$ref": "#/components/schemas/SortDir"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Indicates in which directions to sort.",
+                            "title": "Sort Dirs"
                         },
+                        "description": "Indicates in which directions to sort."
+                    },
+                    {
                         "name": "sort_keys",
-                        "in": "query"
-                    },
-                    {
-                        "description": "List recycle servers for all projects.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "boolean",
-                            "title": "All Projects",
-                            "description": "List recycle servers for all projects."
+                            "anyOf": [
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RecycleServerSortKey"
+                                    }
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Indicates in which attributes to sort. Updated_at is used as deleted_at",
+                            "title": "Sort Keys"
                         },
+                        "description": "Indicates in which attributes to sort. Updated_at is used as deleted_at"
+                    },
+                    {
                         "name": "all_projects",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of recycle servers by the given project ID. Only works when the all_projects filter is also specified.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Project Id",
-                            "description": "Filter the list of recycle servers by the given project ID. Only works when the all_projects filter is also specified."
+                            "anyOf": [
+                                {
+                                    "type": "boolean"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "List recycle servers for all projects.",
+                            "title": "All Projects"
                         },
+                        "description": "List recycle servers for all projects."
+                    },
+                    {
                         "name": "project_id",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of recycle servers by the given project name. Only works when the all_projects filter is also specified.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Project Name",
-                            "description": "Filter the list of recycle servers by the given project name. Only works when the all_projects filter is also specified."
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of recycle servers by the given project ID. Only works when the all_projects filter is also specified.",
+                            "title": "Project Id"
                         },
+                        "description": "Filter the list of recycle servers by the given project ID. Only works when the all_projects filter is also specified."
+                    },
+                    {
                         "name": "project_name",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of recycle servers by the given server name. Support fuzzy query.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Name",
-                            "description": "Filter the list of recycle servers by the given server name. Support fuzzy query."
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of recycle servers by the given project name. Only works when the all_projects filter is also specified.",
+                            "title": "Project Name"
                         },
+                        "description": "Filter the list of recycle servers by the given project name. Only works when the all_projects filter is also specified."
+                    },
+                    {
                         "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of recycle servers by the given recycle server UUID.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Uuid",
-                            "description": "Filter the list of recycle servers by the given recycle server UUID."
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of recycle servers by the given server name. Support fuzzy query.",
+                            "title": "Name"
                         },
-                        "name": "uuid",
-                        "in": "query"
+                        "description": "Filter the list of recycle servers by the given server name. Support fuzzy query."
                     },
                     {
+                        "name": "uuid",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of recycle servers by the given recycle server UUID.",
+                            "title": "Uuid"
+                        },
+                        "description": "Filter the list of recycle servers by the given recycle server UUID."
+                    },
+                    {
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
-                            "title": "X-Openstack-Request-Id",
-                            "default": ""
-                        },
-                        "name": "X-Openstack-Request-Id",
-                        "in": "header"
+                            "default": "",
+                            "title": "X-Openstack-Request-Id"
+                        }
                     }
                 ],
                 "responses": {
@@ -682,44 +797,44 @@
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/BadRequestMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Bad Request"
                     },
                     "401": {
-                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UnauthorizedMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Unauthorized"
                     },
                     "403": {
-                        "description": "Forbidden",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ForbiddenMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Forbidden"
                     },
                     "500": {
-                        "description": "Internal Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/InternalServerErrorMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Internal Server Error"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -744,148 +859,220 @@
                 "operationId": "list_volumes_api_v1_extension_volumes_get",
                 "parameters": [
                     {
-                        "description": "Requests a page size of items. Returns a number of items up to a limit value.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "exclusiveMinimum": 0.0,
-                            "title": "Limit",
-                            "description": "Requests a page size of items. Returns a number of items up to a limit value."
-                        },
                         "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The ID of the last-seen item.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Marker",
-                            "description": "The ID of the last-seen item."
+                            "anyOf": [
+                                {
+                                    "type": "integer",
+                                    "exclusiveMinimum": 0
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Requests a page size of items. Returns a number of items up to a limit value.",
+                            "title": "Limit"
                         },
-                        "name": "marker",
-                        "in": "query"
+                        "description": "Requests a page size of items. Returns a number of items up to a limit value."
                     },
                     {
-                        "description": "Indicates in which directions to sort.",
+                        "name": "marker",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "allOf": [
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "The ID of the last-seen item.",
+                            "title": "Marker"
+                        },
+                        "description": "The ID of the last-seen item."
+                    },
+                    {
+                        "name": "sort_dirs",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
                                 {
                                     "$ref": "#/components/schemas/SortDir"
+                                },
+                                {
+                                    "type": "null"
                                 }
                             ],
-                            "description": "Indicates in which directions to sort."
+                            "description": "Indicates in which directions to sort.",
+                            "title": "Sort Dirs"
                         },
-                        "name": "sort_dirs",
-                        "in": "query"
+                        "description": "Indicates in which directions to sort."
                     },
                     {
-                        "description": "Indicates in which attributes to sort. Updated_at is used as deleted_at",
-                        "required": false,
-                        "schema": {
-                            "items": {
-                                "$ref": "#/components/schemas/VolumeSortKey"
-                            },
-                            "type": "array",
-                            "description": "Indicates in which attributes to sort. Updated_at is used as deleted_at"
-                        },
                         "name": "sort_keys",
-                        "in": "query"
-                    },
-                    {
-                        "description": "List volumes for all projects.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "boolean",
-                            "title": "All Projects",
-                            "description": "List volumes for all projects."
+                            "anyOf": [
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/VolumeSortKey"
+                                    }
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Indicates in which attributes to sort. Updated_at is used as deleted_at",
+                            "title": "Sort Keys"
                         },
+                        "description": "Indicates in which attributes to sort. Updated_at is used as deleted_at"
+                    },
+                    {
                         "name": "all_projects",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of volumes by the given project ID.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Project Id",
-                            "description": "Filter the list of volumes by the given project ID."
+                            "anyOf": [
+                                {
+                                    "type": "boolean"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "List volumes for all projects.",
+                            "title": "All Projects"
                         },
+                        "description": "List volumes for all projects."
+                    },
+                    {
                         "name": "project_id",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of volumes by the given server name.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Name",
-                            "description": "Filter the list of volumes by the given server name."
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of volumes by the given project ID.",
+                            "title": "Project Id"
                         },
+                        "description": "Filter the list of volumes by the given project ID."
+                    },
+                    {
                         "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of volumes by the given multiattach.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "boolean",
-                            "title": "Multiattach",
-                            "description": "Filter the list of volumes by the given multiattach."
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of volumes by the given server name.",
+                            "title": "Name"
                         },
-                        "name": "multiattach",
-                        "in": "query"
+                        "description": "Filter the list of volumes by the given server name."
                     },
                     {
-                        "description": "Filter the list of volumes by the given status.",
+                        "name": "multiattach",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "allOf": [
+                            "anyOf": [
+                                {
+                                    "type": "boolean"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of volumes by the given multiattach.",
+                            "title": "Multiattach"
+                        },
+                        "description": "Filter the list of volumes by the given multiattach."
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
                                 {
                                     "$ref": "#/components/schemas/VolumeStatus"
+                                },
+                                {
+                                    "type": "null"
                                 }
                             ],
-                            "description": "Filter the list of volumes by the given status."
+                            "description": "Filter the list of volumes by the given status.",
+                            "title": "Status"
                         },
-                        "name": "status",
-                        "in": "query"
+                        "description": "Filter the list of volumes by the given status."
                     },
                     {
-                        "description": "Filter the list of volumes by the given bootable.",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "title": "Bootable",
-                            "description": "Filter the list of volumes by the given bootable."
-                        },
                         "name": "bootable",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of volumes by the given volumes UUID.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "items": {
-                                "type": "string"
-                            },
-                            "type": "array",
-                            "title": "Uuid",
-                            "description": "Filter the list of volumes by the given volumes UUID."
+                            "anyOf": [
+                                {
+                                    "type": "boolean"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of volumes by the given bootable.",
+                            "title": "Bootable"
                         },
-                        "name": "uuid",
-                        "in": "query"
+                        "description": "Filter the list of volumes by the given bootable."
                     },
                     {
+                        "name": "uuid",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of volumes by the given volumes UUID.",
+                            "title": "Uuid"
+                        },
+                        "description": "Filter the list of volumes by the given volumes UUID."
+                    },
+                    {
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
-                            "title": "X-Openstack-Request-Id",
-                            "default": ""
-                        },
-                        "name": "X-Openstack-Request-Id",
-                        "in": "header"
+                            "default": "",
+                            "title": "X-Openstack-Request-Id"
+                        }
                     }
                 ],
                 "responses": {
@@ -900,34 +1087,34 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UnauthorizedMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Unauthorized"
                     },
                     "403": {
-                        "description": "Forbidden",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ForbiddenMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Forbidden"
                     },
                     "500": {
-                        "description": "Internal Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/InternalServerErrorMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Internal Server Error"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -952,134 +1139,199 @@
                 "operationId": "list_volume_snapshots_api_v1_extension_volume_snapshots_get",
                 "parameters": [
                     {
-                        "description": "Requests a page size of items. Return items up to the limit value.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "exclusiveMinimum": 0.0,
-                            "title": "Limit",
-                            "description": "Requests a page size of items. Return items up to the limit value."
-                        },
                         "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The ID of the last-seen item.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Marker",
-                            "description": "The ID of the last-seen item."
+                            "anyOf": [
+                                {
+                                    "type": "integer",
+                                    "exclusiveMinimum": 0
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Requests a page size of items. Return items up to the limit value.",
+                            "title": "Limit"
                         },
-                        "name": "marker",
-                        "in": "query"
+                        "description": "Requests a page size of items. Return items up to the limit value."
                     },
                     {
-                        "description": "Indicates in which directions to sort.",
+                        "name": "marker",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "allOf": [
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "The ID of the last-seen item.",
+                            "title": "Marker"
+                        },
+                        "description": "The ID of the last-seen item."
+                    },
+                    {
+                        "name": "sort_dirs",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
                                 {
                                     "$ref": "#/components/schemas/SortDir"
+                                },
+                                {
+                                    "type": "null"
                                 }
                             ],
-                            "description": "Indicates in which directions to sort."
+                            "description": "Indicates in which directions to sort.",
+                            "title": "Sort Dirs"
                         },
-                        "name": "sort_dirs",
-                        "in": "query"
+                        "description": "Indicates in which directions to sort."
                     },
                     {
-                        "description": "Indicates in which attributes to sort.",
-                        "required": false,
-                        "schema": {
-                            "items": {
-                                "$ref": "#/components/schemas/VolumeSnapshotSortKey"
-                            },
-                            "type": "array",
-                            "description": "Indicates in which attributes to sort."
-                        },
                         "name": "sort_keys",
-                        "in": "query"
-                    },
-                    {
-                        "description": "List snapshots for all projects.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "boolean",
-                            "title": "All Projects",
-                            "description": "List snapshots for all projects."
+                            "anyOf": [
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/VolumeSnapshotSortKey"
+                                    }
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Indicates in which attributes to sort.",
+                            "title": "Sort Keys"
                         },
+                        "description": "Indicates in which attributes to sort."
+                    },
+                    {
                         "name": "all_projects",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of snapshots by the given project ID.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Project Id",
-                            "description": "Filter the list of snapshots by the given project ID."
+                            "anyOf": [
+                                {
+                                    "type": "boolean"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "List snapshots for all projects.",
+                            "title": "All Projects"
                         },
+                        "description": "List snapshots for all projects."
+                    },
+                    {
                         "name": "project_id",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of snapshots by the given snapshot name.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Name",
-                            "description": "Filter the list of snapshots by the given snapshot name."
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of snapshots by the given project ID.",
+                            "title": "Project Id"
                         },
-                        "name": "name",
-                        "in": "query"
+                        "description": "Filter the list of snapshots by the given project ID."
                     },
                     {
-                        "description": "Filter the list of snapshots by the given snapshot status.",
+                        "name": "name",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "allOf": [
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of snapshots by the given snapshot name.",
+                            "title": "Name"
+                        },
+                        "description": "Filter the list of snapshots by the given snapshot name."
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
                                 {
                                     "$ref": "#/components/schemas/VolumeSnapshotStatus"
+                                },
+                                {
+                                    "type": "null"
                                 }
                             ],
-                            "description": "Filter the list of snapshots by the given snapshot status."
+                            "description": "Filter the list of snapshots by the given snapshot status.",
+                            "title": "Status"
                         },
-                        "name": "status",
-                        "in": "query"
+                        "description": "Filter the list of snapshots by the given snapshot status."
                     },
                     {
-                        "description": "Filter the list of snapshots by the given volume ID.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "Volume Id",
-                            "description": "Filter the list of snapshots by the given volume ID."
-                        },
                         "name": "volume_id",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of snapshots by the given snapshot UUID.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Uuid",
-                            "description": "Filter the list of snapshots by the given snapshot UUID."
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of snapshots by the given volume ID.",
+                            "title": "Volume Id"
                         },
-                        "name": "uuid",
-                        "in": "query"
+                        "description": "Filter the list of snapshots by the given volume ID."
                     },
                     {
+                        "name": "uuid",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of snapshots by the given snapshot UUID.",
+                            "title": "Uuid"
+                        },
+                        "description": "Filter the list of snapshots by the given snapshot UUID."
+                    },
+                    {
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
-                            "title": "X-Openstack-Request-Id",
-                            "default": ""
-                        },
-                        "name": "X-Openstack-Request-Id",
-                        "in": "header"
+                            "default": "",
+                            "title": "X-Openstack-Request-Id"
+                        }
                     }
                 ],
                 "responses": {
@@ -1094,34 +1346,34 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UnauthorizedMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Unauthorized"
                     },
                     "403": {
-                        "description": "Forbidden",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ForbiddenMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Forbidden"
                     },
                     "500": {
-                        "description": "Internal Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/InternalServerErrorMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Internal Server Error"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -1146,172 +1398,259 @@
                 "operationId": "list_ports_api_v1_extension_ports_get",
                 "parameters": [
                     {
-                        "description": "Requests a page size of items. Returns a number of items up to a limit value.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "exclusiveMinimum": 0.0,
-                            "title": "Limit",
-                            "description": "Requests a page size of items. Returns a number of items up to a limit value."
-                        },
                         "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The ID of the last-seen item.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Marker",
-                            "description": "The ID of the last-seen item."
+                            "anyOf": [
+                                {
+                                    "type": "integer",
+                                    "exclusiveMinimum": 0
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Requests a page size of items. Returns a number of items up to a limit value.",
+                            "title": "Limit"
                         },
-                        "name": "marker",
-                        "in": "query"
+                        "description": "Requests a page size of items. Returns a number of items up to a limit value."
                     },
                     {
-                        "description": "Indicates in which directions to sort.",
+                        "name": "marker",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "allOf": [
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "The ID of the last-seen item.",
+                            "title": "Marker"
+                        },
+                        "description": "The ID of the last-seen item."
+                    },
+                    {
+                        "name": "sort_dirs",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
                                 {
                                     "$ref": "#/components/schemas/SortDir"
+                                },
+                                {
+                                    "type": "null"
                                 }
                             ],
-                            "description": "Indicates in which directions to sort."
+                            "description": "Indicates in which directions to sort.",
+                            "title": "Sort Dirs"
                         },
-                        "name": "sort_dirs",
-                        "in": "query"
+                        "description": "Indicates in which directions to sort."
                     },
                     {
-                        "description": "Indicates in which attributes to sort.",
-                        "required": false,
-                        "schema": {
-                            "items": {
-                                "$ref": "#/components/schemas/PortSortKey"
-                            },
-                            "type": "array",
-                            "description": "Indicates in which attributes to sort."
-                        },
                         "name": "sort_keys",
-                        "in": "query"
-                    },
-                    {
-                        "description": "List ports for all projects.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "boolean",
-                            "title": "All Projects",
-                            "description": "List ports for all projects."
+                            "anyOf": [
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PortSortKey"
+                                    }
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Indicates in which attributes to sort.",
+                            "title": "Sort Keys"
                         },
+                        "description": "Indicates in which attributes to sort."
+                    },
+                    {
                         "name": "all_projects",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of ports by the given project ID.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Project Id",
-                            "description": "Filter the list of ports by the given project ID."
+                            "anyOf": [
+                                {
+                                    "type": "boolean"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "List ports for all projects.",
+                            "title": "All Projects"
                         },
+                        "description": "List ports for all projects."
+                    },
+                    {
                         "name": "project_id",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of ports by the given port name.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Name",
-                            "description": "Filter the list of ports by the given port name."
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of ports by the given project ID.",
+                            "title": "Project Id"
                         },
-                        "name": "name",
-                        "in": "query"
+                        "description": "Filter the list of ports by the given project ID."
                     },
                     {
-                        "description": "Filter the list of ports by the given port status.",
+                        "name": "name",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "allOf": [
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of ports by the given port name.",
+                            "title": "Name"
+                        },
+                        "description": "Filter the list of ports by the given port name."
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
                                 {
                                     "$ref": "#/components/schemas/PortStatus"
+                                },
+                                {
+                                    "type": "null"
                                 }
                             ],
-                            "description": "Filter the list of ports by the given port status."
+                            "description": "Filter the list of ports by the given port status.",
+                            "title": "Status"
                         },
-                        "name": "status",
-                        "in": "query"
+                        "description": "Filter the list of ports by the given port status."
                     },
                     {
-                        "description": "Filter the list of ports by the given network name.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "Network Name",
-                            "description": "Filter the list of ports by the given network name."
-                        },
                         "name": "network_name",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of ports by the given network ID.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Network Id",
-                            "description": "Filter the list of ports by the given network ID."
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of ports by the given network name.",
+                            "title": "Network Name"
                         },
+                        "description": "Filter the list of ports by the given network name."
+                    },
+                    {
                         "name": "network_id",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The ID of the device that uses this port. For example, a server instance or a logical router.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "title": "Device Id",
-                            "description": "The ID of the device that uses this port. For example, a server instance or a logical router."
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of ports by the given network ID.",
+                            "title": "Network Id"
                         },
+                        "description": "Filter the list of ports by the given network ID."
+                    },
+                    {
                         "name": "device_id",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The entity type that uses this port.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "items": {
-                                "$ref": "#/components/schemas/PortDeviceOwner"
-                            },
-                            "type": "array",
-                            "description": "The entity type that uses this port."
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "The ID of the device that uses this port. For example, a server instance or a logical router.",
+                            "title": "Device Id"
                         },
+                        "description": "The ID of the device that uses this port. For example, a server instance or a logical router."
+                    },
+                    {
                         "name": "device_owner",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of ports by the given port UUID.",
+                        "in": "query",
                         "required": false,
                         "schema": {
-                            "items": {
-                                "type": "string"
-                            },
-                            "type": "array",
-                            "title": "Uuid",
-                            "description": "Filter the list of ports by the given port UUID."
+                            "anyOf": [
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PortDeviceOwner"
+                                    }
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "The entity type that uses this port.",
+                            "title": "Device Owner"
                         },
-                        "name": "uuid",
-                        "in": "query"
+                        "description": "The entity type that uses this port."
                     },
                     {
+                        "name": "uuid",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of ports by the given port UUID.",
+                            "title": "Uuid"
+                        },
+                        "description": "Filter the list of ports by the given port UUID."
+                    },
+                    {
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
-                            "title": "X-Openstack-Request-Id",
-                            "default": ""
-                        },
-                        "name": "X-Openstack-Request-Id",
-                        "in": "header"
+                            "default": "",
+                            "title": "X-Openstack-Request-Id"
+                        }
                     }
                 ],
                 "responses": {
@@ -1326,34 +1665,34 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UnauthorizedMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Unauthorized"
                     },
                     "403": {
-                        "description": "Forbidden",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ForbiddenMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Forbidden"
                     },
                     "500": {
-                        "description": "Internal Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/InternalServerErrorMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Internal Server Error"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -1378,37 +1717,37 @@
                 "operationId": "compute_services_api_v1_extension_compute_services_get",
                 "parameters": [
                     {
-                        "description": "Filter the list of compute services by the given binary.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "Binary",
-                            "description": "Filter the list of compute services by the given binary."
-                        },
                         "name": "binary",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filter the list of compute services by the given host.",
+                        "in": "query",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "title": "Host",
-                            "description": "Filter the list of compute services by the given host."
+                            "description": "Filter the list of compute services by the given binary.",
+                            "title": "Binary"
                         },
-                        "name": "host",
-                        "in": "query"
+                        "description": "Filter the list of compute services by the given binary."
                     },
                     {
+                        "name": "host",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "description": "Filter the list of compute services by the given host.",
+                            "title": "Host"
+                        },
+                        "description": "Filter the list of compute services by the given host."
+                    },
+                    {
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
-                            "title": "X-Openstack-Request-Id",
-                            "default": ""
-                        },
-                        "name": "X-Openstack-Request-Id",
-                        "in": "header"
+                            "default": "",
+                            "title": "X-Openstack-Request-Id"
+                        }
                     }
                 ],
                 "responses": {
@@ -1423,24 +1762,24 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UnauthorizedMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Unauthorized"
                     },
                     "500": {
-                        "description": "Internal Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/InternalServerErrorMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Internal Server Error"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -1465,37 +1804,37 @@
                 "operationId": "prometheus_query_api_v1_query_get",
                 "parameters": [
                     {
-                        "description": "The query expression of prometheus to filter.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "Query",
-                            "description": "The query expression of prometheus to filter."
-                        },
                         "name": "query",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The time to filter.",
+                        "in": "query",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "title": "Time",
-                            "description": "The time to filter."
+                            "description": "The query expression of prometheus to filter.",
+                            "title": "Query"
                         },
+                        "description": "The query expression of prometheus to filter."
+                    },
+                    {
                         "name": "time",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The timeout to filter.",
+                        "in": "query",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "title": "Timeout",
-                            "description": "The timeout to filter."
+                            "description": "The time to filter.",
+                            "title": "Time"
                         },
+                        "description": "The time to filter."
+                    },
+                    {
                         "name": "timeout",
-                        "in": "query"
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "description": "The timeout to filter.",
+                            "title": "Timeout"
+                        },
+                        "description": "The timeout to filter."
                     }
                 ],
                 "responses": {
@@ -1510,24 +1849,24 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UnauthorizedMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Unauthorized"
                     },
                     "500": {
-                        "description": "Internal Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/InternalServerErrorMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Internal Server Error"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -1552,59 +1891,59 @@
                 "operationId": "prometheus_query_range_api_v1_query_range_get",
                 "parameters": [
                     {
-                        "description": "The query expression of prometheus to filter.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "Query",
-                            "description": "The query expression of prometheus to filter."
-                        },
                         "name": "query",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The start time to filter.",
+                        "in": "query",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "title": "Start",
-                            "description": "The start time to filter."
+                            "description": "The query expression of prometheus to filter.",
+                            "title": "Query"
                         },
+                        "description": "The query expression of prometheus to filter."
+                    },
+                    {
                         "name": "start",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The end time to filter.",
+                        "in": "query",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "title": "End",
-                            "description": "The end time to filter."
+                            "description": "The start time to filter.",
+                            "title": "Start"
                         },
+                        "description": "The start time to filter."
+                    },
+                    {
                         "name": "end",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The step to filter.",
+                        "in": "query",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "title": "Step",
-                            "description": "The step to filter."
+                            "description": "The end time to filter.",
+                            "title": "End"
                         },
+                        "description": "The end time to filter."
+                    },
+                    {
                         "name": "step",
-                        "in": "query"
-                    },
-                    {
-                        "description": "The timeout to filter.",
+                        "in": "query",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "title": "Timeout",
-                            "description": "The timeout to filter."
+                            "description": "The step to filter.",
+                            "title": "Step"
                         },
+                        "description": "The step to filter."
+                    },
+                    {
                         "name": "timeout",
-                        "in": "query"
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "description": "The timeout to filter.",
+                            "title": "Timeout"
+                        },
+                        "description": "The timeout to filter."
                     }
                 ],
                 "responses": {
@@ -1619,24 +1958,24 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UnauthorizedMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Unauthorized"
                     },
                     "500": {
-                        "description": "Internal Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/InternalServerErrorMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Internal Server Error"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -1883,13 +2222,13 @@
                 "operationId": "show_setting_api_v1_setting__key__get",
                 "parameters": [
                     {
+                        "name": "key",
+                        "in": "path",
                         "required": true,
                         "schema": {
                             "type": "string",
                             "title": "Key"
-                        },
-                        "name": "key",
-                        "in": "path"
+                        }
                     }
                 ],
                 "responses": {
@@ -1904,24 +2243,24 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UnauthorizedMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Unauthorized"
                     },
                     "404": {
-                        "description": "Not Found",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/NotFoundMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Not Found"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -1944,13 +2283,13 @@
                 "operationId": "reset_setting_api_v1_setting__key__delete",
                 "parameters": [
                     {
+                        "name": "key",
+                        "in": "path",
                         "required": true,
                         "schema": {
                             "type": "string",
                             "title": "Key"
-                        },
-                        "name": "key",
-                        "in": "path"
+                        }
                     }
                 ],
                 "responses": {
@@ -1965,34 +2304,34 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UnauthorizedMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Unauthorized"
                     },
                     "403": {
-                        "description": "Forbidden",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ForbiddenMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Forbidden"
                     },
                     "404": {
-                        "description": "Not Found",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/NotFoundMessage"
                                 }
                             }
-                        }
+                        },
+                        "description": "Not Found"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -2161,7 +2500,14 @@
             "ComputeServicesResponseBase": {
                 "properties": {
                     "id": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Id",
                         "description": "Service id"
                     },
@@ -2171,7 +2517,14 @@
                         "description": "Service binary"
                     },
                     "disabled_reason": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Disabled Reason",
                         "description": "Disabled reason"
                     },
@@ -2181,7 +2534,14 @@
                         "description": "Host name"
                     },
                     "state": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "State",
                         "description": "Service state"
                     },
@@ -2191,17 +2551,38 @@
                         "description": "Service status"
                     },
                     "updated_at": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Updated At",
                         "description": "Updated at"
                     },
                     "forced_down": {
-                        "type": "boolean",
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Forced Down",
                         "description": "Forced down"
                     },
                     "zone": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Zone",
                         "description": "Zone"
                     }
@@ -2217,7 +2598,14 @@
             "Credential": {
                 "properties": {
                     "region": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Region",
                         "description": "Credential identity service region"
                     },
@@ -2244,12 +2632,14 @@
                     "password"
                 ],
                 "title": "Credential",
-                "example": {
-                    "region": "RegionOne",
-                    "username": "admin",
-                    "domain": "default",
-                    "password": "admin"
-                }
+                "examples": [
+                    {
+                        "domain": "default",
+                        "password": "admin",
+                        "region": "RegionOne",
+                        "username": "admin"
+                    }
+                ]
             },
             "Domain": {
                 "properties": {
@@ -2274,37 +2664,87 @@
             "FlavorInServer": {
                 "properties": {
                     "ephemeral": {
-                        "type": "integer",
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Ephemeral",
                         "description": "Ephemeral disk size in GB"
                     },
                     "ram": {
-                        "type": "integer",
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Ram",
                         "description": "RAM size in MB"
                     },
                     "original_name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Original Name",
                         "description": "Original flavor name"
                     },
                     "vcpus": {
-                        "type": "integer",
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Vcpus",
                         "description": "Number of vCPUs"
                     },
                     "extra_specs": {
-                        "type": "object",
+                        "anyOf": [
+                            {
+                                "additionalProperties": true,
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Extra Specs",
                         "description": "Extra specs"
                     },
                     "swap": {
-                        "type": "integer",
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Swap",
                         "description": "Swap size in MB"
                     },
                     "disk": {
-                        "type": "integer",
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Disk",
                         "description": "Disk size in GB"
                     }
@@ -2441,10 +2881,17 @@
                         "description": "Policies rules list"
                     },
                     "target": {
-                        "additionalProperties": {
-                            "type": "string"
-                        },
-                        "type": "object",
+                        "anyOf": [
+                            {
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Target",
                         "description": "Policies targets"
                     }
@@ -2495,8 +2942,7 @@
                     "network:distributed",
                     "Octavia"
                 ],
-                "title": "PortDeviceOwner",
-                "description": "An enumeration."
+                "title": "PortDeviceOwner"
             },
             "PortSortKey": {
                 "type": "string",
@@ -2507,8 +2953,7 @@
                     "status",
                     "project_id"
                 ],
-                "title": "PortSortKey",
-                "description": "An enumeration."
+                "title": "PortSortKey"
             },
             "PortStatus": {
                 "type": "string",
@@ -2519,8 +2964,7 @@
                     "ERROR",
                     "N/A"
                 ],
-                "title": "PortStatus",
-                "description": "An enumeration."
+                "title": "PortStatus"
             },
             "PortsResponse": {
                 "properties": {
@@ -2547,107 +2991,227 @@
                         "description": "Port ID"
                     },
                     "origin_data": {
+                        "additionalProperties": true,
                         "type": "object",
                         "title": "Origin Data",
                         "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/network/v2/index.html?expanded=list-ports-detail#list-ports"
                     },
                     "server_name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Server Name",
                         "description": "Server name"
                     },
                     "network_name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Network Name",
                         "description": "Network name"
                     },
                     "ipv4": {
-                        "items": {},
-                        "type": "array",
+                        "anyOf": [
+                            {
+                                "items": {},
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Ipv4",
                         "description": "IPv4 addresses"
                     },
                     "ipv6": {
-                        "items": {},
-                        "type": "array",
+                        "anyOf": [
+                            {
+                                "items": {},
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Ipv6",
                         "description": "IPv6 addresses"
                     },
                     "name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Name",
                         "description": "Will be removed, please use origin_data[name]",
                         "deprecated": true
                     },
                     "mac_address": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Mac Address",
                         "description": "Will be removed, please use origin_data[mac_address]",
                         "deprecated": true
                     },
                     "project_id": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Project Id",
                         "description": "Will be removed, please use origin_data[project_id]",
                         "deprecated": true
                     },
                     "device_owner": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Device Owner",
                         "description": "Will be removed, please use origin_data[device_owner]",
                         "deprecated": true
                     },
                     "device_id": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Device Id",
                         "description": "Will be removed, please use origin_data[device_id]",
                         "deprecated": true
                     },
                     "status": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Status",
                         "description": "Will be removed, please use origin_data[status]",
                         "deprecated": true
                     },
                     "created_at": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Created At",
                         "description": "Will be removed, please use origin_data[created_at]",
                         "deprecated": true
                     },
                     "network_id": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Network Id",
                         "description": "Will be removed, please use origin_data[network_id]",
                         "deprecated": true
                     },
                     "binding_vnic_type": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Binding Vnic Type",
                         "description": "Will be removed, please use origin_data[binding:vnic_type]",
                         "deprecated": true
                     },
                     "description": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Description",
                         "description": "Will be removed, please use origin_data[description]",
                         "deprecated": true
                     },
                     "port_security_enabled": {
-                        "type": "boolean",
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Port Security Enabled",
                         "description": "Will be removed, please use origin_data[port_security_enabled]",
                         "deprecated": true
                     },
                     "qos_policy_id": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Qos Policy Id",
                         "description": "Will be removed, please use origin_data[qos_policy_id]",
                         "deprecated": true
                     },
                     "fixed_ips": {
-                        "items": {},
-                        "type": "array",
+                        "anyOf": [
+                            {
+                                "items": {},
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Fixed Ips",
                         "description": "Will be removed, please use origin_data[fixed_ips]",
                         "deprecated": true
@@ -2656,7 +3220,20 @@
                 "type": "object",
                 "required": [
                     "id",
-                    "origin_data"
+                    "origin_data",
+                    "name",
+                    "mac_address",
+                    "project_id",
+                    "device_owner",
+                    "device_id",
+                    "status",
+                    "created_at",
+                    "network_id",
+                    "binding_vnic_type",
+                    "description",
+                    "port_security_enabled",
+                    "qos_policy_id",
+                    "fixed_ips"
                 ],
                 "title": "PortsResponseBase"
             },
@@ -2683,21 +3260,11 @@
                         "description": "UUID"
                     },
                     "project": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/Project"
-                            }
-                        ],
-                        "title": "Project",
+                        "$ref": "#/components/schemas/Project",
                         "description": "User project"
                     },
                     "user": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/User"
-                            }
-                        ],
-                        "title": "User",
+                        "$ref": "#/components/schemas/User",
                         "description": "User"
                     },
                     "roles": {
@@ -2714,25 +3281,55 @@
                         "description": "Keystone token expiration time"
                     },
                     "base_domains": {
-                        "items": {
-                            "type": "string"
-                        },
-                        "type": "array",
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Base Domains",
                         "description": "User base domains"
                     },
                     "endpoints": {
-                        "type": "object",
+                        "anyOf": [
+                            {
+                                "additionalProperties": true,
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Endpoints",
                         "description": "Keystone endpoints"
                     },
                     "projects": {
-                        "type": "object",
+                        "anyOf": [
+                            {
+                                "additionalProperties": true,
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Projects",
                         "description": "User projects"
                     },
                     "default_project_id": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Default Project Id",
                         "description": "User default project ID"
                     },
@@ -2769,12 +3366,7 @@
                         "description": "Project name"
                     },
                     "domain": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/Domain"
-                            }
-                        ],
-                        "title": "Domain",
+                        "$ref": "#/components/schemas/Domain",
                         "description": "Project domain"
                     }
                 },
@@ -2840,27 +3432,50 @@
                         "description": "Prometheus status"
                     },
                     "errorType": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Errortype",
                         "description": "Prometheus error type"
                     },
                     "error": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Error",
                         "description": "Prometheus error"
                     },
                     "warnings": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Warnings",
                         "description": "Prometheus warnings"
                     },
                     "data": {
-                        "allOf": [
+                        "anyOf": [
                             {
                                 "$ref": "#/components/schemas/PrometheusQueryRangeData"
+                            },
+                            {
+                                "type": "null"
                             }
                         ],
-                        "title": "Data",
                         "description": "Prometheus query range data"
                     }
                 },
@@ -2902,27 +3517,50 @@
                         "description": "Prometheus status"
                     },
                     "errorType": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Errortype",
                         "description": "Prometheus error type"
                     },
                     "error": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Error",
                         "description": "Prometheus error"
                     },
                     "warnings": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Warnings",
                         "description": "Prometheus warnings"
                     },
                     "data": {
-                        "allOf": [
+                        "anyOf": [
                             {
                                 "$ref": "#/components/schemas/PrometheusQueryData"
+                            },
+                            {
+                                "type": "null"
                             }
                         ],
-                        "title": "Data",
                         "description": "Prometheus query data"
                     }
                 },
@@ -2964,8 +3602,7 @@
                     "updated_at",
                     "project_id"
                 ],
-                "title": "RecycleServerSortKey",
-                "description": "An enumeration."
+                "title": "RecycleServerSortKey"
             },
             "RecycleServersResponse": {
                 "properties": {
@@ -2993,50 +3630,107 @@
                         "description": "Recycle server id"
                     },
                     "origin_data": {
+                        "additionalProperties": true,
                         "type": "object",
                         "title": "Origin Data",
                         "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/compute/?expanded=list-servers-detailed-detail#list-servers-detailed"
                     },
                     "project_name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Project Name",
                         "description": "Project name"
                     },
                     "image": {
-                        "type": "string",
-                        "format": "uuid4",
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "uuid4"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Image",
                         "description": "Image id"
                     },
                     "image_name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Image Name",
                         "description": "Image name"
                     },
                     "image_os_distro": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Image Os Distro",
                         "description": "Image os distro"
                     },
                     "fixed_addresses": {
-                        "items": {},
-                        "type": "array",
+                        "anyOf": [
+                            {
+                                "items": {},
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Fixed Addresses",
                         "description": "Fixed addresses"
                     },
                     "floating_addresses": {
-                        "items": {},
-                        "type": "array",
+                        "anyOf": [
+                            {
+                                "items": {},
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Floating Addresses",
                         "description": "Floating addresses"
                     },
                     "deleted_at": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Deleted At",
                         "description": "Deleted at"
                     },
                     "updated_at": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Updated At",
                         "description": "Updated at"
                     },
@@ -3046,47 +3740,91 @@
                         "description": "Reclaim timestamp"
                     },
                     "name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Name",
                         "description": "Will be removed, please use origin_data[name]",
                         "deprecated": true
                     },
                     "project_id": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Project Id",
                         "description": "Will be removed, please use origin_data[tenant_id]",
                         "deprecated": true
                     },
                     "host": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Host",
                         "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:host]",
                         "deprecated": true
                     },
                     "hostname": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Hostname",
                         "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:hostname]",
                         "deprecated": true
                     },
                     "flavor": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Flavor",
                         "description": "Will be removed, please use origin_data[flavor][original_name]",
                         "deprecated": true
                     },
                     "flavor_info": {
-                        "allOf": [
+                        "anyOf": [
                             {
                                 "$ref": "#/components/schemas/FlavorInServer"
+                            },
+                            {
+                                "type": "null"
                             }
                         ],
-                        "title": "Flavor Info",
                         "description": "Will be removed, please use origin_data[flavor]",
                         "deprecated": true
                     },
                     "status": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Status",
                         "description": "Will be removed, please use origin_data[status]",
                         "deprecated": true
@@ -3096,7 +3834,14 @@
                 "required": [
                     "id",
                     "origin_data",
-                    "reclaim_timestamp"
+                    "reclaim_timestamp",
+                    "name",
+                    "project_id",
+                    "host",
+                    "hostname",
+                    "flavor",
+                    "flavor_info",
+                    "status"
                 ],
                 "title": "RecycleServersResponseBase"
             },
@@ -3170,8 +3915,7 @@
                     "host",
                     "project_id"
                 ],
-                "title": "ServerSortKey",
-                "description": "An enumeration."
+                "title": "ServerSortKey"
             },
             "ServerStatus": {
                 "type": "string",
@@ -3193,8 +3937,7 @@
                     "SUSPENDED",
                     "UNKNOWN"
                 ],
-                "title": "ServerStatus",
-                "description": "An enumeration."
+                "title": "ServerStatus"
             },
             "ServersResponse": {
                 "properties": {
@@ -3222,127 +3965,264 @@
                         "description": "Server ID"
                     },
                     "origin_data": {
+                        "additionalProperties": true,
                         "type": "object",
                         "title": "Origin Data",
                         "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/compute/?expanded=list-servers-detailed-detail#list-servers-detailed"
                     },
                     "project_name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Project Name",
                         "description": "Project name"
                     },
                     "image": {
-                        "type": "string",
-                        "format": "uuid4",
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "uuid4"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Image",
                         "description": "Image ID"
                     },
                     "image_name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Image Name",
                         "description": "Image name"
                     },
                     "image_os_distro": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Image Os Distro",
                         "description": "Image OS distro"
                     },
                     "fixed_addresses": {
-                        "items": {},
-                        "type": "array",
+                        "anyOf": [
+                            {
+                                "items": {},
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Fixed Addresses",
                         "description": "Fixed addresses"
                     },
                     "floating_addresses": {
-                        "items": {},
-                        "type": "array",
+                        "anyOf": [
+                            {
+                                "items": {},
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Floating Addresses",
                         "description": "Floating addresses"
                     },
                     "name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Name",
                         "description": "Will be removed, please use origin_data[name]",
                         "deprecated": true
                     },
                     "project_id": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Project Id",
                         "description": "Will be removed, please use origin_data[tenant_id]",
                         "deprecated": true
                     },
                     "host": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Host",
                         "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:host]",
                         "deprecated": true
                     },
                     "hostname": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Hostname",
                         "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:hostname]",
                         "deprecated": true
                     },
                     "flavor": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Flavor",
                         "description": "Will be removed, please use origin_data[flavor][original_name]",
                         "deprecated": true
                     },
                     "flavor_info": {
-                        "allOf": [
+                        "anyOf": [
                             {
                                 "$ref": "#/components/schemas/FlavorInServer"
+                            },
+                            {
+                                "type": "null"
                             }
                         ],
-                        "title": "Flavor Info",
                         "description": "Will be removed, please use origin_data[flavor]",
                         "deprecated": true
                     },
                     "status": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Status",
                         "description": "Will be removed, please use origin_data[status]",
                         "deprecated": true
                     },
                     "locked": {
-                        "type": "boolean",
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Locked",
                         "description": "Will be removed, please use origin_data[locked]",
                         "deprecated": true
                     },
                     "created_at": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Created At",
                         "description": "Will be removed, please use origin_data[created]",
                         "deprecated": true
                     },
                     "task_state": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Task State",
                         "description": "Will be removed, please use origin_data[OS-EXT-STS:task_state]",
                         "deprecated": true
                     },
                     "vm_state": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Vm State",
                         "description": "Will be removed, please use origin_data[OS-EXT-STS:vm_state]",
                         "deprecated": true
                     },
                     "power_state": {
-                        "type": "integer",
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Power State",
                         "description": "Will be removed, please use origin_data[OS-EXT-STS:power_state]",
                         "deprecated": true
                     },
                     "root_device_name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Root Device Name",
                         "description": "Will be removed, please use origin_data[OS-EXT-SRV-ATTR:root_device_name]",
                         "deprecated": true
                     },
                     "metadata": {
-                        "type": "object",
+                        "anyOf": [
+                            {
+                                "additionalProperties": true,
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Metadata",
                         "description": "Will be removed, please use origin_data[metadata]",
                         "deprecated": true
@@ -3351,7 +4231,21 @@
                 "type": "object",
                 "required": [
                     "id",
-                    "origin_data"
+                    "origin_data",
+                    "name",
+                    "project_id",
+                    "host",
+                    "hostname",
+                    "flavor",
+                    "flavor_info",
+                    "status",
+                    "locked",
+                    "created_at",
+                    "task_state",
+                    "vm_state",
+                    "power_state",
+                    "root_device_name",
+                    "metadata"
                 ],
                 "title": "ServersResponseBase"
             },
@@ -3367,7 +4261,14 @@
                         "description": "Value of setting"
                     },
                     "hidden": {
-                        "type": "boolean",
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Hidden",
                         "description": "Hidden setting or not"
                     },
@@ -3408,8 +4309,7 @@
                     "desc",
                     "asc"
                 ],
-                "title": "SortDir",
-                "description": "An enumeration."
+                "title": "SortDir"
             },
             "UnauthorizedMessage": {
                 "properties": {
@@ -3457,12 +4357,7 @@
                         "description": "User name"
                     },
                     "domain": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/Domain"
-                            }
-                        ],
-                        "title": "Domain",
+                        "$ref": "#/components/schemas/Domain",
                         "description": "User domain"
                     }
                 },
@@ -3515,17 +4410,38 @@
                         "description": "Volume attachment id"
                     },
                     "device": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Device",
                         "description": "Device name"
                     },
                     "server_id": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Server Id",
                         "description": "Server id"
                     },
                     "server_name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Server Name",
                         "description": "Server name"
                     }
@@ -3539,16 +4455,34 @@
             "VolumeSnapshotChildVolume": {
                 "properties": {
                     "volume_id": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Volume Id",
                         "description": "ID of volume",
-                        "example": "00000000-0000-0000-0000-000000000000"
+                        "examples": [
+                            "00000000-0000-0000-0000-000000000000"
+                        ]
                     },
                     "volume_name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Volume Name",
                         "description": "Name of volume",
-                        "example": "child-volume-demo"
+                        "examples": [
+                            "child-volume-demo"
+                        ]
                     }
                 },
                 "type": "object",
@@ -3562,8 +4496,7 @@
                     "status",
                     "created_at"
                 ],
-                "title": "VolumeSnapshotSortKey",
-                "description": "An enumeration."
+                "title": "VolumeSnapshotSortKey"
             },
             "VolumeSnapshotStatus": {
                 "type": "string",
@@ -3574,13 +4507,19 @@
                     "ERROR",
                     "ERROR_DELETING"
                 ],
-                "title": "VolumeSnapshotStatus",
-                "description": "An enumeration."
+                "title": "VolumeSnapshotStatus"
             },
             "VolumeSnapshotsResponse": {
                 "properties": {
                     "count": {
-                        "type": "integer",
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Count",
                         "description": "Count of volume snapshots",
                         "default": 0
@@ -3608,72 +4547,153 @@
                         "description": "Snapshot ID"
                     },
                     "origin_data": {
+                        "additionalProperties": true,
                         "type": "object",
                         "title": "Origin Data",
                         "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/block-storage/v3/index.html?expanded=list-snapshots-and-details-detail#list-snapshots-and-details"
                     },
                     "project_name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Project Name",
                         "description": "Project name"
                     },
                     "host": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Host",
                         "description": "Host name"
                     },
                     "volume_name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Volume Name",
                         "description": "Name of volume",
-                        "example": "volume-demo"
+                        "examples": [
+                            "volume-demo"
+                        ]
                     },
                     "child_volumes": {
-                        "items": {
-                            "$ref": "#/components/schemas/VolumeSnapshotChildVolume"
-                        },
-                        "type": "array",
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "$ref": "#/components/schemas/VolumeSnapshotChildVolume"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Child Volumes",
                         "description": "Child volumes"
                     },
                     "name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Name",
                         "description": "Will be removed, please use origin_data[name]",
                         "deprecated": true
                     },
                     "project_id": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Project Id",
                         "description": "Will be removed, please use origin_data[os-extended-snapshot-attributes:project_id]",
                         "deprecated": true
                     },
                     "size": {
-                        "type": "integer",
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Size",
                         "description": "Will be removed, please use origin_data[size]",
                         "deprecated": true
                     },
                     "status": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Status",
                         "description": "Will be removed, please use origin_data[status]",
                         "deprecated": true
                     },
                     "volume_id": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Volume Id",
                         "description": "Will be removed, please use origin_data[volume_id]",
                         "deprecated": true
                     },
                     "created_at": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Created At",
                         "description": "Will be removed, please use origin_data[created_at]",
                         "deprecated": true
                     },
                     "metadata": {
-                        "type": "object",
+                        "anyOf": [
+                            {
+                                "additionalProperties": true,
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Metadata",
                         "description": "Will be removed, please use origin_data[metadata]",
                         "deprecated": true
@@ -3682,7 +4702,14 @@
                 "type": "object",
                 "required": [
                     "id",
-                    "origin_data"
+                    "origin_data",
+                    "name",
+                    "project_id",
+                    "size",
+                    "status",
+                    "volume_id",
+                    "created_at",
+                    "metadata"
                 ],
                 "title": "VolumeSnapshotsResponseBase"
             },
@@ -3696,8 +4723,7 @@
                     "bootable",
                     "created_at"
                 ],
-                "title": "VolumeSortKey",
-                "description": "An enumeration."
+                "title": "VolumeSortKey"
             },
             "VolumeStatus": {
                 "type": "string",
@@ -3723,13 +4749,19 @@
                     "retyping",
                     "extending"
                 ],
-                "title": "VolumeStatus",
-                "description": "An enumeration."
+                "title": "VolumeStatus"
             },
             "VolumesResponse": {
                 "properties": {
                     "count": {
-                        "type": "integer",
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Count",
                         "description": "Count of volumes",
                         "default": 0
@@ -3758,97 +4790,203 @@
                         "description": "Volume ID"
                     },
                     "origin_data": {
+                        "additionalProperties": true,
                         "type": "object",
                         "title": "Origin Data",
                         "description": "The origin_data is the same like the response of https://docs.openstack.org/api-ref/block-storage/v3/index.html?expanded=list-accessible-volumes-with-details-detail#list-accessible-volumes-with-details"
                     },
                     "project_name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Project Name",
                         "description": "Project name"
                     },
                     "attachments": {
-                        "items": {
-                            "$ref": "#/components/schemas/VolumeAttachment"
-                        },
-                        "type": "array",
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "$ref": "#/components/schemas/VolumeAttachment"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Attachments",
                         "description": "Volume attachments"
                     },
                     "name": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Name",
                         "description": "Will be removed, please use origin_data[name]",
                         "deprecated": true
                     },
                     "project_id": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Project Id",
                         "description": "Will be removed, please use origin_data[os-vol-tenant-attr:tenant_id]",
                         "deprecated": true
                     },
                     "host": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Host",
                         "description": "Will be removed, please use origin_data[os-vol-host-attr:host]",
                         "deprecated": true
                     },
                     "snapshot_id": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Snapshot Id",
                         "description": "Will be removed, please use origin_data[snapshot_id]",
                         "deprecated": true
                     },
                     "source_volid": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Source Volid",
                         "description": "Will be removed, please use origin_data[source_volid]",
                         "deprecated": true
                     },
                     "size": {
-                        "type": "integer",
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Size",
                         "description": "Will be removed, please use origin_data[size]",
                         "deprecated": true
                     },
                     "status": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Status",
                         "description": "Will be removed, please use origin_data[status]",
                         "deprecated": true
                     },
                     "volume_type": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Volume Type",
                         "description": "Will be removed, please use origin_data[volume_type]",
                         "deprecated": true
                     },
                     "encrypted": {
-                        "type": "boolean",
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Encrypted",
                         "description": "Will be removed, please use origin_data[encrypted]",
                         "deprecated": true
                     },
                     "bootable": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Bootable",
                         "description": "Will be removed, please use origin_data[bootable]",
                         "deprecated": true
                     },
                     "multiattach": {
-                        "type": "boolean",
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Multiattach",
                         "description": "Will be removed, please use origin_data[multiattach]",
                         "deprecated": true
                     },
                     "availability_zone": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Availability Zone",
                         "description": "Will be removed, please use origin_data[availability_zone]",
                         "deprecated": true
                     },
                     "created_at": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Created At",
                         "description": "Will be removed, please use origin_data[created_at]",
                         "deprecated": true
@@ -3857,7 +4995,20 @@
                 "type": "object",
                 "required": [
                     "id",
-                    "origin_data"
+                    "origin_data",
+                    "name",
+                    "project_id",
+                    "host",
+                    "snapshot_id",
+                    "source_volid",
+                    "size",
+                    "status",
+                    "volume_type",
+                    "encrypted",
+                    "bootable",
+                    "multiattach",
+                    "availability_zone",
+                    "created_at"
                 ],
                 "title": "VolumesResponseBase"
             }

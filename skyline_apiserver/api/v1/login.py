@@ -20,12 +20,13 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from fastapi import status
 from fastapi.exceptions import HTTPException
 from fastapi.param_functions import Depends, Form, Header
+from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRouter
 from keystoneauth1.identity.v3 import Password, Token
 from keystoneauth1.session import Session
 from keystoneclient.client import Client as KeystoneClient
 from starlette.requests import Request
-from starlette.responses import RedirectResponse, Response
+from starlette.responses import Response
 
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
@@ -262,7 +263,7 @@ def get_sso(request: Request) -> schemas.SSO:
     "/websso",
     description="Websso",
     responses={
-        302: {"class": RedirectResponse},
+        302: {"description": "Redirect to SSO provider"},
         401: {"model": schemas.common.UnauthorizedMessage},
     },
     response_class=RedirectResponse,
@@ -378,33 +379,33 @@ def logout(
 )
 def switch_project(
     project_id: str,
+    request: Request,
     response: Response,
-    profile: schemas.Profile = Depends(deps.get_profile),
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
         regex=constants.INBOUND_HEADER_REGEX,
     ),
 ) -> schemas.Profile:
+    profile = deps.get_profile(request)
+    region = profile.region
     try:
         project_scope_token = get_project_scope_token(
             keystone_token=profile.keystone_token,
-            region=profile.region,
+            region=region,
             project_id=project_id,
         )
-
-        profile = generate_profile(
+        new_profile = generate_profile(
             keystone_token=project_scope_token,
-            region=profile.region,
-            uuid_value=profile.uuid,
+            region=region,
         )
-        profile = _patch_profile(profile, x_openstack_request_id)
+        new_profile = _patch_profile(new_profile, x_openstack_request_id)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=str(e),
         )
     else:
-        response.set_cookie(CONF.default.session_name, profile.toJWTPayload())
-        response.set_cookie(constants.TIME_EXPIRED_KEY, str(profile.exp))
-        return profile
+        response.set_cookie(CONF.default.session_name, new_profile.toJWTPayload())
+        response.set_cookie(constants.TIME_EXPIRED_KEY, str(new_profile.exp))
+        return new_profile

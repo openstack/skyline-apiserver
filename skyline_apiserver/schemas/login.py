@@ -29,15 +29,18 @@ class Credential(BaseModel):
     username: str = Field(..., description="Credential username")
     password: str = Field(..., description="Credential password for user")
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "region": "RegionOne",
-                "username": "admin",
-                "domain": "default",
-                "password": "admin",
-            },
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "region": "RegionOne",
+                    "username": "admin",
+                    "domain": "default",
+                    "password": "admin",
+                },
+            ]
         }
+    }
 
 
 class Domain(BaseModel):

@@ -20,8 +20,8 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple, Type
 
 import pytest
 from _pytest.fixtures import SubRequest
-from pydantic import StrictBool, StrictFloat, StrictInt, StrictStr
-from pydantic.error_wrappers import ValidationError
+from pydantic import StrictBool, StrictFloat, StrictInt, StrictStr, ValidationError
+from pydantic.errors import PydanticSchemaGenerationError
 
 from skyline_apiserver.config.base import Configuration, Group, Opt
 from skyline_apiserver.tests.fake import FAKER, FakeOptData
@@ -81,7 +81,7 @@ class TestOpt:
                             "description": FAKER.text.word(),
                             "schema": RuntimeError,
                         },
-                        RuntimeError,
+                        PydanticSchemaGenerationError,
                     ),
                 ),
             ],

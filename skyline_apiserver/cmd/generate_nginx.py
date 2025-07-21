@@ -196,7 +196,7 @@ def main(
         endpoints = get_proxy_endpoints()
         context = {
             "skyline_console_static_path": static_path,
-            "endpoints": [i.dict() for i in endpoints.values()],
+            "endpoints": [i.model_dump() for i in endpoints.values()],
             "api_prefix": constants.API_PREFIX,
         }
         if ssl_certfile:

@@ -198,9 +198,9 @@ list_rules = ("""
     for r in rules:
         print(
             rule_format_str.format(
-                name=json.dumps(r.name),
-                check_str=json.dumps(r.check_str),
-                description=json.dumps(r.description),
+                name=r.name,
+                check_str=r.check_str,
+                description=r.description,
             ),
         )
 
@@ -216,11 +216,11 @@ list_rules = ("""
     for r in api_rules:
         print(
             apirule_format_str.format(
-                name=json.dumps(r.name),
-                check_str=json.dumps(r.check_str),
-                description=json.dumps(r.description),
-                scope_types=json.dumps(r.scope_types),
-                operations=json.dumps(r.operations),
+                name=r.name,
+                check_str=r.check_str,
+                description=r.description,
+                scope_types=r.scope_types,
+                operations=r.operations.model_dump(),
             ),
         )
 

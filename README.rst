@@ -159,7 +159,7 @@ Install & Run
    .. code:: bash
 
       tox -e venv
-      pip install -r requirements.txt -r test-requirements.txt
+      pip install -r requirements.txt -r test-requirements.txt -chttps://releases.openstack.org/constraints/upper/master
       pip install -e .
 
 2. Set skyline.yaml config file

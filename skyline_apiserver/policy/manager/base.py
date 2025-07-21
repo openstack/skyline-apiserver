@@ -14,10 +14,11 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import Any, List, Optional, Sequence
 
 from oslo_policy import _parser
 from oslo_policy.policy import DocumentedRuleDefault, RuleDefault
+from pydantic import BaseModel
 
 from skyline_apiserver import schemas
 
@@ -68,7 +69,7 @@ class APIRule(Rule):
         check_str: str,
         description: str,
         scope_types: List[str],
-        operations: List[schemas.Operation],
+        operations: Optional[Sequence[Any]] = None,
         basic_check_str: str = "",
     ) -> None:
         super().__init__(name, check_str, description, basic_check_str)
@@ -76,13 +77,16 @@ class APIRule(Rule):
         schemas.ScopeTypesSchema.parse_obj(scope_types)
         self.scope_types = scope_types
 
-        schemas.OperationsSchema.parse_obj(operations)
-        self.operations = operations
+        # for Pydantic 2.x, automatically convert Operation instances to dict
+        if operations and isinstance(operations[0], BaseModel):
+            operations = [op.model_dump() for op in operations]
+        self.operations: schemas.OperationsSchema = schemas.OperationsSchema.model_validate(
+            operations
+        )
 
     def format_into_yaml(self) -> str:
         op_list = [
-            f'# {operation.get("method"):8}{operation.get("path")}\n'
-            for operation in self.operations
+            f"# {operation.method:8}{operation.path}\n" for operation in self.operations.root
         ]
         op = "".join(op_list)
         scope = f"# Intended scope(s): {self.scope_types}\n"
@@ -91,6 +95,17 @@ class APIRule(Rule):
         text = f"{desc}{op}{scope}{str(self)}\n\n"
 
         return text
+
+    def to_dict(self):
+        return {
+            "name": getattr(self, "name", None),
+            "description": getattr(self, "description", None),
+            "scope_types": getattr(self, "scope_types", None),
+            "operations": self.operations.model_dump() if hasattr(self, "operations") else None,
+        }
+
+    def __repr__(self):
+        return f"APIRule({self.to_dict()})"
 
     @classmethod
     def from_oslo(cls, rule: DocumentedRuleDefault):

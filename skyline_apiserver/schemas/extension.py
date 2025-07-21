@@ -17,8 +17,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
-from pydantic.types import UUID4
+from pydantic import UUID4, BaseModel, Field
 
 SERVERS_LIST_DOCS_LINKS = "https://docs.openstack.org/api-ref/compute/?expanded=list-servers-detailed-detail#list-servers-detailed"  # noqa
 VOLUMES_LIST_DOCS_LINKS = "https://docs.openstack.org/api-ref/block-storage/v3/index.html?expanded=list-accessible-volumes-with-details-detail#list-accessible-volumes-with-details"  # noqa
@@ -403,10 +402,12 @@ class VolumesResponse(BaseModel):
 
 
 class VolumeSnapshotChildVolume(BaseModel):
-    volume_id: str = Field(
-        None, description="ID of volume", example="00000000-0000-0000-0000-000000000000"
+    volume_id: Optional[str] = Field(
+        None, description="ID of volume", examples=["00000000-0000-0000-0000-000000000000"]
     )
-    volume_name: str = Field(None, description="Name of volume", example="child-volume-demo")
+    volume_name: Optional[str] = Field(
+        None, description="Name of volume", examples=["child-volume-demo"]
+    )
 
 
 class VolumeSnapshotsResponseBase(BaseModel):
@@ -416,7 +417,9 @@ class VolumeSnapshotsResponseBase(BaseModel):
     )
     project_name: Optional[str] = Field(None, description="Project name")
     host: Optional[str] = Field(None, description="Host name")
-    volume_name: Optional[str] = Field(None, description="Name of volume", example="volume-demo")
+    volume_name: Optional[str] = Field(
+        None, description="Name of volume", examples=["volume-demo"]
+    )
     child_volumes: Optional[List[VolumeSnapshotChildVolume]] = Field(
         None, description="Child volumes"
     )
