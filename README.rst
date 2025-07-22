@@ -159,6 +159,7 @@ Install & Run
    .. code:: bash
 
       tox -e venv
+      . .tox/venv/bin/activate
       pip install -r requirements.txt -r test-requirements.txt -chttps://releases.openstack.org/constraints/upper/master
       pip install -e .
 
