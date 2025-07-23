@@ -39,6 +39,7 @@ class UserContext(MutableMapping):
         self._data.setdefault("auth_token", getattr(access, "auth_token", None))
         self._data.setdefault("user_id", getattr(access, "user_id", None))
         self._data.setdefault("project_id", getattr(access, "project_id", None))
+        self._data.setdefault("tenant_id", getattr(access, "project_id", None))
         self._data.setdefault("domain_id", getattr(access, "domain_id", None))
         self._data.setdefault("user_domain_id", getattr(access, "user_domain_id", None))
         self._data.setdefault("project_domain_id", getattr(access, "project_domain_id", None))
