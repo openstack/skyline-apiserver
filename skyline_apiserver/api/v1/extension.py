@@ -170,28 +170,29 @@ def list_servers(
     )
 
     result: List = []
-    server_ids = []
-    image_ids = []
-    root_device_ids = []
+    server_ids = set()
+    image_ids = set()
+    root_device_ids = set()
     for server in servers:
         origin_data = OSServer(server).to_dict()
         server = Server(server).to_dict()
         server["origin_data"] = origin_data
         result.append(server)
-        server_ids.append(server["id"])
+        server_ids.add(server["id"])
         if server["image"] and server["image"] not in image_ids:
-            image_ids.append(server["image"])
+            image_ids.add(server["image"])
         for volume_attached in server["volumes_attached"]:
-            root_device_ids.append(volume_attached["id"])
+            root_device_ids.add(volume_attached["id"])
 
     # Get all images and merge image_mappings
     images = []
-    for i in range(0, len(image_ids), STEP):
+    image_ids_list = list(image_ids)
+    for i in range(0, len(image_ids_list), STEP):
         images_batch = glance.list_images(
             profile=profile,
             session=system_session,
             global_request_id=x_openstack_request_id,
-            filters={"id": "in:" + ",".join(image_ids[i : i + STEP])},
+            filters={"id": "in:" + ",".join(image_ids_list[i : i + STEP])},
         )
         images.extend(images_batch)
     image_mappings = {
@@ -203,14 +204,14 @@ def list_servers(
     }
 
     # Get all root device volumes and merge ser_image_mappings
-    root_device_ids = list(set(root_device_ids))
+    root_device_ids_list = list(root_device_ids)
     volumes = []
-    for i in range(0, len(root_device_ids), STEP):
+    for i in range(0, len(root_device_ids_list), STEP):
         volumes_batch = cinder.list_volumes(
             profile=profile,
             session=system_session,
             global_request_id=x_openstack_request_id,
-            search_opts={"id": root_device_ids[i : i + STEP], "all_tenants": True},
+            search_opts={"id": root_device_ids_list[i : i + STEP], "all_tenants": True},
         )
         volumes.extend(volumes_batch)
     ser_image_mappings = {}
