@@ -147,7 +147,7 @@ requires python37). Considering that most systems do not support
 python37, we choose to support python38 at least.
 
 -  make >= 3.82
--  python >= 3.8
+-  python >= 3.9
 -  node >= 10.22.0 (Optional if you only develop with apiserver)
 -  yarn >= 1.22.4 (Optional if you only develop with apiserver)
 
