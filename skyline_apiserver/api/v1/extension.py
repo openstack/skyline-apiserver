@@ -384,31 +384,6 @@ def list_recycle_servers(
         for volume_attached in server["volumes_attached"]:
             root_device_ids.append(volume_attached["id"])
 
-    for i in range(0, len(image_ids), STEP):
-        images = glance.list_images(
-            profile=profile,
-            session=system_session,
-            global_request_id=x_openstack_request_id,
-            filters={"id": "in:" + ",".join(image_ids[i : i + STEP])},
-        )
-        for image in images:
-            image_mappings = {
-                image.id: {
-                    "name": image.name,
-                    "image_os_distro": getattr(image, "os_distro", None),
-                }
-            }
-            for recycle_server in result:
-                if recycle_server.image and recycle_server.image in image_mappings:
-                    values = {
-                        "image": recycle_server.image,
-                        "image_name": image_mappings[recycle_server.image]["name"],
-                        "image_os_distro": image_mappings[recycle_server.image][
-                            "image_os_distro"
-                        ],
-                    }
-                    recycle_server = recycle_server.copy(update=values)
-
     # Get all images and merge image_mappings
     images = []
     for i in range(0, len(image_ids), STEP):
