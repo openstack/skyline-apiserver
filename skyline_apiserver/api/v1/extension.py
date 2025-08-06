@@ -574,21 +574,22 @@ def list_volumes(
         sort=sort,
     )
     result = []
-    server_ids = []
+    server_ids_set = set()
     for volume in volumes:
         origin_data = OSVolume(volume).to_dict()
         volume = Volume(volume).to_dict()
         volume["origin_data"] = origin_data
         result.append(volume)
         for attachment in volume["attachments"]:
-            if attachment["server_id"] not in server_ids:
-                server_ids.append(attachment["server_id"])
+            server_id = attachment.get("server_id")
+            if server_id:
+                server_ids_set.add(server_id)
 
     # Sometimes, the servers have been soft deleted, but the volumes will
     # be still displayed on the volume page. If we do not get the recycle
     # servers, the attachment server name for those volumes which are attached
     # to these servers will be blank.
-    server_ids = list(set(server_ids))
+    server_ids = list(server_ids_set)
     server_name_map = {}
     servers = []
     for server_id in server_ids:
@@ -625,8 +626,9 @@ def list_volumes(
 
     for volume in result:
         for attachment in volume["attachments"]:
-            sid = attachment["server_id"]
-            attachment["server_name"] = server_name_map.get(sid)
+            server_id = attachment.get("server_id")
+            if server_id:
+                attachment["server_name"] = server_name_map.get(server_id)
 
     return schemas.VolumesResponse(**{"count": count, "volumes": result})
 

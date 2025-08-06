@@ -147,3 +147,101 @@ class TestListRecycleServersReal:
 
         # Verify keystone was not called (since all_projects=False)
         mock_keystone.list_projects.assert_not_called()
+
+
+class TestListVolumesReal:
+    """Real test cases for list_volumes function"""
+
+    @pytest.fixture
+    def mock_profile(self):
+        profile = Mock()
+        profile.project.id = "test-project-id"
+        profile.project.name = "test-project"
+        return profile
+
+    @pytest.fixture
+    def mock_volume_data(self):
+        return {
+            "id": "test-volume-id",
+            "name": "test-volume",
+            "status": "available",
+            "attachments": [{"server_id": "test-server-id"}],
+            "project_id": "test-project-id",
+        }
+
+    @patch("skyline_apiserver.api.v1.extension.nova")
+    @patch("skyline_apiserver.api.v1.extension.cinder")
+    @patch("skyline_apiserver.api.v1.extension.generate_session")
+    @patch("skyline_apiserver.api.v1.extension.get_system_session")
+    @patch("skyline_apiserver.api.v1.extension.OSVolume")
+    @patch("skyline_apiserver.api.v1.extension.Volume")
+    @patch("skyline_apiserver.api.v1.extension.schemas")
+    @patch("skyline_apiserver.api.v1.extension.CONF")
+    def test_list_volumes_basic(
+        self,
+        mock_conf,
+        mock_schemas,
+        mock_volume,
+        mock_os_volume,
+        mock_get_system_session,
+        mock_generate_session,
+        mock_cinder,
+        mock_nova,
+        mock_profile,
+        mock_volume_data,
+    ):
+        # 配置 mock
+        mock_conf.openstack.reclaim_instance_interval = 86400
+
+        mock_system_session = Mock()
+        mock_get_system_session.return_value = mock_system_session
+
+        mock_current_session = Mock()
+        mock_generate_session.return_value = mock_current_session
+
+        # mock volume对象
+        mock_volume_obj = Mock()
+        mock_volume_obj.to_dict.return_value = mock_volume_data
+        mock_volume.return_value = mock_volume_obj
+
+        mock_os_volume_obj = Mock()
+        mock_os_volume_obj.to_dict.return_value = mock_volume_data
+        mock_os_volume.return_value = mock_os_volume_obj
+
+        # cinder.list_volumes 返回 (volumes, count)
+        mock_cinder.list_volumes.return_value = ([mock_volume_obj], 1)
+
+        # nova.list_servers 返回空（不查到server name）
+        mock_nova.list_servers.return_value = []
+
+        # mock schemas.VolumesResponse
+        mock_response = Mock()
+        mock_response.volumes = [mock_volume_obj]
+        mock_response.count = 1
+        mock_schemas.VolumesResponse.return_value = mock_response
+
+        # 调用被测函数
+        from skyline_apiserver.api.v1.extension import list_volumes
+
+        result = list_volumes(
+            profile=mock_profile,
+            x_openstack_request_id="test-request-id",
+            all_projects=False,
+            limit=None,
+            marker=None,
+            sort_dirs=None,
+            sort_keys=None,
+            project_id=None,
+            name=None,
+            multiattach=None,
+            status=None,
+            bootable=None,
+            uuid=None,
+        )
+
+        # 断言
+        assert result is not None
+        assert hasattr(result, "volumes")
+        assert hasattr(result, "count")
+        mock_cinder.list_volumes.assert_called_once()
+        mock_nova.list_servers.assert_called()
