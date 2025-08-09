@@ -137,7 +137,7 @@ all:
 	tox -e docs
 	tox -e genswagger
 	tox -e genconfig
-	tox -e gennginx
+	# tox -e gennginx
 	# tox -e releasenotes
 	# tox -e pdf-docs
 	# tox -e functional
