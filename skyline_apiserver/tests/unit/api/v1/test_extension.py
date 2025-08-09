@@ -245,3 +245,108 @@ class TestListVolumesReal:
         assert hasattr(result, "count")
         mock_cinder.list_volumes.assert_called_once()
         mock_nova.list_servers.assert_called()
+
+
+class TestListServersReal:
+    """Real test cases for list_servers function"""
+
+    @pytest.fixture
+    def mock_profile(self):
+        profile = Mock()
+        profile.project.id = "test-project-id"
+        profile.project.name = "test-project"
+        profile.region = "test-region"
+        return profile
+
+    @pytest.fixture
+    def mock_server_data(self):
+        return {
+            "id": "server-1",
+            "name": "vm-1",
+            "image": None,
+            "volumes_attached": [],
+            "project_id": "test-project-id",
+        }
+
+    @patch("skyline_apiserver.api.v1.extension.nova")
+    @patch("skyline_apiserver.api.v1.extension.glance")
+    @patch("skyline_apiserver.api.v1.extension.cinder")
+    @patch("skyline_apiserver.api.v1.extension.keystone")
+    @patch("skyline_apiserver.api.v1.extension.generate_session")
+    @patch("skyline_apiserver.api.v1.extension.get_system_session")
+    @patch("skyline_apiserver.api.v1.extension.OSServer")
+    @patch("skyline_apiserver.api.v1.extension.Server")
+    @patch("skyline_apiserver.api.v1.extension.schemas")
+    def test_list_servers_search_opts(
+        self,
+        mock_schemas,
+        mock_server_wrapper,
+        mock_osserver_wrapper,
+        mock_get_system_session,
+        mock_generate_session,
+        mock_keystone,
+        mock_cinder,
+        mock_glance,
+        mock_nova,
+        mock_profile,
+        mock_server_data,
+    ):
+        # Setup sessions
+        mock_system_session = Mock()
+        mock_current_session = Mock()
+        mock_get_system_session.return_value = mock_system_session
+        mock_generate_session.return_value = mock_current_session
+
+        # Mock nova.list_servers
+        server_obj = Mock()
+        mock_nova.list_servers.return_value = [server_obj]
+
+        # Mock wrappers
+        server_wrapper_obj = Mock()
+        server_wrapper_obj.to_dict.return_value = mock_server_data
+        mock_server_wrapper.return_value = server_wrapper_obj
+
+        osserver_wrapper_obj = Mock()
+        osserver_wrapper_obj.to_dict.return_value = mock_server_data
+        mock_osserver_wrapper.return_value = osserver_wrapper_obj
+
+        # Mock schemas.ServersResponse
+        response_obj = Mock()
+        response_obj.servers = [mock_server_data]
+        mock_schemas.ServersResponse.return_value = response_obj
+
+        # Import target after patches are ready
+        from skyline_apiserver.api.v1.extension import list_servers
+
+        # Call function with a set of filters to verify passthrough
+        result = list_servers(
+            profile=mock_profile,
+            x_openstack_request_id="req-1",
+            all_projects=False,
+            limit=None,
+            marker=None,
+            sort_dirs=None,
+            sort_keys=[],
+            project_id="should-be-ignored",
+            project_name=None,
+            name="vm-1",
+            status=None,
+            host="compute-1",
+            flavor_id="flavor-1",
+            uuid="uuid-1",
+            ip="10.0.0.5",
+        )
+
+        assert result is not None
+        mock_nova.list_servers.assert_called_once()
+        call_args = mock_nova.list_servers.call_args
+        assert call_args[1]["session"] == mock_current_session
+        search_opts = call_args[1]["search_opts"]
+        # project_id is ignored when all_projects is False
+        assert search_opts["project_id"] is None
+        assert search_opts["all_tenants"] is False
+        assert search_opts["name"] == "vm-1"
+        assert search_opts["host"] == "compute-1"
+        assert search_opts["flavor"] == "flavor-1"
+        assert search_opts["uuid"] == "uuid-1"
+        assert search_opts["ip"] == "10.0.0.5"

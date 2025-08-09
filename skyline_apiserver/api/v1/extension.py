@@ -115,6 +115,13 @@ def list_servers(
         None, description="Filter the list of servers by the given flavor ID."
     ),
     uuid: str = Query(None, description="Filter the list of servers by the given server UUID."),
+    ip: Optional[str] = Query(
+        None,
+        description=(
+            "Filter the list of servers by the given IP address (only fixed, not floating). "
+            "Also passed to Nova API if supported."
+        ),
+    ),
 ) -> schemas.ServersResponse:
     all_projects = all_projects or False
     if all_projects:
@@ -158,6 +165,8 @@ def list_servers(
         "all_tenants": all_projects,
         "uuid": uuid,
     }
+    if ip is not None:
+        search_opts["ip"] = ip
     servers = nova.list_servers(
         profile=profile,
         session=current_session,

@@ -523,6 +523,24 @@
                         "description": "Filter the list of servers by the given server UUID."
                     },
                     {
+                        "name": "ip",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of servers by the given IP address (only fixed, not floating). Also passed to Nova API if supported.",
+                            "title": "Ip"
+                        },
+                        "description": "Filter the list of servers by the given IP address (only fixed, not floating). Also passed to Nova API if supported."
+                    },
+                    {
                         "name": "X-Openstack-Request-Id",
                         "in": "header",
                         "required": false,

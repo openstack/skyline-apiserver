@@ -20,7 +20,8 @@ from pathlib import Path
 from typing import AsyncGenerator
 
 import jose
-from fastapi import FastAPI, Request, Response, status
+from fastapi import FastAPI, Request, status
+from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 
 from skyline_apiserver.api.v1 import api_router
@@ -93,8 +94,9 @@ async def validate_token(request: Request, call_next):
         # Get token from cookie
         token = request.cookies.get(CONF.default.session_name)
         if not token:
-            return Response(
-                content="Unauthorized: Token not found", status_code=status.HTTP_401_UNAUTHORIZED
+            return JSONResponse(
+                content={"message": "Unauthorized: Token not found"},
+                status_code=status.HTTP_401_UNAUTHORIZED,
             )
 
         try:
@@ -105,8 +107,8 @@ async def validate_token(request: Request, call_next):
             parsed_token = parse_access_token(token)
             is_revoked = db_api.check_token(parsed_token.uuid)
             if is_revoked:
-                return Response(
-                    content="Unauthorized: Token revoked",
+                return JSONResponse(
+                    content={"message": "Unauthorized: Token revoked"},
                     status_code=status.HTTP_401_UNAUTHORIZED,
                 )
 
@@ -136,13 +138,14 @@ async def validate_token(request: Request, call_next):
                 request.state.new_exp = str(profile.exp)
 
         except jose.exceptions.ExpiredSignatureError as e:
-            return Response(
-                content=f"Unauthorized: Token expired - {str(e)}",
+            return JSONResponse(
+                content={"message": f"Unauthorized: Token expired - {str(e)}"},
                 status_code=status.HTTP_401_UNAUTHORIZED,
             )
         except Exception as e:
-            return Response(
-                content=f"Unauthorized: {str(e)}", status_code=status.HTTP_401_UNAUTHORIZED
+            return JSONResponse(
+                content={"message": f"Unauthorized: {str(e)}"},
+                status_code=status.HTTP_401_UNAUTHORIZED,
             )
 
     response = await call_next(request)
