@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+*.code-workspace
+
 sql_app.db
 
 # C extensions
