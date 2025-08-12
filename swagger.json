@@ -792,6 +792,24 @@
                         "description": "Filter the list of recycle servers by the given recycle server UUID."
                     },
                     {
+                        "name": "ip",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter the list of recycle servers by the given IP address (only fixed, not floating). Also passed to Nova API if supported.",
+                            "title": "Ip"
+                        },
+                        "description": "Filter the list of recycle servers by the given IP address (only fixed, not floating). Also passed to Nova API if supported."
+                    },
+                    {
                         "name": "X-Openstack-Request-Id",
                         "in": "header",
                         "required": false,
