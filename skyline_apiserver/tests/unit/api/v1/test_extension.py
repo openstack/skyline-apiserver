@@ -126,6 +126,7 @@ class TestListRecycleServersReal:
             project_name=None,
             name=None,
             uuid=None,
+            ip="10.0.0.5",
         )
 
         # Assertions
@@ -140,6 +141,7 @@ class TestListRecycleServersReal:
         assert call_args[1]["search_opts"]["deleted"] is True
         assert call_args[1]["search_opts"]["all_tenants"] is True
         assert call_args[1]["search_opts"]["project_id"] == "test-project-id"
+        assert call_args[1]["search_opts"]["ip"] == "10.0.0.5"
 
         # Verify other services were called
         mock_glance.list_images.assert_called()

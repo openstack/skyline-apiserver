@@ -324,6 +324,13 @@ def list_recycle_servers(
     uuid: Optional[str] = Query(
         None, description="Filter the list of recycle servers by the given recycle server UUID."
     ),
+    ip: Optional[str] = Query(
+        None,
+        description=(
+            "Filter the list of recycle servers by the given IP address "
+            "(only fixed, not floating). Also passed to Nova API if supported."
+        ),
+    ),
 ) -> schemas.RecycleServersResponse:
     all_projects = all_projects or False
     if all_projects:
@@ -365,6 +372,8 @@ def list_recycle_servers(
         "project_id": project_id,
         "uuid": uuid,
     }
+    if ip is not None:
+        search_opts["ip"] = ip
     if not all_projects:
         search_opts["project_id"] = profile.project.id
     servers = nova.list_servers(
