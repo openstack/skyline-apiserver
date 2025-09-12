@@ -96,6 +96,16 @@ We will install the Skyline APIServer service from docker image.
 
       $ sudo docker pull 99cloud/skyline:latest
 
+   .. note::
+
+      Skyline docker image does not contain python driver for database. You may need to build a custom image from 99cloud/skyline which contains the python driver for the database you are using. If you are using mysql that may result in a Dockerfile ressembling the following
+
+      .. code-block:: dockerfile
+
+         FROM 99cloud/skyline:latest
+
+         RUN apt install -y python3-mysqldb
+
 #. Ensure that some folders of skyline-apiserver have been created
 
    .. code-block:: console
