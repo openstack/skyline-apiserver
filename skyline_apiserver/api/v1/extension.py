@@ -36,6 +36,7 @@ from skyline_apiserver.client.openstack import cinder, glance, keystone, neutron
 from skyline_apiserver.client.utils import generate_session, get_system_session
 from skyline_apiserver.config import CONF
 from skyline_apiserver.log import LOG
+from skyline_apiserver.schemas.extension import PortsResponseBase, RecycleServersResponseBase
 from skyline_apiserver.types import constants
 from skyline_apiserver.utils.roles import assert_system_admin_or_reader, is_system_reader_no_admin
 
@@ -377,7 +378,7 @@ async def list_recycle_servers(
         sort_dirs=[sort_dirs.value] if sort_dirs else None,
     )
 
-    result = []
+    result: List[RecycleServersResponseBase] = []
     server_ids = []
     image_ids = []
     root_device_ids = []
@@ -385,7 +386,7 @@ async def list_recycle_servers(
         origin_data = OSServer(server).to_dict()
         server = Server(server).to_dict()
         server["origin_data"] = origin_data
-        result.append(server)
+        result.append(RecycleServersResponseBase.parse_obj(server))
         server_ids.append(server["id"])
         if server["image"] and server["image"] not in image_ids:
             image_ids.append(server["image"])
@@ -454,33 +455,33 @@ async def list_recycle_servers(
                 }
 
     for recycle_server in result:
-        recycle_server["host"] = recycle_server["host"] if all_projects else None
-        recycle_server["project_name"] = proj_mappings.get(recycle_server["project_id"])
-        recycle_server["deleted_at"] = recycle_server["updated_at"]
-        recycle_server["reclaim_timestamp"] = (
-            parser.isoparse(recycle_server["updated_at"]).timestamp()
+        recycle_server.host = recycle_server.host if all_projects else None
+        recycle_server.project_name = proj_mappings.get(recycle_server.project_id)
+        recycle_server.deleted_at = recycle_server.updated_at
+        recycle_server.reclaim_timestamp = (
+            parser.isoparse(str(recycle_server.updated_at or "")).timestamp()
             + CONF.openstack.reclaim_instance_interval
         )
-        ser_image_mapping = ser_image_mappings.get(recycle_server["id"])
+        ser_image_mapping = ser_image_mappings.get(recycle_server.id)
         if ser_image_mapping:
             values = {
                 "image": ser_image_mapping["image"],
                 "image_name": ser_image_mapping["image_name"],
                 "image_os_distro": ser_image_mapping["image_os_distro"],
             }
-        elif recycle_server["image"]:
+        elif recycle_server.image:
             values = {
-                "image": recycle_server["image"],
-                "image_name": image_mappings.get(recycle_server["image"], {}).get("name", ""),
-                "image_os_distro": image_mappings.get(recycle_server["image"], {}).get(
+                "image": recycle_server.image,
+                "image_name": image_mappings.get(recycle_server.image, {}).get("name", ""),
+                "image_os_distro": image_mappings.get(recycle_server.image, {}).get(
                     "image_os_distro",
                     "",
                 ),
             }
         else:
             values = {"image": None, "image_name": None, "image_os_distro": None}
-        recycle_server.update(values)
-    return schemas.RecycleServersResponse(**{"recycle_servers": result})
+        recycle_server = recycle_server.copy(update=values)
+    return schemas.RecycleServersResponse(recycle_servers=result)
 
 
 @router.get(
@@ -972,12 +973,12 @@ async def list_ports(
 
     server_ids = []
     network_ids = []
-    result = []
+    result: List[PortsResponseBase] = []
     for port in ports.next().get("ports", []):
         origin_data = OSPort(port).to_dict()
         port = Port(port).to_dict()
         port["origin_data"] = origin_data
-        result.append(port)
+        result.append(PortsResponseBase.parse_obj(port))
         if port["device_owner"] == "compute:nova":
             server_ids.append(port["device_id"])
         network_ids.append(port["network_id"])
@@ -1032,9 +1033,9 @@ async def list_ports(
     nets = reduce(lambda x, y: x + y, _networks, []) + shared_nets
     network_mappings = {net["id"]: net["name"] for net in nets}
     for port in result:
-        port["server_name"] = ser_mappings.get(port["device_id"])
-        port["network_name"] = network_mappings.get(port["network_id"])
-    return schemas.PortsResponse(**{"ports": result})
+        port.server_name = ser_mappings.get(port.device_id)
+        port.network_name = network_mappings.get(port.network_id)
+    return schemas.PortsResponse(ports=result)
 
 
 @router.get(

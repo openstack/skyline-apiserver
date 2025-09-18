@@ -289,6 +289,7 @@ class RecycleServersResponseBase(BaseModel):
     fixed_addresses: Optional[List] = Field(None, description="Fixed addresses")
     floating_addresses: Optional[List] = Field(None, description="Floating addresses")
     deleted_at: Optional[str] = Field(None, description="Deleted at")
+    updated_at: Optional[str] = Field(None, description="Updated at")
     reclaim_timestamp: float = Field(..., description="Reclaim timestamp")
 
     name: Optional[str] = Field(
