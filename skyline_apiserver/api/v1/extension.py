@@ -480,7 +480,7 @@ async def list_recycle_servers(
         else:
             values = {"image": None, "image_name": None, "image_os_distro": None}
         recycle_server.update(values)
-    return schemas.RecycleServersResponse(**{"recycle_servers": result})
+    return schemas.RecycleServersResponse(**{"recycle_servers": result})  # type: ignore
 
 
 @router.get(
@@ -1034,7 +1034,7 @@ async def list_ports(
     for port in result:
         port["server_name"] = ser_mappings.get(port["device_id"])
         port["network_name"] = network_mappings.get(port["network_id"])
-    return schemas.PortsResponse(**{"ports": result})
+    return schemas.PortsResponse(**{"ports": result})  # type: ignore
 
 
 @router.get(
