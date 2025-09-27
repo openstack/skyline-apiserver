@@ -2,7 +2,7 @@
 Skyline API Server
 ==================
 
-English \| `简体中文 <./README-zh_CN.rst>`__
+English \| `简体中文 <./README/README-zh_CN.rst>`__ \| `한국어 <./README/README-ko_KR.rst>`__
 
 Skyline is an OpenStack dashboard optimized by UI and UE, support
 OpenStack Train+. It has a modern technology stack and ecology, is

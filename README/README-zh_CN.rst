@@ -2,7 +2,7 @@
 OpenStack Skyline APIServer
 ===========================
 
-`English <./README.rst>`__ \| 简体中文
+`English <../README.rst>`__ \| 简体中文 \| `한국어 <./README-ko_KR.rst>`__
 
 Skyline 是一个经过 UI 和 UE 优化过的 OpenStack 仪表盘，支持 OpenStack
 Train 及以上版本。Skyline 拥有现代化的技术栈和生态，更易于开发者维护和
@@ -62,7 +62,7 @@ Skyline 像九色鹿一样，轻巧、优雅，而又能力强大，为 OpenStac
 
 1. 在 Linux 服务器中编辑 ``/etc/skyline/skyline.yaml`` 文件
 
-   可以参考 `sample file <etc/skyline.yaml.sample>`__,
+   可以参考 `sample file <../etc/skyline.yaml.sample>`__,
    并根据实际的环境修改以下参数
 
    -  database_url
@@ -292,14 +292,14 @@ python 3.8 及以上版本
 Devstack 集成
 -------------
 
-`与 Devstack 快速集成，搭建环境。 <./devstack/README.rst>`__
+`与 Devstack 快速集成，搭建环境。 <../devstack/README.rst>`__
 
 Kolla Ansible 部署
 ------------------
 
-`使用 Kolla Ansible 部署环境。 <./kolla/README-zh_CN.md>`__
+`使用 Kolla Ansible 部署环境。 <../kolla/README-zh_CN.md>`__
 
 |image1|
 
-.. |image0| image:: doc/source/images/logo/OpenStack_Project_Skyline_horizontal.png
-.. |image1| image:: doc/source/images/logo/nine-color-deer-64.png
+.. |image0| image:: ../doc/source/images/logo/OpenStack_Project_Skyline_horizontal.png
+.. |image1| image:: ../doc/source/images/logo/nine-color-deer-64.png
