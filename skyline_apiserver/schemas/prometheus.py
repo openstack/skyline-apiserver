@@ -30,9 +30,9 @@ class PrometheusQueryDataBase(BaseModel):
 
 class PrometheusResponseBase(BaseModel):
     status: str = Field(..., description="Prometheus status")
-    errorType: Optional[str] = Field(None, description="Prometheus error type")
-    error: Optional[str] = Field(None, description="Prometheus error")
-    warnings: Optional[str] = Field(None, description="Prometheus warnings")
+    errorType: Optional[str] = Field(default=None, description="Prometheus error type")
+    error: Optional[str] = Field(default=None, description="Prometheus error")
+    warnings: Optional[str] = Field(default=None, description="Prometheus warnings")
 
 
 class PrometheusQueryResult(PrometheusQueryResultBase):
@@ -44,7 +44,7 @@ class PrometheusQueryData(PrometheusQueryDataBase):
 
 
 class PrometheusQueryResponse(PrometheusResponseBase):
-    data: Optional[PrometheusQueryData] = Field(None, description="Prometheus query data")
+    data: Optional[PrometheusQueryData] = Field(default=None, description="Prometheus query data")
 
 
 class PrometheusQueryRangeResult(PrometheusQueryResultBase):
@@ -59,5 +59,5 @@ class PrometheusQueryRangeData(PrometheusQueryDataBase):
 
 class PrometheusQueryRangeResponse(PrometheusResponseBase):
     data: Optional[PrometheusQueryRangeData] = Field(
-        None, description="Prometheus query range data"
+        default=None, description="Prometheus query range data"
     )
