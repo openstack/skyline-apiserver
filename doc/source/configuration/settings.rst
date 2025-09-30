@@ -31,6 +31,7 @@ file ``skyline.yaml.sample`` in ``etc`` directory.
       base_domains:
       - heat_user_domain
       default_region: RegionOne
+      user_default_domain: Default
       enforce_new_defaults: true
       extension_mapping:
         floating-ip-port-forwarding: neutron_port_forwarding

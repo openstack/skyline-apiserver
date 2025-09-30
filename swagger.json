@@ -70,6 +70,28 @@
                 }
             }
         },
+        "/api/v1/config": {
+            "get": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Get Config",
+                "description": "Get public configuration",
+                "operationId": "get_config_api_v1_config_get",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Config"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/sso": {
             "get": {
                 "tags": [
@@ -2630,6 +2652,19 @@
                     "status"
                 ],
                 "title": "ComputeServicesResponseBase"
+            },
+            "Config": {
+                "properties": {
+                    "default_domain": {
+                        "type": "string",
+                        "title": "Default Domain"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "default_domain"
+                ],
+                "title": "Config"
             },
             "Credential": {
                 "properties": {

@@ -42,7 +42,7 @@ from .extension import (
     VolumesResponse,
     VolumeStatus,
 )
-from .login import SSO, Credential, Payload, Profile
+from .login import SSO, Config, Credential, Payload, Profile
 from .policy import Policies, PoliciesRules
 from .policy_manager import Operation, OperationsSchema, ScopeTypesSchema
 from .prometheus import (

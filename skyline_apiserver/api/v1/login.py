@@ -179,10 +179,11 @@ def login(
     ),
 ) -> schemas.Profile:
     region = credential.region or CONF.openstack.default_region
+    domain = credential.domain or CONF.openstack.user_default_domain
     try:
         project_scope, unscope_token, default_project_id = _get_projects_and_unscope_token(
             region=region,
-            domain=credential.domain,
+            domain=domain,
             username=credential.username,
             password=credential.password,
             project_enabled=True,
@@ -211,6 +212,20 @@ def login(
         response.set_cookie(CONF.default.session_name, profile.toJWTPayload())
         response.set_cookie(constants.TIME_EXPIRED_KEY, str(profile.exp))
         return profile
+
+
+@router.get(
+    "/config",
+    description="Get public configuration",
+    responses={
+        200: {"model": schemas.Config},
+    },
+    response_model=schemas.Config,
+    status_code=status.HTTP_200_OK,
+    response_description="OK",
+)
+def get_config(request: Request) -> schemas.Config:
+    return schemas.Config(default_domain=CONF.openstack.user_default_domain)
 
 
 @router.get(

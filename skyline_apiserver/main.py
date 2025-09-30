@@ -81,6 +81,7 @@ async def validate_token(request: Request, call_next):
         f"{constants.API_PREFIX}/openapi.json",
         "/favicon.ico",
         f"{constants.API_PREFIX}/sso",
+        f"{constants.API_PREFIX}/config",
         f"{constants.API_PREFIX}/contrib/keystone_endpoints",
         # f"{constants.API_PREFIX}/contrib/domains",
         f"{constants.API_PREFIX}/contrib/regions",

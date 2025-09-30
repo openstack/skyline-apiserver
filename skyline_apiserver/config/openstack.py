@@ -73,6 +73,13 @@ default_region = Opt(
     default="RegionOne",
 )
 
+user_default_domain = Opt(
+    name="user_default_domain",
+    description="Default domain for user authentication when no domain is specified",
+    schema=StrictStr,
+    default="Default",
+)
+
 interface_type = Opt(
     name="interface_type",
     description="OpenStack endpoint interface type",
@@ -205,6 +212,7 @@ ALL_OPTS = (
     system_user_name,
     system_user_password,
     default_region,
+    user_default_domain,
     interface_type,
     nginx_prefix,
     base_domains,
