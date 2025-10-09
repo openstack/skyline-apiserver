@@ -287,7 +287,15 @@ python 3.8 及以上版本
 
    .. code:: bash
 
-      make build
+      # Ubuntu 22.04 / 24.04 install docker-buildx
+      # apt install docker-buildx
+      # docker buildx create --name mybuilder --driver docker-container --use --bootstrap
+
+      # 本地构建（仅当前平台）
+      make build PLATFORMS=linux/amd64
+
+      # 多平台构建并推送
+      make build PLATFORMS=linux/amd64,linux/arm64 IMAGE=yourrepo/skyline IMAGE_TAG=latest PUSH=true
 
 Devstack 集成
 -------------

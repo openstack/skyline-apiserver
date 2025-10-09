@@ -212,7 +212,15 @@ Skyline-apiserver 개발
 
    .. code:: bash
 
-      make build
+      # Ubuntu 22.04 / 24.04 install docker-buildx
+      # apt install docker-buildx
+      # docker buildx create --name mybuilder --driver docker-container --use --bootstrap
+
+      # 로컬 빌드 (현재 플랫폼)
+      make build PLATFORMS=linux/amd64
+
+      # 멀티 플랫폼 빌드 및 푸시
+      make build PLATFORMS=linux/amd64,linux/arm64 IMAGE=yourrepo/skyline IMAGE_TAG=latest PUSH=true
 
 Devstack 통합
 --------------------

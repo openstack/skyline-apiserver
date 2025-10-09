@@ -29,7 +29,11 @@ help:
 	@echo "Target:"
 	@echo "  git_config          Initialize git configuration."
 	@echo "  clean               Clean up."
-	@echo "  build               Build docker image."
+	@echo "  build               Build docker image for multiple platforms (default: linux/amd64,linux/arm64)."
+	@echo "                      Options:"
+	@echo "                        PLATFORMS=linux/amd64,linux/arm64  - Set target platforms"
+	@echo "                        PUSH=true                          - Push multi-arch image to registry"
+	@echo "                        PUSH=false (default)               - Load single-arch image to local docker"
 	@echo "  db_revision         Generate database alembic version revision with model."
 	@echo "  db_sync             Sync database from alembic version revision."
 	@echo "  future_check        Find python files without 'type annotations'.(Alpha)"
@@ -84,27 +88,47 @@ BUILD_CONTEXT ?= .
 DOCKER_FILE ?= container/Dockerfile
 IMAGE ?= skyline
 IMAGE_TAG ?= latest
+PLATFORMS ?= linux/amd64,linux/arm64
+PUSH ?= false
 ifeq ($(BUILD_ENGINE), docker)
-    build_cmd = docker build
+    build_cmd = docker buildx build
 else ifeq ($(BUILD_ENGINE), buildah)
     build_cmd = buildah bud
 else
     $(error Unsupported build engine $(BUILD_ENGINE))
 endif
 build: skyline_console/skyline_console.tar.gz skyline_console/commit_id
-	$(build_cmd) --no-cache --pull --force-rm \
+ifeq ($(PUSH), true)
+	$(build_cmd) --no-cache --pull --platform $(PLATFORMS) \
 	  --build-arg GIT_CONSOLE_COMMIT=$(shell cat skyline_console/commit_id) \
 	  --build-arg GIT_BRANCH=$(GIT_BRANCH) \
 	  --build-arg GIT_COMMIT=$(GIT_COMMIT) \
 	  --build-arg RELEASE_VERSION=$(RELEASE_VERSION) \
-	  $(BUILD_ARGS) -f $(DOCKER_FILE) -t $(IMAGE):$(IMAGE_TAG) $(BUILD_CONTEXT)
+	  $(BUILD_ARGS) -f $(DOCKER_FILE) -t $(IMAGE):$(IMAGE_TAG) --push $(BUILD_CONTEXT)
+else
+	$(build_cmd) --no-cache --pull --platform $(PLATFORMS) \
+	  --build-arg GIT_CONSOLE_COMMIT=$(shell cat skyline_console/commit_id) \
+	  --build-arg GIT_BRANCH=$(GIT_BRANCH) \
+	  --build-arg GIT_COMMIT=$(GIT_COMMIT) \
+	  --build-arg RELEASE_VERSION=$(RELEASE_VERSION) \
+	  $(BUILD_ARGS) -f $(DOCKER_FILE) -t $(IMAGE):$(IMAGE_TAG) --load $(BUILD_CONTEXT)
+endif
 devbuild: skyline_console/skyline_console.tar.gz skyline_console/commit_id
-	$(build_cmd) \
+ifeq ($(PUSH), true)
+	$(build_cmd) --platform $(PLATFORMS) \
 	  --build-arg GIT_CONSOLE_COMMIT=$(shell cat skyline_console/commit_id) \
 	  --build-arg GIT_BRANCH=devbuild \
 	  --build-arg GIT_COMMIT=devbuild \
 	  --build-arg RELEASE_VERSION=devbuild \
-	  $(BUILD_ARGS) -f $(DOCKER_FILE) -t $(IMAGE):$(IMAGE_TAG) $(BUILD_CONTEXT)
+	  $(BUILD_ARGS) -f $(DOCKER_FILE) -t $(IMAGE):$(IMAGE_TAG) --push $(BUILD_CONTEXT)
+else
+	$(build_cmd) --platform $(PLATFORMS) \
+	  --build-arg GIT_CONSOLE_COMMIT=$(shell cat skyline_console/commit_id) \
+	  --build-arg GIT_BRANCH=devbuild \
+	  --build-arg GIT_COMMIT=devbuild \
+	  --build-arg RELEASE_VERSION=devbuild \
+	  $(BUILD_ARGS) -f $(DOCKER_FILE) -t $(IMAGE):$(IMAGE_TAG) --load $(BUILD_CONTEXT)
+endif
 
 
 .PHONY: db_revision
