@@ -221,7 +221,15 @@ Install & Run
 
    .. code:: bash
 
-      make build
+      # Ubuntu 22.04 / 24.04 install docker-buildx
+      # apt install docker-buildx
+      # docker buildx create --name mybuilder --driver docker-container --use --bootstrap
+
+      # Local build (current platform only)
+      make build PLATFORMS=linux/amd64
+
+      # Multi-platform build and push
+      make build PLATFORMS=linux/amd64,linux/arm64 IMAGE=yourrepo/skyline IMAGE_TAG=latest PUSH=true
 
 DevStack Integration
 --------------------

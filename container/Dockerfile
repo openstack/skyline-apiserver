@@ -11,8 +11,8 @@ LABEL skyline.build_branch=${GIT_BRANCH}
 LABEL skyline.build_commit=${GIT_COMMIT}
 LABEL skyline.release_version=${RELEASE_VERSION}
 
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 
 RUN apt update -y && apt install -y --no-install-recommends apt-utils \
     && DEBIAN_FRONTEND=noninteractive apt install -y \
