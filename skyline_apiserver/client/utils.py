@@ -16,8 +16,8 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
+import openstack
 from cinderclient.client import Client as CinderClient
-from glanceclient.client import Client as GlanceClient
 from keystoneauth1.access.access import AccessInfoV3
 from keystoneauth1.identity.v3 import Password, Token
 from keystoneauth1.session import Session
@@ -114,15 +114,13 @@ def keystone_client(
     return client
 
 
-def glance_client(
+def image_client(
     session: Session,
     region: str,
     global_request_id: Optional[str] = None,
-    version: str = constants.GLANCE_API_VERSION,
 ) -> HTTPClient:
     endpoint = get_endpoint(region, "image", session=session)
-    client = GlanceClient(
-        version=version,
+    client = openstack.connection.Connection(
         session=session,
         endpoint=endpoint,
         global_request_id=global_request_id,

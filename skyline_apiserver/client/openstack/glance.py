@@ -35,12 +35,12 @@ def list_images(
         kwargs = {}
         if filters:
             kwargs["filters"] = filters
-        gc = utils.glance_client(
+        ic = utils.image_client(
             session=session,
             region=profile.region,
             global_request_id=global_request_id,
         )
-        return gc.images.list(**kwargs)
+        return ic.images.images(**kwargs)
     except Unauthorized as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
