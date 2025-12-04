@@ -14,6 +14,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import six
 from oslo_config import cfg
 from oslo_context import context
@@ -69,7 +71,7 @@ class RequestContext(context.RequestContext):
         return result
 
     @classmethod
-    def from_dict(cls, values):
+    def from_dict(cls, values: dict[str, Any], **kwargs: Any) -> RequestContext:
         return cls(
             user_id=values.get("user_id"),
             project_id=values.get("project_id"),
@@ -89,6 +91,7 @@ class RequestContext(context.RequestContext):
             project_domain_id=values.get("project_domain"),
             user_domain=values.get("user_domain"),
             project_domain=values.get("project_domain"),
+            **kwargs,
         )
 
     def authorize(self, action, target=None, target_obj=None, fatal=True):
