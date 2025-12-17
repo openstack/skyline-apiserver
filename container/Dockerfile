@@ -1,5 +1,5 @@
 
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 ARG GIT_CONSOLE_COMMIT
 ARG GIT_BRANCH
@@ -17,20 +17,27 @@ ENV LC_ALL=C.UTF-8
 RUN apt update -y && apt install -y --no-install-recommends apt-utils \
     && DEBIAN_FRONTEND=noninteractive apt install -y \
     gcc make nginx traceroute lsof iputils-ping vim git wget curl locales-all ssl-cert \
-    python3 python3-pip python3-dev python3-venv python-dev-is-python3
+    python3 python3-pip python3-dev python3-venv python-dev-is-python3 \
+    && python3 -m pip install --break-system-packages --upgrade --ignore-installed pip
 
 COPY ./skyline_console /opt/skyline_apiserver/skyline_console
 
-RUN python -m pip install -U /opt/skyline_apiserver/skyline_console/skyline_console.tar.gz
+RUN cd /opt/skyline_apiserver/skyline_console \
+    && tar -xzf skyline_console.tar.gz \
+    && python3 -m pip install --break-system-packages -U skyline_console-*/ \
+    && python3 -c "import importlib; importlib.invalidate_caches(); import skyline_console; print(f'Skyline Console installed at: {skyline_console.__file__}')" \
+    && python3 -c "from skyline_console import static_path; import os; commit_file = os.path.join(static_path, 'commit_id.txt'); print(f'Skyline Console commit_id: {open(commit_file).read().strip() if os.path.exists(commit_file) else \"N/A\"}')" \
+    && rm -rf skyline_console-* \
+    && rm -f skyline_console.tar.gz
 
 COPY ./requirements.txt /opt/skyline_apiserver/requirements.txt
 
-RUN python -m pip install -r /opt/skyline_apiserver/requirements.txt -chttps://releases.openstack.org/constraints/upper/master
+RUN python3 -m pip install --break-system-packages -r /opt/skyline_apiserver/requirements.txt -chttps://releases.openstack.org/constraints/upper/master
 
 COPY ./ /opt/skyline_apiserver/
 
 RUN git init /opt/skyline_apiserver \
-    && python -m pip install /opt/skyline_apiserver -chttps://releases.openstack.org/constraints/upper/master \
+    && python3 -m pip install --break-system-packages /opt/skyline_apiserver -chttps://releases.openstack.org/constraints/upper/master \
     && apt clean \
     && rm -rf ~/.cache/pip \
     && mkdir -p /etc/skyline /var/log/skyline /var/lib/skyline

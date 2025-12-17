@@ -26,7 +26,64 @@ from keystoneauth1.identity.v3 import Password
 from keystoneauth1.session import Session
 from keystoneclient.client import Client as KeystoneClient
 from pydantic import BaseModel
-from skyline_console import static_path  # type: ignore [attr-defined, unused-ignore]
+
+try:
+    from skyline_console import static_path  # type: ignore [attr-defined, unused-ignore]
+except ImportError:
+    # Fallback if skyline_console is not installed
+    # Try to find the static path in common installation locations
+    import importlib.util
+    import site
+
+    static_path = None
+
+    # First, try to find the package using importlib
+    try:
+        spec = importlib.util.find_spec("skyline_console")
+        if spec and spec.origin:
+            # If we found the package, try to get static_path from it
+            package_path = Path(spec.origin).parent
+            possible_static = package_path / "static"
+            if possible_static.exists():
+                static_path = possible_static
+    except (ImportError, AttributeError, ValueError):
+        pass
+
+    # If not found, check site-packages directories
+    if static_path is None:
+        possible_paths = []
+        # Check site-packages directories
+        for site_packages in site.getsitepackages():
+            possible_paths.append(Path(site_packages) / "skyline_console" / "static")
+
+        # Also check user site-packages
+        try:
+            user_site = site.getusersitepackages()
+            if user_site:
+                possible_paths.append(Path(user_site) / "skyline_console" / "static")
+        except AttributeError:
+            pass
+
+        # Check dist-packages (Debian/Ubuntu)
+        possible_paths.extend(
+            [
+                Path("/usr/local/lib/python3.10/dist-packages/skyline_console/static"),
+                Path("/usr/lib/python3.10/dist-packages/skyline_console/static"),
+                Path("/opt/skyline_apiserver/skyline_console/static"),
+            ]
+        )
+
+        for path in possible_paths:
+            if path.exists():
+                static_path = path
+                break
+
+    if static_path is None:
+        raise ImportError(
+            "Could not import skyline_console.static_path and could not find "
+            "skyline_console/static directory in any known installation location. "
+            "Please ensure skyline_console is properly installed."
+        )
 
 import skyline_apiserver
 from skyline_apiserver.config import CONF, configure
