@@ -91,6 +91,7 @@ class RequestContext(context.RequestContext):
             project_domain_id=values.get("project_domain"),
             user_domain=values.get("user_domain"),
             project_domain=values.get("project_domain"),
+            **kwargs,
         )
 
     def authorize(self, action, target=None, target_obj=None, fatal=True):
