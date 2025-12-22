@@ -32,10 +32,8 @@ classifiers = [
 Homepage = "https://docs.openstack.org/skyline-apiserver/latest/"
 Repository = "https://opendev.org/openstack/skyline-apiserver"
 
-[tool.setuptools]
-packages = [
-    "skyline_apiserver"
-]
+[tool.setuptools.packages.find]
+include = ["skyline_apiserver*"]
 
 [project.entry-points."console_scripts"]
 skyline-swagger-generator = "skyline_apiserver.cmd.generate_swagger:main"

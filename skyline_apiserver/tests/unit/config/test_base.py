@@ -452,9 +452,9 @@ class TestConfiguration:
         project = config_setup_params[0]
         env = config_setup_params[1]
         config.setup(project, env)
-        for group in config:
-            for opt in getattr(config, group):
-                opt_value = getattr(getattr(config, group, None), opt)
+        for group in config.values():
+            for opt in group:
+                opt_value = getattr(group, opt)
                 assert isinstance(opt_value, str)
 
     @pytest.mark.ddt(
