@@ -54,7 +54,6 @@ SUPPORTED_SERVICE_EPS = {
     "glance": ["glance"],
     "heat": ["heat"],
     "ironic": ["ironic.api"],
-    "ironic_inspector": ["ironic_inspector.api"],
     "keystone": ["keystone"],
     "magnum": ["magnum"],
     "manila": ["manila"],
