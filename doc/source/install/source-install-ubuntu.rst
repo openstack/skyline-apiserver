@@ -146,7 +146,7 @@ We will install the Skyline APIServer service from source code.
       .. code-block:: yaml
 
         default:
-          database_url: mysql://skyline:SKYLINE_DBPASS@DB_SERVER:3306/skyline
+          database_url: mysql+pymysql://skyline:SKYLINE_DBPASS@DB_SERVER:3306/skyline
           debug: true
           log_dir: /var/log/skyline
         openstack:
