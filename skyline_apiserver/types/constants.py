@@ -62,7 +62,6 @@ SUPPORTED_SERVICE_EPS = {
     "neutron": ["neutron", "neutron-vpnaas"],
     "nova": ["nova"],
     "octavia": ["octavia"],
-    "panko": ["panko"],
     "placement": ["placement"],
     "trove": ["trove"],
     "zun": ["zun"],
