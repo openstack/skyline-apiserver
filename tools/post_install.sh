@@ -11,7 +11,6 @@ INSTALL_PROJECTS="keystone \
     neutron neutron-vpnaas \
     heat \
     ironic \
-    ironic-inspector \
     octavia \
     manila \
     magnum \
