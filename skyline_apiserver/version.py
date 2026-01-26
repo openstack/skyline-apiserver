@@ -14,7 +14,7 @@
 
 from pbr import version as pbr_version
 
-SKYLINE_APISERVER_VENDOR = "OpenStack Foundation"
+SKYLINE_APISERVER_VENDOR = "OpenInfra Foundation"
 SKYLINE_APISERVER_PRODUCT = "OpenStack Skyline APIServer"
 SKYLINE_APISERVER_PACKAGE = None  # OS distro package version suffix
 
