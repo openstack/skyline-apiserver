@@ -40,7 +40,7 @@ def list_images(
             region=profile.region,
             global_request_id=global_request_id,
         )
-        return ic.images.images(**kwargs)
+        return ic.image.images(**kwargs)
     except Unauthorized as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
