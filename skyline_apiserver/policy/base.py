@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from collections.abc import MutableMapping
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Union
+from typing import Any, Dict, Iterator, List, Union, cast
 
 import attr
 from immutables import Map
@@ -108,7 +108,7 @@ class Enforcer:
         )
         if path.exists():
             reloaded, data = _cache_handler.read_cached_file(
-                self._file_cache, path, force_reload=False
+                self._file_cache, str(path), force_reload=False
             )
             if reloaded or not self.file_rules:
                 self.file_rules = policy.Rules.load(data)
@@ -141,7 +141,7 @@ class Enforcer:
                 rule=do_check,
                 target=target,
                 creds=context,
-                enforcer=self,
+                enforcer=cast(policy.Enforcer, self),
                 current_rule=rule,
             )
         except Exception:
