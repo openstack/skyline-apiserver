@@ -459,7 +459,7 @@ list_rules = (
     base.APIRule(
         name="zone_export",
         check_str=("(role:admin) or (role:member and project_id:%(project_id)s)"),
-        description="Retrive a Zone Export from the Designate Datastore",
+        description="Retrieve a Zone Export from the Designate Datastore",
         scope_types=["project"],
         operations=[Operation(method="GET", path="/v2/zones/tasks/exports/{zone_export_id}/export")],
     ),
