@@ -280,8 +280,8 @@ def validate(diff: bool) -> None:
         unmanaged_rules = set(os_rule_map.get(service, {}).keys()) - set(
             [r.name for r in rules],
         )
-        for r in unmanaged_rules:
-            LOG.error(f"Rule {r} is unmanaged, please add it in '{service}' service")
+        for rule_name in unmanaged_rules:
+            LOG.error(f"Rule {rule_name} is unmanaged, please add it in '{service}' service")
 
     LOG.info("Validate policy completed")
 

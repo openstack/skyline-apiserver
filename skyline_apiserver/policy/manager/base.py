@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from typing import Any, List, Optional, Sequence
+from typing import Any, List, Optional, Sequence, cast
 
 from oslo_policy import _parser
 from oslo_policy.policy import DocumentedRuleDefault, RuleDefault
@@ -108,11 +108,12 @@ class APIRule(Rule):
         return f"APIRule({self.to_dict()})"
 
     @classmethod
-    def from_oslo(cls, rule: DocumentedRuleDefault):
+    def from_oslo(cls, rule: RuleDefault):
+        rule = cast(DocumentedRuleDefault, rule)
         description = rule.description or ""
         description = description.replace("\n", "\n#")
         if isinstance(rule.scope_types, list):
-            scope_types = [item for item in rule.scope_types]
+            scope_types = list(rule.scope_types)
         else:
             scope_types = ["project"]
         operations = []
