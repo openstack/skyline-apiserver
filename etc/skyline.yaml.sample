@@ -32,7 +32,7 @@ openstack:
   reclaim_instance_interval: 604800
   service_mapping:
     baremetal: ironic
-    volumev3: cinder
+    block-storage: cinder
     compute: nova
     container: zun
     container-infra: magnum
