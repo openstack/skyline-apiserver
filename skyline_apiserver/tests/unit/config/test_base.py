@@ -27,6 +27,22 @@ from skyline_apiserver.config.base import Configuration, Group, Opt
 from skyline_apiserver.tests.fake import FAKER, FakeOptData
 from skyline_apiserver.tests.models import ArgumentData, TestData
 
+# Reserved names that are methods on Configuration class
+
+RESERVED_GROUP_NAMES = frozenset(
+    {"keys", "values", "items", "config", "setup", "cleanup", "get_config_path"}
+)
+
+
+def _safe_group_name(max_retries: int = 10) -> str:
+    """Generate a group name that doesn't conflict with Configuration class methods."""
+    for i in range(max_retries):
+        name = FAKER.text.word()
+        if name not in RESERVED_GROUP_NAMES:
+            return name
+    # Fallback: append suffix if all retries hit reserved names
+    return f"{FAKER.text.word()}_{i}"
+
 
 class TestOpt:
     @pytest.mark.ddt(
@@ -330,7 +346,7 @@ class TestConfiguration:
                 opt = Opt(**opt_data)
                 opt.load(None)
                 opts.append(opt)
-            group = Group(FAKER.text.word(), opts)
+            group = Group(_safe_group_name(), opts)
             groups.append(group)
         return groups
 
@@ -447,7 +463,7 @@ class TestConfiguration:
                     FakeOptData(schema=StrictStr, default=FAKER.text.word()),
                 )
                 opts.append(Opt(**opt_data))
-            groups.append(Group(FAKER.text.word(), opts))
+            groups.append(Group(_safe_group_name(), opts))
         config = Configuration(groups)
         project = config_setup_params[0]
         env = config_setup_params[1]
@@ -486,7 +502,7 @@ class TestConfiguration:
                     FakeOptData(schema=StrictStr, default=FAKER.text.word()),
                 )
                 opts.append(Opt(**opt_data))
-            groups.append(Group(FAKER.text.word(), opts))
+            groups.append(Group(_safe_group_name(), opts))
         config = Configuration(groups)
         project = config_setup_params[0]
         env = config_setup_params[1]
@@ -525,7 +541,7 @@ class TestConfiguration:
                     FakeOptData(schema=StrictStr, default=FAKER.text.word()),
                 )
                 opts.append(Opt(**opt_data))
-            groups.append(Group(FAKER.text.word(), opts))
+            groups.append(Group(_safe_group_name(), opts))
         config = Configuration(groups)
         project = config_setup_params[0]
         env = config_setup_params[1]
