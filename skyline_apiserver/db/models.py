@@ -14,7 +14,17 @@
 
 from __future__ import annotations
 
-from sqlalchemy import JSON, Column, Integer, MetaData, String, Table
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Column,
+    DateTime,
+    Integer,
+    MetaData,
+    String,
+    Table,
+    Text,
+)
 
 METADATA = MetaData()
 
@@ -31,4 +41,33 @@ Settings = Table(
     METADATA,
     Column("key", String(length=128), nullable=False, index=True, unique=True),
     Column("value", JSON, nullable=True),
+)
+
+MessageBanners = Table(
+    "message_banners",
+    METADATA,
+    Column("id", String(length=36), nullable=False, primary_key=True),
+    Column("type", String(length=32), nullable=False, index=True),
+    Column("title", String(length=255), nullable=True),
+    Column("message", Text, nullable=False),
+    Column("impacted_service", String(length=255), nullable=True),
+    Column("start_at", DateTime(timezone=True), nullable=True, index=True),
+    Column("expires_at", DateTime(timezone=True), nullable=False, index=True),
+    Column("project_id", String(length=128), nullable=True, index=True),
+    Column("region", String(length=255), nullable=True, index=True),
+    Column("source", String(length=32), nullable=False, index=True),
+    Column("source_id", String(length=255), nullable=True, index=True),
+    Column("source_url", String(length=1024), nullable=True),
+    Column("enabled", Boolean, nullable=False, default=True),
+    Column("created_at", DateTime(timezone=True), nullable=False),
+    Column("updated_at", DateTime(timezone=True), nullable=False),
+)
+
+DeletedExternalMessageBanners = Table(
+    "deleted_external_message_banners",
+    METADATA,
+    Column("source", String(length=32), nullable=False, primary_key=True),
+    Column("source_id", String(length=255), nullable=False, primary_key=True),
+    Column("region", String(length=255), nullable=True, index=True),
+    Column("deleted_at", DateTime(timezone=True), nullable=False),
 )
