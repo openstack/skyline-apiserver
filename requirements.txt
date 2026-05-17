@@ -1,5 +1,4 @@
 attrs # MIT
-pbr>=5.8.0 # Apache-2.0
 fastapi>=0.111.0 # MIT
 pydantic>=2.11.7,<3.0.0 # MIT
 uvicorn==0.30.1 # BSD License (3 clause)
