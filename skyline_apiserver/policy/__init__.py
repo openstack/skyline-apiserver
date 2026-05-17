@@ -19,7 +19,7 @@ from oslo_policy import _parser
 from .base import Enforcer, UserContext
 from .manager import get_service_rules
 
-ENFORCER = {}
+ENFORCER: dict[str, Enforcer] = {}
 
 
 def setup() -> None:
