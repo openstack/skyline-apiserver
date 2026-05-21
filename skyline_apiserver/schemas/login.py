@@ -112,6 +112,28 @@ class Profile(PayloadBase):
         return self.toPayLoad().toJWTPayload()
 
 
+class TOTPCredential(BaseModel):
+    region: Optional[str] = Field(None, description="Credential identity service region")
+    domain: str = Field(..., description="Credential user domain")
+    username: str = Field(..., description="Credential username")
+    passcode: str = Field(..., description="TOTP passcode", pattern=r"^\d{6}$")
+    receipt: str = Field(..., description="Keystone receipt from first auth step")
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "region": "RegionOne",
+                    "username": "admin",
+                    "domain": "default",
+                    "passcode": "123456",
+                    "receipt": "receipt-token-from-first-step",
+                },
+            ]
+        }
+    }
+
+
 class SSOInfo(BaseModel):
     protocol: str
     url: str
