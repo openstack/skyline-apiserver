@@ -1,0 +1,9 @@
+---
+fixes:
+  - |
+    Fixed handling of orphaned projects in resource listings. When a project
+    is deleted but resources (snapshots, volumes, etc.) still exist, the API
+    raised a KeyError when trying to resolve the project name. This fix uses
+    .get() with project_id as fallback instead of direct dictionary access,
+    preventing API errors when viewing resources from deleted projects.
+    `LP#2153555 <https://bugs.launchpad.net/skyline-apiserver/+bug/2153555>`_
