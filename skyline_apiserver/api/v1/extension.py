@@ -257,7 +257,9 @@ def list_servers(
         )
         project_id_name_map = {project.id: project.name for project in projects}
         for server in result:
-            server["project_name"] = project_id_name_map[server["project_id"]]
+            server["project_name"] = project_id_name_map.get(
+                server["project_id"], server["project_id"]
+            )
 
     return schemas.ServersResponse(**{"servers": result})
 
@@ -472,7 +474,9 @@ def list_recycle_servers(
         )
         project_id_name_map = {project.id: project.name for project in projects}
         for recycle_server in result:
-            recycle_server.project_name = project_id_name_map.get(recycle_server.project_id)
+            recycle_server.project_name = project_id_name_map.get(
+                recycle_server.project_id, recycle_server.project_id
+            )
     return schemas.RecycleServersResponse(recycle_servers=result)
 
 
@@ -828,7 +832,9 @@ def list_volume_snapshots(
         )
 
     for snapshot in result:
-        snapshot["project_name"] = proj_mappings.get(snapshot["project_id"])
+        snapshot["project_name"] = proj_mappings.get(
+            snapshot["project_id"], snapshot["project_id"]
+        )
         vol_mapping = vol_mappings.get(snapshot["volume_id"])
         if vol_mapping:
             snapshot["volume_name"] = vol_mapping["name"]
