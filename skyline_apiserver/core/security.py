@@ -72,5 +72,5 @@ def generate_profile(
             base_domains=CONF.openstack.base_domains,
             exp=exp or int(time.time()) + CONF.default.access_token_expire,
             uuid=uuid_value or uuid.uuid4().hex,
-            version=version.version_string(),
+            version=version.version,
         )

@@ -12,12 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pbr import version as pbr_version
+import importlib.metadata
 
 SKYLINE_APISERVER_VENDOR = "OpenInfra Foundation"
 SKYLINE_APISERVER_PRODUCT = "OpenStack Skyline APIServer"
 SKYLINE_APISERVER_PACKAGE = None  # OS distro package version suffix
 
 loaded = False
-version_info = pbr_version.VersionInfo("skyline-apiserver")
-version_string = version_info.version_string
+version = importlib.metadata.version("skyline-apiserver")
