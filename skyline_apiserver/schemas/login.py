@@ -24,8 +24,8 @@ from skyline_apiserver.types import constants
 
 
 class Credential(BaseModel):
-    region: Optional[str] = Field(None, description="Credential identity service region")
-    domain: str = Field(..., description="Credential user domain")
+    region: Optional[str] = Field(default=None, description="Credential identity service region")
+    domain: Optional[str] = Field(default=None, description="Credential user domain")
     username: str = Field(..., description="Credential username")
     password: str = Field(..., description="Credential password for user")
 
@@ -99,6 +99,9 @@ class Profile(PayloadBase):
     projects: Optional[Dict[str, Any]] = Field(default=None, description="User projects")
     default_project_id: Optional[str] = Field(default=None, description="User default project ID")
     version: str = Field(..., description="Version")
+    regions: Optional[List[str]] = Field(
+        default=None, description="Available regions for the user"
+    )
 
     def toPayLoad(self) -> Payload:
         return Payload(
@@ -124,3 +127,4 @@ class SSO(BaseModel):
 
 class Config(BaseModel):
     default_domain: str
+    default_region: str

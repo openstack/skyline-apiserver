@@ -52,7 +52,7 @@
 
 - `GET /contrib/regions`（无需登录）：通过 system session 的 service catalog 汇总所有
   `region_id`（`client/openstack/system.py:get_regions()`）。
-- 登录页、改密流程等使用该接口；**登录后控制台顶栏无 region 切换入口**。
+- 当前用于登录页 region 下拉（多 region 时）。**改造后将逐步废弃**：登录页去掉 region 选择后该接口无调用方；建议保留接口但标记 deprecated，作为调试/内部用途。
 
 #### 3.1.3 Project / Domain 切换（已有，有限）
 
@@ -240,7 +240,7 @@ profile.projects = {
 #### 3.4.2 顶栏 Region 切换
 
 - 在 `GlobalHeader`（如 `ProjectDropdown` 左侧或 `index.jsx`）增加 **Region** 下拉/选择器：
-  - 数据源：登录后 `GET /contrib/regions`（或 profile 扩展字段）。
+  - 数据源：`GET /profile.regions`（基于用户 token catalog，与 `switch_region` 可切换范围一致）。
   - 展示当前 `rootStore.user.region`。
   - 选择后：`rootStore.switchRegion(region)` → `POST /switch_region/{region}` → `clearData()` →
     `getUserProfileAndPolicy()` → 跳转 `/base/overview`（与 switch project 一致）。

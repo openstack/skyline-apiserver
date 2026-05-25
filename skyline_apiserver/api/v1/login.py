@@ -118,8 +118,22 @@ def _get_projects_and_unscope_token(
     return project_scope, unscope_token, default_project_id  # type: ignore
 
 
+def _get_user_regions(profile: schemas.Profile) -> List[str]:
+    try:
+        user_session = generate_session(profile)
+        access = utils.get_access(session=user_session)
+        catalogs: Dict[str, Any] = (
+            access.service_catalog.get_endpoints(interface=CONF.openstack.interface_type) or {}
+        )
+        regions = list(set(j["region_id"] for i in catalogs for j in (catalogs[i] or [])))
+        return sorted(regions)
+    except Exception:
+        return []
+
+
 def _patch_profile(profile: schemas.Profile, global_request_id: str) -> schemas.Profile:
     try:
+        profile.regions = _get_user_regions(profile)
         profile.endpoints = get_endpoints(region=profile.region)
 
         projects = get_projects(
@@ -142,6 +156,7 @@ def _patch_profile(profile: schemas.Profile, global_request_id: str) -> schemas.
                 "name": i.name,
                 "enabled": i.enabled,
                 "domain_id": i.domain_id,
+                "domain_name": getattr(getattr(i, "domain", None), "name", None),
                 "description": i.description,
             }
             for i in projects
@@ -178,10 +193,10 @@ def login(
         regex=constants.INBOUND_HEADER_REGEX,
     ),
 ) -> schemas.Profile:
-    region = credential.region or CONF.openstack.default_region
+    region = CONF.openstack.default_region
     domain = credential.domain or CONF.openstack.user_default_domain
     try:
-        project_scope, unscope_token, default_project_id = _get_projects_and_unscope_token(
+        (project_scope, unscope_token, default_project_id,) = _get_projects_and_unscope_token(
             region=region,
             domain=domain,
             username=credential.username,
@@ -225,7 +240,10 @@ def login(
     response_description="OK",
 )
 def get_config(request: Request) -> schemas.Config:
-    return schemas.Config(default_domain=CONF.openstack.user_default_domain)
+    return schemas.Config(
+        default_domain=CONF.openstack.user_default_domain,
+        default_region=CONF.openstack.default_region,
+    )
 
 
 @router.get(
@@ -404,6 +422,11 @@ def switch_project(
 ) -> schemas.Profile:
     profile = deps.get_profile(request)
     region = profile.region
+    if profile.projects and project_id not in profile.projects:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Project not accessible",
+        )
     try:
         project_scope_token = get_project_scope_token(
             keystone_token=profile.keystone_token,
@@ -412,6 +435,51 @@ def switch_project(
         )
         new_profile = generate_profile(
             keystone_token=project_scope_token,
+            region=region,
+        )
+        new_profile = _patch_profile(new_profile, x_openstack_request_id)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e),
+        )
+    else:
+        response.set_cookie(CONF.default.session_name, new_profile.toJWTPayload())
+        response.set_cookie(constants.TIME_EXPIRED_KEY, str(new_profile.exp))
+        return new_profile
+
+
+@router.post(
+    "/switch_region/{region}",
+    description="Switch region.",
+    responses={
+        200: {"model": schemas.Profile},
+        401: {"model": schemas.UnauthorizedMessage},
+    },
+    response_model=schemas.Profile,
+    status_code=status.HTTP_200_OK,
+    response_description="OK",
+)
+def switch_region(
+    region: str,
+    request: Request,
+    response: Response,
+    x_openstack_request_id: str = Header(
+        "",
+        alias=constants.INBOUND_HEADER,
+        regex=constants.INBOUND_HEADER_REGEX,
+    ),
+) -> schemas.Profile:
+    profile = deps.get_profile(request)
+    allowed_regions = profile.regions or _get_user_regions(profile)
+    if region not in allowed_regions:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Region not accessible",
+        )
+    try:
+        new_profile = generate_profile(
+            keystone_token=profile.keystone_token,
             region=region,
         )
         new_profile = _patch_profile(new_profile, x_openstack_request_id)
