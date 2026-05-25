@@ -70,7 +70,8 @@ kolla-build -b ubuntu -t source -n kolla --tag master --registry 127.0.0.1:4000 
     control
     ```
 
-  - 编辑 `/etc/kolla/passwords.yml` 并增加以下配置项，自定义密码或使用 `kolla-genpwd` 命令生成以下配置密码
+  - 编辑 `/etc/kolla/passwords.yml` 并增加以下配置项，自定义密码或使用 `kolla-genpwd`
+    命令生成以下配置密码
 
     ```shell
     skyline_database_password:

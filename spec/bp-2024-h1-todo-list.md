@@ -8,7 +8,8 @@ FastAPI sync mode is much more easier for coding than async.
 
 We made a mistake to choose async mode at the very begining.
 
-Async has advantages in performance however sync also enough since skyline is a cloud control console, not ebay or Amazon.
+Async has advantages in performance however sync also enough since skyline is a cloud control
+console, not ebay or Amazon.
 
 Skyline API service is light enough for a quick refactor, which is a lucky thing.
 
@@ -32,4 +33,5 @@ Lots of basic libs need to be upgraded:
 
 More use cases, more popular.
 
-Some enterprise use customized Skyline with non-OpenStack components, we could give some demo & coding examples.
+Some enterprise use customized Skyline with non-OpenStack components, we could give some demo &
+coding examples.
