@@ -16,7 +16,6 @@ from __future__ import annotations
 
 from typing import Any
 
-import six
 from oslo_config import cfg
 from oslo_context import context
 from oslo_log import log
@@ -48,7 +47,7 @@ class RequestContext(context.RequestContext):
 
         if not timestamp:
             timestamp = timeutils.utcnow()
-        elif isinstance(timestamp, six.string_types):
+        elif isinstance(timestamp, str):
             timestamp = timeutils.parse_isotime(timestamp)
         self.timestamp = timestamp
 
