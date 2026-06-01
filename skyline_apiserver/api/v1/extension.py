@@ -244,7 +244,7 @@ async def list_servers(
 
     for server in result:
         server["host"] = server["host"] if all_projects else None
-        server["project_name"] = proj_mappings.get(server["project_id"])
+        server["project_name"] = proj_mappings.get(server["project_id"], server["project_id"])
         ser_image_mapping = ser_image_mappings.get(server["id"])
         if ser_image_mapping:
             values = {
@@ -456,7 +456,9 @@ async def list_recycle_servers(
 
     for recycle_server in result:
         recycle_server.host = recycle_server.host if all_projects else None
-        recycle_server.project_name = proj_mappings.get(recycle_server.project_id)
+        recycle_server.project_name = proj_mappings.get(
+            recycle_server.project_id, recycle_server.project_id
+        )
         recycle_server.deleted_at = recycle_server.updated_at
         recycle_server.reclaim_timestamp = (
             parser.isoparse(str(recycle_server.updated_at or "")).timestamp()
@@ -658,7 +660,7 @@ async def list_volumes(
 
     for volume in result:
         volume["host"] = volume["host"] if all_projects else None
-        volume["project_name"] = proj_mappings.get(volume["project_id"])
+        volume["project_name"] = proj_mappings.get(volume["project_id"], volume["project_id"])
         for attachment in volume["attachments"]:
             attachment["server_name"] = ser_mappings.get(attachment["server_id"])
     return schemas.VolumesResponse(**{"count": count, "volumes": result})
@@ -851,7 +853,9 @@ async def list_volume_snapshots(
         )
 
     for snapshot in result:
-        snapshot["project_name"] = proj_mappings.get(snapshot["project_id"])
+        snapshot["project_name"] = proj_mappings.get(
+            snapshot["project_id"], snapshot["project_id"]
+        )
         vol_mapping = vol_mappings.get(snapshot["volume_id"])
         if vol_mapping:
             snapshot["volume_name"] = vol_mapping["name"]
