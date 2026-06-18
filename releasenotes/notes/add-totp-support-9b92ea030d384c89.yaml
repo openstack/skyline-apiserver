@@ -1,0 +1,7 @@
+---
+features:
+  - |
+    Add TOTP (Time-based One-Time Password) two-factor authentication API
+    support. The API server now detects when TOTP is required during login
+    and provides a /login/totp endpoint to complete the second
+    authentication step with a TOTP passcode.
