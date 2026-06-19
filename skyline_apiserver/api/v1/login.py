@@ -52,6 +52,168 @@ from skyline_apiserver.types import constants
 
 router = APIRouter()
 
+TOTP_ERROR_INVALID = "invalid_totp"
+TOTP_ERROR_RECEIPT_EXPIRED = "receipt_expired"
+TOTP_ERROR_AUTH_FAILED = "authentication_failed"
+
+
+def _requires_totp_step(exc: ks_exceptions.MissingAuthMethods) -> bool:
+    if not exc.receipt:
+        return False
+    for rule in exc.required_auth_methods or []:
+        if "totp" in rule and "password" in rule:
+            return True
+    return False
+
+
+def _totp_required_detail(receipt: str) -> Dict[str, Any]:
+    return schemas.TOTPRequiredDetail(totp_required=True, receipt=receipt).model_dump()
+
+
+def _raise_for_missing_auth_methods(exc: ks_exceptions.MissingAuthMethods) -> None:
+    if _requires_totp_step(exc):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=_totp_required_detail(exc.receipt),
+        )
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="An error occurred authenticating. Please try again later.",
+    )
+
+
+def _is_receipt_auth_error(exc: Exception) -> bool:
+    if isinstance(exc, ks_exceptions.MissingAuthMethods):
+        return not exc.receipt
+
+    if isinstance(exc, ks_exceptions.http.HttpError):
+        response = exc.response
+        if response is None:
+            return False
+        receipt_header = response.headers.get("Openstack-Auth-Receipt")
+        try:
+            body = response.json()
+        except Exception:
+            body = {}
+        error = body.get("error") if isinstance(body, dict) else {}
+        if isinstance(error, dict):
+            code = str(error.get("code", "")).lower()
+            message = str(error.get("message", "")).lower()
+            if "receipt" in code and "expir" in code:
+                return True
+            if "receipt" in message and "expir" in message:
+                return True
+        if isinstance(body, dict) and "required_auth_methods" in body and not receipt_header:
+            return True
+    return False
+
+
+def _raise_for_totp_auth_error(exc: Exception, username: str, domain: str) -> None:
+    if _is_receipt_auth_error(exc):
+        LOG.warning(
+            "TOTP receipt expired or invalid for user %s in domain %s: %s",
+            username,
+            domain,
+            exc,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=TOTP_ERROR_RECEIPT_EXPIRED,
+        )
+
+    if isinstance(exc, ks_exceptions.http.Unauthorized):
+        LOG.warning(
+            "TOTP authentication failed for user %s in domain %s: %s",
+            username,
+            domain,
+            exc,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=TOTP_ERROR_INVALID,
+        )
+
+    LOG.exception(
+        "Unexpected error during TOTP authentication for user %s in domain %s",
+        username,
+        domain,
+    )
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=TOTP_ERROR_AUTH_FAILED,
+    )
+
+
+def _build_profile_from_unscope(
+    unscope_token: str,
+    region: str,
+    x_openstack_request_id: str,
+    project_scope: List[Any],
+    default_project_id: Optional[str],
+) -> schemas.Profile:
+    if default_project_id not in [i.id for i in project_scope]:
+        default_project_id = None
+    project_scope_token = get_project_scope_token(
+        keystone_token=unscope_token,
+        region=region,
+        project_id=default_project_id or project_scope[0].id,
+    )
+    profile = generate_profile(
+        keystone_token=project_scope_token,
+        region=region,
+    )
+    return _patch_profile(profile, x_openstack_request_id)
+
+
+def _set_login_cookies(response: Response, profile: schemas.Profile) -> None:
+    response.set_cookie(CONF.default.session_name, profile.toJWTPayload())
+    response.set_cookie(constants.TIME_EXPIRED_KEY, str(profile.exp))
+
+
+def _finish_login(
+    unscope_token: str,
+    region: str,
+    response: Response,
+    x_openstack_request_id: str,
+    project_enabled: bool = True,
+) -> schemas.Profile:
+    project_scope, _, default_project_id = _get_projects_and_unscope_token(
+        region=region,
+        token=unscope_token,
+        project_enabled=project_enabled,
+    )
+    profile = _build_profile_from_unscope(
+        unscope_token=unscope_token,
+        region=region,
+        x_openstack_request_id=x_openstack_request_id,
+        project_scope=project_scope,
+        default_project_id=default_project_id,
+    )
+    _set_login_cookies(response, profile)
+    return profile
+
+
+def _get_totp_session(
+    region: str,
+    domain: str,
+    username: str,
+    passcode: str,
+    receipt: str,
+) -> Session:
+    auth_url = utils.get_endpoint(
+        region=region,
+        service="identity",
+        session=get_system_session(),
+    )
+    totp_auth = v3_auth.TOTP(
+        auth_url=auth_url,
+        username=username,
+        passcode=passcode,
+        user_domain_name=domain,
+    )
+    totp_auth.add_method(v3_auth.ReceiptMethod(receipt=receipt))
+    return Session(auth=totp_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT)
+
 
 def _get_default_project_id(
     session: Session, region: str, user_id: Optional[str] = None
@@ -104,16 +266,7 @@ def _get_projects_and_unscope_token(
         try:
             session.get_token()
         except ks_exceptions.MissingAuthMethods as exc:
-            for required in exc.required_auth_methods:
-                if len(required) == 2 and "totp" in required and "password" in required:
-                    raise HTTPException(
-                        status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail={"totp_required": True, "receipt": exc.receipt},
-                    )
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="An error occurred authenticating. Please try again later.",
-            )
+            _raise_for_missing_auth_methods(exc)
 
     unscope_client = KeystoneClient(
         session=session,
@@ -194,7 +347,7 @@ def _patch_profile(profile: schemas.Profile, global_request_id: str) -> schemas.
     description="Login & get user profile.",
     responses={
         200: {"model": schemas.Profile},
-        401: {"model": schemas.UnauthorizedMessage},
+        401: {"model": schemas.LoginUnauthorizedMessage},
     },
     response_model=schemas.Profile,
     status_code=status.HTTP_200_OK,
@@ -220,21 +373,13 @@ def login(
             password=credential.password,
             project_enabled=True,
         )
-
-        if default_project_id not in [i.id for i in project_scope]:
-            default_project_id = None
-        project_scope_token = get_project_scope_token(
-            keystone_token=unscope_token,
+        profile = _build_profile_from_unscope(
+            unscope_token=unscope_token,
             region=region,
-            project_id=default_project_id or project_scope[0].id,
+            x_openstack_request_id=x_openstack_request_id,
+            project_scope=project_scope,
+            default_project_id=default_project_id,
         )
-
-        profile = generate_profile(
-            keystone_token=project_scope_token,
-            region=region,
-        )
-
-        profile = _patch_profile(profile, x_openstack_request_id)
     except HTTPException:
         raise
     except Exception as e:
@@ -243,8 +388,7 @@ def login(
             detail=str(e),
         )
     else:
-        response.set_cookie(CONF.default.session_name, profile.toJWTPayload())
-        response.set_cookie(constants.TIME_EXPIRED_KEY, str(profile.exp))
+        _set_login_cookies(response, profile)
         return profile
 
 
@@ -273,88 +417,30 @@ def login_totp(
     domain = credential.domain or CONF.openstack.user_default_domain
 
     try:
-        auth_url = utils.get_endpoint(
+        totp_session = _get_totp_session(
             region=region,
-            service="identity",
-            session=get_system_session(),
-        )
-        totp_auth = v3_auth.TOTP(
-            auth_url=auth_url,
+            domain=domain,
             username=credential.username,
             passcode=credential.passcode,
-            user_domain_name=domain,
-        )
-        totp_auth.add_method(v3_auth.ReceiptMethod(receipt=credential.receipt))
-
-        totp_session = Session(
-            auth=totp_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT
+            receipt=credential.receipt,
         )
         unscope_token = totp_session.get_token()
         if not unscope_token:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Authentication failed",
+                detail=TOTP_ERROR_AUTH_FAILED,
             )
-
-        unscope_client = KeystoneClient(
-            session=totp_session,
-            endpoint=auth_url,
-            interface=CONF.openstack.interface_type,
-        )
-        project_scope = unscope_client.auth.projects()
-        project_scope = [p for p in project_scope if p.enabled]
-
-        if not project_scope:
-            raise Exception("You are not authorized for any projects or domains.")
-
-        default_project_id = _get_default_project_id(totp_session, region)
-        if default_project_id not in [i.id for i in project_scope]:
-            default_project_id = None
-
-        project_scope_token = get_project_scope_token(
-            keystone_token=unscope_token,
+        return _finish_login(
+            unscope_token=unscope_token,
             region=region,
-            project_id=default_project_id or project_scope[0].id,
+            response=response,
+            x_openstack_request_id=x_openstack_request_id,
+            project_enabled=True,
         )
-
-        profile = generate_profile(
-            keystone_token=project_scope_token,
-            region=region,
-        )
-        profile = _patch_profile(profile, x_openstack_request_id)
     except HTTPException:
         raise
-    except ks_exceptions.http.Unauthorized as e:
-        msg = str(e)
-        LOG.warning(
-            "TOTP authentication failed for user %s in domain %s: %s",
-            credential.username,
-            domain,
-            msg,
-        )
-        if "receipt" in msg.lower() or "expired" in msg.lower():
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="receipt_expired",
-            )
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="invalid_totp",
-        )
-    except Exception:
-        LOG.exception(
-            "Unexpected error during TOTP authentication for user %s in domain %s",
-            credential.username,
-            domain,
-        )
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Authentication failed",
-        )
-    else:
-        response.set_cookie(CONF.default.session_name, profile.toJWTPayload())
-        response.set_cookie(constants.TIME_EXPIRED_KEY, str(profile.exp))
-        return profile
+    except Exception as exc:
+        _raise_for_totp_auth_error(exc, credential.username, domain)
 
 
 @router.get(

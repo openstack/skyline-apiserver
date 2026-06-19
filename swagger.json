@@ -20,7 +20,7 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "pattern": "^$|^req-\\w{8}(-\\w{4}){3}-\\w{12}",
                             "default": "",
                             "title": "X-Openstack-Request-Id"
                         }
@@ -32,6 +32,71 @@
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/Credential"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Profile"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginUnauthorizedMessage"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/login/totp": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Login Totp",
+                "description": "Complete login with TOTP passcode after password auth.",
+                "operationId": "login_totp_api_v1_login_totp_post",
+                "parameters": [
+                    {
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^$|^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "default": "",
+                            "title": "X-Openstack-Request-Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TOTPCredential"
                             }
                         }
                     }
@@ -129,7 +194,7 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "pattern": "^$|^req-\\w{8}(-\\w{4}){3}-\\w{12}",
                             "default": "",
                             "title": "X-Openstack-Request-Id"
                         }
@@ -187,7 +252,7 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "pattern": "^$|^req-\\w{8}(-\\w{4}){3}-\\w{12}",
                             "default": "",
                             "title": "X-Openstack-Request-Id"
                         }
@@ -242,7 +307,7 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "pattern": "^$|^req-\\w{8}(-\\w{4}){3}-\\w{12}",
                             "default": "",
                             "title": "X-Openstack-Request-Id"
                         }
@@ -296,7 +361,71 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "pattern": "^$|^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "default": "",
+                            "title": "X-Openstack-Request-Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Profile"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedMessage"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/switch_region/{region}": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Switch Region",
+                "description": "Switch region.",
+                "operationId": "switch_region_api_v1_switch_region__region__post",
+                "parameters": [
+                    {
+                        "name": "region",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Region"
+                        }
+                    },
+                    {
+                        "name": "X-Openstack-Request-Id",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^$|^req-\\w{8}(-\\w{4}){3}-\\w{12}",
                             "default": "",
                             "title": "X-Openstack-Request-Id"
                         }
@@ -568,7 +697,7 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "pattern": "^$|^req-\\w{8}(-\\w{4}){3}-\\w{12}",
                             "default": "",
                             "title": "X-Openstack-Request-Id"
                         }
@@ -837,7 +966,7 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "pattern": "^$|^req-\\w{8}(-\\w{4}){3}-\\w{12}",
                             "default": "",
                             "title": "X-Openstack-Request-Id"
                         }
@@ -1127,7 +1256,7 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "pattern": "^$|^req-\\w{8}(-\\w{4}){3}-\\w{12}",
                             "default": "",
                             "title": "X-Openstack-Request-Id"
                         }
@@ -1386,7 +1515,7 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "pattern": "^$|^req-\\w{8}(-\\w{4}){3}-\\w{12}",
                             "default": "",
                             "title": "X-Openstack-Request-Id"
                         }
@@ -1705,7 +1834,7 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "pattern": "^$|^req-\\w{8}(-\\w{4}){3}-\\w{12}",
                             "default": "",
                             "title": "X-Openstack-Request-Id"
                         }
@@ -1802,7 +1931,7 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "pattern": "^req-\\w{8}(-\\w{4}){3}-\\w{12}",
+                            "pattern": "^$|^req-\\w{8}(-\\w{4}){3}-\\w{12}",
                             "default": "",
                             "title": "X-Openstack-Request-Id"
                         }
@@ -2658,11 +2787,16 @@
                     "default_domain": {
                         "type": "string",
                         "title": "Default Domain"
+                    },
+                    "default_region": {
+                        "type": "string",
+                        "title": "Default Region"
                     }
                 },
                 "type": "object",
                 "required": [
-                    "default_domain"
+                    "default_domain",
+                    "default_region"
                 ],
                 "title": "Config"
             },
@@ -2681,7 +2815,14 @@
                         "description": "Credential identity service region"
                     },
                     "domain": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Domain",
                         "description": "Credential user domain"
                     },
@@ -2698,7 +2839,6 @@
                 },
                 "type": "object",
                 "required": [
-                    "domain",
                     "username",
                     "password"
                 ],
@@ -2883,6 +3023,27 @@
                     "url"
                 ],
                 "title": "KeystoneEndpoints"
+            },
+            "LoginUnauthorizedMessage": {
+                "properties": {
+                    "detail": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "$ref": "#/components/schemas/TOTPRequiredDetail"
+                            }
+                        ],
+                        "title": "Detail",
+                        "description": "Unauthorized detail message or TOTP challenge payload"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "detail"
+                ],
+                "title": "LoginUnauthorizedMessage"
             },
             "Message": {
                 "properties": {
@@ -3408,6 +3569,21 @@
                         "type": "string",
                         "title": "Version",
                         "description": "Version"
+                    },
+                    "regions": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Regions",
+                        "description": "Available regions for the user"
                     }
                 },
                 "type": "object",
@@ -4382,6 +4558,86 @@
                 ],
                 "title": "SortDir"
             },
+            "TOTPCredential": {
+                "properties": {
+                    "region": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Region",
+                        "description": "Credential identity service region"
+                    },
+                    "domain": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Domain",
+                        "description": "Credential user domain"
+                    },
+                    "username": {
+                        "type": "string",
+                        "title": "Username",
+                        "description": "Credential username"
+                    },
+                    "passcode": {
+                        "type": "string",
+                        "pattern": "^\\d{6}$",
+                        "title": "Passcode",
+                        "description": "TOTP passcode"
+                    },
+                    "receipt": {
+                        "type": "string",
+                        "title": "Receipt",
+                        "description": "Keystone receipt from first auth step"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "username",
+                    "passcode",
+                    "receipt"
+                ],
+                "title": "TOTPCredential",
+                "examples": [
+                    {
+                        "domain": "default",
+                        "passcode": "123456",
+                        "receipt": "receipt-token-from-first-step",
+                        "region": "RegionOne",
+                        "username": "admin"
+                    }
+                ]
+            },
+            "TOTPRequiredDetail": {
+                "properties": {
+                    "totp_required": {
+                        "type": "boolean",
+                        "const": true,
+                        "title": "Totp Required",
+                        "default": true
+                    },
+                    "receipt": {
+                        "type": "string",
+                        "title": "Receipt",
+                        "description": "Keystone receipt from first auth step"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "receipt"
+                ],
+                "title": "TOTPRequiredDetail"
+            },
             "UnauthorizedMessage": {
                 "properties": {
                     "detail": {
@@ -4463,6 +4719,13 @@
                     "type": {
                         "type": "string",
                         "title": "Error Type"
+                    },
+                    "input": {
+                        "title": "Input"
+                    },
+                    "ctx": {
+                        "type": "object",
+                        "title": "Context"
                     }
                 },
                 "type": "object",

@@ -52,7 +52,8 @@
 
 - `GET /contrib/regions`（无需登录）：通过 system session 的 service catalog 汇总所有
   `region_id`（`client/openstack/system.py:get_regions()`）。
-- 当前用于登录页 region 下拉（多 region 时）。**改造后将逐步废弃**：登录页去掉 region 选择后该接口无调用方；建议保留接口但标记 deprecated，作为调试/内部用途。
+- 当前用于登录页 region 下拉（多 region 时）。**改造后将逐步废弃**：登录页去掉 region
+  选择后该接口无调用方；建议保留接口但标记 deprecated，作为调试/内部用途。
 
 #### 3.1.3 Project / Domain 切换（已有，有限）
 

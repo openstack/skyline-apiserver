@@ -17,6 +17,25 @@ from unittest.mock import MagicMock, Mock, patch
 import pytest
 
 
+def _missing_auth_methods(
+    receipt="receipt-token",
+    required_auth_methods=None,
+    methods=None,
+):
+    from keystoneauth1 import exceptions as ks_exceptions
+
+    response = MagicMock()
+    response.headers = {"Openstack-Auth-Receipt": receipt} if receipt else {}
+    response.json.return_value = {
+        "receipt": {
+            "methods": methods or ["password"],
+            "expires_at": "2018-07-05T08:39:23.000000Z",
+        },
+        "required_auth_methods": required_auth_methods or [["password", "totp"]],
+    }
+    return ks_exceptions.MissingAuthMethods(response)
+
+
 class TestGetUserRegions:
     """Tests for _get_user_regions function."""
 
@@ -510,3 +529,329 @@ class TestConfigSchema:
         )
         assert cfg.default_region == "RegionOne"
         assert cfg.default_domain == "Default"
+
+
+class TestRequiresTotpStep:
+    """Tests for TOTP MFA detection helpers."""
+
+    def test_requires_totp_when_receipt_and_totp_rule(self):
+        from skyline_apiserver.api.v1.login import _requires_totp_step
+
+        exc = _missing_auth_methods()
+
+        assert _requires_totp_step(exc) is True
+
+    def test_requires_totp_false_for_totp_only_rule(self):
+        from skyline_apiserver.api.v1.login import _requires_totp_step
+
+        exc = _missing_auth_methods(required_auth_methods=[["totp"]])
+
+        assert _requires_totp_step(exc) is False
+
+    def test_requires_totp_false_without_receipt(self):
+        from skyline_apiserver.api.v1.login import _requires_totp_step
+
+        exc = _missing_auth_methods(receipt=None)
+
+        assert _requires_totp_step(exc) is False
+
+    def test_requires_totp_false_without_totp_in_rules(self):
+        from skyline_apiserver.api.v1.login import _requires_totp_step
+
+        exc = _missing_auth_methods(required_auth_methods=[["password", "custom-auth-method"]])
+
+        assert _requires_totp_step(exc) is False
+
+
+class TestRaiseForMissingAuthMethods:
+    """Tests for MissingAuthMethods HTTP translation."""
+
+    def test_raises_totp_required_payload(self):
+        from fastapi.exceptions import HTTPException
+
+        from skyline_apiserver.api.v1.login import _raise_for_missing_auth_methods
+
+        exc = _missing_auth_methods(receipt="abc-receipt")
+
+        with pytest.raises(HTTPException) as exc_info:
+            _raise_for_missing_auth_methods(exc)
+
+        assert exc_info.value.status_code == 401
+        assert exc_info.value.detail == {
+            "totp_required": True,
+            "receipt": "abc-receipt",
+        }
+
+    def test_raises_generic_message_for_other_mfa(self):
+        from fastapi.exceptions import HTTPException
+
+        from skyline_apiserver.api.v1.login import _raise_for_missing_auth_methods
+
+        exc = _missing_auth_methods(required_auth_methods=[["password", "custom-auth-method"]])
+
+        with pytest.raises(HTTPException) as exc_info:
+            _raise_for_missing_auth_methods(exc)
+
+        assert exc_info.value.status_code == 401
+        assert "try again later" in exc_info.value.detail
+
+
+class TestIsReceiptAuthError:
+    """Tests for receipt expiration / invalid receipt detection."""
+
+    def test_missing_auth_methods_without_receipt(self):
+        from skyline_apiserver.api.v1.login import _is_receipt_auth_error
+
+        exc = _missing_auth_methods(receipt=None)
+
+        assert _is_receipt_auth_error(exc) is True
+
+    def test_http_error_with_receipt_expired_code(self):
+        from keystoneauth1.exceptions import http
+
+        from skyline_apiserver.api.v1.login import _is_receipt_auth_error
+
+        response = MagicMock()
+        response.headers = {}
+        response.json.return_value = {
+            "error": {
+                "code": "auth_receipt_expired",
+                "message": "Auth receipt expired",
+            }
+        }
+        exc = http.Unauthorized(response=response)
+
+        assert _is_receipt_auth_error(exc) is True
+
+    def test_unauthorized_without_receipt_signal_is_not_receipt_error(self):
+        from keystoneauth1.exceptions import http
+
+        from skyline_apiserver.api.v1.login import _is_receipt_auth_error
+
+        response = MagicMock()
+        response.headers = {}
+        response.json.return_value = {
+            "error": {
+                "code": "401",
+                "message": "Invalid passcode",
+            }
+        }
+        exc = http.Unauthorized(response=response)
+
+        assert _is_receipt_auth_error(exc) is False
+
+
+class TestGetProjectsAndUnscopeTokenTotp:
+    """Tests for TOTP detection during password authentication."""
+
+    @patch("skyline_apiserver.api.v1.login.KeystoneClient")
+    @patch("skyline_apiserver.api.v1.login.Session")
+    @patch("skyline_apiserver.api.v1.login.Password")
+    @patch("skyline_apiserver.api.v1.login.utils.get_endpoint")
+    @patch("skyline_apiserver.api.v1.login.get_system_session")
+    @patch("skyline_apiserver.api.v1.login.CONF")
+    def test_password_login_raises_totp_required(
+        self,
+        mock_conf,
+        mock_get_system_session,
+        mock_get_endpoint,
+        mock_password,
+        mock_session_cls,
+        mock_keystone_client,
+    ):
+        from fastapi.exceptions import HTTPException
+
+        from skyline_apiserver.api.v1.login import _get_projects_and_unscope_token
+
+        mock_conf.default.cafile = None
+        mock_conf.openstack.interface_type = "public"
+        mock_get_endpoint.return_value = "http://keystone/v3"
+
+        mock_session = MagicMock()
+        mock_session_cls.return_value = mock_session
+        mock_session.get_token.side_effect = _missing_auth_methods(receipt="step-one-receipt")
+
+        with pytest.raises(HTTPException) as exc_info:
+            _get_projects_and_unscope_token(
+                region="RegionOne",
+                domain="Default",
+                username="admin",
+                password="secret",
+            )
+
+        assert exc_info.value.status_code == 401
+        assert exc_info.value.detail["totp_required"] is True
+        assert exc_info.value.detail["receipt"] == "step-one-receipt"
+        mock_keystone_client.assert_not_called()
+
+
+class TestLoginTotpEndpoint:
+    """Tests for login_totp endpoint."""
+
+    @patch("skyline_apiserver.api.v1.login._finish_login")
+    @patch("skyline_apiserver.api.v1.login._get_totp_session")
+    @patch("skyline_apiserver.api.v1.login.CONF")
+    def test_login_totp_success(self, mock_conf, mock_get_totp_session, mock_finish_login):
+        mock_conf.openstack.default_region = "RegionOne"
+        mock_conf.openstack.user_default_domain = "Default"
+
+        mock_session = MagicMock()
+        mock_session.get_token.return_value = "unscoped-token"
+        mock_get_totp_session.return_value = mock_session
+
+        mock_profile = MagicMock()
+        mock_finish_login.return_value = mock_profile
+
+        mock_request = MagicMock()
+        mock_response = MagicMock()
+        credential = MagicMock()
+        credential.region = None
+        credential.domain = None
+        credential.username = "admin"
+        credential.passcode = "123456"
+        credential.receipt = "receipt-token"
+
+        from skyline_apiserver.api.v1.login import login_totp
+
+        result = login_totp(
+            request=mock_request,
+            response=mock_response,
+            credential=credential,
+            x_openstack_request_id="req-id",
+        )
+
+        mock_get_totp_session.assert_called_once_with(
+            region="RegionOne",
+            domain="Default",
+            username="admin",
+            passcode="123456",
+            receipt="receipt-token",
+        )
+        mock_finish_login.assert_called_once_with(
+            unscope_token="unscoped-token",
+            region="RegionOne",
+            response=mock_response,
+            x_openstack_request_id="req-id",
+            project_enabled=True,
+        )
+        assert result == mock_profile
+
+    @patch("skyline_apiserver.api.v1.login._get_totp_session")
+    @patch("skyline_apiserver.api.v1.login.CONF")
+    def test_login_totp_invalid_passcode(self, mock_conf, mock_get_totp_session):
+        from fastapi.exceptions import HTTPException
+        from keystoneauth1.exceptions import http
+
+        mock_conf.openstack.default_region = "RegionOne"
+        mock_conf.openstack.user_default_domain = "Default"
+
+        mock_session = MagicMock()
+        response = MagicMock()
+        response.headers = {}
+        response.json.return_value = {
+            "error": {
+                "code": "401",
+                "message": "Invalid passcode",
+            }
+        }
+        mock_session.get_token.side_effect = http.Unauthorized(response=response)
+        mock_get_totp_session.return_value = mock_session
+
+        credential = MagicMock()
+        credential.region = "RegionOne"
+        credential.domain = "Default"
+        credential.username = "admin"
+        credential.passcode = "000000"
+        credential.receipt = "receipt-token"
+
+        from skyline_apiserver.api.v1.login import login_totp
+
+        with pytest.raises(HTTPException) as exc_info:
+            login_totp(
+                request=MagicMock(),
+                response=MagicMock(),
+                credential=credential,
+                x_openstack_request_id="req-id",
+            )
+
+        assert exc_info.value.status_code == 401
+        assert exc_info.value.detail == "invalid_totp"
+
+    @patch("skyline_apiserver.api.v1.login._get_totp_session")
+    @patch("skyline_apiserver.api.v1.login.CONF")
+    def test_login_totp_receipt_expired(self, mock_conf, mock_get_totp_session):
+        from fastapi.exceptions import HTTPException
+        from keystoneauth1.exceptions import http
+
+        mock_conf.openstack.default_region = "RegionOne"
+        mock_conf.openstack.user_default_domain = "Default"
+
+        mock_session = MagicMock()
+        response = MagicMock()
+        response.headers = {}
+        response.json.return_value = {
+            "error": {
+                "code": "auth_receipt_expired",
+                "message": "Auth receipt expired",
+            }
+        }
+        mock_session.get_token.side_effect = http.Unauthorized(response=response)
+        mock_get_totp_session.return_value = mock_session
+
+        credential = MagicMock()
+        credential.region = "RegionOne"
+        credential.domain = "Default"
+        credential.username = "admin"
+        credential.passcode = "123456"
+        credential.receipt = "expired-receipt"
+
+        from skyline_apiserver.api.v1.login import login_totp
+
+        with pytest.raises(HTTPException) as exc_info:
+            login_totp(
+                request=MagicMock(),
+                response=MagicMock(),
+                credential=credential,
+                x_openstack_request_id="req-id",
+            )
+
+        assert exc_info.value.status_code == 401
+        assert exc_info.value.detail == "receipt_expired"
+
+
+class TestTOTPCredentialSchema:
+    """Tests for TOTPCredential schema."""
+
+    def test_domain_is_optional(self):
+        from skyline_apiserver.schemas import login as schemas
+
+        cred = schemas.TOTPCredential(
+            username="admin",
+            passcode="123456",
+            receipt="receipt-token",
+        )
+        assert cred.domain is None
+
+    def test_passcode_must_be_six_digits(self):
+        from pydantic import ValidationError
+
+        from skyline_apiserver.schemas import login as schemas
+
+        with pytest.raises(ValidationError):
+            schemas.TOTPCredential(
+                username="admin",
+                passcode="12345",
+                receipt="receipt-token",
+            )
+
+    def test_totp_required_detail_schema(self):
+        from skyline_apiserver.schemas import login as schemas
+
+        detail = schemas.TOTPRequiredDetail(
+            totp_required=True,
+            receipt="abc",
+        )
+        assert detail.model_dump() == {
+            "totp_required": True,
+            "receipt": "abc",
+        }

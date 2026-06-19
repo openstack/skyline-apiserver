@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional, Union
 
 from jose import jwt
 from pydantic import BaseModel, Field
@@ -115,9 +115,21 @@ class Profile(PayloadBase):
         return self.toPayLoad().toJWTPayload()
 
 
+class TOTPRequiredDetail(BaseModel):
+    totp_required: Literal[True] = True
+    receipt: str = Field(..., description="Keystone receipt from first auth step")
+
+
+class LoginUnauthorizedMessage(BaseModel):
+    detail: Union[str, TOTPRequiredDetail] = Field(
+        ...,
+        description="Unauthorized detail message or TOTP challenge payload",
+    )
+
+
 class TOTPCredential(BaseModel):
     region: Optional[str] = Field(None, description="Credential identity service region")
-    domain: str = Field(..., description="Credential user domain")
+    domain: Optional[str] = Field(None, description="Credential user domain")
     username: str = Field(..., description="Credential username")
     passcode: str = Field(..., description="TOTP passcode", pattern=r"^\d{6}$")
     receipt: str = Field(..., description="Keystone receipt from first auth step")
