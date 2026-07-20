@@ -1,0 +1,8 @@
+---
+fixes:
+  - |
+    Fixed the Skyline database schema for the ``revoked_token`` and
+    ``settings`` tables by adding explicit primary keys through an Alembic
+    migration. This restores compatibility with MySQL and Percona deployments
+    that enforce primary-key requirements for DML.
+    `LP#2108940 <https://bugs.launchpad.net/skyline-apiserver/+bug/2108940>`_

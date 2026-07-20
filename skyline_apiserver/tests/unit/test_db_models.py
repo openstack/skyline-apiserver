@@ -12,23 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import annotations
-
-from sqlalchemy import JSON, Column, Integer, MetaData, String, Table
-
-METADATA = MetaData()
+from skyline_apiserver.db.models import RevokedToken, Settings
 
 
-RevokedToken = Table(
-    "revoked_token",
-    METADATA,
-    Column("uuid", String(length=128), primary_key=True, nullable=False),
-    Column("expire", Integer, nullable=False),
-)
+class TestDBModels:
+    def test_revoked_token_uses_uuid_as_primary_key(self) -> None:
+        assert list(RevokedToken.primary_key.columns.keys()) == ["uuid"]
 
-Settings = Table(
-    "settings",
-    METADATA,
-    Column("key", String(length=128), primary_key=True, nullable=False),
-    Column("value", JSON, nullable=True),
-)
+    def test_settings_uses_key_as_primary_key(self) -> None:
+        assert list(Settings.primary_key.columns.keys()) == ["key"]
