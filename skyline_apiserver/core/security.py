@@ -38,12 +38,16 @@ def parse_access_token(token: str) -> (schemas.Payload):
     )
 
 
-def generate_profile_by_token(token: schemas.Payload) -> schemas.Profile:
+def generate_profile_by_token(
+    token: schemas.Payload,
+    original_ip: Optional[str] = None,
+) -> schemas.Profile:
     return generate_profile(
         keystone_token=token.keystone_token,
         region=token.region,
         exp=token.exp,
         uuid_value=token.uuid,
+        original_ip=original_ip,
     )
 
 
@@ -52,9 +56,13 @@ def generate_profile(
     region: str,
     exp: Optional[int] = None,
     uuid_value: Optional[str] = None,
+    original_ip: Optional[str] = None,
 ) -> schemas.Profile:
     try:
-        kc = utils.keystone_client(session=get_system_session(), region=region)
+        kc = utils.keystone_client(
+            session=get_system_session(original_ip=original_ip),
+            region=region,
+        )
         token_data = kc.tokens.get_token_data(token=keystone_token)
     except Exception as e:
         raise HTTPException(

@@ -33,11 +33,11 @@ from skyline_apiserver.types import constants
 SESSION = None
 
 
-def generate_session(profile: schemas.Profile) -> Any:
+def generate_session(profile: schemas.Profile, original_ip: Optional[str] = None) -> Any:
     auth_url = get_endpoint(
         region=profile.region,
         service="identity",
-        session=get_system_session(),
+        session=get_system_session(original_ip=original_ip),
     )
     kwargs = {
         "auth_url": auth_url,
@@ -45,34 +45,58 @@ def generate_session(profile: schemas.Profile) -> Any:
         "project_id": profile.project.id,
     }
     auth = Token(**kwargs)
-    session = Session(auth=auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT)
+    session = Session(
+        auth=auth,
+        original_ip=original_ip,
+        verify=CONF.default.cafile,
+        timeout=constants.DEFAULT_TIMEOUT,
+    )
     session.auth.auth_ref = session.auth.get_auth_ref(session)  # type: ignore # noqa E501
     return session
 
 
-def get_system_session() -> Session:
+def get_system_session(original_ip: Optional[str] = None) -> Session:
     global SESSION
-    if SESSION is not None:
+    if SESSION is None:
+        auth = Password(
+            auth_url=CONF.openstack.keystone_url,
+            user_domain_name=CONF.openstack.system_user_domain,
+            username=CONF.openstack.system_user_name,
+            password=CONF.openstack.system_user_password,
+            project_name=CONF.openstack.system_project,
+            project_domain_name=CONF.openstack.system_project_domain,
+            reauthenticate=True,
+        )
+        SESSION = Session(
+            auth=auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT
+        )
+
+    if original_ip is None:
         return SESSION
 
-    auth = Password(
-        auth_url=CONF.openstack.keystone_url,
-        user_domain_name=CONF.openstack.system_user_domain,
-        username=CONF.openstack.system_user_name,
-        password=CONF.openstack.system_user_password,
-        project_name=CONF.openstack.system_project,
-        project_domain_name=CONF.openstack.system_project_domain,
-        reauthenticate=True,
+    # Keep request-specific state off the process-global system session while
+    # reusing its authentication plugin in an ephemeral Session wrapper.
+    return Session(
+        auth=SESSION.auth,
+        session=SESSION.session,
+        original_ip=original_ip,
+        verify=CONF.default.cafile,
+        timeout=constants.DEFAULT_TIMEOUT,
     )
-    SESSION = Session(auth=auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT)
-    return SESSION
 
 
-def get_system_scope_access(keystone_token: str, region: str) -> AccessInfoV3:
-    auth_url = get_endpoint(region, "identity", get_system_session())
+def get_system_scope_access(
+    keystone_token: str,
+    region: str,
+    original_ip: Optional[str] = None,
+) -> AccessInfoV3:
+    auth_url = get_endpoint(region, "identity", get_system_session(original_ip=original_ip))
     scope_auth = Token(auth_url, keystone_token, system_scope="all")
     session = Session(
-        auth=scope_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT
+        auth=scope_auth,
+        original_ip=original_ip,
+        verify=CONF.default.cafile,
+        timeout=constants.DEFAULT_TIMEOUT,
     )
     return session.auth.get_auth_ref(session)  # type: ignore
 

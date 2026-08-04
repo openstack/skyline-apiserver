@@ -24,6 +24,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 
+from skyline_apiserver.api import deps
 from skyline_apiserver.api.v1 import api_router
 from skyline_apiserver.config import CONF, configure
 from skyline_apiserver.context import RequestContext
@@ -114,7 +115,11 @@ async def validate_token(request: Request, call_next):
                 )
 
             # Generate profile from token
-            profile = generate_profile_by_token(parsed_token)
+            original_ip = deps.get_original_ip(request)
+            profile = generate_profile_by_token(
+                parsed_token,
+                original_ip=original_ip,
+            )
 
             # Create RequestContext from profile
             request.state.context = RequestContext(

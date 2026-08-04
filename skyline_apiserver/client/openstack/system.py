@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 from pathlib import PurePath
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from keystoneauth1.identity.v3 import Token
 from keystoneauth1.session import Session
@@ -31,25 +31,30 @@ def get_project_scope_token(
     keystone_token: str,
     region: str,
     project_id: str,
+    original_ip: Optional[str] = None,
 ) -> str:
     auth_url = utils.get_endpoint(
         region=region,
         service="identity",
-        session=get_system_session(),
+        session=get_system_session(original_ip=original_ip),
     )
     kwargs = {"project_id": project_id}
     scope_auth = Token(auth_url=auth_url, token=keystone_token, **kwargs)  # type: ignore
 
     session = Session(
-        auth=scope_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT
+        auth=scope_auth,
+        original_ip=original_ip,
+        verify=CONF.default.cafile,
+        timeout=constants.DEFAULT_TIMEOUT,
     )
     keystone_token = session.get_token()  # type: ignore
 
     return keystone_token
 
 
-def get_endpoints(region: str) -> Dict[str, Any]:
-    access = utils.get_access(session=get_system_session())
+def get_endpoints(region: str, original_ip: Optional[str] = None) -> Dict[str, Any]:
+    system_session = get_system_session(original_ip=original_ip)
+    access = utils.get_access(session=system_session)
     catalogs = access.service_catalog.get_endpoints(
         region_name=region,
         interface=CONF.openstack.interface_type,
@@ -70,7 +75,7 @@ def get_endpoints(region: str) -> Dict[str, Any]:
 
         path = PurePath("/").joinpath(CONF.openstack.nginx_prefix, region.lower(), service)
         endpoints[service] = str(path)
-    nc = utils.neutron_client(session=get_system_session(), region=region)
+    nc = utils.neutron_client(session=system_session, region=region)
     neutron_extentions = nc.list_extensions()
     ext_list = (
         neutron_extentions["extensions"]
@@ -86,9 +91,14 @@ def get_endpoints(region: str) -> Dict[str, Any]:
     return endpoints
 
 
-def get_projects(global_request_id: str, region: str, user: str) -> List[Any]:
+def get_projects(
+    global_request_id: str,
+    region: str,
+    user: str,
+    original_ip: Optional[str] = None,
+) -> List[Any]:
     kc = utils.keystone_client(
-        session=get_system_session(),
+        session=get_system_session(original_ip=original_ip),
         region=region,
         global_request_id=global_request_id,
     )
@@ -96,9 +106,13 @@ def get_projects(global_request_id: str, region: str, user: str) -> List[Any]:
     return projects
 
 
-def get_domains(global_request_id: str, region: str) -> Any:
+def get_domains(
+    global_request_id: str,
+    region: str,
+    original_ip: Optional[str] = None,
+) -> Any:
     kc = utils.keystone_client(
-        session=get_system_session(),
+        session=get_system_session(original_ip=original_ip),
         region=region,
         global_request_id=global_request_id,
     )
@@ -106,8 +120,8 @@ def get_domains(global_request_id: str, region: str) -> Any:
     return domains
 
 
-def get_regions() -> Any:
-    access = utils.get_access(session=get_system_session())
+def get_regions(original_ip: Optional[str] = None) -> Any:
+    access = utils.get_access(session=get_system_session(original_ip=original_ip))
     catalogs = access.service_catalog.get_endpoints(interface=CONF.openstack.interface_type)
     regions = list(set(j["region_id"] for i in catalogs for j in catalogs[i]))  # type: ignore
     return regions

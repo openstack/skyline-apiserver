@@ -1,0 +1,13 @@
+---
+features:
+  - |
+    Added the ``default.secure_proxy_addr_header`` configuration option. When
+    configured, Skyline uses the trusted header's single sanitized client
+    address for the ``Forwarded`` header on server-side OpenStack API
+    requests. Otherwise, Skyline uses the direct ASGI peer address.
+
+    Deployments must configure their proxy to overwrite and sanitize this
+    header. The option takes an HTTP header name such as ``X-Real-IP``.
+    Skyline does not resolve or forward a full ``X-Forwarded-For`` chain.
+    See `LP#2162817
+    <https://bugs.launchpad.net/skyline-apiserver/+bug/2162817>`_.

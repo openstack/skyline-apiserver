@@ -22,6 +22,21 @@ from starlette.requests import Request
 from starlette.responses import Response
 
 from skyline_apiserver import schemas
+from skyline_apiserver.config import CONF
+
+
+def get_original_ip(request: Request) -> Optional[str]:
+    """Return the trusted single client address for an incoming request."""
+    header_name = CONF.default.secure_proxy_addr_header
+    if header_name:
+        header_values = request.headers.getlist(header_name)
+        if len(header_values) == 1:
+            header_value = header_values[0]
+            header_value = header_value.strip()
+            if header_value and "," not in header_value:
+                return header_value
+
+    return request.client.host if request.client else None
 
 
 def getJWTPayload(request: Request) -> Optional[str]:

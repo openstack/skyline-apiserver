@@ -16,6 +16,7 @@ default:
   prometheus_enable_basic_auth: false
   prometheus_endpoint: http://localhost:9091
   secret_key: aCtmgbcUqYUy_HNVg5BDXCaeJgJQzHJXwqbXr0Nmb2o
+  secure_proxy_addr_header: null
   session_name: session
   ssl_enabled: true
 openstack:

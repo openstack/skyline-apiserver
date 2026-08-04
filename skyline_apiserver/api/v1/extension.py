@@ -21,6 +21,7 @@ from dateutil import parser
 from fastapi import status
 from fastapi.param_functions import Depends, Header, Query
 from fastapi.routing import APIRouter
+from starlette.requests import Request
 
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
@@ -59,6 +60,7 @@ STEP = constants.ID_UUID_RANGE_STEP
     response_description="OK",
 )
 def list_servers(
+    request: Request,
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
     x_openstack_request_id: str = Header(
         "",
@@ -123,6 +125,7 @@ def list_servers(
         ),
     ),
 ) -> schemas.ServersResponse:
+    original_ip = deps.get_original_ip(request)
     all_projects = all_projects or False
     if all_projects:
         assert_system_admin_or_reader(
@@ -133,8 +136,8 @@ def list_servers(
         project_id = None
         project_name = None
 
-    current_session = generate_session(profile)
-    system_session = get_system_session()
+    current_session = generate_session(profile, original_ip=original_ip)
+    system_session = get_system_session(original_ip=original_ip)
 
     # Check first if we supply the project_name filter.
     if project_name:
@@ -279,6 +282,7 @@ def list_servers(
     response_description="OK",
 )
 def list_recycle_servers(
+    request: Request,
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
     x_openstack_request_id: str = Header(
         "",
@@ -334,6 +338,7 @@ def list_recycle_servers(
         ),
     ),
 ) -> schemas.RecycleServersResponse:
+    original_ip = deps.get_original_ip(request)
     all_projects = all_projects or False
     if all_projects:
         assert_system_admin_or_reader(
@@ -344,8 +349,8 @@ def list_recycle_servers(
         project_id = None
         project_name = None
 
-    current_session = generate_session(profile)
-    system_session = get_system_session()
+    current_session = generate_session(profile, original_ip=original_ip)
+    system_session = get_system_session(original_ip=original_ip)
 
     # Check first if we supply the project_name filter.
     if project_name:
@@ -494,6 +499,7 @@ def list_recycle_servers(
     response_description="OK",
 )
 def list_volumes(
+    request: Request,
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
     x_openstack_request_id: str = Header(
         "",
@@ -540,9 +546,10 @@ def list_volumes(
         None, description="Filter the list of volumes by the given volumes UUID."
     ),
 ) -> schemas.VolumesResponse:
+    original_ip = deps.get_original_ip(request)
     all_projects = all_projects or False
-    current_session = generate_session(profile)
-    system_session = get_system_session()
+    current_session = generate_session(profile, original_ip=original_ip)
+    system_session = get_system_session(original_ip=original_ip)
     cinder_session = current_session
 
     if all_projects:
@@ -668,6 +675,7 @@ def list_volumes(
     response_description="OK",
 )
 def list_volume_snapshots(
+    request: Request,
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
     x_openstack_request_id: str = Header(
         "",
@@ -703,6 +711,7 @@ def list_volume_snapshots(
         None, description="Filter the list of snapshots by the given snapshot UUID."
     ),
 ) -> schemas.VolumeSnapshotsResponse:
+    original_ip = deps.get_original_ip(request)
     all_projects = all_projects or False
     if all_projects:
         assert_system_admin_or_reader(
@@ -712,8 +721,8 @@ def list_volume_snapshots(
     else:
         project_id = None
 
-    current_session = generate_session(profile=profile)
-    system_session = get_system_session()
+    current_session = generate_session(profile=profile, original_ip=original_ip)
+    system_session = get_system_session(original_ip=original_ip)
 
     sort = None
     if sort_keys:
@@ -752,7 +761,7 @@ def list_volume_snapshots(
                     f"'{volume_snapshot.project_id}', not in '{profile.project.id}'"
                 )
                 return schemas.VolumeSnapshotsResponse(count=0, volume_snapshots=[])
-        snapshot_session = get_system_session()
+        snapshot_session = get_system_session(original_ip=original_ip)
         search_opts["all_tenants"] = True
 
     volume_snapshots, count = cinder.list_volume_snapshots(
@@ -856,6 +865,7 @@ def list_volume_snapshots(
     response_description="OK",
 )
 def list_ports(
+    request: Request,
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
     x_openstack_request_id: str = Header(
         "",
@@ -906,6 +916,7 @@ def list_ports(
         None, description="Filter the list of ports by the given port UUID."
     ),
 ) -> schemas.PortsResponse:
+    original_ip = deps.get_original_ip(request)
     all_projects = all_projects or False
     if all_projects:
         assert_system_admin_or_reader(
@@ -915,7 +926,7 @@ def list_ports(
     else:
         project_id = None
 
-    current_session = generate_session(profile)
+    current_session = generate_session(profile, original_ip=original_ip)
 
     kwargs: Dict[str, Any] = {}
     if limit is not None:
@@ -1042,6 +1053,7 @@ def list_ports(
     response_model_exclude_none=True,
 )
 def compute_services(
+    request: Request,
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
     x_openstack_request_id: str = Header(
         "",
@@ -1053,12 +1065,13 @@ def compute_services(
     ),
     host: str = Query(None, description="Filter the list of compute services by the given host."),
 ) -> schemas.ComputeServicesResponse:
+    original_ip = deps.get_original_ip(request)
     assert_system_admin_or_reader(
         profile=profile,
         exception="Not allowed to get compute services.",
     )
 
-    system_session = utils.get_system_session()
+    system_session = utils.get_system_session(original_ip=original_ip)
 
     kwargs = {}
     if binary is not None:

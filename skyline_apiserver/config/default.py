@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import List, Optional
 
 from pydantic import StrictBool, StrictInt, StrictStr
 
@@ -139,6 +139,18 @@ cafile = Opt(
     default="",
 )
 
+secure_proxy_addr_header = Opt(
+    name="secure_proxy_addr_header",
+    description=(
+        "The actual name of a trusted HTTP header containing a single sanitized "
+        "client address, for example X-Real-IP. When unset or when the header is "
+        "absent, the direct client address is used. The header must be overwritten by "
+        "a trusted proxy."
+    ),
+    schema=Optional[StrictStr],
+    default=None,
+)
+
 policy_file_suffix = Opt(
     name="policy_file_suffix",
     description="policy file suffix",
@@ -168,6 +180,7 @@ ALL_OPTS = (
     session_name,
     ssl_enabled,
     cafile,
+    secure_proxy_addr_header,
     database_url,
     prometheus_endpoint,
     prometheus_enable_basic_auth,

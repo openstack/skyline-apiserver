@@ -24,6 +24,7 @@ from keystoneauth1.exceptions.http import (
     InternalServerError as KeystoneInternalServerError,
     Unauthorized as KeystoneUnauthorized,
 )
+from starlette.requests import Request
 
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
@@ -93,13 +94,19 @@ def _generate_target(profile: schemas.Profile) -> Dict[str, str]:
     response_description="OK",
 )
 def list_policies(
+    request: Request,
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
 ) -> schemas.Policies:
-    session = generate_session(profile)
+    original_ip = deps.get_original_ip(request)
+    session = generate_session(profile, original_ip=original_ip)
     access = get_access(session)
     user_context = UserContext(access)
     try:
-        system_scope_access = get_system_scope_access(profile.keystone_token, profile.region)
+        system_scope_access = get_system_scope_access(
+            profile.keystone_token,
+            profile.region,
+            original_ip=original_ip,
+        )
         user_context["system_scope"] = (
             "all"
             if getattr(system_scope_access, "system")
@@ -148,14 +155,20 @@ def list_policies(
     response_description="OK",
 )
 def check_policies(
+    request: Request,
     policy_rules: schemas.PoliciesRules,
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
 ) -> schemas.Policies:
-    session = generate_session(profile)
+    original_ip = deps.get_original_ip(request)
+    session = generate_session(profile, original_ip=original_ip)
     access = get_access(session)
     user_context = UserContext(access)
     try:
-        system_scope_access = get_system_scope_access(profile.keystone_token, profile.region)
+        system_scope_access = get_system_scope_access(
+            profile.keystone_token,
+            profile.region,
+            original_ip=original_ip,
+        )
         user_context["system_scope"] = (
             "all"
             if getattr(system_scope_access, "system")

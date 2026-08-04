@@ -20,6 +20,7 @@ from fastapi import status
 from fastapi.exceptions import HTTPException
 from fastapi.param_functions import Depends
 from fastapi.routing import APIRouter
+from starlette.requests import Request
 
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
@@ -40,12 +41,13 @@ router = APIRouter()
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-def list_keystone_endpoints() -> List[schemas.KeystoneEndpoints]:
+def list_keystone_endpoints(request: Request) -> List[schemas.KeystoneEndpoints]:
+    original_ip = deps.get_original_ip(request)
     try:
-        regions = system.get_regions()
+        regions = system.get_regions(original_ip=original_ip)
         result = []
         for region in regions:
-            endpoints = get_endpoints(region)
+            endpoints = get_endpoints(region, original_ip=original_ip)
             result.append(
                 schemas.KeystoneEndpoints(
                     **{"region_name": region, "url": endpoints.get("keystone")}
@@ -71,9 +73,14 @@ def list_keystone_endpoints() -> List[schemas.KeystoneEndpoints]:
     response_description="OK",
 )
 def list_domains(
+    request: Request,
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
 ) -> List[str]:
-    return get_domains("", profile.region)
+    return get_domains(
+        "",
+        profile.region,
+        original_ip=deps.get_original_ip(request),
+    )
 
 
 @router.get(
@@ -87,5 +94,5 @@ def list_domains(
     status_code=status.HTTP_200_OK,
     response_description="OK",
 )
-def list_regions() -> List[str]:
-    return get_regions()
+def list_regions(request: Request) -> List[str]:
+    return get_regions(original_ip=deps.get_original_ip(request))

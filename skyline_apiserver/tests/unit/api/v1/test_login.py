@@ -62,7 +62,7 @@ class TestGetUserRegions:
         result = _get_user_regions(mock_profile)
 
         assert result == ["RegionOne", "RegionTwo"]
-        mock_generate_session.assert_called_once_with(mock_profile)
+        mock_generate_session.assert_called_once_with(mock_profile, original_ip=None)
 
     @patch("skyline_apiserver.api.v1.login.generate_session")
     @patch("skyline_apiserver.api.v1.login.utils")
@@ -192,6 +192,7 @@ class TestSwitchRegion:
         mock_profile.projects = {"proj-1": {}}
         mock_profile.regions = ["RegionOne", "RegionTwo"]
         mock_deps.get_profile.return_value = mock_profile
+        mock_deps.get_original_ip.return_value = "198.51.100.20"
 
         new_profile = MagicMock()
         mock_gen_profile.return_value = new_profile
@@ -213,6 +214,7 @@ class TestSwitchRegion:
         mock_gen_profile.assert_called_once_with(
             keystone_token="keystone-token-xyz",
             region="RegionTwo",
+            original_ip="198.51.100.20",
         )
         assert result == new_profile
 
@@ -713,12 +715,16 @@ class TestLoginTotpEndpoint:
 
         from skyline_apiserver.api.v1.login import login_totp
 
-        result = login_totp(
-            request=mock_request,
-            response=mock_response,
-            credential=credential,
-            x_openstack_request_id="req-id",
-        )
+        with patch(
+            "skyline_apiserver.api.v1.login.deps.get_original_ip",
+            return_value="198.51.100.20",
+        ):
+            result = login_totp(
+                request=mock_request,
+                response=mock_response,
+                credential=credential,
+                x_openstack_request_id="req-id",
+            )
 
         mock_get_totp_session.assert_called_once_with(
             region="RegionOne",
@@ -726,6 +732,7 @@ class TestLoginTotpEndpoint:
             username="admin",
             passcode="123456",
             receipt="receipt-token",
+            original_ip="198.51.100.20",
         )
         mock_finish_login.assert_called_once_with(
             unscope_token="unscoped-token",
@@ -733,6 +740,7 @@ class TestLoginTotpEndpoint:
             response=mock_response,
             x_openstack_request_id="req-id",
             project_enabled=True,
+            original_ip="198.51.100.20",
         )
         assert result == mock_profile
 
@@ -766,13 +774,26 @@ class TestLoginTotpEndpoint:
 
         from skyline_apiserver.api.v1.login import login_totp
 
-        with pytest.raises(HTTPException) as exc_info:
-            login_totp(
-                request=MagicMock(),
-                response=MagicMock(),
-                credential=credential,
-                x_openstack_request_id="req-id",
-            )
+        with patch(
+            "skyline_apiserver.api.v1.login.deps.get_original_ip",
+            return_value="198.51.100.20",
+        ):
+            with pytest.raises(HTTPException) as exc_info:
+                login_totp(
+                    request=MagicMock(),
+                    response=MagicMock(),
+                    credential=credential,
+                    x_openstack_request_id="req-id",
+                )
+
+        mock_get_totp_session.assert_called_once_with(
+            region="RegionOne",
+            domain="Default",
+            username="admin",
+            passcode="000000",
+            receipt="receipt-token",
+            original_ip="198.51.100.20",
+        )
 
         assert exc_info.value.status_code == 401
         assert exc_info.value.detail == "invalid_totp"
@@ -807,13 +828,26 @@ class TestLoginTotpEndpoint:
 
         from skyline_apiserver.api.v1.login import login_totp
 
-        with pytest.raises(HTTPException) as exc_info:
-            login_totp(
-                request=MagicMock(),
-                response=MagicMock(),
-                credential=credential,
-                x_openstack_request_id="req-id",
-            )
+        with patch(
+            "skyline_apiserver.api.v1.login.deps.get_original_ip",
+            return_value="198.51.100.20",
+        ):
+            with pytest.raises(HTTPException) as exc_info:
+                login_totp(
+                    request=MagicMock(),
+                    response=MagicMock(),
+                    credential=credential,
+                    x_openstack_request_id="req-id",
+                )
+
+        mock_get_totp_session.assert_called_once_with(
+            region="RegionOne",
+            domain="Default",
+            username="admin",
+            passcode="123456",
+            receipt="expired-receipt",
+            original_ip="198.51.100.20",
+        )
 
         assert exc_info.value.status_code == 401
         assert exc_info.value.detail == "receipt_expired"

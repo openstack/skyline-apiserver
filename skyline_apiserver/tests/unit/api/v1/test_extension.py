@@ -114,24 +114,34 @@ class TestListRecycleServersReal:
         mock_schemas.RecycleServersResponse.return_value = mock_response
 
         # Call the actual function
-        result = list_recycle_servers(
-            profile=mock_profile,
-            x_openstack_request_id="test-request-id",
-            all_projects=False,
-            limit=None,
-            marker=None,
-            sort_dirs=None,
-            sort_keys=None,
-            project_id=None,
-            project_name=None,
-            name=None,
-            uuid=None,
-            ip="10.0.0.5",
-        )
+        with patch(
+            "skyline_apiserver.api.v1.extension.deps.get_original_ip",
+            return_value="198.51.100.20",
+        ):
+            result = list_recycle_servers(
+                request=Mock(),
+                profile=mock_profile,
+                x_openstack_request_id="test-request-id",
+                all_projects=False,
+                limit=None,
+                marker=None,
+                sort_dirs=None,
+                sort_keys=None,
+                project_id=None,
+                project_name=None,
+                name=None,
+                uuid=None,
+                ip="10.0.0.5",
+            )
 
         # Assertions
         assert result is not None
         assert hasattr(result, "recycle_servers")
+        mock_generate_session.assert_called_once_with(
+            mock_profile,
+            original_ip="198.51.100.20",
+        )
+        mock_get_system_session.assert_called_once_with(original_ip="198.51.100.20")
 
         # Verify nova.list_servers was called with correct parameters
         mock_nova.list_servers.assert_called_once()
@@ -225,26 +235,36 @@ class TestListVolumesReal:
         # 调用被测函数
         from skyline_apiserver.api.v1.extension import list_volumes
 
-        result = list_volumes(
-            profile=mock_profile,
-            x_openstack_request_id="test-request-id",
-            all_projects=False,
-            limit=None,
-            marker=None,
-            sort_dirs=None,
-            sort_keys=None,
-            project_id=None,
-            name=None,
-            multiattach=None,
-            status=None,
-            bootable=None,
-            uuid=None,
-        )
+        with patch(
+            "skyline_apiserver.api.v1.extension.deps.get_original_ip",
+            return_value="198.51.100.20",
+        ):
+            result = list_volumes(
+                request=Mock(),
+                profile=mock_profile,
+                x_openstack_request_id="test-request-id",
+                all_projects=False,
+                limit=None,
+                marker=None,
+                sort_dirs=None,
+                sort_keys=None,
+                project_id=None,
+                name=None,
+                multiattach=None,
+                status=None,
+                bootable=None,
+                uuid=None,
+            )
 
         # 断言
         assert result is not None
         assert hasattr(result, "volumes")
         assert hasattr(result, "count")
+        mock_generate_session.assert_called_once_with(
+            mock_profile,
+            original_ip="198.51.100.20",
+        )
+        mock_get_system_session.assert_called_once_with(original_ip="198.51.100.20")
         mock_cinder.list_volumes.assert_called_once()
         mock_nova.list_servers.assert_called()
 
@@ -321,25 +341,35 @@ class TestListServersReal:
         from skyline_apiserver.api.v1.extension import list_servers
 
         # Call function with a set of filters to verify passthrough
-        result = list_servers(
-            profile=mock_profile,
-            x_openstack_request_id="req-1",
-            all_projects=False,
-            limit=None,
-            marker=None,
-            sort_dirs=None,
-            sort_keys=[],
-            project_id="should-be-ignored",
-            project_name=None,
-            name="vm-1",
-            status=None,
-            host="compute-1",
-            flavor_id="flavor-1",
-            uuid="uuid-1",
-            ip="10.0.0.5",
-        )
+        with patch(
+            "skyline_apiserver.api.v1.extension.deps.get_original_ip",
+            return_value="198.51.100.20",
+        ):
+            result = list_servers(
+                request=Mock(),
+                profile=mock_profile,
+                x_openstack_request_id="req-1",
+                all_projects=False,
+                limit=None,
+                marker=None,
+                sort_dirs=None,
+                sort_keys=[],
+                project_id="should-be-ignored",
+                project_name=None,
+                name="vm-1",
+                status=None,
+                host="compute-1",
+                flavor_id="flavor-1",
+                uuid="uuid-1",
+                ip="10.0.0.5",
+            )
 
         assert result is not None
+        mock_generate_session.assert_called_once_with(
+            mock_profile,
+            original_ip="198.51.100.20",
+        )
+        mock_get_system_session.assert_called_once_with(original_ip="198.51.100.20")
         mock_nova.list_servers.assert_called_once()
         call_args = mock_nova.list_servers.call_args
         assert call_args[1]["session"] == mock_current_session

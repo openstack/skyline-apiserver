@@ -150,6 +150,7 @@ def _build_profile_from_unscope(
     x_openstack_request_id: str,
     project_scope: List[Any],
     default_project_id: Optional[str],
+    original_ip: Optional[str] = None,
 ) -> schemas.Profile:
     if default_project_id not in [i.id for i in project_scope]:
         default_project_id = None
@@ -157,12 +158,14 @@ def _build_profile_from_unscope(
         keystone_token=unscope_token,
         region=region,
         project_id=default_project_id or project_scope[0].id,
+        original_ip=original_ip,
     )
     profile = generate_profile(
         keystone_token=project_scope_token,
         region=region,
+        original_ip=original_ip,
     )
-    return _patch_profile(profile, x_openstack_request_id)
+    return _patch_profile(profile, x_openstack_request_id, original_ip=original_ip)
 
 
 def _set_login_cookies(response: Response, profile: schemas.Profile) -> None:
@@ -176,11 +179,13 @@ def _finish_login(
     response: Response,
     x_openstack_request_id: str,
     project_enabled: bool = True,
+    original_ip: Optional[str] = None,
 ) -> schemas.Profile:
     project_scope, _, default_project_id = _get_projects_and_unscope_token(
         region=region,
         token=unscope_token,
         project_enabled=project_enabled,
+        original_ip=original_ip,
     )
     profile = _build_profile_from_unscope(
         unscope_token=unscope_token,
@@ -188,6 +193,7 @@ def _finish_login(
         x_openstack_request_id=x_openstack_request_id,
         project_scope=project_scope,
         default_project_id=default_project_id,
+        original_ip=original_ip,
     )
     _set_login_cookies(response, profile)
     return profile
@@ -199,11 +205,12 @@ def _get_totp_session(
     username: str,
     passcode: str,
     receipt: str,
+    original_ip: Optional[str] = None,
 ) -> Session:
     auth_url = utils.get_endpoint(
         region=region,
         service="identity",
-        session=get_system_session(),
+        session=get_system_session(original_ip=original_ip),
     )
     totp_auth = v3_auth.TOTP(
         auth_url=auth_url,
@@ -212,13 +219,21 @@ def _get_totp_session(
         user_domain_name=domain,
     )
     totp_auth.add_method(v3_auth.ReceiptMethod(receipt=receipt))
-    return Session(auth=totp_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT)
+    return Session(
+        auth=totp_auth,
+        original_ip=original_ip,
+        verify=CONF.default.cafile,
+        timeout=constants.DEFAULT_TIMEOUT,
+    )
 
 
 def _get_default_project_id(
-    session: Session, region: str, user_id: Optional[str] = None
+    session: Session,
+    region: str,
+    user_id: Optional[str] = None,
+    original_ip: Optional[str] = None,
 ) -> Union[str, None]:
-    system_session = get_system_session()
+    system_session = get_system_session(original_ip=original_ip)
     if not user_id:
         token = session.get_token()
         token_data = get_token_data(token, region, system_session)  # type: ignore
@@ -236,11 +251,12 @@ def _get_projects_and_unscope_token(
     password: Optional[str] = None,
     token: Optional[str] = None,
     project_enabled: bool = False,
+    original_ip: Optional[str] = None,
 ) -> Tuple[List[Any], str, Union[str, None]]:
     auth_url = utils.get_endpoint(
         region=region,
         service="identity",
-        session=get_system_session(),
+        session=get_system_session(original_ip=original_ip),
     )
 
     if token:
@@ -259,7 +275,10 @@ def _get_projects_and_unscope_token(
         )
 
     session = Session(
-        auth=unscope_auth, verify=CONF.default.cafile, timeout=constants.DEFAULT_TIMEOUT
+        auth=unscope_auth,
+        original_ip=original_ip,
+        verify=CONF.default.cafile,
+        timeout=constants.DEFAULT_TIMEOUT,
     )
 
     if not token:
@@ -283,14 +302,21 @@ def _get_projects_and_unscope_token(
     if not project_scope:
         raise Exception("You are not authorized for any projects or domains.")
 
-    default_project_id = _get_default_project_id(session, region)
+    default_project_id = _get_default_project_id(
+        session,
+        region,
+        original_ip=original_ip,
+    )
 
     return project_scope, unscope_token, default_project_id  # type: ignore
 
 
-def _get_user_regions(profile: schemas.Profile) -> List[str]:
+def _get_user_regions(
+    profile: schemas.Profile,
+    original_ip: Optional[str] = None,
+) -> List[str]:
     try:
-        user_session = generate_session(profile)
+        user_session = generate_session(profile, original_ip=original_ip)
         access = utils.get_access(session=user_session)
         catalogs: Dict[str, Any] = (
             access.service_catalog.get_endpoints(interface=CONF.openstack.interface_type) or {}
@@ -301,24 +327,37 @@ def _get_user_regions(profile: schemas.Profile) -> List[str]:
         return []
 
 
-def _patch_profile(profile: schemas.Profile, global_request_id: str) -> schemas.Profile:
+def _patch_profile(
+    profile: schemas.Profile,
+    global_request_id: str,
+    original_ip: Optional[str] = None,
+) -> schemas.Profile:
     try:
-        profile.regions = _get_user_regions(profile)
-        profile.endpoints = get_endpoints(region=profile.region)
+        profile.regions = _get_user_regions(profile, original_ip=original_ip)
+        profile.endpoints = get_endpoints(
+            region=profile.region,
+            original_ip=original_ip,
+        )
 
         projects = get_projects(
             global_request_id=global_request_id,
             region=profile.region,
             user=profile.user.id,
+            original_ip=original_ip,
         )
 
         if not projects:
             projects, _, default_project_id = _get_projects_and_unscope_token(
-                region=profile.region, token=profile.keystone_token
+                region=profile.region,
+                token=profile.keystone_token,
+                original_ip=original_ip,
             )
         else:
             default_project_id = _get_default_project_id(
-                get_system_session(), profile.region, user_id=profile.user.id
+                get_system_session(original_ip=original_ip),
+                profile.region,
+                user_id=profile.user.id,
+                original_ip=original_ip,
             )
 
         profile.projects = {
@@ -365,6 +404,7 @@ def login(
 ) -> schemas.Profile:
     region = CONF.openstack.default_region
     domain = credential.domain or CONF.openstack.user_default_domain
+    original_ip = deps.get_original_ip(request)
     try:
         (project_scope, unscope_token, default_project_id,) = _get_projects_and_unscope_token(
             region=region,
@@ -372,6 +412,7 @@ def login(
             username=credential.username,
             password=credential.password,
             project_enabled=True,
+            original_ip=original_ip,
         )
         profile = _build_profile_from_unscope(
             unscope_token=unscope_token,
@@ -379,6 +420,7 @@ def login(
             x_openstack_request_id=x_openstack_request_id,
             project_scope=project_scope,
             default_project_id=default_project_id,
+            original_ip=original_ip,
         )
     except HTTPException:
         raise
@@ -415,6 +457,7 @@ def login_totp(
 ) -> schemas.Profile:
     region = credential.region or CONF.openstack.default_region
     domain = credential.domain or CONF.openstack.user_default_domain
+    original_ip = deps.get_original_ip(request)
 
     try:
         totp_session = _get_totp_session(
@@ -423,6 +466,7 @@ def login_totp(
             username=credential.username,
             passcode=credential.passcode,
             receipt=credential.receipt,
+            original_ip=original_ip,
         )
         unscope_token = totp_session.get_token()
         if not unscope_token:
@@ -436,6 +480,7 @@ def login_totp(
             response=response,
             x_openstack_request_id=x_openstack_request_id,
             project_enabled=True,
+            original_ip=original_ip,
         )
     except HTTPException:
         raise
@@ -518,6 +563,7 @@ def get_sso(request: Request) -> schemas.SSO:
     response_description="Redirect",
 )
 def websso(
+    request: Request,
     token: str = Form(...),
     x_openstack_request_id: str = Header(
         "",
@@ -525,11 +571,13 @@ def websso(
         regex=constants.INBOUND_HEADER_REGEX,
     ),
 ) -> RedirectResponse:
+    original_ip = deps.get_original_ip(request)
     try:
         project_scope, _, default_project_id = _get_projects_and_unscope_token(
             region=CONF.openstack.sso_region,
             token=token,
             project_enabled=True,
+            original_ip=original_ip,
         )
 
         if default_project_id not in [i.id for i in project_scope]:
@@ -538,14 +586,20 @@ def websso(
             keystone_token=token,
             region=CONF.openstack.sso_region,
             project_id=default_project_id or project_scope[0].id,
+            original_ip=original_ip,
         )
 
         profile = generate_profile(
             keystone_token=project_scope_token,
             region=CONF.openstack.sso_region,
+            original_ip=original_ip,
         )
 
-        profile = _patch_profile(profile, x_openstack_request_id)
+        profile = _patch_profile(
+            profile,
+            x_openstack_request_id,
+            original_ip=original_ip,
+        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -570,6 +624,7 @@ def websso(
     response_description="OK",
 )
 def get_profile(
+    request: Request,
     profile: schemas.Profile = Depends(deps.get_profile_update_jwt),
     x_openstack_request_id: str = Header(
         "",
@@ -577,7 +632,11 @@ def get_profile(
         regex=constants.INBOUND_HEADER_REGEX,
     ),
 ) -> schemas.Profile:
-    return _patch_profile(profile, x_openstack_request_id)
+    return _patch_profile(
+        profile,
+        x_openstack_request_id,
+        original_ip=deps.get_original_ip(request),
+    )
 
 
 @router.post(
@@ -602,9 +661,10 @@ def logout(
 ) -> schemas.Message:
     if payload:
         try:
+            original_ip = deps.get_original_ip(request)
             token = parse_access_token(payload)
-            profile = generate_profile_by_token(token)
-            session = generate_session(profile)
+            profile = generate_profile_by_token(token, original_ip=original_ip)
+            session = generate_session(profile, original_ip=original_ip)
             revoke_token(profile, session, x_openstack_request_id, token.keystone_token)
             db_api.revoke_token(profile.uuid, profile.exp)
         except Exception as e:
@@ -635,6 +695,7 @@ def switch_project(
     ),
 ) -> schemas.Profile:
     profile = deps.get_profile(request)
+    original_ip = deps.get_original_ip(request)
     region = profile.region
     if profile.projects and project_id not in profile.projects:
         raise HTTPException(
@@ -646,12 +707,18 @@ def switch_project(
             keystone_token=profile.keystone_token,
             region=region,
             project_id=project_id,
+            original_ip=original_ip,
         )
         new_profile = generate_profile(
             keystone_token=project_scope_token,
             region=region,
+            original_ip=original_ip,
         )
-        new_profile = _patch_profile(new_profile, x_openstack_request_id)
+        new_profile = _patch_profile(
+            new_profile,
+            x_openstack_request_id,
+            original_ip=original_ip,
+        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -685,7 +752,11 @@ def switch_region(
     ),
 ) -> schemas.Profile:
     profile = deps.get_profile(request)
-    allowed_regions = profile.regions or _get_user_regions(profile)
+    original_ip = deps.get_original_ip(request)
+    allowed_regions = profile.regions or _get_user_regions(
+        profile,
+        original_ip=original_ip,
+    )
     if region not in allowed_regions:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -695,8 +766,13 @@ def switch_region(
         new_profile = generate_profile(
             keystone_token=profile.keystone_token,
             region=region,
+            original_ip=original_ip,
         )
-        new_profile = _patch_profile(new_profile, x_openstack_request_id)
+        new_profile = _patch_profile(
+            new_profile,
+            x_openstack_request_id,
+            original_ip=original_ip,
+        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
