@@ -529,19 +529,31 @@ def get_sso(request: Request) -> schemas.SSO:
         base_url = f"{url_scheme}://{request.url.hostname}{port}"
         base_path = str(PurePath("/").joinpath(CONF.openstack.nginx_prefix, "skyline"))
 
-        for protocol in CONF.openstack.sso_protocols:
+        origin = f"{base_url}{base_path}{constants.API_PREFIX}/websso"
 
-            url = (
-                f"{ks_url}/auth/OS-FEDERATION/websso/{protocol}"
-                f"?origin={base_url}{base_path}{constants.API_PREFIX}/websso"
-            )
-
-            protocols.append(
-                {
-                    "protocol": protocol,
-                    "url": url,
-                }
-            )
+        if CONF.openstack.sso_identity_providers:
+            for idp in CONF.openstack.sso_identity_providers:
+                url = (
+                    f"{ks_url}/auth/OS-FEDERATION/identity_providers/{idp['name']}"
+                    f"/protocols/{idp['protocol']}/websso"
+                    f"?origin={origin}"
+                )
+                protocols.append(
+                    {
+                        "protocol": idp["protocol"],
+                        "url": url,
+                        "label": idp["label"],
+                    }
+                )
+        else:
+            for protocol in CONF.openstack.sso_protocols:
+                url = f"{ks_url}/auth/OS-FEDERATION/websso/{protocol}?origin={origin}"
+                protocols.append(
+                    {
+                        "protocol": protocol,
+                        "url": url,
+                    }
+                )
 
         sso = {
             "enable_sso": CONF.openstack.sso_enabled,
