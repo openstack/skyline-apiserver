@@ -1,0 +1,12 @@
+---
+fixes:
+  - |
+    Fixed image filters being ignored when listing images. Filters were passed
+    to the OpenStack SDK nested under a ``filters`` key, but the SDK expects
+    query parameters as direct arguments and silently drops unknown ones. As a
+    result the identifier filter had no effect and every request listed all
+    images visible to the service user instead of only those needed. Errors
+    returned while listing images are now reported with the intended status
+    code as well, instead of escaping the error handling because the results
+    were fetched lazily.
+    `LP#2165992 <https://bugs.launchpad.net/skyline-apiserver/+bug/2165992>`_
