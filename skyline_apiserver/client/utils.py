@@ -122,9 +122,10 @@ def image_client(
     endpoint = get_endpoint(region, "image", session=session)
     client = openstack.connection.Connection(
         session=session,
-        endpoint=endpoint,
-        global_request_id=global_request_id,
+        region_name=region,
+        image_endpoint_override=endpoint,
     )
+    client.image.global_request_id = global_request_id
     return client
 
 
