@@ -1,0 +1,12 @@
+---
+fixes:
+  - |
+    Fixed the Glance client querying the wrong region. The endpoint resolved
+    from the service catalog was passed to the OpenStack SDK connection as
+    ``endpoint``, which is not a valid parameter and was silently discarded.
+    Since no region was given either, the SDK resolved the image endpoint on
+    its own and could pick a different region than the one requested. In
+    multi-region deployments this made the instance list show an empty image
+    name and the generic operating system icon for every instance, because the
+    image lookup returned nothing while the request still succeeded.
+    `LP#2165992 <https://bugs.launchpad.net/skyline-apiserver/+bug/2165992>`_
