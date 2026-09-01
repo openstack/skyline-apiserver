@@ -34,13 +34,13 @@ def list_images(
     try:
         kwargs = {}
         if filters:
-            kwargs["filters"] = filters
+            kwargs.update(filters)
         ic = utils.image_client(
             session=session,
             region=profile.region,
             global_request_id=global_request_id,
         )
-        return ic.image.images(**kwargs)
+        return list(ic.image.images(**kwargs))
     except Unauthorized as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
