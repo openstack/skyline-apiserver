@@ -1,0 +1,11 @@
+---
+features:
+  - |
+    Adds the ``sso_identity_providers`` configuration option. When set, the
+    ``/sso`` endpoint returns one entry per configured identity provider,
+    each pointing directly at its Keystone federation URL and carrying a
+    ``label`` for display. Previously a single generic entry per protocol
+    was returned, which left the identity provider selection to the
+    federation endpoint. When the option is unset, the previous behaviour
+    is preserved.
+

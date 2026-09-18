@@ -19,7 +19,7 @@ from typing import Dict, List
 from pydantic import HttpUrl, StrictBool, StrictInt, StrictStr
 
 from skyline_apiserver.config.base import Opt
-from skyline_apiserver.types import InterfaceType
+from skyline_apiserver.types import InterfaceType, SSOIdentityProvider
 
 keystone_url = Opt(
     name="keystone_url",
@@ -199,12 +199,20 @@ sso_region = Opt(
     default="RegionOne",
 )
 
+sso_identity_providers = Opt(
+    name="sso_identity_providers",
+    description="List of SSO identity providers (name, protocol, label)",
+    schema=List[SSOIdentityProvider],
+    default=[],
+)
+
 GROUP_NAME = __name__.split(".")[-1]
 ALL_OPTS = (
     enforce_new_defaults,
     sso_enabled,
     sso_protocols,
     sso_region,
+    sso_identity_providers,
     keystone_url,
     system_project_domain,
     system_project,

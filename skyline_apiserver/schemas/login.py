@@ -152,6 +152,7 @@ class TOTPCredential(BaseModel):
 class SSOInfo(BaseModel):
     protocol: str
     url: str
+    label: Optional[str] = None
 
 
 class SSO(BaseModel):
