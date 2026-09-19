@@ -28,7 +28,11 @@ from skyline_apiserver.api import deps
 from skyline_apiserver.api.v1 import api_router
 from skyline_apiserver.config import CONF, configure
 from skyline_apiserver.context import RequestContext
-from skyline_apiserver.core.security import generate_profile_by_token, parse_access_token
+from skyline_apiserver.core.security import (
+    generate_profile,
+    generate_profile_by_token,
+    parse_access_token,
+)
 from skyline_apiserver.db import api as db_api, setup as db_setup
 from skyline_apiserver.log import LOG, setup as log_setup
 from skyline_apiserver.policy import setup as policies_setup
@@ -93,9 +97,16 @@ async def validate_token(request: Request, call_next):
             return await call_next(request)
 
     if url_path.startswith(constants.API_PREFIX):
-        # Get token from cookie
-        token = request.cookies.get(CONF.default.session_name)
-        if not token:
+        # Get token from the session cookie (the apiserver's own signed
+        # JWT) or fall back to the X-Auth-Token header that skyline-console
+        # sends. skyline-console authenticates every API call with the raw
+        # Keystone token it receives from /v3/auth in the X-Auth-Token header
+        # rather than relying on the session cookie. Without this fallback
+        # every post-login request 401s and the UI reports a bogus
+        # "Incorrect username or password" (upstream LP#2103711).
+        cookie_token = request.cookies.get(CONF.default.session_name)
+        header_token = request.headers.get("X-Auth-Token")
+        if not (cookie_token or header_token):
             return JSONResponse(
                 content={"message": "Unauthorized: Token not found"},
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -105,21 +116,31 @@ async def validate_token(request: Request, call_next):
             # Purge revoked tokens
             db_api.purge_revoked_token()
 
-            # Parse and validate token
-            parsed_token = parse_access_token(token)
-            is_revoked = db_api.check_token(parsed_token.uuid)
-            if is_revoked:
-                return JSONResponse(
-                    content={"message": "Unauthorized: Token revoked"},
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                )
-
-            # Generate profile from token
             original_ip = deps.get_original_ip(request)
-            profile = generate_profile_by_token(
-                parsed_token,
-                original_ip=original_ip,
-            )
+
+            if cookie_token:
+                # Parse and validate the signed session JWT
+                parsed_token = parse_access_token(cookie_token)
+                is_revoked = db_api.check_token(parsed_token.uuid)
+                if is_revoked:
+                    return JSONResponse(
+                        content={"message": "Unauthorized: Token revoked"},
+                        status_code=status.HTTP_401_UNAUTHORIZED,
+                    )
+                # Generate profile from token
+                profile = generate_profile_by_token(
+                    parsed_token,
+                    original_ip=original_ip,
+                )
+            else:
+                # A raw Keystone token was supplied via X-Auth-Token; validate
+                # it live against Keystone the same way /login does and build
+                # the profile from the token data.
+                profile = generate_profile(
+                    keystone_token=header_token or "",
+                    region=CONF.openstack.default_region,
+                    original_ip=original_ip,
+                )
 
             # Create RequestContext from profile
             request.state.context = RequestContext(
