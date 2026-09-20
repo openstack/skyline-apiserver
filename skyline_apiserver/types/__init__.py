@@ -17,6 +17,8 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any, Callable, Dict, Optional, TypeVar
 
+from pydantic import BaseModel, StrictStr
+
 # Function types
 Fn = TypeVar("Fn", bound=Callable[..., Any])
 
@@ -25,6 +27,12 @@ class InterfaceType(str, Enum):
     internal = "internal"
     admin = "admin"
     public = "public"
+
+
+class SSOIdentityProvider(BaseModel):
+    name: StrictStr
+    protocol: StrictStr
+    label: StrictStr
 
 
 SchemaT = Dict[str, Any]

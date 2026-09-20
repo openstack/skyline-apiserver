@@ -889,3 +889,80 @@ class TestTOTPCredentialSchema:
             "totp_required": True,
             "receipt": "abc",
         }
+
+
+class TestGetSSO:
+    """Tests for get_sso endpoint."""
+
+    ORIGIN = "https://skyline.example.com/api/openstack/skyline/api/v1/websso"
+    KEYSTONE = "https://keystone.example.com/v3"
+
+    @staticmethod
+    def _request():
+        request = MagicMock()
+        request.url.hostname = "skyline.example.com"
+        request.url.port = None
+        return request
+
+    @staticmethod
+    def _configure(mock_conf, identity_providers=None, protocols=None, enabled=True):
+        mock_conf.openstack.sso_enabled = enabled
+        mock_conf.openstack.keystone_url = "https://keystone.example.com/v3/"
+        mock_conf.openstack.nginx_prefix = "/api/openstack"
+        mock_conf.openstack.sso_protocols = ["openid"] if protocols is None else protocols
+        mock_conf.openstack.sso_identity_providers = identity_providers or []
+        mock_conf.default.ssl_enabled = True
+
+    @patch("skyline_apiserver.api.v1.login.CONF")
+    def test_get_sso_returns_one_option_per_identity_provider(self, mock_conf):
+        """Each configured identity provider yields its own login option."""
+        self._configure(
+            mock_conf,
+            identity_providers=[
+                {"name": "keycloak", "protocol": "openid", "label": "KeyCloak SSO"},
+                {"name": "adfs", "protocol": "openid", "label": "Corporate ADFS"},
+            ],
+        )
+
+        from skyline_apiserver.api.v1.login import get_sso
+
+        result = get_sso(request=self._request())
+
+        assert result.enable_sso is True
+        assert [p.label for p in result.protocols] == ["KeyCloak SSO", "Corporate ADFS"]
+        assert result.protocols[0].url == (
+            f"{self.KEYSTONE}/auth/OS-FEDERATION/identity_providers/keycloak"
+            f"/protocols/openid/websso?origin={self.ORIGIN}"
+        )
+        assert result.protocols[1].url == (
+            f"{self.KEYSTONE}/auth/OS-FEDERATION/identity_providers/adfs"
+            f"/protocols/openid/websso?origin={self.ORIGIN}"
+        )
+
+    @patch("skyline_apiserver.api.v1.login.CONF")
+    def test_get_sso_falls_back_to_protocols_without_identity_providers(self, mock_conf):
+        """Without identity providers the generic per-protocol option is kept."""
+        self._configure(mock_conf, identity_providers=[], protocols=["openid"])
+
+        from skyline_apiserver.api.v1.login import get_sso
+
+        result = get_sso(request=self._request())
+
+        assert len(result.protocols) == 1
+        assert result.protocols[0].protocol == "openid"
+        assert result.protocols[0].label is None
+        assert result.protocols[0].url == (
+            f"{self.KEYSTONE}/auth/OS-FEDERATION/websso/openid?origin={self.ORIGIN}"
+        )
+
+    @patch("skyline_apiserver.api.v1.login.CONF")
+    def test_get_sso_disabled_returns_no_protocols(self, mock_conf):
+        """SSO disabled short-circuits before any provider is inspected."""
+        self._configure(mock_conf, enabled=False)
+
+        from skyline_apiserver.api.v1.login import get_sso
+
+        result = get_sso(request=self._request())
+
+        assert result.enable_sso is False
+        assert result.protocols == []

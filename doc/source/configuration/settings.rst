@@ -61,6 +61,7 @@ file ``skyline.yaml.sample`` in ``etc`` directory.
         placement: placement
         sharev2: manilav2
       sso_enabled: false
+      sso_identity_providers: []
       sso_protocols:
       - openid
       sso_region: RegionOne
