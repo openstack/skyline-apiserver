@@ -1,0 +1,7 @@
+---
+features:
+  - |
+    Add ``messaging: zaqar`` into service_mapping of skyline config. So that we will
+    generate zaqar related endpoint into nginx file.
+  - |
+    Add zaqar related policies. So that we provide policies of zaqar to skyline-console.
