@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from fastapi import status
 from fastapi.exceptions import HTTPException
@@ -30,17 +30,23 @@ def list_images(
     session: Session,
     global_request_id: str,
     filters: Optional[Dict[str, Any]] = None,
-) -> Any:
+) -> List[Any]:
+    """List images via openstacksdk.
+
+    ``filters`` are passed as direct query keyword arguments to
+    ``connection.image.images()`` (for example ``id="in:..."``), matching
+    ``Image._query_mapping``. Nesting them under a ``filters`` key is not
+    supported by the SDK and would be silently dropped.
+    """
     try:
-        kwargs = {}
-        if filters:
-            kwargs.update(filters)
         ic = utils.image_client(
             session=session,
             region=profile.region,
             global_request_id=global_request_id,
         )
-        return list(ic.image.images(**kwargs))
+        # Materialise inside the try block: images() is a lazy generator, so
+        # API errors would otherwise escape the HTTPException mapping below.
+        return list(ic.image.images(**(filters or {})))
     except Unauthorized as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
