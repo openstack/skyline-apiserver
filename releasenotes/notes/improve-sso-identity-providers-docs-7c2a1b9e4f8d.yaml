@@ -1,0 +1,11 @@
+---
+fixes:
+  - |
+    The ``/sso`` endpoint now omits null ``label`` fields from its response,
+    avoiding blank SSO option names when older UIs spread the API payload
+    over computed labels.
+other:
+  - |
+    Documented ``sso_identity_providers`` in the settings reference, including
+    the example format and that ``sso_protocols`` is ignored when identity
+    providers are configured.

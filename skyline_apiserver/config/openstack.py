@@ -185,7 +185,10 @@ sso_enabled = Opt(
 
 sso_protocols = Opt(
     name="sso_protocols",
-    description="SSO protocol list",
+    description=(
+        "SSO protocol list used when sso_identity_providers is empty. "
+        "Ignored when sso_identity_providers is set."
+    ),
     schema=List[StrictStr],
     default=[
         "openid",
@@ -201,7 +204,11 @@ sso_region = Opt(
 
 sso_identity_providers = Opt(
     name="sso_identity_providers",
-    description="List of SSO identity providers (name, protocol, label)",
+    description=(
+        "List of SSO identity providers. Each entry needs name, protocol and "
+        "label. When set, /sso returns one option per provider and "
+        "sso_protocols is ignored."
+    ),
     schema=List[SSOIdentityProvider],
     default=[],
 )

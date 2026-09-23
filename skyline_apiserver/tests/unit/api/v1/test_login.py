@@ -951,9 +951,10 @@ class TestGetSSO:
         assert len(result.protocols) == 1
         assert result.protocols[0].protocol == "openid"
         assert result.protocols[0].label is None
-        assert result.protocols[0].url == (
-            f"{self.KEYSTONE}/auth/OS-FEDERATION/websso/openid?origin={self.ORIGIN}"
-        )
+        assert result.protocols[0].model_dump(exclude_none=True) == {
+            "protocol": "openid",
+            "url": f"{self.KEYSTONE}/auth/OS-FEDERATION/websso/openid?origin={self.ORIGIN}",
+        }
 
     @patch("skyline_apiserver.api.v1.login.CONF")
     def test_get_sso_disabled_returns_no_protocols(self, mock_conf):

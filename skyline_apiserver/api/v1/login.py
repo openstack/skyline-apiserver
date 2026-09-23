@@ -514,6 +514,7 @@ def get_config(request: Request) -> schemas.Config:
     response_model=schemas.SSO,
     status_code=status.HTTP_200_OK,
     response_description="OK",
+    response_model_exclude_none=True,
 )
 def get_sso(request: Request) -> schemas.SSO:
     sso: Dict = {

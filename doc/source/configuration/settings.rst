@@ -101,3 +101,38 @@ file ``skyline.yaml.sample`` in ``etc`` directory.
       - nvidia_t4
       usb_models:
       - usb_c
+
+SSO identity providers
+----------------------
+
+When ``sso_enabled`` is ``true``, Skyline can expose one or more SSO login
+options via the ``/sso`` endpoint.
+
+* ``sso_protocols``: used only when ``sso_identity_providers`` is empty.
+  Skyline returns one generic option per protocol, pointing at Keystone's
+  protocol-level WebSSO endpoint
+  (``/v3/auth/OS-FEDERATION/websso/{protocol}``).
+* ``sso_identity_providers``: when set, Skyline returns one option per
+  identity provider, pointing at the IdP-specific WebSSO endpoint
+  (``/v3/auth/OS-FEDERATION/identity_providers/{name}/protocols/{protocol}/websso``).
+  In this case ``sso_protocols`` is ignored.
+
+Each identity provider entry requires:
+
+* ``name``: Keystone identity provider ID
+* ``protocol``: federation protocol, for example ``openid``
+* ``label``: display name shown in the login UI
+
+Example:
+
+.. code-block:: yaml
+
+    openstack:
+      sso_enabled: true
+      sso_identity_providers:
+      - name: keycloak
+        protocol: openid
+        label: KeyCloak SSO
+      - name: adfs
+        protocol: openid
+        label: Corporate ADFS
