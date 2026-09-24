@@ -125,3 +125,36 @@ class TestSystemSessionOriginalIP:
                 timeout=30,
             ),
         ]
+
+
+class TestImageClient:
+    @patch("skyline_apiserver.client.utils.openstack.connection.Connection")
+    @patch("skyline_apiserver.client.utils.get_endpoint")
+    def test_uses_region_and_image_endpoint_override(
+        self,
+        mock_get_endpoint,
+        mock_connection_cls,
+    ):
+        session = MagicMock()
+        connection = MagicMock()
+        mock_get_endpoint.return_value = "https://glance.example"
+        mock_connection_cls.return_value = connection
+
+        result = utils.image_client(
+            session=session,
+            region="RegionTwo",
+            global_request_id="req-glance",
+        )
+
+        assert result is connection
+        mock_get_endpoint.assert_called_once_with(
+            "RegionTwo",
+            "image",
+            session=session,
+        )
+        mock_connection_cls.assert_called_once_with(
+            session=session,
+            region_name="RegionTwo",
+            image_endpoint_override="https://glance.example",
+        )
+        assert connection.image.global_request_id == "req-glance"
