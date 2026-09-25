@@ -50,7 +50,6 @@ SUPPORTED_SERVICE_EPS = {
     # openstack_service: [<entry_point_name>, <entry_point_name>,]
     "barbican": ["barbican"],
     "cinder": ["cinder"],
-    "zaqar": ["zaqar"],
     "designate": ["designate"],
     "glance": ["glance"],
     "heat": ["heat"],
@@ -64,6 +63,7 @@ SUPPORTED_SERVICE_EPS = {
     "octavia": ["octavia"],
     "placement": ["placement"],
     "trove": ["trove"],
+    "zaqar": ["zaqar"],
     "zun": ["zun"],
 }
 
