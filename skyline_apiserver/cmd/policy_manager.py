@@ -26,6 +26,7 @@ from oslo_policy.policy import DocumentedRuleDefault, RuleDefault
 from skyline_apiserver.log import LOG, setup as log_setup
 from skyline_apiserver.policy.manager import get_service_rules
 from skyline_apiserver.policy.manager.base import APIRule, Rule
+from skyline_apiserver.schemas.policy_manager import OperationsSchema
 from skyline_apiserver.types import constants
 
 DEBUG = False
@@ -183,6 +184,8 @@ def generate_rule(service: str) -> None:
 # flake8: noqa
 # fmt: off
 
+from skyline_apiserver.schemas.policy_manager import Operation
+
 from . import base
 
 list_rules = ("""
@@ -198,11 +201,20 @@ list_rules = ("""
     for r in rules:
         print(
             rule_format_str.format(
-                name=r.name,
-                check_str=r.check_str,
-                description=r.description,
+                name=json.dumps(r.name),
+                check_str=json.dumps(r.check_str),
+                description=json.dumps(r.description),
             ),
         )
+
+    def format_operations(operations: OperationsSchema) -> str:
+        parts = []
+        for op in operations.root:
+            method = op.method.value if hasattr(op.method, "value") else op.method
+            parts.append(
+                f"Operation(method={json.dumps(method)}, path={json.dumps(op.path)})",
+            )
+        return "[" + ", ".join(parts) + "]"
 
     apirule_format_str = (
         "    base.APIRule(\n"
@@ -216,11 +228,11 @@ list_rules = ("""
     for r in api_rules:
         print(
             apirule_format_str.format(
-                name=r.name,
-                check_str=r.check_str,
-                description=r.description,
+                name=json.dumps(r.name),
+                check_str=json.dumps(r.check_str),
+                description=json.dumps(r.description),
                 scope_types=r.scope_types,
-                operations=r.operations.model_dump(),
+                operations=format_operations(r.operations),
             ),
         )
 
