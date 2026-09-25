@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 
+import ast
 from dataclasses import asdict
 from importlib import metadata
 from importlib.metadata import EntryPoint
@@ -149,10 +150,23 @@ class TestPolicyManager:
 
     def test_generate_rule(self, runner: CliRunner) -> None:
         policy_manager.add_command(generate_rule)
-        for ep_names in FAKE_SERVICE_EPS.values():
-            for ep_name in ep_names:
-                result = runner.invoke(policy_manager, ["generate-rule", ep_name])
-                assert result.exit_code == 0
+        for service in FAKE_SERVICE_EPS:
+            result = runner.invoke(policy_manager, ["generate-rule", service])
+            assert result.exit_code == 0
+            output = result.output
+            assert "from skyline_apiserver.schemas.policy_manager import Operation" in output
+            assert 'name="' in output
+            assert "check_str=(" in output
+            assert 'description="' in output
+            assert "Operation(method=" in output
+            # Strip logging noise; generated module starts at the license header.
+            start = output.find("# Copyright")
+            assert start >= 0
+            module_src = output[start:]
+            end = module_src.find('__all__ = ("list_rules",)')
+            assert end >= 0
+            module_src = module_src[: end + len('__all__ = ("list_rules",)')] + "\n"
+            ast.parse(module_src)
 
     def test_validate(self, runner: CliRunner) -> None:
         policy_manager.add_command(validate)
