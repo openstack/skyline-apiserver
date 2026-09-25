@@ -55,6 +55,7 @@ file ``skyline.yaml.sample`` in ``etc`` directory.
         instance-ha: masakari
         key-manager: barbican
         load-balancer: octavia
+        messaging: zaqar
         network: neutron
         object-store: swift
         orchestration: heat
