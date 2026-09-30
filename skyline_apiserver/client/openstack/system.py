@@ -19,6 +19,7 @@ from typing import Any, Dict, List, Optional
 
 from keystoneauth1.identity.v3 import Token
 from keystoneauth1.session import Session
+from keystoneclient.client import Client as KeystoneClient
 
 from skyline_apiserver.client import utils
 from skyline_apiserver.client.utils import get_system_session
@@ -50,6 +51,56 @@ def get_project_scope_token(
     keystone_token = session.get_token()  # type: ignore
 
     return keystone_token
+
+
+def get_scope_domains(
+    keystone_token: str,
+    region: str,
+    original_ip: Optional[str] = None,
+) -> List[Any]:
+    """Domains the token holder can scope to (GET /v3/auth/domains)."""
+    auth_url = utils.get_endpoint(
+        region=region,
+        service="identity",
+        session=get_system_session(original_ip=original_ip),
+    )
+    unscope_auth = Token(auth_url=auth_url, token=keystone_token, reauthenticate=False)
+    session = Session(
+        auth=unscope_auth,
+        original_ip=original_ip,
+        verify=CONF.default.cafile,
+        timeout=constants.DEFAULT_TIMEOUT,
+    )
+    client = KeystoneClient(
+        session=session,
+        endpoint=auth_url,
+        interface=CONF.openstack.interface_type,
+    )
+    return client.auth.domains()
+
+
+def get_domain_scope_token(
+    keystone_token: str,
+    region: str,
+    domain_id: str,
+    original_ip: Optional[str] = None,
+) -> str:
+    auth_url = utils.get_endpoint(
+        region=region,
+        service="identity",
+        session=get_system_session(original_ip=original_ip),
+    )
+    scope_auth = Token(auth_url=auth_url, token=keystone_token, domain_id=domain_id)
+
+    session = Session(
+        auth=scope_auth,
+        original_ip=original_ip,
+        verify=CONF.default.cafile,
+        timeout=constants.DEFAULT_TIMEOUT,
+    )
+    domain_scope_token = session.get_token()  # type: ignore
+
+    return domain_scope_token
 
 
 def get_endpoints(region: str, original_ip: Optional[str] = None) -> Dict[str, Any]:

@@ -26,6 +26,7 @@ from skyline_apiserver import schemas, version
 from skyline_apiserver.client import utils
 from skyline_apiserver.client.utils import get_system_session
 from skyline_apiserver.config import CONF
+from skyline_apiserver.log import LOG
 
 
 def parse_access_token(token: str) -> (schemas.Payload):
@@ -35,6 +36,7 @@ def parse_access_token(token: str) -> (schemas.Payload):
         region=payload["region"],
         exp=payload["exp"],
         uuid=payload["uuid"],
+        domain_scope_token=payload.get("domain_scope_token"),
     )
 
 
@@ -48,6 +50,7 @@ def generate_profile_by_token(
         exp=token.exp,
         uuid_value=token.uuid,
         original_ip=original_ip,
+        domain_scope_token=token.domain_scope_token,
     )
 
 
@@ -57,6 +60,7 @@ def generate_profile(
     exp: Optional[int] = None,
     uuid_value: Optional[str] = None,
     original_ip: Optional[str] = None,
+    domain_scope_token: Optional[str] = None,
 ) -> schemas.Profile:
     try:
         kc = utils.keystone_client(
@@ -69,16 +73,31 @@ def generate_profile(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=str(e),
         )
-    else:
-        return schemas.Profile(
-            keystone_token=keystone_token,
-            region=region,
-            project=token_data["token"]["project"],
-            user=token_data["token"]["user"],
-            roles=token_data["token"]["roles"],
-            keystone_token_exp=token_data["token"]["expires_at"],
-            base_domains=CONF.openstack.base_domains,
-            exp=exp or int(time.time()) + CONF.default.access_token_expire,
-            uuid=uuid_value or uuid.uuid4().hex,
-            version=version.version,
-        )
+    domain_fields = {}
+    if domain_scope_token:
+        # A domain-scoped token is optional: if it is gone (expired, revoked) the
+        # session simply loses the domain identity area, it does not break.
+        try:
+            domain_data = kc.tokens.get_token_data(token=domain_scope_token)["token"]
+            domain_fields = {
+                "domain_scope_token": domain_scope_token,
+                "domain": domain_data["domain"],
+                "domain_roles": domain_data["roles"],
+                "domain_scope_token_exp": domain_data["expires_at"],
+            }
+        except Exception as e:
+            LOG.debug(f"Domain-scoped token dropped from the profile: {str(e)}")
+
+    return schemas.Profile(
+        keystone_token=keystone_token,
+        region=region,
+        project=token_data["token"]["project"],
+        user=token_data["token"]["user"],
+        roles=token_data["token"]["roles"],
+        keystone_token_exp=token_data["token"]["expires_at"],
+        base_domains=CONF.openstack.base_domains,
+        exp=exp or int(time.time()) + CONF.default.access_token_expire,
+        uuid=uuid_value or uuid.uuid4().hex,
+        version=version.version,
+        **domain_fields,
+    )

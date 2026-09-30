@@ -215,6 +215,7 @@ class TestSwitchRegion:
             keystone_token="keystone-token-xyz",
             region="RegionTwo",
             original_ip="198.51.100.20",
+            domain_scope_token=mock_profile.domain_scope_token,
         )
         assert result == new_profile
 
@@ -740,6 +741,7 @@ class TestLoginTotpEndpoint:
             response=mock_response,
             x_openstack_request_id="req-id",
             project_enabled=True,
+            user_domain="Default",
             original_ip="198.51.100.20",
         )
         assert result == mock_profile
