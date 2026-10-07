@@ -1,0 +1,8 @@
+---
+fixes:
+  - |
+    The migration that adds primary keys to ``revoked_token`` and
+    ``settings`` no longer fails with ``Multiple primary key defined`` on
+    databases where a primary key was added by hand to work around bug
+    2108940 on Galera or Percona XtraDB Cluster. A table that already has a
+    primary key is left as it is.

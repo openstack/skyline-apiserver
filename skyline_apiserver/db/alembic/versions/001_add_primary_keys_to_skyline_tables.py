@@ -20,6 +20,7 @@ Create Date: 2026-07-20 00:00:00.000000
 
 """
 
+import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
@@ -30,13 +31,17 @@ depends_on = None
 
 
 def upgrade() -> None:
-    with op.batch_alter_table("revoked_token") as batch_op:
-        batch_op.drop_index(op.f("ix_revoked_token_uuid"))
-        batch_op.create_primary_key("pk_revoked_token", ["uuid"])
-
-    with op.batch_alter_table("settings") as batch_op:
-        batch_op.drop_index(op.f("ix_settings_key"))
-        batch_op.create_primary_key("pk_settings", ["key"])
+    # Bug 2108940 left these tables without a primary key, which Galera and
+    # Percona XtraDB Cluster with pxc_strict_mode=ENFORCING refuse to write
+    # to, so some deployments added one by hand. Creating a second one fails
+    # there, so leave such a table as it is.
+    inspector = sa.inspect(op.get_bind())
+    for table, column in (("revoked_token", "uuid"), ("settings", "key")):
+        if inspector.get_pk_constraint(table)["constrained_columns"]:
+            continue
+        with op.batch_alter_table(table) as batch_op:
+            batch_op.drop_index(op.f(f"ix_{table}_{column}"))
+            batch_op.create_primary_key(f"pk_{table}", [column])
 
 
 def downgrade() -> None:
