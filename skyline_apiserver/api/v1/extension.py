@@ -65,7 +65,7 @@ def list_servers(
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
-        regex=constants.INBOUND_HEADER_REGEX,
+        pattern=constants.INBOUND_HEADER_REGEX,
     ),
     limit: Optional[int] = Query(
         None,
@@ -287,7 +287,7 @@ def list_recycle_servers(
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
-        regex=constants.INBOUND_HEADER_REGEX,
+        pattern=constants.INBOUND_HEADER_REGEX,
     ),
     limit: Optional[int] = Query(
         None,
@@ -504,7 +504,7 @@ def list_volumes(
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
-        regex=constants.INBOUND_HEADER_REGEX,
+        pattern=constants.INBOUND_HEADER_REGEX,
     ),
     limit: Optional[int] = Query(
         None,
@@ -680,7 +680,7 @@ def list_volume_snapshots(
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
-        regex=constants.INBOUND_HEADER_REGEX,
+        pattern=constants.INBOUND_HEADER_REGEX,
     ),
     limit: Optional[int] = Query(
         None,
@@ -870,7 +870,7 @@ def list_ports(
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
-        regex=constants.INBOUND_HEADER_REGEX,
+        pattern=constants.INBOUND_HEADER_REGEX,
     ),
     limit: Optional[int] = Query(
         None,
@@ -1058,7 +1058,7 @@ def compute_services(
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
-        regex=constants.INBOUND_HEADER_REGEX,
+        pattern=constants.INBOUND_HEADER_REGEX,
     ),
     binary: str = Query(
         None, description="Filter the list of compute services by the given binary."
