@@ -114,6 +114,11 @@ http {
             proxy_pass {{ endpoint["url"] }};
             proxy_redirect {{ endpoint["url"] }} {{ endpoint["location"] }};
             proxy_buffering off;
+            # Talk HTTP/1.1 to upstream OpenStack services. nginx defaults to
+            # HTTP/1.0 for proxied requests, and some service front-ends (e.g.
+            # an Apache fronting Keystone) reject HTTP/1.0 with "426 Upgrade
+            # Required", which breaks every proxied API call.
+            proxy_http_version 1.1;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
             proxy_set_header X-Forwarded-Host $host;

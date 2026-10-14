@@ -1,0 +1,12 @@
+---
+fixes:
+  - |
+    Fixed proxied OpenStack API calls failing with ``426 Upgrade Required``.
+    The generated nginx reverse-proxy configuration did not set
+    ``proxy_http_version``, so nginx forwarded upstream requests using
+    HTTP/1.0. Service front-ends that require HTTP/1.1 (for example an Apache
+    httpd fronting Keystone) reject HTTP/1.0 requests with a ``426 Upgrade
+    Required`` response. This broke every request Skyline proxies to the
+    OpenStack services, including Keystone role and project lookups, so
+    functionality such as switching projects stopped working. The per-endpoint
+    proxy blocks now set ``proxy_http_version 1.1``.
