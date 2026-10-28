@@ -1,5 +1,5 @@
 worker_processes auto;
-pid /run/nginx.pid;
+pid {{ nginx_pid_file | default('/run/nginx.pid') }};
 include /etc/nginx/modules-enabled/*.conf;
 
 events {
@@ -8,7 +8,13 @@ events {
 }
 
 http {
-
+{% if nginx_temp_path_prefix %}
+    client_body_temp_path {{ nginx_temp_path_prefix }}/client-body;
+    fastcgi_temp_path {{ nginx_temp_path_prefix }}/fastcgi;
+    proxy_temp_path {{ nginx_temp_path_prefix }}/proxy;
+    scgi_temp_path {{ nginx_temp_path_prefix }}/scgi;
+    uwsgi_temp_path {{ nginx_temp_path_prefix }}/uwsgi;
+{% endif %}
     ##
     # Basic Settings
     ##

@@ -227,6 +227,25 @@ resulting path will be {*_log_file}
     "error_log_file",
     help=("Nginx error log file."),
 )
+@click.option(
+    "--pid-file",
+    "nginx_pid_file",
+    help=(
+        "Nginx pid file path. Defaults to /run/nginx.pid when omitted "
+        "(suitable for systemd/root). Use a writable path such as "
+        "/tmp/skyline-nginx.pid for non-root containers."
+    ),
+)
+@click.option(
+    "--temp-path-prefix",
+    "nginx_temp_path_prefix",
+    help=(
+        "Prefix directory for nginx temporary file paths "
+        "(client_body/proxy/fastcgi/scgi/uwsgi). When omitted, nginx "
+        "distro defaults are used. Set to a writable path such as "
+        "/tmp/skyline-nginx for non-root containers."
+    ),
+)
 def main(
     output_file_path: str,
     ssl_certfile: str,
@@ -235,6 +254,8 @@ def main(
     log_dir: str,
     access_log_file: str,
     error_log_file: str,
+    nginx_pid_file: str,
+    nginx_temp_path_prefix: str,
 ) -> None:
     try:
         configure("skyline")
@@ -262,6 +283,10 @@ def main(
             context.update(ssl_keyfile=ssl_keyfile)
         if listen_address:
             context.update(listen_address=listen_address)
+        if nginx_pid_file:
+            context.update(nginx_pid_file=nginx_pid_file)
+        if nginx_temp_path_prefix:
+            context.update(nginx_temp_path_prefix=nginx_temp_path_prefix)
         _access_log_file = Path(log_dir or CONF.default.log_dir).joinpath(
             access_log_file or CONF.default.access_log_file
         )
