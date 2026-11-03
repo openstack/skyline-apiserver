@@ -20,10 +20,23 @@ fi
 # Bind ports <1024 need extra capabilities; prefer LISTEN_ADDRESS with a
 # high port behind a Route/Ingress when running without root.
 NGINX_CONFIG_FILE=/tmp/skyline-nginx.conf
+NGINX_PID_FILE=/tmp/skyline-nginx.pid
+NGINX_TEMP_PATH_PREFIX=/tmp/skyline-nginx
+
+# nginx only creates the leaf temp directories, not parents. An empty /tmp
+# bind-mount (e.g. -v /tmp/skyline:/tmp) therefore needs these created from
+# the same prefix passed to --temp-path-prefix.
+mkdir -p \
+    "${NGINX_TEMP_PATH_PREFIX}/client-body" \
+    "${NGINX_TEMP_PATH_PREFIX}/proxy" \
+    "${NGINX_TEMP_PATH_PREFIX}/fastcgi" \
+    "${NGINX_TEMP_PATH_PREFIX}/uwsgi" \
+    "${NGINX_TEMP_PATH_PREFIX}/scgi"
+
 GENERATOR_ARGS=(
     --output-file "${NGINX_CONFIG_FILE}"
-    --pid-file /tmp/skyline-nginx.pid
-    --temp-path-prefix /tmp/skyline-nginx
+    --pid-file "${NGINX_PID_FILE}"
+    --temp-path-prefix "${NGINX_TEMP_PATH_PREFIX}"
 )
 if [[ -n "${LISTEN_ADDRESS}" ]]; then
     GENERATOR_ARGS+=(--listen-address "${LISTEN_ADDRESS}")
