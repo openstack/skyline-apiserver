@@ -441,7 +441,7 @@ def login(
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
-        regex=constants.INBOUND_HEADER_REGEX,
+        pattern=constants.INBOUND_HEADER_REGEX,
     ),
 ) -> schemas.Profile:
     region = CONF.openstack.default_region
@@ -495,7 +495,7 @@ def login_totp(
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
-        regex=constants.INBOUND_HEADER_REGEX,
+        pattern=constants.INBOUND_HEADER_REGEX,
     ),
 ) -> schemas.Profile:
     region = credential.region or CONF.openstack.default_region
@@ -626,7 +626,7 @@ def websso(
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
-        regex=constants.INBOUND_HEADER_REGEX,
+        pattern=constants.INBOUND_HEADER_REGEX,
     ),
 ) -> RedirectResponse:
     original_ip = deps.get_original_ip(request)
@@ -691,7 +691,7 @@ def get_profile(
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
-        regex=constants.INBOUND_HEADER_REGEX,
+        pattern=constants.INBOUND_HEADER_REGEX,
     ),
 ) -> schemas.Profile:
     return _patch_profile(
@@ -718,7 +718,7 @@ def logout(
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
-        regex=constants.INBOUND_HEADER_REGEX,
+        pattern=constants.INBOUND_HEADER_REGEX,
     ),
 ) -> schemas.Message:
     if payload:
@@ -755,7 +755,7 @@ def switch_project(
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
-        regex=constants.INBOUND_HEADER_REGEX,
+        pattern=constants.INBOUND_HEADER_REGEX,
     ),
 ) -> schemas.Profile:
     profile = deps.get_profile(request)
@@ -813,7 +813,7 @@ def switch_region(
     x_openstack_request_id: str = Header(
         "",
         alias=constants.INBOUND_HEADER,
-        regex=constants.INBOUND_HEADER_REGEX,
+        pattern=constants.INBOUND_HEADER_REGEX,
     ),
 ) -> schemas.Profile:
     profile = deps.get_profile(request)
