@@ -70,6 +70,11 @@ class PayloadBase(BaseModel):
     region: str = Field(..., description="User region")
     exp: int = Field(..., description="Token expiration time")
     uuid: str = Field(..., description="UUID")
+    domain_scope_token: Optional[str] = Field(
+        default=None,
+        description="Domain-scoped Keystone token, present when the user has role assignments "
+        "on a domain (domain manager persona)",
+    )
 
 
 class Payload(PayloadBase):
@@ -79,6 +84,7 @@ class Payload(PayloadBase):
             "region": self.region,
             "exp": self.exp,
             "uuid": self.uuid,
+            "domain_scope_token": self.domain_scope_token,
         }
 
     def toJWTPayload(self) -> str:
@@ -102,6 +108,15 @@ class Profile(PayloadBase):
     regions: Optional[List[str]] = Field(
         default=None, description="Available regions for the user"
     )
+    domain: Optional[Domain] = Field(
+        default=None, description="Domain the domain-scoped token is scoped to"
+    )
+    domain_roles: Optional[List[Role]] = Field(
+        default=None, description="Roles carried by the domain-scoped token"
+    )
+    domain_scope_token_exp: Optional[str] = Field(
+        default=None, description="Domain-scoped token expiration time"
+    )
 
     def toPayLoad(self) -> Payload:
         return Payload(
@@ -109,6 +124,7 @@ class Profile(PayloadBase):
             region=self.region,
             exp=self.exp,
             uuid=self.uuid,
+            domain_scope_token=self.domain_scope_token,
         )
 
     def toJWTPayload(self) -> str:
@@ -163,3 +179,7 @@ class SSO(BaseModel):
 class Config(BaseModel):
     default_domain: str
     default_region: str
+    domain_manager_roles: List[str] = Field(
+        default_factory=list,
+        description="Roles of a domain-scoped token that enable the domain identity area",
+    )

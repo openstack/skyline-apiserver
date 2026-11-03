@@ -118,6 +118,16 @@ system_reader_roles = Opt(
     default=["system_reader"],
 )
 
+domain_manager_roles = Opt(
+    name="domain_manager_roles",
+    description=(
+        "roles of a domain-scoped token that enable the domain identity area "
+        "(Keystone domain manager persona)"
+    ),
+    schema=List[StrictStr],
+    default=["manager"],
+)
+
 service_mapping = Opt(
     name="service_mapping",
     description=(
@@ -234,6 +244,7 @@ ALL_OPTS = (
     base_domains,
     system_admin_roles,
     system_reader_roles,
+    domain_manager_roles,
     service_mapping,
     extension_mapping,
     reclaim_instance_interval,

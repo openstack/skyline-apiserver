@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Any, Dict, List, Optional
 
 from fastapi import status
 from fastapi.exceptions import HTTPException
@@ -24,17 +24,95 @@ from keystoneauth1.exceptions.http import (
     InternalServerError as KeystoneInternalServerError,
     Unauthorized as KeystoneUnauthorized,
 )
+from keystoneauth1.identity.v3 import Token
+from keystoneauth1.session import Session
 from starlette.requests import Request
 
 from skyline_apiserver import schemas
 from skyline_apiserver.api import deps
-from skyline_apiserver.client.utils import generate_session, get_access, get_system_scope_access
+from skyline_apiserver.client.utils import (
+    generate_session,
+    get_access,
+    get_endpoint,
+    get_system_scope_access,
+    get_system_session,
+)
 from skyline_apiserver.config import CONF
 from skyline_apiserver.log import LOG
 from skyline_apiserver.policy import ENFORCER, UserContext
 from skyline_apiserver.types import constants
 
 router = APIRouter()
+
+# Services whose rules are evaluated a second time with the domain-scoped token
+DOMAIN_SCOPE_SERVICES = ("keystone",)
+
+
+def _generate_domain_target(profile: schemas.Profile) -> Dict[str, str]:
+    """Policy target for the domain-scoped evaluation: everything belongs to the user's domain."""
+    domain_id = profile.domain.id if profile.domain else profile.user.domain.id
+    target = _generate_target(profile)
+    target.update(
+        {
+            "target.user.domain_id": domain_id,
+            "target.project.domain_id": domain_id,
+            "target.domain.id": domain_id,
+            "target.domain_id": domain_id,
+            "target.role.domain_id": domain_id,
+            "target.group.domain_id": domain_id,
+            "target.limit.domain.id": domain_id,
+            "domain_id": domain_id,
+            # generic evaluation of grant rules: the least privileged role a manager may assign
+            "target.role.name": "member",
+        }
+    )
+    return target
+
+
+def _domain_user_context(
+    profile: schemas.Profile, original_ip: Optional[str] = None
+) -> Optional[UserContext]:
+    """Credentials of the domain-scoped token, or None when the session has none.
+
+    Keystone rules compare ``token.domain.id`` (oslo.policy resolves dotted keys as nested
+    lookups), so the ``token`` entry mirrors the shape Keystone itself uses.
+    """
+    if not profile.domain_scope_token or not profile.domain:
+        return None
+    try:
+        auth_url = get_endpoint(
+            profile.region, "identity", get_system_session(original_ip=original_ip)
+        )
+        # keep the domain scope: a bare token auth would re-scope to the default project
+        auth = Token(auth_url, profile.domain_scope_token, domain_id=profile.domain.id)
+        session = Session(
+            auth=auth,
+            original_ip=original_ip,
+            verify=CONF.default.cafile,
+            timeout=constants.DEFAULT_TIMEOUT,
+        )
+        access = session.auth.get_auth_ref(session)  # type: ignore
+    except (KeystoneUnauthorized, KeystoneInternalServerError) as e:
+        LOG.debug(f"Domain-scoped token not usable for policy evaluation: {str(e)}")
+        return None
+    context = UserContext(access)
+    context["token"] = {"domain": {"id": profile.domain.id}}
+    return context
+
+
+def _authorize(
+    service: str,
+    enforcer: Any,
+    rule: str,
+    target: Dict[str, str],
+    user_context: UserContext,
+    domain_target: Optional[Dict[str, str]],
+    domain_context: Optional[UserContext],
+) -> bool:
+    allowed = enforcer.authorize(rule, target, user_context)
+    if not allowed and domain_context is not None and service in DOMAIN_SCOPE_SERVICES:
+        allowed = enforcer.authorize(rule, domain_target, domain_context)
+    return allowed
 
 
 def _generate_target(profile: schemas.Profile) -> Dict[str, str]:
@@ -118,6 +196,8 @@ def list_policies(
     except KeystoneInternalServerError:
         LOG.debug("Keystone is not reachable. No privilege to access system scope.")
     target = _generate_target(profile)
+    domain_context = _domain_user_context(profile, original_ip=original_ip)
+    domain_target = _generate_domain_target(profile) if domain_context else None
 
     results: List = []
     services = constants.SUPPORTED_SERVICE_EPS.keys()
@@ -127,7 +207,15 @@ def list_policies(
             result = [
                 {
                     "rule": f"{service}:{rule}",
-                    "allowed": enforcer.authorize(rule, target, user_context),
+                    "allowed": _authorize(
+                        service,
+                        enforcer,
+                        rule,
+                        target,
+                        user_context,
+                        domain_target,
+                        domain_context,
+                    ),
                 }
                 for rule in enforcer.rules
             ]
@@ -181,6 +269,11 @@ def check_policies(
         LOG.debug("Keystone is not reachable. No privilege to access system scope.")
     target = _generate_target(profile)
     target.update(policy_rules.target if policy_rules.target else {})
+    domain_context = _domain_user_context(profile, original_ip=original_ip)
+    domain_target = None
+    if domain_context:
+        domain_target = _generate_domain_target(profile)
+        domain_target.update(policy_rules.target if policy_rules.target else {})
     try:
         result: List = []
         for policy_rule in policy_rules.rules:
@@ -188,7 +281,18 @@ def check_policies(
             rule = policy_rule.split(":", 1)[1]
             enforcer = ENFORCER[service]
             result.append(
-                {"rule": policy_rule, "allowed": enforcer.authorize(rule, target, user_context)}
+                {
+                    "rule": policy_rule,
+                    "allowed": _authorize(
+                        service,
+                        enforcer,
+                        rule,
+                        target,
+                        user_context,
+                        domain_target,
+                        domain_context,
+                    ),
+                }
             )
     except Exception as e:
         raise HTTPException(

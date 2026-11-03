@@ -35,9 +35,11 @@ from skyline_apiserver.api import deps
 from skyline_apiserver.client import utils
 from skyline_apiserver.client.openstack.keystone import get_token_data, get_user, revoke_token
 from skyline_apiserver.client.openstack.system import (
+    get_domain_scope_token,
     get_endpoints,
     get_project_scope_token,
     get_projects,
+    get_scope_domains,
 )
 from skyline_apiserver.client.utils import generate_session, get_system_session
 from skyline_apiserver.config import CONF
@@ -144,6 +146,39 @@ def _raise_for_totp_auth_error(exc: Exception, username: str, domain: str) -> No
     )
 
 
+def _get_domain_scope_token(
+    unscope_token: str,
+    region: str,
+    user_domain: Optional[str] = None,
+    original_ip: Optional[str] = None,
+) -> Optional[str]:
+    """Domain-scoped token for the user's own domain, or None.
+
+    Only users with role assignments on a domain (Keystone domain manager persona)
+    get one. Failures never block the login: the session just has no domain area.
+    """
+    try:
+        domains = [
+            d
+            for d in get_scope_domains(unscope_token, region, original_ip=original_ip)
+            if d.enabled
+        ]
+        if user_domain:
+            own = [d for d in domains if d.name == user_domain or d.id == user_domain]
+            domains = own or []
+        if not domains:
+            return None
+        return get_domain_scope_token(
+            keystone_token=unscope_token,
+            region=region,
+            domain_id=domains[0].id,
+            original_ip=original_ip,
+        )
+    except Exception as e:
+        LOG.debug(f"No domain-scoped token: {str(e)}")
+        return None
+
+
 def _build_profile_from_unscope(
     unscope_token: str,
     region: str,
@@ -151,6 +186,7 @@ def _build_profile_from_unscope(
     project_scope: List[Any],
     default_project_id: Optional[str],
     original_ip: Optional[str] = None,
+    user_domain: Optional[str] = None,
 ) -> schemas.Profile:
     if default_project_id not in [i.id for i in project_scope]:
         default_project_id = None
@@ -160,10 +196,14 @@ def _build_profile_from_unscope(
         project_id=default_project_id or project_scope[0].id,
         original_ip=original_ip,
     )
+    domain_scope_token = _get_domain_scope_token(
+        unscope_token, region, user_domain, original_ip=original_ip
+    )
     profile = generate_profile(
         keystone_token=project_scope_token,
         region=region,
         original_ip=original_ip,
+        domain_scope_token=domain_scope_token,
     )
     return _patch_profile(profile, x_openstack_request_id, original_ip=original_ip)
 
@@ -180,6 +220,7 @@ def _finish_login(
     x_openstack_request_id: str,
     project_enabled: bool = True,
     original_ip: Optional[str] = None,
+    user_domain: Optional[str] = None,
 ) -> schemas.Profile:
     project_scope, _, default_project_id = _get_projects_and_unscope_token(
         region=region,
@@ -194,6 +235,7 @@ def _finish_login(
         project_scope=project_scope,
         default_project_id=default_project_id,
         original_ip=original_ip,
+        user_domain=user_domain,
     )
     _set_login_cookies(response, profile)
     return profile
@@ -421,6 +463,7 @@ def login(
             project_scope=project_scope,
             default_project_id=default_project_id,
             original_ip=original_ip,
+            user_domain=domain,
         )
     except HTTPException:
         raise
@@ -480,6 +523,7 @@ def login_totp(
             response=response,
             x_openstack_request_id=x_openstack_request_id,
             project_enabled=True,
+            user_domain=domain,
             original_ip=original_ip,
         )
     except HTTPException:
@@ -502,6 +546,7 @@ def get_config(request: Request) -> schemas.Config:
     return schemas.Config(
         default_domain=CONF.openstack.user_default_domain,
         default_region=CONF.openstack.default_region,
+        domain_manager_roles=CONF.openstack.domain_manager_roles,
     )
 
 
@@ -601,11 +646,15 @@ def websso(
             project_id=default_project_id or project_scope[0].id,
             original_ip=original_ip,
         )
+        domain_scope_token = _get_domain_scope_token(
+            token, CONF.openstack.sso_region, original_ip=original_ip
+        )
 
         profile = generate_profile(
             keystone_token=project_scope_token,
             region=CONF.openstack.sso_region,
             original_ip=original_ip,
+            domain_scope_token=domain_scope_token,
         )
 
         profile = _patch_profile(
@@ -679,6 +728,8 @@ def logout(
             profile = generate_profile_by_token(token, original_ip=original_ip)
             session = generate_session(profile, original_ip=original_ip)
             revoke_token(profile, session, x_openstack_request_id, token.keystone_token)
+            if token.domain_scope_token:
+                revoke_token(profile, session, x_openstack_request_id, token.domain_scope_token)
             db_api.revoke_token(profile.uuid, profile.exp)
         except Exception as e:
             LOG.debug(str(e))
@@ -726,6 +777,7 @@ def switch_project(
             keystone_token=project_scope_token,
             region=region,
             original_ip=original_ip,
+            domain_scope_token=profile.domain_scope_token,
         )
         new_profile = _patch_profile(
             new_profile,
@@ -780,6 +832,7 @@ def switch_region(
             keystone_token=profile.keystone_token,
             region=region,
             original_ip=original_ip,
+            domain_scope_token=profile.domain_scope_token,
         )
         new_profile = _patch_profile(
             new_profile,

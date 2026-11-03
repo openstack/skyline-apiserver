@@ -1,0 +1,19 @@
+---
+features:
+  - |
+    Users holding role assignments on a Keystone domain (the *domain manager*
+    persona introduced with the Keystone 2024.2 default policies) now get a
+    domain-scoped token at login, next to the project-scoped one. The profile
+    exposes it as ``domain_scope_token`` together with ``domain`` and
+    ``domain_roles``; it is kept across ``switch_project``/``switch_region``
+    and revoked at logout. ``/policies`` and ``/policies/check`` evaluate the
+    Keystone rules a second time with the domain scope, so the console can
+    offer the identity self-service (users, groups, projects and role
+    assignments of the user's own domain) that Keystone allows. The new
+    option ``openstack.domain_manager_roles`` (default ``["manager"]``) is
+    exposed by ``/config``.
+upgrade:
+  - |
+    The bundled Keystone policy rules (``policy/manager/keystone.py``) were
+    regenerated from Keystone 2026.1; they now include the ``manager`` role
+    clauses of the domain manager persona.
