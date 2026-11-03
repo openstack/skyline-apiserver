@@ -40,7 +40,9 @@ RUN git init /opt/skyline_apiserver \
     && python3 -m pip install --break-system-packages /opt/skyline_apiserver -chttps://releases.openstack.org/constraints/upper/master \
     && apt clean \
     && rm -rf ~/.cache/pip \
-    && mkdir -p /etc/skyline /var/log/skyline /var/lib/skyline
+    && mkdir -p /etc/skyline /var/log/skyline /var/lib/skyline \
+    && chgrp -R 0 /var/log/skyline /var/lib/skyline \
+    && chmod -R g=u /var/log/skyline /var/lib/skyline
 
 COPY ./etc/gunicorn.py /etc/skyline/gunicorn.py
 COPY ./etc/skyline.yaml.sample /etc/skyline/skyline.yaml
