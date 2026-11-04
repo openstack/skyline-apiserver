@@ -152,6 +152,7 @@ service_mapping = Opt(
         "object-store": "swift",
         "orchestration": "heat",
         "placement": "placement",
+        "rating": "cloudkitty",
         "sharev2": "manilav2",
     },
 )

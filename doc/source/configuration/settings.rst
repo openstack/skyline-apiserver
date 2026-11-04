@@ -60,6 +60,7 @@ file ``skyline.yaml.sample`` in ``etc`` directory.
         object-store: swift
         orchestration: heat
         placement: placement
+        rating: cloudkitty
         sharev2: manilav2
       sso_enabled: false
       sso_identity_providers: []

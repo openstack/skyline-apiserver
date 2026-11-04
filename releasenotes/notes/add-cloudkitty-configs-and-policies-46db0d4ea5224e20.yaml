@@ -1,0 +1,23 @@
+---
+features:
+  - |
+    Add CloudKitty (rating) support. The ``rating`` service type is now mapped
+    to ``cloudkitty`` in the default ``service_mapping``, so the CloudKitty
+    endpoint is generated into the nginx configuration and can be used by
+    skyline-console.
+  - |
+    Add the CloudKitty policy rules, so that skyline-console can check
+    permissions for rating summaries, reports, rating modules, the HashMap and
+    PyScripts module configuration, and the collector information. The rules
+    are generated from CloudKitty with ``skyline-policy-manager`` and keep
+    CloudKitty's own defaults: administrators can manage rating modules and
+    their configuration, while project readers and administrators can view
+    rating summaries and reports.
+  - |
+    CloudKitty declares a few operations with the method ``LIST``, which is
+    not an HTTP method accepted by the policy manager. These operations are
+    recorded as ``GET``.
+upgrade:
+  - |
+    If ``service_mapping`` is overridden in ``skyline.yaml``, add
+    ``rating: cloudkitty`` to it to make the CloudKitty endpoint available.
